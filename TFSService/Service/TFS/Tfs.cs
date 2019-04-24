@@ -23,6 +23,11 @@ namespace Service.TFS
             _project = new TfsTeamProjectCollection(new Uri(url));
         }
 
+        #region Methods
+
+        /// <summary>
+        /// Возвращает последние чекины за указанный промежуток времени
+        /// </summary>
         public IList<Changeset> GetLatestCheckIns(TimeSpan fromNow)
         {
             var service = _project.GetService<VersionControlServer>();
@@ -38,7 +43,12 @@ namespace Service.TFS
             return changes.ToList();
         }
 
-        #region Methods
+        public object GetLatestCreatedTask()
+        {
+            var service = _project.GetService<WorkItemStore>();
+
+            //service.Query("SELECT * from WorkItemLinks WHERE []")
+        }
 
         public void Dispose()
         {
