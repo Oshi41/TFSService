@@ -1,6 +1,6 @@
 ﻿namespace Service
 {
-    partial class Service1
+    partial class TfsWatcher
     {
         /// <summary> 
         /// Required designer variable.

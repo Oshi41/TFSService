@@ -12,7 +12,7 @@ namespace Service
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new Service1()
+                new TfsWatcher()
             };
             ServiceBase.Run(ServicesToRun);
         }
