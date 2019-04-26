@@ -32,6 +32,13 @@ namespace TfsAPI
         IList<WorkItem> GetAssotiatedItems(int changeset);
 
         /// <summary>
+        /// Ищет рабочий эжлемент по номеру
+        /// </summary>
+        /// <param name="id">Номер рабочего элемента</param>
+        /// <returns></returns>
+        WorkItem FindById(int id);
+
+        /// <summary>
         /// Возвращает кол-во часов, которое необходимо списать за день
         /// </summary>
         /// <returns></returns>

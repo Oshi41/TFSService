@@ -2,17 +2,25 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.TeamFoundation;
+using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Client;
+using Microsoft.TeamFoundation.Framework.Client;
 using Microsoft.TeamFoundation.ProcessConfiguration.Client;
 using Microsoft.TeamFoundation.Server;
+using Microsoft.TeamFoundation.TestManagement.Client;
 using Microsoft.TeamFoundation.VersionControl.Client;
+using Microsoft.TeamFoundation.Work.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using Microsoft.TeamFoundation.WorkItemTracking.Proxy;
+using Microsoft.VisualStudio.Services.Client;
+using Microsoft.VisualStudio.Services.Commerce;
 using Microsoft.VisualStudio.Services.Common;
 using TfsAPI.Extentions;
+using TfsAPI.TFS;
 
 namespace TfsAPI
 {
-    public class Tfs : IDisposable, ITfs
+    public class Tfs : ITfs
     {
         #region Fields
 
@@ -23,6 +31,8 @@ namespace TfsAPI
         private readonly TfsTeamService _teamService;
         private TeamSettingsConfigurationService _teamConfiguration;
         private ICommonStructureService4 _structureService;
+
+        private readonly TfsWorkItemHook _newItemHook;
 
         #endregion
 
@@ -37,12 +47,15 @@ namespace TfsAPI
         public Tfs(string uri)
         {
             _project = new TfsTeamProjectCollection(new Uri(uri));
+
             _versionControl = _project.GetService<VersionControlServer>();
             _itemStore = _project.GetService<WorkItemStore>();
             _linking = _project.GetService<ILinking>();
             _teamService = _project.GetService<TfsTeamService>();
             _teamConfiguration = _project.GetService<TeamSettingsConfigurationService>();
             _structureService = _project.GetService<ICommonStructureService4>();
+
+            _newItemHook = new TfsWorkItemHook();
 
             Subscribe();
         }
@@ -52,14 +65,15 @@ namespace TfsAPI
         private void Subscribe()
         {
             _versionControl.CommitCheckin += FireCheckinEvent;
-
-            
+            _newItemHook.Created += CheckNewItem;
         }
 
         private void Unsubscribe()
         {
             _versionControl.CommitCheckin -= FireCheckinEvent;
             _project.Dispose();
+
+            _newItemHook.Created -= CheckNewItem;
 
             Checkin.Unsubscribe();
             NewItem.Unsubscribe();
@@ -72,6 +86,11 @@ namespace TfsAPI
         private void FireCheckinEvent(object sender, CommitCheckinEventArgs e)
         {
             Checkin?.Invoke(sender, e);
+        }
+
+        private void CheckNewItem(object sender, int e)
+        {
+            
         }
 
         #endregion
@@ -132,6 +151,11 @@ namespace TfsAPI
             }
 
             return result;
+        }
+
+        public WorkItem FindById(int id)
+        {
+            return _itemStore.GetWorkItem(id);
         }
 
         public int GetCapacity()
