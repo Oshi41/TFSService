@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.Client;
-using Microsoft.TeamFoundation.Framework.Client;
 using Microsoft.TeamFoundation.VersionControl.Client;
-using Microsoft.TeamFoundation.VersionControl.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using Microsoft.VisualStudio.Services.Client;
+using Microsoft.VisualStudio.Services.Common;
 
 namespace Service.TFS
 {
@@ -32,6 +30,7 @@ namespace Service.TFS
         private readonly TfsTeamProjectCollection _project;
         private readonly VersionControlServer _versionControl;
         private readonly WorkItemStore _itemStore;
+        private readonly ILinking _linking;
 
         #endregion
 
@@ -46,6 +45,7 @@ namespace Service.TFS
             _project = new TfsTeamProjectCollection(new Uri(url));
             _versionControl = _project.GetService<VersionControlServer>();
             _itemStore = _project.GetService<WorkItemStore>();
+            _linking = _project.GetService<ILinking>();
 
             Subscribe();
         }
@@ -118,6 +118,46 @@ namespace Service.TFS
             var total = int.Parse(workField.Value.ToString()) + hours;
             var remain = Math.Max(int.Parse(remainingField.Value.ToString()) - hours, 0);
             
+        }
+
+        /// <summary>
+        /// Вытаскиваю связанные с changeSet элементы
+        /// </summary>
+        /// <param name="id">ID набора изменений</param>
+        public IList<WorkItem> GetWorkitemsFromCheckin(int id)
+        {
+            var result = new List<WorkItem>();
+
+            // Создал объект для получения URL
+            var setId = new ArtifactId
+            {
+                Tool = "VersionControl",
+                ArtifactType = "ChangeSet",
+                ToolSpecificId = id.ToString(),
+            };
+
+            // По этому URL буду искать линкованные элементы
+            var uri = LinkingUtilities.EncodeUri(setId);
+
+            // Нашел связи
+            var linked = _linking.GetReferencingArtifacts(new[] {uri});
+
+            foreach (var artifact in linked)
+            {
+                // Распарсил url
+                var artifactId = LinkingUtilities.DecodeUri(artifact.Uri);
+                // Какая-то хитрая проверка
+                if (string.Equals(artifactId.Tool, "WorkItemTracking", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Нашёл элемент
+                    var item = _itemStore.GetWorkItem(Convert.ToInt32(artifactId.ToolSpecificId));
+                    // Добавил
+                    result.Add(item);
+
+                }
+            }
+
+            return result;
         }
 
         public void Dispose()

@@ -205,9 +205,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Service\Service.csproj">
-      <Project>{2185cea9-d220-4767-aa1a-ded68ba48c97}</Project>
-      <Name>Service</Name>
+    <ProjectReference Include="..\TfsAPI\TfsAPI.csproj">
+      <Project>{a16cca4c-9d08-4b28-aa58-f188fcbbd9a5}</Project>
+      <Name>TfsAPI</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
