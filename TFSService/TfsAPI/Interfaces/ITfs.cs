@@ -22,14 +22,15 @@ namespace TfsAPI
         /// </summary>
         /// <param name="item">Таск, куда списываю</param>
         /// <param name="hours">Кол-во часов</param>
-        void WriteHours(WorkItem item, byte hours);
+        /// <param name="setActive">Нужно ли выставить состояние таска в Active</param>
+        void WriteHours(WorkItem item, byte hours, bool setActive);
 
         /// <summary>
         /// Возвращает список прилинкованных рабочих элементов к набору изменений
         /// </summary>
         /// <param name="changeset">ID набора изменений</param>
         /// <returns></returns>
-        IList<WorkItem> GetAssotiatedItems(int changeset);
+        IList<WorkItem> GetAssociateItems(int changeset);
 
         /// <summary>
         /// Ищет рабочий эжлемент по номеру

@@ -2,18 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.TeamFoundation;
-using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Client;
-using Microsoft.TeamFoundation.Framework.Client;
 using Microsoft.TeamFoundation.ProcessConfiguration.Client;
 using Microsoft.TeamFoundation.Server;
-using Microsoft.TeamFoundation.TestManagement.Client;
 using Microsoft.TeamFoundation.VersionControl.Client;
-using Microsoft.TeamFoundation.Work.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
-using Microsoft.TeamFoundation.WorkItemTracking.Proxy;
-using Microsoft.VisualStudio.Services.Client;
-using Microsoft.VisualStudio.Services.Commerce;
 using Microsoft.VisualStudio.Services.Common;
 using TfsAPI.Extentions;
 using TfsAPI.TFS;
@@ -90,7 +83,27 @@ namespace TfsAPI
 
         private void CheckNewItem(object sender, int e)
         {
-            
+            var item = _itemStore.GetWorkItem(e);
+
+            // Не наш элемент, вообще все равно
+            if (!string.Equals(item[CoreField.AssignedTo].ToString(), _project.AuthorizedIdentity.DisplayName,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            // Создали сами
+            if (string.Equals(item.CreatedBy, _project.AuthorizedIdentity.DisplayName,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                Trace.Write($"User created work element - {item.Id}");
+            }
+            else
+            {
+                Trace.Write($"{item.CreatedBy} created work item {item.Id}: {item.Description}");
+
+                NewItem?.Invoke(item.CreatedBy, item);
+            }
         }
 
         #endregion
@@ -109,15 +122,15 @@ namespace TfsAPI
         /// <inheritdoc cref="ITfs.WriteHours"/>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="Exception"></exception>
-        public void WriteHours(WorkItem item, byte hours)
+        public void WriteHours(WorkItem item, byte hours, bool setActive)
         {
-            item.AddHours(hours);
+            item.AddHours(hours, setActive);
             item.Save();
             Trace.Write($"Saved item - {item.Id}");
         }
 
-        /// <inheritdoc cref="ITfs.GetAssotiatedItems"/>
-        public IList<WorkItem> GetAssotiatedItems(int changeset)
+        /// <inheritdoc cref="ITfs.GetAssociateItems"/>
+        public IList<WorkItem> GetAssociateItems(int changeset)
         {
             var result = new List<WorkItem>();
 

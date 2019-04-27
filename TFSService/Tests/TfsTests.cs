@@ -60,7 +60,7 @@ namespace Tests
             {
                 var id = 40952;
 
-                var items = tfs.GetAssotiatedItems(id);
+                var items = tfs.GetAssociateItems(id);
 
             }
         }
