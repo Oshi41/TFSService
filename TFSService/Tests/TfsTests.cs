@@ -64,5 +64,14 @@ namespace Tests
 
             }
         }
+
+        [TestMethod]
+        public void GetMyItems()
+        {
+            using (var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"))
+            {
+                var all = tfs.GetMyWorkItems();
+            }
+        }
     }
 }

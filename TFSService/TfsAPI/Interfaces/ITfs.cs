@@ -44,5 +44,11 @@ namespace TfsAPI
         /// </summary>
         /// <returns></returns>
         int GetCapacity();
+
+        /// <summary>
+        /// Получает список моих рабочих элементов
+        /// </summary>
+        /// <returns></returns>
+        IList<WorkItem> GetMyWorkItems();
     }
 }

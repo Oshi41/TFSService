@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:client="clr-namespace:Microsoft.TeamFoundation.WorkItemTracking.Client;assembly=Microsoft.TeamFoundation.WorkItemTracking.Client"
+                    xmlns:view="clr-namespace:Gui.View"
+                    xmlns:viewModels="clr-namespace:Gui.ViewModels">
+    
+    <DataTemplate DataType="{x:Type client:WorkItem}">
+        <view:WorkItemView/>
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type viewModels:WorkItemSearcher}">
+        <view:WorkItemSearcherView/>
+    </DataTemplate>
+    
+</ResourceDictionary>

@@ -11,5 +11,6 @@
         public const string Pbi = "Product Backlog Item";
         public const string Incident = nameof(Incident);
         public const string Improvement = nameof(Improvement);
+        public const string CodeReview = "Code Review Request";
     }
 }

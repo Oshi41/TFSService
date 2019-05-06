@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.ProcessConfiguration.Client;
@@ -8,6 +9,7 @@ using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.VisualStudio.Services.Common;
+using Microsoft.VisualStudio.Services.Graph;
 using TfsAPI.Extentions;
 using TfsAPI.TFS;
 
@@ -168,7 +170,15 @@ namespace TfsAPI
 
         public WorkItem FindById(int id)
         {
-            return _itemStore.GetWorkItem(id);
+            try
+            {
+                return _itemStore.GetWorkItem(id);
+            }
+            catch (Exception e)
+            {
+                Trace.Write(e);
+                return null;
+            }
         }
 
         public int GetCapacity()
@@ -262,6 +272,19 @@ namespace TfsAPI
             //}
 
             return 7;
+        }
+
+        public IList<WorkItem> GetMyWorkItems()
+        {
+            var quarry = $"select * from {Sql.Tables.WorkItems} " +
+                         $"where {Sql.AssignedToMeCondition} " +
+                         $"and {Sql.Fields.State} <> '{WorkItemStates.Closed}' " +
+                         $"and {Sql.Fields.State} <> '{WorkItemStates.Removed}' " +
+                         $"and {Sql.Fields.WorkItemType} <> '{WorkItemTypes.CodeReview}'";
+
+            var items = _itemStore.Query(quarry);
+
+            return items.OfType<WorkItem>().ToList();
         }
 
         #endregion

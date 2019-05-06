@@ -1,4 +1,8 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
+using Gui.ViewModels;
+using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using TfsAPI;
 
 namespace Gui
 {
@@ -10,6 +14,9 @@ namespace Gui
         public MainWindow()
         {
             InitializeComponent();
+
+            //var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+            //Content = new WorkItemSearcher(tfs);
         }
     }
 }
