@@ -13,6 +13,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
         <TextBlock TextWrapping="Wrap">
@@ -26,5 +27,8 @@
         
         <TextBlock Grid.Row="2"
                    Text="{Binding Path=State, Mode=OneWay}"/>
+        
+        <TextBlock Grid.Row="3"
+                   Text="{Binding Path=[Assigned To]}"/>
     </Grid>
 </UserControl>

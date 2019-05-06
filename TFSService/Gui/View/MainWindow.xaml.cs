@@ -15,8 +15,11 @@ namespace Gui
         {
             InitializeComponent();
 
-            //var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
-            //Content = new WorkItemSearcher(tfs);
+#if DEBUG
+            var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+            Content = new WorkItemSearcher(tfs);
+#endif
+            
         }
     }
 }
