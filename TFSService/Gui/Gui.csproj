@@ -221,9 +221,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\IdWorkitemConverter.cs" />
     <Compile Include="Converters\InvertBoolConverter.cs" />
     <Compile Include="Helper\TimedAction.cs" />
     <Compile Include="Settings\Settings.cs" />
+    <Compile Include="ViewModels\WorkItemVm.cs" />
     <Compile Include="View\WorkItemSearcherView.xaml.cs">
       <DependentUpon>WorkItemSearcherView.xaml</DependentUpon>
     </Compile>

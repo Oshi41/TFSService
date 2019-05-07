@@ -40,14 +40,22 @@ namespace TfsAPI
         WorkItem FindById(int id);
 
         /// <summary>
+        /// Производит поиск в названии, описании
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        IList<WorkItem> Search(string text);
+
+        /// <summary>
         /// Возвращает кол-во часов, которое необходимо списать за день
         /// </summary>
         /// <returns></returns>
         int GetCapacity();
 
         /// <summary>
-        /// Получает список моих рабочих элементов
+        /// Получает список моих рабочих элементов. 
         /// </summary>
+        /// <param name="type">Тип рабочего элемента. См. <see cref="WorkItemTypes"/></param>
         /// <returns></returns>
         IList<WorkItem> GetMyWorkItems();
     }

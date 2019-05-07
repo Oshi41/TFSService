@@ -4,8 +4,8 @@
                     xmlns:view="clr-namespace:Gui.View"
                     xmlns:viewModels="clr-namespace:Gui.ViewModels">
     
-    <DataTemplate DataType="{x:Type client:WorkItem}">
-        <view:WorkItemView/>
+    <DataTemplate DataType="{x:Type viewModels:WorkItemVm}">
+        <view:WorkItemView DataContext="{Binding Item}"/>
     </DataTemplate>
     
     <DataTemplate DataType="{x:Type viewModels:WorkItemSearcher}">

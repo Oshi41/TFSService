@@ -181,6 +181,17 @@ namespace TfsAPI
             }
         }
 
+        public IList<WorkItem> Search(string text)
+        {
+            var quarry = $"select * from {Sql.Tables.WorkItems} " +
+                         $"where {Sql.Fields.Description} {Sql.ContainsStrOperand} '{text}' " +
+                         $"or {Sql.Fields.History} {Sql.ContainsStrOperand} '{text}' " +
+                         $"or {Sql.Fields.Title} {Sql.ContainsStrOperand} '{text}' ";
+
+            var items = _itemStore.Query(quarry);
+            return items.OfType<WorkItem>().ToList();
+        }
+
         public int GetCapacity()
         {
             //var workClient = _project.GetClient<WorkHttpClient>();
@@ -280,6 +291,7 @@ namespace TfsAPI
                          $"where {Sql.AssignedToMeCondition} " +
                          $"and {Sql.Fields.State} <> '{WorkItemStates.Closed}' " +
                          $"and {Sql.Fields.State} <> '{WorkItemStates.Removed}' " +
+                         // Все, кроме Код ревью, они мусорные
                          $"and {Sql.Fields.WorkItemType} <> '{WorkItemTypes.CodeReview}'";
 
             var items = _itemStore.Query(quarry);
