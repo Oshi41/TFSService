@@ -13,11 +13,5 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <!--<TextBlock Text="{Binding Path=Owner}"
-                   HorizontalAlignment="Center"/>-->
-
-        <view:ChooseTaskView/>
-        
     </Grid>
 </Window>

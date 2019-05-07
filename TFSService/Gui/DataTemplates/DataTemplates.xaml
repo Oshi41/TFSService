@@ -12,4 +12,8 @@
         <view:WorkItemSearcherView/>
     </DataTemplate>
     
+    <DataTemplate DataType="{x:Type viewModels:TextInputVm}">
+        <view:TextInputView/>
+    </DataTemplate>
+    
 </ResourceDictionary>

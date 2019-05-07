@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mvvm.Commands;
 
 namespace Gui.ViewModels
 {
@@ -24,10 +25,13 @@ namespace Gui.ViewModels
             set => SetProperty(ref _help, value);
         }
 
-        public TextInputVm(string help, Func<string, string> validate)
+        public TextInputVm(string help,
+            Func<string, string> validate)
         {
             Help = help;
             _validate = validate;
+
+            SubmitCommand = DelegateCommand.FromAsyncHandler(() => Task.Delay(TimeSpan.FromSeconds(2)));
         }
 
         protected override string ValidateProperty(string prop)
