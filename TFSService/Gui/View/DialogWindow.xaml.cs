@@ -16,20 +16,10 @@ namespace Gui.View
             InitializeComponent();
         }
 
-
         private void Deny(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;
             Close();
-        }
-
-        private void OnCanClose(object sender, ExecutedRoutedEventArgs e)
-        {
-            if (OkBtn.IsEnabled)
-            {
-                this.DialogResult = true;
-                Close();
-            }
         }
     }
 }

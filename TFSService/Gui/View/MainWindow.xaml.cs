@@ -24,16 +24,18 @@ namespace Gui
             //WindowManager.ShowDialog(searcher, "Search", width: 300);
             //App.Current.Shutdown();
 
-            var vm = new TextInputVm("Введите строку подключения к Team Foundation Server",
-                s =>
-                {
-                    if (!Uri.TryCreate(s, UriKind.Absolute, out var result))
-                    {
-                        return "Эта строчка не явялется веб-адресом";
-                    }
+            //var vm = new TextInputVm("Введите строку подключения к Team Foundation Server",
+            //    s =>
+            //    {
+            //        if (!Uri.TryCreate(s, UriKind.Absolute, out var result))
+            //        {
+            //            return "Эта строчка не явялется веб-адресом";
+            //        }
 
-                    return null;
-                });
+            //        return null;
+            //    });
+
+            var vm = new FirstConnectionViewModel();
 
             WindowManager.ShowDialog(vm, "Первое подключение", width: 400, height:200);
 #endif

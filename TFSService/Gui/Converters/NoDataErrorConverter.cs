@@ -4,10 +4,16 @@ using System.Windows.Data;
 
 namespace Gui.Converters
 {
-    class IsEmptyStrConverter : IValueConverter
+    /// <summary>
+    /// Конвертер для индикации наличия ошибки Data Error
+    /// </summary>
+    class NoDataErrorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value == null)
+                return true;
+
             if (value is string s)
                 return string.IsNullOrEmpty(s);
 

@@ -14,11 +14,11 @@
     <Window.Resources>
         <ResourceDictionary>
             <converters:InvertBoolConverter x:Key="InvertBoolConverter"/>
-            <converters:IsEmptyStrConverter x:Key="NotEmptyStrConverter"/>
+            <converters:NoDataErrorConverter x:Key="NoDataErrorConverter"/>
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid Background="{StaticResource MaterialDesignCardBackground}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
@@ -41,10 +41,11 @@
                     IsDefault="True"
                     Style="{StaticResource MaterialDesignRaisedButton}"
                     Margin="7"
+                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding Path=IsExecuting}"
                     materialDesign:ButtonProgressAssist.IsIndeterminate="True"
                     MinWidth="{Binding ElementName=ExitBtn, Path=ActualWidth}"
                     IsEnabled="{Binding Path=Error, 
-                                Converter={StaticResource NotEmptyStrConverter}, 
+                                Converter={StaticResource NoDataErrorConverter}, 
                                 ValidatesOnDataErrors=True}"/>
             
             <Button Grid.Column="2"

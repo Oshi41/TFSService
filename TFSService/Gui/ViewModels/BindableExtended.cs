@@ -1,60 +1,86 @@
 ﻿using System;
 using System.Collections.Generic;
-using Mvvm;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
+using System.Windows.Threading;
 using Gui.Helper;
+using Mvvm;
 using Mvvm.Commands;
 
 namespace Gui.ViewModels
 {
     public class BindableExtended : BindableBase, IDataErrorInfo
     {
+        #region Fields
+
         /// <summary>
-        /// Список ошибок всех проверенных свойств
+        ///     Единоразовое выполнение
+        /// </summary>
+        private readonly ActionArbiter _arbiter = new ActionArbiter();
+
+        /// <summary>
+        ///     Список ошибок всех проверенных свойств
         /// </summary>
         private readonly Dictionary<string, string> _errors = new Dictionary<string, string>();
 
+        private readonly Dictionary<string, string> _optionalErrors = new Dictionary<string, string>();
+
+        private bool _isExecuting;
+
+        #endregion
+
+        #region Properties
+
         /// <summary>
-        /// Единоразовое выполнение
+        ///     Обработчик кнопки подтверждения. Если в кнопке явно выставили Error в true, диалог не закроется
         /// </summary>
-        private readonly ActionArbiter _arbiter = new ActionArbiter();
+        public DelegateCommandBase SubmitCommand { get; protected set; }
+
+        public bool IsExecuting
+        {
+            get => _isExecuting;
+            set => SetProperty(ref _isExecuting, value);
+        }
+
+        #endregion
+
+        #region IDataErrorInfo
 
         public string this[string columnName]
         {
             get
             {
+                string optional = null;
+
                 _arbiter.Do(() =>
                 {
                     _errors[columnName] = ValidateProperty(columnName);
+                    optional = ValidateOpotionalProperty(columnName);
                     OnPropertyChanged(nameof(Error));
                 });
 
-                return _errors[columnName];
+                return optional ?? _errors[columnName];
             }
         }
 
         /// <summary>
-        /// Если есть ошибочное проперти, возвращаем его
+        ///     Если есть ошибочное проперти, возвращаем его
         /// </summary>
         public string Error
         {
             get
             {
                 foreach (var prop in _errors)
-                {
                     if (!string.IsNullOrEmpty(prop.Value))
                         return prop.Value;
-                }
 
                 return null;
             }
         }
 
+        #endregion
+
         /// <summary>
-        /// Валидация свойства модели
+        ///     Валидация свойства модели
         /// </summary>
         /// <param name="prop"></param>
         /// <returns></returns>
@@ -64,9 +90,22 @@ namespace Gui.ViewModels
         }
 
         /// <summary>
-        /// Обработчик кнопки подтверждения. Если в кнопке явно выставили Error в true, диалог не закроется
+        ///     Валидация свойства, которое выдаёт некритичную ошибку
         /// </summary>
-        public ICommand SubmitCommand { get; protected set; }
+        /// <param name="prop"></param>
+        /// <returns></returns>
+        protected virtual string ValidateOpotionalProperty(string prop)
+        {
+            return null;
+        }
 
+        /// <summary>
+        ///     Выполняет действие в GUI потоке, в приоритете Loaded
+        /// </summary>
+        /// <param name="action"></param>
+        public void SafeExecute(Action action)
+        {
+            Dispatcher.CurrentDispatcher.Invoke(action, DispatcherPriority.Loaded);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Mvvm;
 using Newtonsoft.Json;
@@ -11,16 +12,16 @@ namespace Gui.Settings
 
         private static string _savePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "TfsService", 
+            "TfsService",
             "config.json");
 
-        private string _connection;
         private int _completed;
         private int _capacity;
         private TimeSpan _duration;
         private DateTime _begin;
 
         private bool _changed;
+        private IList<string> _connections;
 
         #endregion
 
@@ -70,10 +71,10 @@ namespace Gui.Settings
         /// <summary>
         /// Строка подключения к TFS
         /// </summary>
-        public string Connection
+        public IList<string> Connections
         {
-            get => _connection;
-            set => SetProperty(ref _connection, value);
+            get => _connections;
+            set => SetProperty(ref _connections, value);
         }
 
         [JsonIgnore]

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Gui.Helper
 {
@@ -16,7 +18,7 @@ namespace Gui.Helper
         {
             try
             {
-                if (CanExecute())
+                if (!IsFree())
                     return;
 
                 Capture();
@@ -37,26 +39,66 @@ namespace Gui.Helper
         /// Выставляем блокирование для операции
         /// </summary>
         /// <param name="isBlock"></param>
-        public void SetBlock(bool isBlock)
+        public virtual void SetBlock(bool isBlock)
         {
             _block = isBlock;
         }
 
+        /// <summary>
+        /// Может ли арбитр выполнить действие
+        /// </summary>
+        /// <returns></returns>
+        public bool IsFree()
+        {
+            return !_isExecuting && !_block;
+        }
 
-
-        private void Capture()
+        
+        protected void Capture()
         {
             _isExecuting = true;
         }
 
-        private void Release()
+        protected void Release()
         {
             _isExecuting = false;
         }
+    }
 
-        private bool CanExecute()
+    public class ActionArbiterAsync : ActionArbiter
+    {
+        private CancellationToken _token;
+
+        public async Task DoAsync(Action action)
         {
-            return !_isExecuting && !_block;
+            try
+            {
+                if (!IsFree())
+                    return;
+
+                Capture();
+
+                await Task.Factory.StartNew(action, (_token = new CancellationToken()));
+            }
+            catch (Exception e)
+            {
+                Trace.Write(e);
+                throw;
+            }
+            finally
+            {
+                Release();
+            }
+        }
+
+        public override void SetBlock(bool isBlock)
+        {
+            base.SetBlock(isBlock);
+
+            if (isBlock)
+            {
+                _token.ThrowIfCancellationRequested();
+            }
         }
     }
 }

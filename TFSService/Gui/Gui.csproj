@@ -221,16 +221,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\IsEmptyStrConverter.cs" />
+    <Compile Include="Converters\NoDataErrorConverter.cs" />
     <Compile Include="Converters\IdWorkitemConverter.cs" />
     <Compile Include="Converters\InvertBoolConverter.cs" />
     <Compile Include="Helper\ActionArbiter.cs" />
     <Compile Include="Helper\TimedAction.cs" />
     <Compile Include="Helper\WindowManager.cs" />
     <Compile Include="Settings\Settings.cs" />
+    <Compile Include="ViewModels\FirstConnectionViewModel.cs" />
     <Compile Include="ViewModels\WorkItemVm.cs" />
     <Compile Include="View\DialogWindow.xaml.cs">
       <DependentUpon>DialogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\FirstConnectView.xaml.cs">
+      <DependentUpon>FirstConnectView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\TextInputView.xaml.cs">
       <DependentUpon>TextInputView.xaml</DependentUpon>
@@ -246,6 +250,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\DialogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\FirstConnectView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
