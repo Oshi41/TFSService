@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows.Input;
 using System.Windows.Threading;
 using Gui.Helper;
 using Mvvm;
@@ -34,6 +35,11 @@ namespace Gui.ViewModels
         ///     Обработчик кнопки подтверждения. Если в кнопке явно выставили Error в true, диалог не закроется
         /// </summary>
         public DelegateCommandBase SubmitCommand { get; protected set; }
+
+        /// <summary>
+        /// Специальная команда для третьей кнопки
+        /// </summary>
+        public DelegateCommandBase SpecialCommand { get; protected set; }
 
         public bool IsExecuting
         {

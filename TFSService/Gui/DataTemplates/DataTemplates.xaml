@@ -16,6 +16,10 @@
         <view:FirstConnectView/>
     </DataTemplate>
     
+    <DataTemplate DataType="{x:Type viewModels:ChooseTaskViewModel}">
+        <view:ChooseTaskView/>
+    </DataTemplate>
+    
     <!--<DataTemplate DataType="{x:Type viewModels:TextInputVm}">
         <view:TextInputView/>
     </DataTemplate>-->

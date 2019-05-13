@@ -15,6 +15,8 @@
         <ResourceDictionary>
             <converters:InvertBoolConverter x:Key="InvertBoolConverter"/>
             <converters:NoDataErrorConverter x:Key="NoDataErrorConverter"/>
+            
+            <materialDesign:NullableToVisibilityConverter x:Key="NullableToVisibilityConverter"/>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -29,13 +31,19 @@
         
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"
                                   MinWidth="50"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             
-            <Button Grid.Column="1"
+            <Button x:Name="SpecialBtn"
+                    Command="{Binding Path=SpecialCommand}"
+                    Margin="7"
+                    Visibility="{Binding Path=SpecialCommand, Converter={StaticResource NullableToVisibilityConverter}}"/>
+            
+            <Button Grid.Column="2"
                     x:Name="OkBtn"
                     Command="{Binding Path=SubmitCommand}"
                     IsDefault="True"
@@ -48,7 +56,7 @@
                                 Converter={StaticResource NoDataErrorConverter}, 
                                 ValidatesOnDataErrors=True}"/>
             
-            <Button Grid.Column="2"
+            <Button Grid.Column="3"
                     x:Name="ExitBtn"
                     Style="{StaticResource MaterialDesignRaisedAccentButton}"
                     Click="Deny"

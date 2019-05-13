@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Gui.View
 {
     /// <summary>
-    /// Interaction logic for TextInputView.xaml
+    /// Interaction logic for ChooseTaskView.xaml
     /// </summary>
-    public partial class TextInputView : UserControl
+    public partial class ChooseTaskView : UserControl
     {
-        public TextInputView()
+        public ChooseTaskView()
         {
             InitializeComponent();
         }

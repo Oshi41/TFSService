@@ -18,6 +18,7 @@ namespace Gui.ViewModels
         private WorkItemVm _selected;
         private IList<WorkItemVm> _items;
         private string _text;
+        private string _help;
 
         #endregion
 
@@ -56,6 +57,12 @@ namespace Gui.ViewModels
         }
 
         #region Propeties
+
+        public string Help
+        {
+            get => _help;
+            set => SetProperty(ref _help, value);
+        }
 
         public string Text
         {

@@ -23,7 +23,9 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <TextBlock Text="Для поиска введите ID элемента либо ищите по ключевым словам"
+        <!--Для поиска введите ID элемента либо ищите по ключевым словам-->
+
+        <TextBlock Text="{Binding Path=Help, Mode=OneWay}"
                    TextWrapping="Wrap"/>
 
         <ComboBox Grid.Row="1"

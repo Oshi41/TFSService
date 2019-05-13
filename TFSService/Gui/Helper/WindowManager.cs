@@ -13,7 +13,8 @@ namespace Gui.Helper
             double? width = null,
             double? height = null,
             string ok = "OK",
-            string cancel = "Отмена")
+            string cancel = "Отмена",
+            string specialText = "Создать...")
         {
             var window = new DialogWindow
             {
@@ -26,6 +27,10 @@ namespace Gui.Helper
                 ExitBtn =
                 {
                     Content = cancel
+                },
+                SpecialBtn =
+                {
+                    Content = specialText
                 }
             };
 

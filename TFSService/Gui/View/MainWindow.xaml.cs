@@ -4,6 +4,7 @@ using System.Windows;
 using Gui.Helper;
 using Gui.ViewModels;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using Mvvm.Commands;
 using TfsAPI;
 
 namespace Gui
@@ -35,7 +36,8 @@ namespace Gui
             //        return null;
             //    });
 
-            var vm = new FirstConnectionViewModel();
+            
+            var vm = new ChooseTaskViewModel(new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
 
             WindowManager.ShowDialog(vm, "Первое подключение", width: 400, height:200);
 #endif
