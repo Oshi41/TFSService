@@ -33,6 +33,14 @@
                   Text="{Binding Path=Text, UpdateSourceTrigger=PropertyChanged}"
                   SelectedValue="{Binding Path=Selected}"
                   IsEditable="True">
+            <ComboBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ComboBoxItem}"
+                       BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                    <Setter Property="MaxWidth"
+                            Value="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=ActualWidth}"/>
+                </Style>
+            </ComboBox.ItemContainerStyle>
+
             <ComboBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <VirtualizingStackPanel/> 
