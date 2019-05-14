@@ -5,30 +5,119 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Gui.View"
              xmlns:client="clr-namespace:Microsoft.TeamFoundation.WorkItemTracking.Client;assembly=Microsoft.TeamFoundation.WorkItemTracking.Client"
+             xmlns:converters="clr-namespace:Gui.Converters"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type={x:Type client:WorkItem}}">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        
-        <TextBlock TextWrapping="Wrap">
-            <Run Text="{Binding Path=Type.Name, Mode=OneWay}"/>
-            <Run Text="{Binding Path=Id, Mode=OneWay}"/>
-        </TextBlock>
-        
-        <TextBlock Grid.Row="1"
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+
+            <Style TargetType="{x:Type TextBlock}"
+                   BasedOn="{StaticResource {x:Type TextBlock}}">
+                <Setter Property="TextWrapping" Value="Wrap"/>
+            </Style>
+
+            <converters:SwitchConverter x:Key="TemplateConverter">
+                <converters:Case If="Task">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="{Binding Path=[Remaining Work], StringFormat={}Осталось {0} часов}"/>
+
+                        <TextBlock Grid.Row="1"
+                                   Text="{Binding Path=[Completed Work], StringFormat={}Затрачено {0} часов}">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}"
+                                       BasedOn="{StaticResource {x:Type TextBlock}}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=State}" Value="New">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </converters:Case>
+
+
+
+            </converters:SwitchConverter>
+
+            <converters:SwitchConverter x:Key="ColorConverter"
+                                        Default="Black">
+                <converters:Case If="New" 
+                                 Value="DarkGreen"/>
+
+                <converters:Case If="Active"
+                                 Value="DarkBlue"/>
+
+                <converters:Case If="Resolved"
+                                 Value="DarkOrange"/>
+            </converters:SwitchConverter>
+            
+            <converters:SwitchConverter x:Key="IconConverter">
+                <converters:Case If="Task">
+                    <materialDesign:PackIcon Kind="ChequeBook"/>
+                </converters:Case>
+                
+                <converters:Case If="Bug">
+                    <materialDesign:PackIcon Kind="Bug"/>
+                </converters:Case>
+                
+                <converters:Case If="Product Backlog Item">
+                    <materialDesign:PackIcon Kind="FileDocumentBoxMultipleOutline"/>
+                </converters:Case>
+            </converters:SwitchConverter>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <materialDesign:Card Padding="7">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Orientation="Horizontal">
+                <ContentControl Content="{Binding Path=Type.Name, Converter={StaticResource IconConverter}}"
+                                Margin="5"/>
+                
+                <TextBlock VerticalAlignment="Center">
+                    <Run Text="{Binding Path=Type.Name, Mode=OneWay}"/>
+                    <Run Text="{Binding Path=Id, Mode=OneWay}"
+                         FontWeight="Bold"/>
+                </TextBlock>
+            </StackPanel>
+            
+
+            <TextBlock Grid.Row="1"
                    Text="{Binding Path=Title, Mode=OneWay}"
-                   TextWrapping="Wrap"/>
-        
-        <TextBlock Grid.Row="2"
-                   Text="{Binding Path=State, Mode=OneWay}"/>
-        
-        <TextBlock Grid.Row="3"
-                   Text="{Binding Path=[Assigned To]}"/>
-    </Grid>
+                   FontWeight="Bold"/>
+
+            <TextBlock Grid.Row="2"
+                   Text="{Binding Path=State, Mode=OneWay}"
+                   FontWeight="Bold"
+                   Foreground="{Binding Path=State, Converter={StaticResource ColorConverter}}"/>
+
+            <TextBlock Grid.Row="3"
+                   Text="{Binding Path=[Assigned To]}"
+                   FontStyle="Italic"/>
+
+            <ContentControl Grid.Row="4"
+                        Content="{Binding Path=Type.Name, Converter={StaticResource TemplateConverter}}"/>
+        </Grid>
+    </materialDesign:Card>
 </UserControl>

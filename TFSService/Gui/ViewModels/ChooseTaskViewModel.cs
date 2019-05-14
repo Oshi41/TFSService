@@ -18,7 +18,7 @@ namespace Gui.ViewModels
         {
             _tfs = tfs;
 
-            Searcher = new WorkItemSearcher(tfs, WorkItemTypes.Task)
+            Searcher = new WorkItemSearcher(tfs, WorkItemTypes.Task, WorkItemTypes.Pbi)
             {
                 Help = "Выберите рабочий элемент:"
             };
