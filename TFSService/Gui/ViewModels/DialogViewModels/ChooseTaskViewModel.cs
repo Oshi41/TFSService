@@ -1,4 +1,5 @@
-﻿using Mvvm.Commands;
+﻿using Gui.Helper;
+using Mvvm.Commands;
 using TfsAPI.Constants;
 using TfsAPI.Interfaces;
 
@@ -18,7 +19,7 @@ namespace Gui.ViewModels.DialogViewModels
                 Help = "Выберите рабочий элемент:"
             };
 
-            SpecialCommand = new DelegateCommand(OnCreate);
+            SpecialCommand = new ObservableCommand(OnCreate);
 
         }
 

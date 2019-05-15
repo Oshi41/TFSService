@@ -65,7 +65,7 @@ namespace Gui.ViewModels.DialogViewModels
                     Text = RememberedConnections.First();
             }
 
-            SubmitCommand = DelegateCommand.FromAsyncHandler(Connect, CanConnect);
+            SubmitCommand = ObservableCommand.FromAsyncHandler(Connect, CanConnect);
         }
 
         protected override string ValidateProperty(string prop)

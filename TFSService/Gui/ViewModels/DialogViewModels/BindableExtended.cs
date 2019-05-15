@@ -33,7 +33,7 @@ namespace Gui.ViewModels.DialogViewModels
         /// <summary>
         ///     Обработчик кнопки подтверждения. Если в кнопке явно выставили Error в true, диалог не закроется
         /// </summary>
-        public DelegateCommandBase SubmitCommand { get; protected set; }
+        public ObservableCommand SubmitCommand { get; protected set; }
 
         /// <summary>
         /// Специальная команда для третьей кнопки

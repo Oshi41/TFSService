@@ -1,4 +1,5 @@
-﻿using Mvvm.Commands;
+﻿using Gui.Helper;
+using Mvvm.Commands;
 using TfsAPI.Constants;
 using TfsAPI.Interfaces;
 
@@ -30,7 +31,7 @@ namespace Gui.ViewModels.DialogViewModels
             Searcher = new WorkItemSearcher(tfs,
                 WorkItemTypes.Pbi, WorkItemTypes.Bug, WorkItemTypes.Improvement, WorkItemTypes.Incident);
 
-            SubmitCommand = new DelegateCommand(CreateTask, OnCanCreateTask);
+            SubmitCommand = new ObservableCommand(CreateTask, OnCanCreateTask);
         }
 
         private bool OnCanCreateTask()

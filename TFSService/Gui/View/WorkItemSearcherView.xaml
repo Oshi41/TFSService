@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Gui.View"
              xmlns:viewModels="clr-namespace:Gui.ViewModels"
-             xmlns:lazyComboBox="clr-namespace:uTILLIty.Controls.WPF.LazyComboBox;assembly=uTILLIty.Controls.WPF.LazyComboBox"
              xmlns:converters="clr-namespace:Gui.Converters"
              xmlns:dialogViewModels="clr-namespace:Gui.ViewModels.DialogViewModels"
              mc:Ignorable="d" 
