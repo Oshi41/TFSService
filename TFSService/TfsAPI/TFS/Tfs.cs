@@ -12,6 +12,7 @@ using Microsoft.VisualStudio.Services.Common;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
+using Field = Microsoft.TeamFoundation.WorkItemTracking.Client.Field;
 
 namespace TfsAPI.TFS
 {
@@ -27,7 +28,7 @@ namespace TfsAPI.TFS
         private TeamSettingsConfigurationService _teamConfiguration;
         private ICommonStructureService4 _structureService;
 
-        private readonly TfsWorkItemHook _newItemHook;
+        private readonly WebHookListener _listener;
 
         #endregion
 
@@ -35,7 +36,17 @@ namespace TfsAPI.TFS
 
         public event EventHandler<CommitCheckinEventArgs> Checkin;
 
-        public event EventHandler<WorkItem> NewItem;
+        public event EventHandler<WorkItem> NewItem
+        {
+            add => _listener.WorkItemAssigned += value;
+            remove => _listener.WorkItemAssigned -= value;
+        }
+
+        public event EventHandler<Field> ItemChanged
+        {
+            add => _listener.ItemChanged += value;
+            remove => _listener.ItemChanged -= value;
+        }
 
         #endregion
 
@@ -49,8 +60,7 @@ namespace TfsAPI.TFS
             _teamService = _project.GetService<TfsTeamService>();
             _teamConfiguration = _project.GetService<TeamSettingsConfigurationService>();
             _structureService = _project.GetService<ICommonStructureService4>();
-
-            _newItemHook = new TfsWorkItemHook();
+            _listener = new WebHookListener(GetMyWorkItems);
 
             Subscribe();
         }
@@ -60,18 +70,17 @@ namespace TfsAPI.TFS
         private void Subscribe()
         {
             _versionControl.CommitCheckin += FireCheckinEvent;
-            _newItemHook.Created += CheckNewItem;
+            
+            _listener.Start();
         }
 
         private void Unsubscribe()
         {
             _versionControl.CommitCheckin -= FireCheckinEvent;
             _project.Dispose();
-
-            _newItemHook.Created -= CheckNewItem;
+            _listener?.Dispose();
 
             Checkin.Unsubscribe();
-            NewItem.Unsubscribe();
         }
 
         #endregion
@@ -81,31 +90,6 @@ namespace TfsAPI.TFS
         private void FireCheckinEvent(object sender, CommitCheckinEventArgs e)
         {
             Checkin?.Invoke(sender, e);
-        }
-
-        private void CheckNewItem(object sender, int e)
-        {
-            var item = _itemStore.GetWorkItem(e);
-
-            // Не наш элемент, вообще все равно
-            if (!string.Equals(item[CoreField.AssignedTo].ToString(), _project.AuthorizedIdentity.DisplayName,
-                    StringComparison.OrdinalIgnoreCase))
-            {
-                return;
-            }
-
-            // Создали сами
-            if (string.Equals(item.CreatedBy, _project.AuthorizedIdentity.DisplayName,
-                StringComparison.OrdinalIgnoreCase))
-            {
-                Trace.Write($"User created work element - {item.Id}");
-            }
-            else
-            {
-                Trace.Write($"{item.CreatedBy} created work item {item.Id}: {item.Description}");
-
-                NewItem?.Invoke(item.CreatedBy, item);
-            }
         }
 
         #endregion

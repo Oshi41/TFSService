@@ -27,6 +27,16 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
+        /// Является ли данный элемент запросом кода на проверку
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public static bool IsReviewRequest(this WorkItem item)
+        {
+            return string.Equals(item?.Type?.Name, WorkItemTypes.ReviewRequest);
+        }
+
+        /// <summary>
         /// Списывает часы у задания. Не сохраняет изменения!
         /// </summary>
         /// <param name="item">рабочий элемента</param>

@@ -18,6 +18,11 @@ namespace TfsAPI.Interfaces
         event EventHandler<WorkItem> NewItem;
 
         /// <summary>
+        /// Рабочий элемент был изменен
+        /// </summary>
+        event EventHandler<Field> ItemChanged; 
+
+        /// <summary>
         /// Списываю часы в указанный таск
         /// </summary>
         /// <param name="item">Таск, куда списываю</param>

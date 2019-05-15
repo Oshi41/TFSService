@@ -15,46 +15,54 @@ namespace Gui.View
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Закрываю окно с отриц. результатом
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Deny(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;
             Close();
         }
 
+        /// <summary>
+        /// Пытаемся закрыть окно на кнопку подтверждения
+        /// </summary>
         private void TryClose(object sender, RoutedEventArgs e)
         {
+            // Сначала получаем команду
             var command = OkBtn.Command as ObservableCommand;
-            var enabled = OkBtn.IsEnabled;
 
-            if (!enabled)
-                return;
-
+            // Если команды нет, сразу пытаемся закрыть
             if (command == null)
             {
                 Submit();
             }
             else
             {
+                // Инчае ждем окончания выполнения команды
                 command.Executed += OnExecuted;
             }
         }
 
         private void OnExecuted(object sender, EventArgs e)
         {
+            // Сразу отписываемся от события
             if (sender is ObservableCommand command)
                 command.Executed -= OnExecuted;
 
-            Dispatcher.Invoke(() =>
-            {
-                if (OkBtn.IsEnabled)
-                    Submit();
-
-            }, DispatcherPriority.Loaded);
-            
+            // После рендера (а значит и отработки все байндингов)
+            // пытаемся закрыть окно
+            Dispatcher.Invoke(Submit, DispatcherPriority.Loaded);
         }
 
         private void Submit()
         {
+            // Подтверждаем только если кнопка доступна
+            if (!OkBtn.IsEnabled) 
+                return;
+
             this.DialogResult = true;
             Close();
         }

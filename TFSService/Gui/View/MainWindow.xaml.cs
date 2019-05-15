@@ -32,10 +32,13 @@ namespace Gui.View
             //        return null;
             //    });
 
-            
-            var vm = new ChooseTaskViewModel(new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
 
-            WindowManager.ShowDialog(vm, "Первое подключение", width: 400, height:200);
+            var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+            tfs.ItemChanged += (sender, item) => { MessageBox.Show("Item changed"); };
+
+            //var vm = new ChooseTaskViewModel(new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
+
+            //WindowManager.ShowDialog(vm, "Первое подключение", width: 400, height:200);
 #endif
 
         }

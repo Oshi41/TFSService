@@ -48,9 +48,6 @@
     <Reference Include="Microsoft.AspNet.WebHooks.Receivers, Version=1.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebHooks.Receivers.1.2.1\lib\net45\Microsoft.AspNet.WebHooks.Receivers.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.WebHooks.Receivers.VSTS, Version=1.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebHooks.Receivers.VSTS.1.2.1\lib\net45\Microsoft.AspNet.WebHooks.Receivers.VSTS.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Azure.Services.AppAuthentication, Version=1.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\lib\net452\Microsoft.Azure.Services.AppAuthentication.dll</HintPath>
     </Reference>
@@ -213,6 +210,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Comarers\WorkItemComparer.cs" />
     <Compile Include="Constants\Sql.cs" />
     <Compile Include="Constants\WorkItemStates.cs" />
     <Compile Include="Constants\WorkItemTypes.cs" />
@@ -224,7 +222,6 @@
     <Compile Include="Constants\WorkItems.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extentions\WorkItemExtensions.cs" />
-    <Compile Include="TFS\TfsWorkItemHook.cs" />
     <Compile Include="TFS\WebHookListener.cs" />
   </ItemGroup>
   <ItemGroup>
