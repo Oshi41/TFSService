@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.TeamFoundation.WorkItemTracking.Client;
+﻿using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace Gui.ViewModels
 {

@@ -7,9 +7,10 @@
         xmlns:converters="clr-namespace:Gui.Converters"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:viewModels="clr-namespace:Gui.ViewModels"
+        xmlns:dialogViewModels="clr-namespace:Gui.ViewModels.DialogViewModels"
         mc:Ignorable="d"
         Title="DialogWindow" Height="450" Width="800"
-        d:DataContext="{d:DesignInstance Type={x:Type viewModels:BindableExtended}}">
+        d:DataContext="{d:DesignInstance Type={x:Type dialogViewModels:BindableExtended}}">
     
     <Window.Resources>
         <ResourceDictionary>

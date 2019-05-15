@@ -3,10 +3,10 @@ using System.Linq;
 using Gui.Helper;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
-using Microsoft.VisualStudio.Services.Common;
-using TfsAPI;
+using TfsAPI.Constants;
+using TfsAPI.Interfaces;
 
-namespace Gui.ViewModels
+namespace Gui.ViewModels.DialogViewModels
 {
     class WorkItemSearcher : BindableExtended
     {

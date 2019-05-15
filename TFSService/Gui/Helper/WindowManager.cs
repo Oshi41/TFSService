@@ -1,8 +1,5 @@
-﻿using System.ComponentModel;
-using Gui.View;
-using Gui.ViewModels;
-using Microsoft.TeamFoundation.Client;
-using Mvvm;
+﻿using Gui.View;
+using Gui.ViewModels.DialogViewModels;
 
 namespace Gui.Helper
 {

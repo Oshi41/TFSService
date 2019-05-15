@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 using Gui.Helper;
-using Gui.ViewModels;
-using Microsoft.TeamFoundation.WorkItemTracking.Client;
-using Mvvm.Commands;
-using TfsAPI;
+using Gui.ViewModels.DialogViewModels;
+using TfsAPI.TFS;
 
-namespace Gui
+namespace Gui.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

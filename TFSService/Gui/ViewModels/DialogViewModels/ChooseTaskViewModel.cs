@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Mvvm.Commands;
-using TfsAPI;
+﻿using Mvvm.Commands;
+using TfsAPI.Constants;
+using TfsAPI.Interfaces;
 
-namespace Gui.ViewModels
+namespace Gui.ViewModels.DialogViewModels
 {
     class ChooseTaskViewModel : BindableExtended
     {

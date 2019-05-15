@@ -9,11 +9,11 @@ using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.VisualStudio.Services.Common;
-using Microsoft.VisualStudio.Services.Graph;
+using TfsAPI.Constants;
 using TfsAPI.Extentions;
-using TfsAPI.TFS;
+using TfsAPI.Interfaces;
 
-namespace TfsAPI
+namespace TfsAPI.TFS
 {
     public class Tfs : ITfs
     {
@@ -297,6 +297,66 @@ namespace TfsAPI
             var items = _itemStore.Query(quarry);
 
             return items.OfType<WorkItem>().ToList();
+        }
+
+        public WorkItem CreateTask(string title, WorkItem parent, uint hours)
+        {
+            if (parent == null)
+                throw new ArgumentNullException(nameof(parent));
+
+            WorkItemType taskType;
+
+            try
+            {
+                taskType = parent.Project.WorkItemTypes[WorkItemTypes.Task];
+            }
+            catch (Exception e)
+            {
+                // Выбранный тип не поддерживается проектом
+                Trace.Write(e);
+                throw new Exception(
+                    $"Supported work item types:\n{string.Join("\n", parent.Project.WorkItemTypes.OfType<WorkItemType>().Select(x => x.Name))}");
+            }
+
+            var task = new WorkItem(taskType)
+            {
+                State = WorkItemStates.New,
+                Title = title,
+                AreaPath = parent.AreaPath,
+                IterationPath = parent.IterationPath,
+            };
+
+            task.Fields[CoreField.AssignedTo].Value = _project.AuthorizedIdentity.DisplayName;
+            task.Fields[WorkItems.Fields.Remaining].Value = hours;
+            task.Fields[WorkItems.Fields.Planning].Value = hours;
+
+            WorkItemLinkType link;
+
+            try
+            {
+                link = _itemStore.WorkItemLinkTypes[WorkItems.LinkTypes.ParentLink];
+            }
+            catch (Exception e)
+            {
+                Trace.Write(e);
+                throw new Exception(
+                    $"Supported link types:\n{string.Join("\n", _itemStore.WorkItemLinkTypes.Select(x => x.ReferenceName))}");
+            }
+
+            // Сначала сохраняем как новый таск
+            task.Save();
+
+            // Потом меняем статус в актив
+            task.State = WorkItemStates.Active;
+            task.Save();
+
+
+            // После сохранения привязываем
+            parent.Links.Add(new RelatedLink(link.ReverseEnd, task.Id));
+            parent.Save();
+
+
+            return task;
         }
 
         #endregion

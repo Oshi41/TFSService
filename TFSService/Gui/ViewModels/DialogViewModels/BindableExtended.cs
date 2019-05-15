@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Input;
 using System.Windows.Threading;
 using Gui.Helper;
 using Mvvm;
 using Mvvm.Commands;
 
-namespace Gui.ViewModels
+namespace Gui.ViewModels.DialogViewModels
 {
     public class BindableExtended : BindableBase, IDataErrorInfo
     {
@@ -60,7 +59,7 @@ namespace Gui.ViewModels
                 _arbiter.Do(() =>
                 {
                     _errors[columnName] = ValidateProperty(columnName);
-                    optional = ValidateOpotionalProperty(columnName);
+                    optional = ValidateOptionalProperty(columnName);
                     OnPropertyChanged(nameof(Error));
                 });
 
@@ -100,7 +99,7 @@ namespace Gui.ViewModels
         /// </summary>
         /// <param name="prop"></param>
         /// <returns></returns>
-        protected virtual string ValidateOpotionalProperty(string prop)
+        protected virtual string ValidateOptionalProperty(string prop)
         {
             return null;
         }

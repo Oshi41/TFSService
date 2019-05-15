@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
-namespace TfsAPI
+namespace TfsAPI.Interfaces
 {
     public interface ITfs : IDisposable
     {
@@ -58,5 +58,14 @@ namespace TfsAPI
         /// <param name="type">Тип рабочего элемента. См. <see cref="WorkItemTypes"/></param>
         /// <returns></returns>
         IList<WorkItem> GetMyWorkItems();
+
+        /// <summary>
+        /// Создание нового рабочего элемента
+        /// </summary>
+        /// <param name="title">Заголовок таска</param>
+        /// <param name="parent">Рабочий элемент, к которому таск привязан</param>
+        /// <param name="hours">Часы, сколько планируем работать</param>
+        /// <returns></returns>
+        WorkItem CreateTask(string title, WorkItem parent, uint hours);
     }
 }

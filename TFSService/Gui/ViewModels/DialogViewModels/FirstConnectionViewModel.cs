@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Gui.Helper;
-using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Common;
 using Mvvm.Commands;
-using TfsAPI;
+using TfsAPI.Interfaces;
+using TfsAPI.TFS;
 
-namespace Gui.ViewModels
+namespace Gui.ViewModels.DialogViewModels
 {
     public class FirstConnectionViewModel : BindableExtended
     {
@@ -83,7 +81,7 @@ namespace Gui.ViewModels
             return base.ValidateProperty(prop);
         }
 
-        protected override string ValidateOpotionalProperty(string prop)
+        protected override string ValidateOptionalProperty(string prop)
         {
             if (prop == nameof(Text))
             {
@@ -93,7 +91,7 @@ namespace Gui.ViewModels
                 }
             }
 
-            return base.ValidateOpotionalProperty(prop);
+            return base.ValidateOptionalProperty(prop);
         }
 
         #region Command handlers

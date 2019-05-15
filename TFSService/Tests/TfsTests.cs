@@ -1,5 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TfsAPI;
+﻿using System;
+using System.Linq;
+using Microsoft.TeamFoundation.Client;
+using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TfsAPI.Constants;
+using TfsAPI.TFS;
 
 namespace Tests
 {
@@ -71,6 +76,47 @@ namespace Tests
             using (var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"))
             {
                 var all = tfs.GetMyWorkItems();
+            }
+        }
+
+        [TestMethod]
+        public void GetMyName()
+        {
+            var name = "Щеглов Аркадий";
+
+            using (var project = new TfsTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security")))
+            {
+                Assert.AreEqual(name, project.AuthorizedIdentity.DisplayName);
+            }
+        }
+
+        [TestMethod]
+        public void GetAllLinkTypes()
+        {
+            using (var project = new TfsTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security")))
+            {
+                var store = project.GetService<WorkItemStore>();
+
+                var childType = store.WorkItemLinkTypes.Select(x => x.ReferenceName).ToList();
+            }
+        }
+
+        [TestMethod]
+        public void GetTaskLinks()
+        {
+            using (var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"))
+            {
+                var items = tfs.GetMyWorkItems().Where(x => x.Type.Name.Equals(WorkItemTypes.Task)).ToList();
+
+                foreach (var task in items)
+                {
+                    var name = task.Title;
+
+                    foreach (Link link in task.Links)
+                    {
+                        
+                    }
+                }
             }
         }
     }

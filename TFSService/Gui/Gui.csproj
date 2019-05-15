@@ -229,11 +229,15 @@
     <Compile Include="Helper\TimedAction.cs" />
     <Compile Include="Helper\WindowManager.cs" />
     <Compile Include="Settings\Settings.cs" />
-    <Compile Include="ViewModels\ChooseTaskViewModel.cs" />
-    <Compile Include="ViewModels\FirstConnectionViewModel.cs" />
+    <Compile Include="ViewModels\DialogViewModels\ChooseTaskViewModel.cs" />
+    <Compile Include="ViewModels\DialogViewModels\CreateTaskViewModel.cs" />
+    <Compile Include="ViewModels\DialogViewModels\FirstConnectionViewModel.cs" />
     <Compile Include="ViewModels\WorkItemVm.cs" />
     <Compile Include="View\ChooseTaskView.xaml.cs">
       <DependentUpon>ChooseTaskView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CreateTaksView.xaml.cs">
+      <DependentUpon>CreateTaksView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\DialogWindow.xaml.cs">
       <DependentUpon>DialogWindow.xaml</DependentUpon>
@@ -255,6 +259,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\CreateTaksView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\DialogWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -272,8 +280,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Helper\SystemHelper.cs" />
-    <Compile Include="ViewModels\BindableExtended.cs" />
-    <Compile Include="ViewModels\WorkItemSearcher.cs" />
+    <Compile Include="ViewModels\DialogViewModels\BindableExtended.cs" />
+    <Compile Include="ViewModels\DialogViewModels\WorkItemSearcher.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

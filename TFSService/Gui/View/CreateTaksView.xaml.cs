@@ -3,11 +3,11 @@
 namespace Gui.View
 {
     /// <summary>
-    /// Interaction logic for FirstConnectView.xaml
+    /// Interaction logic for CreateTaksView.xaml
     /// </summary>
-    public partial class FirstConnectView : UserControl
+    public partial class CreateTaksView : UserControl
     {
-        public FirstConnectView()
+        public CreateTaksView()
         {
             InitializeComponent();
         }

@@ -1,4 +1,4 @@
-﻿namespace TfsAPI
+﻿namespace TfsAPI.Constants
 {
     /// <summary>
     /// Типы элементов

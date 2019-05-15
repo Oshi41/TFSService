@@ -7,9 +7,10 @@
              xmlns:viewModels="clr-namespace:Gui.ViewModels"
              xmlns:lazyComboBox="clr-namespace:uTILLIty.Controls.WPF.LazyComboBox;assembly=uTILLIty.Controls.WPF.LazyComboBox"
              xmlns:converters="clr-namespace:Gui.Converters"
+             xmlns:dialogViewModels="clr-namespace:Gui.ViewModels.DialogViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             d:DataContext="{d:DesignInstance Type={x:Type viewModels:WorkItemSearcher}}">
+             d:DataContext="{d:DesignInstance Type={x:Type dialogViewModels:WorkItemSearcher}}">
     
     <UserControl.Resources>
         <ResourceDictionary>

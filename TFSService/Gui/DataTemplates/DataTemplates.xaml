@@ -2,26 +2,27 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:client="clr-namespace:Microsoft.TeamFoundation.WorkItemTracking.Client;assembly=Microsoft.TeamFoundation.WorkItemTracking.Client"
                     xmlns:view="clr-namespace:Gui.View"
-                    xmlns:viewModels="clr-namespace:Gui.ViewModels">
+                    xmlns:viewModels="clr-namespace:Gui.ViewModels"
+                    xmlns:dialogViewModels="clr-namespace:Gui.ViewModels.DialogViewModels">
     
     <DataTemplate DataType="{x:Type viewModels:WorkItemVm}">
         <view:WorkItemView DataContext="{Binding Item}"/>
     </DataTemplate>
     
-    <DataTemplate DataType="{x:Type viewModels:WorkItemSearcher}">
+    <DataTemplate DataType="{x:Type dialogViewModels:WorkItemSearcher}">
         <view:WorkItemSearcherView/>
     </DataTemplate>
     
-    <DataTemplate DataType="{x:Type viewModels:FirstConnectionViewModel}">
+    <DataTemplate DataType="{x:Type dialogViewModels:FirstConnectionViewModel}">
         <view:FirstConnectView/>
     </DataTemplate>
     
-    <DataTemplate DataType="{x:Type viewModels:ChooseTaskViewModel}">
+    <DataTemplate DataType="{x:Type dialogViewModels:ChooseTaskViewModel}">
         <view:ChooseTaskView/>
     </DataTemplate>
     
-    <!--<DataTemplate DataType="{x:Type viewModels:TextInputVm}">
-        <view:TextInputView/>
-    </DataTemplate>-->
+    <DataTemplate DataType="{x:Type dialogViewModels:CreateTaskViewModel}">
+        <view:CreateTaksView/>
+    </DataTemplate>
     
 </ResourceDictionary>
