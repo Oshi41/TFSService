@@ -49,7 +49,7 @@
                     IsDefault="True"
                     Style="{StaticResource MaterialDesignRaisedButton}"
                     Margin="7"
-                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding Path=IsExecuting}"
+                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding Path=SubmitCommand.IsExecuting}"
                     materialDesign:ButtonProgressAssist.IsIndeterminate="True"
                     MinWidth="{Binding ElementName=ExitBtn, Path=ActualWidth}"
                     IsEnabled="{Binding Path=Error, 

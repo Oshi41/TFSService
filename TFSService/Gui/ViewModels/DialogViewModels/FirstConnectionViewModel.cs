@@ -104,8 +104,6 @@ namespace Gui.ViewModels.DialogViewModels
 
         private async Task Connect()
         {
-            IsExecuting = true;
-
             await _arbiter.DoAsync(() =>
             {
                 try
@@ -120,7 +118,6 @@ namespace Gui.ViewModels.DialogViewModels
 
             SafeExecute(() =>
             {
-                IsExecuting = false;
                 IsConnected = _tfs != null;
 
                 // необходимо для валидации данных

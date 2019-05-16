@@ -1,17 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Mvvm.Commands;
-using Mvvm.Properties;
 
 namespace Gui.Helper
 {
-    public class ObservableCommand : DelegateCommandBase, ICommand
+    public class ObservableCommand : DelegateCommandBase, ICommand, INotifyPropertyChanged
     {
-        /// <summary>
+        private bool _isExecuting;
+
+        #region Constructors
+
+                /// <summary>
         ///     Creates a new instance of <see cref="T:Mvvm.Commands.DelegateCommand" /> with the <see cref="T:System.Action" /> to invoke on execution.
         /// </summary>
         /// <param name="executeMethod">The <see cref="T:System.Action" /> to invoke when <see cref="M:System.Windows.Input.ICommand.Execute(System.Object)" /> is called.</param>
@@ -49,6 +51,11 @@ namespace Gui.Helper
                 throw new ArgumentNullException(nameof(executeMethod));
         }
 
+
+        #endregion
+
+        #region Static
+
         /// <summary>
         ///     Factory method to create a new instance of <see cref="T:Mvvm.Commands.DelegateCommand" /> from an awaitable handler method.
         /// </summary>
@@ -74,16 +81,60 @@ namespace Gui.Helper
             return new ObservableCommand(executeMethod, canExecuteMethod, isAutomaticRequeryDisabled);
         }
 
+
+        #endregion
+
         /// <summary>
         /// После выполнения команды
         /// </summary>
         public event EventHandler Executed;
 
+        public bool IsExecuting
+        {
+            get => _isExecuting;
+            set
+            {
+                if (value == _isExecuting)
+                    return;
+
+                _isExecuting = value;
+                OnPropertyChanged(nameof(IsExecuting));
+            }
+        }
+
+        #region ICommand
+
         async void ICommand.Execute(object parameter)
         {
-            await Execute(parameter);
+            try
+            {
+                IsExecuting = true;
 
-            Executed?.Invoke(this, EventArgs.Empty);
+                await Execute(parameter);
+                Executed?.Invoke(this, EventArgs.Empty);
+            }
+            finally
+            {
+                IsExecuting = false;
+            }
         }
+
+        bool ICommand.CanExecute(object parameter)
+        {
+            return !IsExecuting && CanExecute(parameter);
+        }
+
+        #endregion
+
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
     }
 }

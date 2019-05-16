@@ -40,12 +40,6 @@ namespace Gui.ViewModels.DialogViewModels
         /// </summary>
         public DelegateCommandBase SpecialCommand { get; protected set; }
 
-        public bool IsExecuting
-        {
-            get => _isExecuting;
-            set => SetProperty(ref _isExecuting, value);
-        }
-
         #endregion
 
         #region IDataErrorInfo
