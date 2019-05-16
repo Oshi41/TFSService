@@ -35,6 +35,7 @@ namespace Gui.View
 
             var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
             tfs.ItemChanged += (sender, item) => { MessageBox.Show("Item changed"); };
+            tfs.Start();
 
             //var vm = new ChooseTaskViewModel(new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
 

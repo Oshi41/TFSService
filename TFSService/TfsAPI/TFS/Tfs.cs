@@ -30,6 +30,8 @@ namespace TfsAPI.TFS
 
         private readonly WebHookListener _listener;
 
+        private bool _paused;
+
         #endregion
 
         #region Events
@@ -61,8 +63,6 @@ namespace TfsAPI.TFS
             _teamConfiguration = _project.GetService<TeamSettingsConfigurationService>();
             _structureService = _project.GetService<ICommonStructureService4>();
             _listener = new WebHookListener(GetMyWorkItems);
-
-            Subscribe();
         }
 
         #region Private methods
@@ -77,9 +77,6 @@ namespace TfsAPI.TFS
         private void Unsubscribe()
         {
             _versionControl.CommitCheckin -= FireCheckinEvent;
-            _project.Dispose();
-            _listener?.Dispose();
-
             Checkin.Unsubscribe();
         }
 
@@ -89,6 +86,9 @@ namespace TfsAPI.TFS
 
         private void FireCheckinEvent(object sender, CommitCheckinEventArgs e)
         {
+            if (_paused)
+                return;
+
             Checkin?.Invoke(sender, e);
         }
 
@@ -99,6 +99,9 @@ namespace TfsAPI.TFS
         public void Dispose()
         {
             Unsubscribe();
+
+            _project.Dispose();
+            _listener?.Dispose();
         }
 
         #endregion
@@ -349,11 +352,14 @@ namespace TfsAPI.TFS
 
         public void Start()
         {
-            _listener.Start();
+            _paused = false;
+            Subscribe();
         }
 
         public void Pause()
         {
+            _paused = true;
+
             _listener.Pause();
         }
 

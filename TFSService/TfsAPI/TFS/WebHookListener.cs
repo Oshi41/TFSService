@@ -80,7 +80,7 @@ namespace TfsAPI.TFS
             var actual = _getMyItems();
 
             var added = actual.Except(old, comparer).ToList();
-            var removed = old.Except(added, comparer).ToList();
+            var removed = old.Except(actual, comparer).ToList();
 
             added.ForEach(Subscribe);
             removed.ForEach(Unsubscribe);
@@ -94,9 +94,10 @@ namespace TfsAPI.TFS
             // Для каждого вызывал событие добавление/удаления
             removed.ForEach(x => FireItem(x, true));
             added.ForEach(x => FireItem(x, false));
-            
+
             // Синхронизировал нетронутые рабочие элементы
-            old.Except(removed.Concat(added), comparer).ForEach(x => x.SyncToLatest());
+            var notChanged = old.Except(added.Concat(removed), comparer).ToList();
+            notChanged.ForEach(x => x.SyncToLatest());
         }
 
         private void Subscribe(WorkItem item)
