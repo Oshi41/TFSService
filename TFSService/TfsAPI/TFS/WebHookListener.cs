@@ -10,13 +10,15 @@ using TfsAPI.Interfaces;
 
 namespace TfsAPI.TFS
 {
-    public class WebHookListener : IDisposable
+    public class WebHookListener : IItemTracker
     {
         #region Fields
 
         private readonly Func<IList<WorkItem>> _getMyItems;
         private readonly Dictionary<int, WorkItem> _subscriptions = new Dictionary<int, WorkItem>();
         private readonly Timer _timer;
+
+        private bool _firstInit = true;
 
         #endregion
 
@@ -25,7 +27,7 @@ namespace TfsAPI.TFS
         /// <summary>
         /// На меня перевели какой-то элемент
         /// </summary>
-        public event EventHandler<WorkItem> WorkItemAssigned;
+        public event EventHandler<WorkItem> NewItem;
 
         /// <summary>
         /// Я закрыл/у меня забрали элемент
@@ -39,23 +41,30 @@ namespace TfsAPI.TFS
 
         #endregion
 
-        public WebHookListener(Func<IList<WorkItem>> getMyItems, byte minutes = 5)
+        public WebHookListener(Func<IList<WorkItem>> getMyItems, byte minutes = 1)
         {
             _getMyItems = getMyItems;
-            _timer = new Timer(minutes * 1000);
+            _timer = new Timer(minutes * 1000 * 60);
             _timer.Elapsed += CheckWorkItems;
         }
+
+        #region IItemTracker
 
         /// <summary>
         /// Начинаю мониторинг за элементами
         /// </summary>
         public void Start()
         {
-            _subscriptions.Values.ForEach(Unsubscribe);
-
-            InitSubscription(true);
+            InitSubscription();
             _timer.Start();
         }
+
+        public void Pause()
+        {
+            _timer.Stop();
+        }
+
+        #endregion
 
         #region Private methods
 
@@ -63,11 +72,12 @@ namespace TfsAPI.TFS
         /// Подспиываемся на изменение элементов, которые на мне
         /// </summary>
         /// <param name="isInitializing">Первичная инициализация, не нужно говорить пользвоателю, что </param>
-        private void InitSubscription(bool isInitializing = false)
+        private void InitSubscription()
         {
+            var comparer = new WorkItemComparer();
+
             var old = _subscriptions.Values.ToList();
             var actual = _getMyItems();
-            var comparer = new WorkItemComparer();
 
             var added = actual.Except(old, comparer).ToList();
             var removed = old.Except(added, comparer).ToList();
@@ -75,11 +85,18 @@ namespace TfsAPI.TFS
             added.ForEach(Subscribe);
             removed.ForEach(Unsubscribe);
 
-            if (isInitializing)
+            if (_firstInit)
+            {
+                _firstInit = false;
                 return;
+            }
 
+            // Для каждого вызывал событие добавление/удаления
+            removed.ForEach(x => FireItem(x, true));
             added.ForEach(x => FireItem(x, false));
-            removed.ForEach(x => FireItem(x, false));
+            
+            // Синхронизировал нетронутые рабочие элементы
+            old.Except(removed.Concat(added), comparer).ForEach(x => x.SyncToLatest());
         }
 
         private void Subscribe(WorkItem item)
@@ -114,7 +131,7 @@ namespace TfsAPI.TFS
             }
             else
             {
-                WorkItemAssigned?.Invoke(this, item);
+                NewItem?.Invoke(this, item);
             }
         }
 
@@ -136,7 +153,7 @@ namespace TfsAPI.TFS
 
         public void Dispose()
         {
-            WorkItemAssigned.Unsubscribe();
+            NewItem.Unsubscribe();
             WorkItemRemoved.Unsubscribe();
 
             _subscriptions.Values.ForEach(Unsubscribe);

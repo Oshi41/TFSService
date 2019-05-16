@@ -38,8 +38,8 @@ namespace TfsAPI.TFS
 
         public event EventHandler<WorkItem> NewItem
         {
-            add => _listener.WorkItemAssigned += value;
-            remove => _listener.WorkItemAssigned -= value;
+            add => _listener.NewItem += value;
+            remove => _listener.NewItem -= value;
         }
 
         public event EventHandler<Field> ItemChanged
@@ -341,6 +341,20 @@ namespace TfsAPI.TFS
 
 
             return task;
+        }
+
+        #endregion
+
+        #region IItemTracker
+
+        public void Start()
+        {
+            _listener.Start();
+        }
+
+        public void Pause()
+        {
+            _listener.Pause();
         }
 
         #endregion

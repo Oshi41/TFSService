@@ -217,6 +217,7 @@
     <Compile Include="Extentions\DateTimeExtentions.cs" />
     <Compile Include="Extentions\EventHandlerExtentions.cs" />
     <Compile Include="Extentions\IterationExtentions.cs" />
+    <Compile Include="Interfaces\IItemTracker.cs" />
     <Compile Include="Interfaces\ITfs.cs" />
     <Compile Include="TFS\Tfs.cs" />
     <Compile Include="Constants\WorkItems.cs" />

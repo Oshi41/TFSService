@@ -5,22 +5,12 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace TfsAPI.Interfaces
 {
-    public interface ITfs : IDisposable
+    public interface ITfs : IItemTracker, IDisposable
     {
         /// <summary>
         /// Пользователь закоммитил изменения
         /// </summary>
         event EventHandler<CommitCheckinEventArgs> Checkin;
-
-        /// <summary>
-        /// На пользователя назначили новый рабочий элемент
-        /// </summary>
-        event EventHandler<WorkItem> NewItem;
-
-        /// <summary>
-        /// Рабочий элемент был изменен
-        /// </summary>
-        event EventHandler<Field> ItemChanged; 
 
         /// <summary>
         /// Списываю часы в указанный таск
