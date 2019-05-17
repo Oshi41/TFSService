@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace TfsAPI.Interfaces
@@ -8,12 +9,12 @@ namespace TfsAPI.Interfaces
         /// <summary>
         /// На пользователя назначили новый рабочий элемент
         /// </summary>
-        event EventHandler<WorkItem> NewItem;
+        event EventHandler<List<WorkItem>> NewItems;
 
         /// <summary>
         /// Рабочий элемент был изменен
         /// </summary>
-        event EventHandler<Field> ItemChanged;
+        event EventHandler<Dictionary<WorkItem, List<WorkItemEventArgs>>> ItemsChanged;
 
         /// <summary>
         /// Стартую наблюдение за рабочими элементами

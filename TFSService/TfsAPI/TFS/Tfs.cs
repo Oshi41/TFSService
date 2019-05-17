@@ -38,23 +38,26 @@ namespace TfsAPI.TFS
 
         public event EventHandler<CommitCheckinEventArgs> Checkin;
 
-        public event EventHandler<WorkItem> NewItem
+        public event EventHandler<List<WorkItem>> NewItems
         {
-            add => _listener.NewItem += value;
-            remove => _listener.NewItem -= value;
+            add => _listener.NewItems += value;
+            remove => _listener.NewItems -= value;
         }
 
-        public event EventHandler<Field> ItemChanged
+        public event EventHandler<Dictionary<WorkItem, List<WorkItemEventArgs>>> ItemsChanged
         {
-            add => _listener.ItemChanged += value;
-            remove => _listener.ItemChanged -= value;
+            add => _listener.ItemsChanged += value;
+            remove => _listener.ItemsChanged -= value;
         }
+
 
         #endregion
 
         public Tfs(string uri)
         {
             _project = new TfsTeamProjectCollection(new Uri(uri));
+
+            Trace.WriteLine("Connected to " + _project.Name);
 
             _versionControl = _project.GetService<VersionControlServer>();
             _itemStore = _project.GetService<WorkItemStore>();
@@ -89,6 +92,8 @@ namespace TfsAPI.TFS
             if (_paused)
                 return;
 
+            Trace.WriteLine($"Chageset ID: {e.ChangesetId}, created by {e.Workspace.DisplayName} at {e.CreationDate:G}");
+
             Checkin?.Invoke(sender, e);
         }
 
@@ -115,7 +120,7 @@ namespace TfsAPI.TFS
         {
             item.AddHours(hours, setActive);
             item.Save();
-            Trace.Write($"Saved item - {item.Id}");
+            Trace.WriteLine($"Saved work item - {item.Id}");
         }
 
         /// <inheritdoc cref="ITfs.GetAssociateItems"/>
@@ -137,6 +142,8 @@ namespace TfsAPI.TFS
             // Нашел связи
             var linked = _linking.GetReferencingArtifacts(new[] {uri});
 
+            Trace.WriteLine($"{nameof(GetAssociateItems)}: Founded {linked.Length} links");
+
             foreach (var artifact in linked)
             {
                 // Распарсил url
@@ -151,6 +158,8 @@ namespace TfsAPI.TFS
 
                 }
             }
+
+            Trace.WriteLineIf(result.Any(), $"Changeset {changeset} linked with items: {string.Join(", ", result.Select(x => x.Id))}");
 
             return result;
         }
@@ -176,6 +185,9 @@ namespace TfsAPI.TFS
                          $"or {Sql.Fields.Title} {Sql.ContainsStrOperand} '{text}' ";
 
             var items = _itemStore.Query(quarry);
+
+            Trace.WriteLine($"Tfs.Search: Founded {items.Count} items");
+
             return items.OfType<WorkItem>().ToList();
         }
 
@@ -333,15 +345,24 @@ namespace TfsAPI.TFS
             // Сначала сохраняем как новый таск
             task.Save();
 
+            Trace.WriteLine($"Created task {task.Id}");
+
             // Потом меняем статус в актив
             task.State = WorkItemStates.Active;
             task.Save();
 
+            Trace.WriteLine($"Task status changed to {task.State}\n" +
+                            "--------- BEFORE LINKING --------\n" +
+                            $"Task links count: {task.Links.Count}, " +
+                            $"Parent links count: {task.Links.Count}");
 
             // После сохранения привязываем
             parent.Links.Add(new RelatedLink(link.ReverseEnd, task.Id));
             parent.Save();
 
+            Trace.WriteLine($"--------- AFTER LINKING --------\n" +
+                            $"Task links count: {task.Links.Count}, " +
+                            $"Parent links count: {task.Links.Count}");
 
             return task;
         }
@@ -350,10 +371,13 @@ namespace TfsAPI.TFS
 
         #region IItemTracker
 
+
         public void Start()
         {
             _paused = false;
             Subscribe();
+
+            Trace.WriteLine("Starting observe work items changes");
         }
 
         public void Pause()
@@ -361,6 +385,8 @@ namespace TfsAPI.TFS
             _paused = true;
 
             _listener.Pause();
+
+            Trace.WriteLine("Pausing observe work items changes");
         }
 
         #endregion

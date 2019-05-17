@@ -70,7 +70,7 @@ namespace Gui.Helper
                 {
                     settings.Begin = now;
 
-                    Trace.Write($"Let the work begin at {now.ToShortTimeString()}!");
+                    Trace.Write($"{nameof(SystemHelper)}.{nameof(TryStartWorkDay)}: Let the work begin at {now.ToShortTimeString()}!");
                 }
             }
         }
@@ -81,6 +81,8 @@ namespace Gui.Helper
 
         private void OnSessionSwitched(object sender, SessionSwitchEventArgs e)
         {
+            Trace.WriteLine($"Session switched to {e.Reason}");
+
             switch (e.Reason)
             {
                     case SessionSwitchReason.ConsoleConnect:
@@ -105,6 +107,8 @@ namespace Gui.Helper
 
         private void FireWiteOffEvent(object sender, TimerElapsedEventArgs e)
         {
+            Trace.WriteLine($"{nameof(SystemHelper)}.{nameof(FireWiteOffEvent)}: Adding one hour to settings");
+
             using (var settings = Settings.Settings.Read())
             {
                 settings.Completed++;

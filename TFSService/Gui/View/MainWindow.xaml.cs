@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using Gui.Helper;
 using Gui.ViewModels.DialogViewModels;
 using TfsAPI.TFS;
@@ -34,7 +35,7 @@ namespace Gui.View
 
 
             var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
-            tfs.ItemChanged += (sender, item) => { MessageBox.Show("Item changed"); };
+            tfs.ItemsChanged += (sender, item) => { MessageBox.Show(string.Join(", ", item.Keys.Select(x => x.Id))); };
             tfs.Start();
 
             //var vm = new ChooseTaskViewModel(new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
