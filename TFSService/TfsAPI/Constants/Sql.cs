@@ -57,7 +57,7 @@
         /// <summary>
         /// Условие, что рабочий элемент когда-то был изменен мной
         /// </summary>
-        public const string WasEverChangedByMeCondition = "[Changed By] Was Ever @me";
+        public const string WasEverChangedByMeCondition = "ever [Changed By] = @me";
 
         /// <summary>
         /// Операнд для поиска строки

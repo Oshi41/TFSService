@@ -386,9 +386,9 @@ namespace TfsAPI.TFS
 
             var querry = $"select * from {Sql.Tables.WorkItems} " +
                          $"where {Sql.Fields.WorkItemType} = '{WorkItemTypes.Task}' " +
-                         $"and {Sql.Fields.ChangedDate} >= {from} " +
-                         $"and {Sql.Fields.ChangedDate} <= {to} " +
-                         $"and {Sql.WasEverChangedByMeCondition}";
+                         $"and {Sql.WasEverChangedByMeCondition} " +
+                         $"and {Sql.Fields.ChangedDate} >= '{from.ToShortDateString()}' " +
+                         $"and {Sql.Fields.ChangedDate} <= '{to.ToShortDateString()}' ";
 
             var tasks = _itemStore.Query(querry);
 
@@ -399,39 +399,54 @@ namespace TfsAPI.TFS
                     .OfType<Revision>()
                     .Where(x => x.Fields[WorkItems.Fields.Complited]?.Value != null
                                 && x.Fields[WorkItems.Fields.ChangedBy]?.Value != null
-                                && x.Fields[CoreField.ChangedDate].Value is DateTime time
-                                && from <= time
-                                && time <= to)
+                                && x.Fields[CoreField.ChangedDate].Value is DateTime)
                     .ToList();
 
+                double previouse = 0;
 
-                //// Записал все изменения элемента, где списали время
-                //var changes = new Queue<KeyValuePair<string, double>>();
+                foreach (var revision in revisions)
+                {
+                    // Был ли в этот момент таск на мне
+                    var assignedToMe = revision.Fields[CoreField.AssignedTo]?.Value is string assigned
+                                       && string.Equals(_itemStore.UserDisplayName, assigned);
 
-                //// Прохожу по всем ревизиям
-                //foreach (var revision in task
-                //    .Revisions
-                //    .OfType<Revision>()
-                //    // вытаскиваю поле завершенной работы
-                //    .Where(x => x.Fields[WorkItems.Fields.Complited]?.Value != null
-                //                && x.Fields[WorkItems.Fields.ChangedBy]?.Value != null))
-                //{
-                //    var owner = revision.Fields[WorkItems.Fields.ChangedBy].ToString();
-                //    var completed = (double)revision.Fields[WorkItems.Fields.Complited].Value;
+                    // Был ли таск изменен мной
+                    var changedByMe = revision.Fields[WorkItems.Fields.ChangedBy]?.Value is string owner
+                                       && string.Equals(_itemStore.UserDisplayName, owner);
 
-                //    changes.Enqueue(new KeyValuePair<string, double>(owner, completed));
-                //}
+                    var correctTime = revision.Fields[CoreField.ChangedDate].Value is DateTime time
+                                           && from <= time
+                                           && time <= to;
 
-                //if (changes.All(x => x.Key != _itemStore.UserDisplayName))
-                //{
-                //    Debug.WriteLine($"Task - {task.Title} is not changed by me");
-                //    continue;
-                //}
+                    var completed = (double) revision.Fields[WorkItems.Fields.Complited].Value;
 
-                //while (changes.Any())
-                //{
-                //    var oldest = changes.Dequeue();
-                //}
+                    // Списанное время
+                    var delta = completed - previouse;
+
+                    previouse = completed;
+
+                    if (delta <= 0)
+                        continue;
+
+                    if (!correctTime)
+                    {
+                        continue;
+                    }
+
+                    if (!changedByMe)
+                    {
+                        Trace.WriteLine($"{revision.Fields[WorkItems.Fields.ChangedBy]?.Value} is changed completed work for you");
+                        continue;
+                    }
+
+                    if (!assignedToMe)
+                    {
+                        Trace.WriteLine($"{revision.Fields[CoreField.AssignedTo]?.Value} took your task");
+                        continue;
+                    }
+
+                    result += (int) delta;
+                }
             }
 
             return result;

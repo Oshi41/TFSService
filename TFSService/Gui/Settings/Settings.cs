@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
+using Gui.Helper;
 using Mvvm;
 using Newtonsoft.Json;
 
@@ -22,14 +25,17 @@ namespace Gui.Settings
         private DateTime _begin;
 
         private bool _changed;
-        private IList<string> _connections;
-        private Dictionary<int, int> _completedWork;
+        private ObservableCollection<string> _connections;
+        private WriteOffCollection _completedWork;
 
         #endregion
 
         public Settings()
         {
             IsDefault = true;
+
+            CompletedWork = new WriteOffCollection();
+            Connections = new ObservableCollection<string>();
         }
 
         #region Properties
@@ -64,19 +70,39 @@ namespace Gui.Settings
         /// <summary>
         /// Сколько часов было списано на разные рабочие элементы
         /// </summary>
-        public Dictionary<int, int> CompletedWork
+        public WriteOffCollection CompletedWork
         {
             get => _completedWork;
-            set => SetProperty(ref _completedWork, value);
+            set
+            {
+                if (value == _completedWork)
+                    return;
+
+                _completedWork.CollectionChanged -= OnCollectionChanged;
+                _completedWork = value;
+                _completedWork.CollectionChanged += OnCollectionChanged;
+
+                OnPropertyChanged();
+            }
         }
 
         /// <summary>
         /// Строка подключения к TFS
         /// </summary>
-        public IList<string> Connections
+        public ObservableCollection<string> Connections
         {
             get => _connections;
-            set => SetProperty(ref _connections, value);
+            set
+            {
+                if (value == _connections)
+                    return;
+
+                _connections.CollectionChanged -= OnCollectionChanged;
+                _connections = value;
+                _connections.CollectionChanged += OnCollectionChanged;
+
+                OnPropertyChanged();
+            }
         }
 
         [JsonIgnore]
@@ -126,6 +152,11 @@ namespace Gui.Settings
 
             return result;
         }
+
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            _changed = true;
+        } 
 
         #endregion
     }

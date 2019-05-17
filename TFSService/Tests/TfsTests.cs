@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.TestManagement.Client;
@@ -56,6 +57,8 @@ namespace Tests
             {
                 quarries += $"{query.Name}\n{query.QueryText}\n\n";
             }
+
+            Trace.WriteLine(quarries);
         }
 
         [TestMethod]
@@ -117,6 +120,21 @@ namespace Tests
                         
                     }
                 }
+            }
+        }
+
+        [TestMethod]
+        public void CheckMyWriteOff()
+        {
+            using (var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"))
+            {
+                var from = DateTime.Today;
+
+                Trace.WriteLine($"Today was - {tfs.GetWriteOffHours(from, from.Add(TimeSpan.FromDays(1)))}");
+
+                from = from.Add(TimeSpan.FromDays(-1));
+
+                Trace.WriteLine($"Yesterday was - {tfs.GetWriteOffHours(from, from.Add(TimeSpan.FromDays(1)))}");
             }
         }
     }
