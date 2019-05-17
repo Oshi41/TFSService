@@ -38,8 +38,9 @@ namespace TfsAPI.Interfaces
         /// Производит поиск в названии, описании
         /// </summary>
         /// <param name="text"></param>
+        /// <param name="allowedTypes">Ищем только по указанным типам</param>
         /// <returns></returns>
-        IList<WorkItem> Search(string text);
+        IList<WorkItem> Search(string text, params string[] allowedTypes);
 
         /// <summary>
         /// Возвращает кол-во часов, которое необходимо списать за день
@@ -62,5 +63,13 @@ namespace TfsAPI.Interfaces
         /// <param name="hours">Часы, сколько планируем работать</param>
         /// <returns></returns>
         WorkItem CreateTask(string title, WorkItem parent, uint hours);
+
+        /// <summary>
+        /// Возвращает списанные часы за указанный период времени
+        /// </summary>
+        /// <param name="from">Начиная с...</param>
+        /// <param name="to">Заканчивая...</param>
+        /// <returns></returns>
+        int GetWriteOffHours(DateTime from, DateTime to);
     }
 }

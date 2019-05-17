@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using System.Linq;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Gui.View
 {
@@ -10,6 +12,11 @@ namespace Gui.View
         public CreateTaksView()
         {
             InitializeComponent();
+        }
+
+        private void AllowOnlyNumbers(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = e.Text.All(char.IsNumber);
         }
     }
 }

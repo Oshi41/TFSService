@@ -235,8 +235,10 @@
     <Compile Include="Converters\SwitchConverter.cs" />
     <Compile Include="Helper\ActionArbiter.cs" />
     <Compile Include="Helper\ObservableCommand.cs" />
+    <Compile Include="Helper\SystemObserver.cs" />
     <Compile Include="Helper\TimedAction.cs" />
     <Compile Include="Helper\WindowManager.cs" />
+    <Compile Include="Interfaces\ISystemObserver.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="ViewModels\DialogViewModels\ChooseTaskViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\CreateTaskViewModel.cs" />
@@ -288,7 +290,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Helper\SystemHelper.cs" />
     <Compile Include="ViewModels\DialogViewModels\BindableExtended.cs" />
     <Compile Include="ViewModels\DialogViewModels\WorkItemSearcher.cs" />
     <Compile Include="View\MainWindow.xaml.cs">

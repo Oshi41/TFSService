@@ -4,11 +4,18 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Gui.View"
+             xmlns:dialogViewModels="clr-namespace:Gui.ViewModels.DialogViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type={x:Type dialogViewModels:CreateTaskViewModel}}">
     
     <UserControl.Resources>
         <ResourceDictionary>
+            
+            <Style TargetType="{x:Type TextBlock}"
+                   BasedOn="{StaticResource {x:Type TextBlock}}">
+                <Setter Property="TextWrapping" Value="Wrap"/>
+            </Style>
 
         </ResourceDictionary>
     </UserControl.Resources>
@@ -16,10 +23,27 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
+        <TextBlock Text="Введите название задачи"/>
+        <TextBox Grid.Row="1"
+                 Text="{Binding Path=Title, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
         
+        <TextBlock Grid.Row="2"
+                   Text="Запланированное время работы"/>
+        <TextBox Grid.Row="3"
+                 PreviewTextInput="AllowOnlyNumbers"
+                 Text="{Binding Path=Hours, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+        
+        <TextBlock Grid.Row="4"
+                   Text="Выберите к чему привязать задачу"/>
+        <local:WorkItemSearcherView Grid.Row="5"
+                                    DataContext="{Binding Path=Searcher}"/>
     </Grid>
 </UserControl>

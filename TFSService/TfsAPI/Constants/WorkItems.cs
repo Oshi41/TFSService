@@ -1,4 +1,6 @@
-﻿namespace TfsAPI.Constants
+﻿using System.Collections.Specialized;
+
+namespace TfsAPI.Constants
 {
     public static class WorkItems
     {
@@ -18,6 +20,11 @@
             /// Поле рабочего элемента с планируемыми трудозатратами
             /// </summary>
             public const string Planning = "Original Estimate";
+
+            /// <summary>
+            /// Поле рабочего элемента и ревизии. Кем было изменено
+            /// </summary>
+            public const string ChangedBy = "Changed By";
         }
 
         public static class LinkTypes

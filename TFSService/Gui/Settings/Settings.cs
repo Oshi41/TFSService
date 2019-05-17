@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Mvvm;
 using Newtonsoft.Json;
@@ -22,6 +23,7 @@ namespace Gui.Settings
 
         private bool _changed;
         private IList<string> _connections;
+        private Dictionary<int, int> _completedWork;
 
         #endregion
 
@@ -60,12 +62,12 @@ namespace Gui.Settings
         }
 
         /// <summary>
-        /// Сколько часов уже было списано
+        /// Сколько часов было списано на разные рабочие элементы
         /// </summary>
-        public int Completed
+        public Dictionary<int, int> CompletedWork
         {
-            get => _completed;
-            set => SetProperty(ref _completed, value);
+            get => _completedWork;
+            set => SetProperty(ref _completedWork, value);
         }
 
         /// <summary>
@@ -92,9 +94,14 @@ namespace Gui.Settings
 
         public static Settings Read()
         {
-            return File.Exists(_savePath)
-                ? JsonConvert.DeserializeObject<Settings>(File.ReadAllText(_savePath))
-                : new Settings();
+            if (File.Exists(_savePath))
+            {
+                return JsonConvert.DeserializeObject<Settings>(File.ReadAllText(_savePath));
+            }
+
+            Trace.WriteLine("Creating new settings");
+
+            return new Settings();
         }
 
         private void Write()
@@ -103,6 +110,8 @@ namespace Gui.Settings
                 Directory.CreateDirectory(Path.GetDirectoryName(_savePath));
 
             File.WriteAllText(_savePath, JsonConvert.SerializeObject(this, Formatting.Indented));
+
+            Trace.WriteLine("Settings saved");
         }
 
         protected override bool SetProperty<T>(ref T storage, T value, string propertyName = null)

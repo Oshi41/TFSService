@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.TeamFoundation.Client;
+using Microsoft.TeamFoundation.TestManagement.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TfsAPI.Constants;
@@ -40,23 +41,22 @@ namespace Tests
         //    }
         //}
 
-        //[TestMethod]
-        //public void GetMyQuarries()
-        //{
-        //    // подключаемся к ТФС
-        //    var tfs = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
+        [TestMethod]
+        public void GetMyQuarries()
+        {
+            // подключаемся к ТФС
+            var tfs = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
 
-        //    // Выбираем проект
-        //    var project = tfs.GetService<ITestManagementService>().GetTeamProject("SNES");
+            // Выбираем проект
+            var project = tfs.GetService<ITestManagementService>().GetTeamProject("SNES");
 
-        //    var quarries = string.Empty;
+            var quarries = string.Empty;
 
-        //    foreach (var query in project.Queries)
-        //    {
-        //        quarries += $"{query.Name}\n{query.QueryText}\n\n";
-        //    }
-
-        //}
+            foreach (var query in project.Queries)
+            {
+                quarries += $"{query.Name}\n{query.QueryText}\n\n";
+            }
+        }
 
         [TestMethod]
         public void GetLinkedItems()

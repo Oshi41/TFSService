@@ -4,7 +4,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace TfsAPI.Interfaces
 {
-    public interface IItemTracker : IDisposable
+    public interface IItemTracker : IResumable, IDisposable
     {
         /// <summary>
         /// На пользователя назначили новый рабочий элемент
@@ -15,15 +15,5 @@ namespace TfsAPI.Interfaces
         /// Рабочий элемент был изменен
         /// </summary>
         event EventHandler<Dictionary<WorkItem, List<WorkItemEventArgs>>> ItemsChanged;
-
-        /// <summary>
-        /// Стартую наблюдение за рабочими элементами
-        /// </summary>
-        void Start();
-
-        /// <summary>
-        /// Ставлю проверку на паузу
-        /// </summary>
-        void Pause();
     }
 }

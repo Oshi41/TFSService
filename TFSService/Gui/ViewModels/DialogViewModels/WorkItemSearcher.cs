@@ -20,6 +20,11 @@ namespace Gui.ViewModels.DialogViewModels
         private string _text;
         private string _help;
 
+        /// <summary>
+        /// Разрешенные типы рабочих элементов
+        /// </summary>
+        private readonly string[] _types;
+
         #endregion
 
         /// <summary>
@@ -43,6 +48,7 @@ namespace Gui.ViewModels.DialogViewModels
         public WorkItemSearcher(ITfs api, params string[] types)
             : this(api)
         {
+            _types = types;
             var mine = _api.GetMyWorkItems();
 
             if (!types.IsNullOrEmpty())
@@ -118,7 +124,7 @@ namespace Gui.ViewModels.DialogViewModels
             // Не получилось - ищем по строке
             else
             {
-                var finded = _api.Search(arg);
+                var finded = _api.Search(arg, _types);
                 foreach (var item in finded)
                 {
                     list.Add(item);

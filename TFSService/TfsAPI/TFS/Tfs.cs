@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.Client;
+using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.ProcessConfiguration.Client;
 using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.VersionControl.Client;
@@ -120,7 +121,7 @@ namespace TfsAPI.TFS
         {
             item.AddHours(hours, setActive);
             item.Save();
-            Trace.WriteLine($"Saved work item - {item.Id}");
+            Trace.WriteLine($"From task {item.Id} was writed off {hours} hour(s)");
         }
 
         /// <inheritdoc cref="ITfs.GetAssociateItems"/>
@@ -177,12 +178,20 @@ namespace TfsAPI.TFS
             }
         }
 
-        public IList<WorkItem> Search(string text)
+        public IList<WorkItem> Search(string text, params string[] allowedTypes)
         {
             var quarry = $"select * from {Sql.Tables.WorkItems} " +
-                         $"where {Sql.Fields.Description} {Sql.ContainsStrOperand} '{text}' " +
+                         $"where ({Sql.Fields.Description} {Sql.ContainsStrOperand} '{text}' " +
                          $"or {Sql.Fields.History} {Sql.ContainsStrOperand} '{text}' " +
-                         $"or {Sql.Fields.Title} {Sql.ContainsStrOperand} '{text}' ";
+                         $"or {Sql.Fields.Title} {Sql.ContainsStrOperand} '{text}' )";
+
+            // Ищу только указанные типы
+            if (!allowedTypes.IsNullOrEmpty())
+            {
+                quarry += " and (" +
+                                    $"{string.Join("or ", allowedTypes.Select(x => $"{Sql.Fields.WorkItemType} = '{x}'"))}" +
+                                    $")";
+            }
 
             var items = _itemStore.Query(quarry);
 
@@ -365,6 +374,67 @@ namespace TfsAPI.TFS
                             $"Parent links count: {task.Links.Count}");
 
             return task;
+        }
+
+        /// <exception cref="Exception"></exception>
+        public int GetWriteOffHours(DateTime from, DateTime to)
+        {
+            var result = 0;
+
+            if (from > to)
+                throw new Exception($"{nameof(from)} should be earlier than {nameof(to)}");
+
+            var querry = $"select * from {Sql.Tables.WorkItems} " +
+                         $"where {Sql.Fields.WorkItemType} = '{WorkItemTypes.Task}' " +
+                         $"and {Sql.Fields.ChangedDate} >= {from} " +
+                         $"and {Sql.Fields.ChangedDate} <= {to} " +
+                         $"and {Sql.WasEverChangedByMeCondition}";
+
+            var tasks = _itemStore.Query(querry);
+
+            foreach (WorkItem task in tasks)
+            {
+                var revisions = task
+                    .Revisions
+                    .OfType<Revision>()
+                    .Where(x => x.Fields[WorkItems.Fields.Complited]?.Value != null
+                                && x.Fields[WorkItems.Fields.ChangedBy]?.Value != null
+                                && x.Fields[CoreField.ChangedDate].Value is DateTime time
+                                && from <= time
+                                && time <= to)
+                    .ToList();
+
+
+                //// Записал все изменения элемента, где списали время
+                //var changes = new Queue<KeyValuePair<string, double>>();
+
+                //// Прохожу по всем ревизиям
+                //foreach (var revision in task
+                //    .Revisions
+                //    .OfType<Revision>()
+                //    // вытаскиваю поле завершенной работы
+                //    .Where(x => x.Fields[WorkItems.Fields.Complited]?.Value != null
+                //                && x.Fields[WorkItems.Fields.ChangedBy]?.Value != null))
+                //{
+                //    var owner = revision.Fields[WorkItems.Fields.ChangedBy].ToString();
+                //    var completed = (double)revision.Fields[WorkItems.Fields.Complited].Value;
+
+                //    changes.Enqueue(new KeyValuePair<string, double>(owner, completed));
+                //}
+
+                //if (changes.All(x => x.Key != _itemStore.UserDisplayName))
+                //{
+                //    Debug.WriteLine($"Task - {task.Title} is not changed by me");
+                //    continue;
+                //}
+
+                //while (changes.Any())
+                //{
+                //    var oldest = changes.Dequeue();
+                //}
+            }
+
+            return result;
         }
 
         #endregion

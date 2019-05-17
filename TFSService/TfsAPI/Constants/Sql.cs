@@ -31,6 +31,11 @@
             /// Поле заголовка рабочего элемента
             /// </summary>
             public const string Title = "[Title]";
+
+            /// <summary>
+            /// Поле содержащее время последнего изменения рабочего элемента
+            /// </summary>
+            public const string ChangedDate = "[Changed Date]";
         }
 
         /// <summary>
@@ -48,6 +53,11 @@
         /// Условие для поиска рабочих элементов на мне
         /// </summary>
         public const string AssignedToMeCondition = "[Assigned To] = @me";
+
+        /// <summary>
+        /// Условие, что рабочий элемент когда-то был изменен мной
+        /// </summary>
+        public const string WasEverChangedByMeCondition = "[Changed By] Was Ever @me";
 
         /// <summary>
         /// Операнд для поиска строки
