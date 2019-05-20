@@ -65,11 +65,11 @@ namespace TfsAPI.Interfaces
         WorkItem CreateTask(string title, WorkItem parent, uint hours);
 
         /// <summary>
-        /// Возвращает списанные часы за указанный период времени
+        /// Возвращает список ревизий рабочих элементов с кол-вом их списанных часов
         /// </summary>
         /// <param name="from">Начиная с...</param>
         /// <param name="to">Заканчивая...</param>
         /// <returns></returns>
-        int GetWriteOffHours(DateTime from, DateTime to);
+        SortedList<Revision, int> GetCheckins(DateTime from, DateTime to);
     }
 }

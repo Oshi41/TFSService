@@ -376,10 +376,9 @@ namespace TfsAPI.TFS
             return task;
         }
 
-        /// <exception cref="Exception"></exception>
-        public int GetWriteOffHours(DateTime from, DateTime to)
+        public SortedList<Revision, int> GetCheckins(DateTime from, DateTime to)
         {
-            var result = 0;
+            var result = new SortedList<Revision, int>();
 
             if (from > to)
                 throw new Exception($"{nameof(from)} should be earlier than {nameof(to)}");
@@ -421,11 +420,11 @@ namespace TfsAPI.TFS
                     var completed = (double) revision.Fields[WorkItems.Fields.Complited].Value;
 
                     // Списанное время
-                    var delta = completed - previouse;
+                    var delta = (int) (completed - previouse);
 
                     previouse = completed;
 
-                    if (delta <= 0)
+                    if (delta < 1)
                         continue;
 
                     if (!correctTime)
@@ -445,7 +444,7 @@ namespace TfsAPI.TFS
                         continue;
                     }
 
-                    result += (int) delta;
+                    result.Add(revision, delta);
                 }
             }
 
@@ -455,7 +454,6 @@ namespace TfsAPI.TFS
         #endregion
 
         #region IItemTracker
-
 
         public void Start()
         {

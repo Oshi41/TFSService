@@ -130,11 +130,15 @@ namespace Tests
             {
                 var from = DateTime.Today;
 
-                Trace.WriteLine($"Today was - {tfs.GetWriteOffHours(from, from.Add(TimeSpan.FromDays(1)))}");
+                var checkins = tfs.GetCheckins(from, from.Add(TimeSpan.FromDays(1)));
+
+                Trace.WriteLine($"Today was - {checkins.Sum(x => x.Value)}");
 
                 from = from.Add(TimeSpan.FromDays(-1));
 
-                Trace.WriteLine($"Yesterday was - {tfs.GetWriteOffHours(from, from.Add(TimeSpan.FromDays(1)))}");
+                checkins = tfs.GetCheckins(from, from.Add(TimeSpan.FromDays(1)));
+
+                Trace.WriteLine($"Yesterday was - {checkins.Sum(x => x.Value)}");
             }
         }
     }

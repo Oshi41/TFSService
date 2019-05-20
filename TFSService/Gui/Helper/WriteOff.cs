@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Newtonsoft.Json;
+using TfsAPI.Extentions;
+using TfsAPI.Interfaces;
 
 namespace Gui.Helper
 {
     public class WriteOff
     {
+        #region Props
+
         /// <summary>
         /// ID раочего элемента
         /// </summary>
@@ -23,16 +29,47 @@ namespace Gui.Helper
         /// </summary>
         public DateTime Time { get; }
 
+        /// <summary>
+        /// Чекин от пользователя?
+        /// </summary>
+        public bool CreatedByUser { get; }
+
+        /// <summary>
+        /// Была ли запись внесена в TFS
+        /// </summary>
+        public bool Recorded { get; }
+
+        #endregion
+
         [JsonConstructor]
-        private WriteOff(int id, int hours, DateTime time)
+        private WriteOff(int id, int hours, DateTime time, bool createdByUser, bool recorded)
         {
             Id = id;
             Hours = hours;
             Time = time;
+            CreatedByUser = createdByUser;
+            Recorded = recorded;
         }
 
+        /// <summary>
+        /// Записанное программой время
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="hours"></param>
         public WriteOff(int id, int hours)
-            : this(id, hours, DateTime.Now)
+            : this(id, hours, DateTime.Now, false, false)
+        {
+            
+        }
+
+        /// <summary>
+        /// Созданный пользователем чекин
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="hours"></param>
+        /// <param name="time"></param>
+        public WriteOff(int id, int hours, DateTime time)
+            : this(id, hours, time, true, true)
         {
             
         }
@@ -45,22 +82,239 @@ namespace Gui.Helper
 
     public class WriteOffCollection : ObservableCollection<WriteOff>
     {
+        #region Public methods
+                /// <summary>
+        /// Прошел час штатной работы программы
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="hours"></param>
         public void ScheduleWork(int id, int hours)
         {
-            var first = this.FirstOrDefault(x => x.Id == id);
-            if (first == null)
+            var item = new WriteOff(id, hours);
+            Add(item);
+
+            Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(ScheduleWork)}: Hour scheduled at {item.Time.ToShortTimeString()}");
+        }
+
+        /// <summary>
+        /// Записываем всю работу в TFS
+        /// </summary>
+        public void CheckInWork(ITfs tfs)
+        {
+            // Стянул свежие чекины
+            SyncCheckins(tfs);
+
+            UpdateByCapacity(tfs.GetCapacity());
+
+            var manual = Merge(GetManual(this));
+
+            foreach (var item in manual)
             {
-                Add(new WriteOff(id, hours));
+                try
+                {
+                    tfs.WriteHours(tfs.FindById(item.Id), (byte) item.Hours, true);
+
+                    RemoveAll(x => x.Id == item.Id);
+                }
+                catch (Exception e)
+                {
+                    Trace.WriteLine(e);
+                }
             }
-            else
+
+            // обновил значения
+            SyncCheckins(tfs);
+        }
+
+        /// <summary>
+        /// Проверяем, записали ли чекины от пользователя
+        /// </summary>
+        /// <param name="tfs"></param>
+        public void SyncCheckins(ITfs tfs)
+        {
+            var checkins = tfs.GetCheckins(DateTime.Today, DateTime.Now);
+
+            Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(SyncCheckins)}: Founded {checkins.Count} changes");
+
+            foreach (var checkin in checkins)
             {
-                first.Increase(hours);
+                var id = checkin.Key.WorkItem.Id;
+                var date = (DateTime) checkin.Key.Fields[CoreField.ChangedDate].Value;
+
+                if (!this.Any(x => x.Time == date && x.Id == id))
+                {
+                    var userCheckIn = new WriteOff(id, checkin.Value, date);
+                    Add(userCheckIn);
+
+                    Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(SyncCheckins)}: Detected new check-in, " +
+                                    $"Id - {checkin.Key.WorkItem.Id}, Time - {date.ToShortTimeString()}");
+                }
             }
         }
 
-        public int GetTotalHours()
+        /// <summary>
+        /// Сколько часов программа поставила в очередь
+        /// </summary>
+        /// <returns></returns>
+        public int ScheduledTime()
         {
-            return this.Sum(x => x.Hours);
+            return GetManual(this).Sum(x => x.Hours);
         }
+
+        /// <summary>
+        /// Сколько сегодня было зачекинено
+        /// </summary>
+        /// <returns></returns>
+        public int CheckinedTime()
+        {
+            return this.Where(x => x.Recorded && x.CreatedByUser).Sum(x => x.Hours);
+        }
+
+        #endregion
+
+        #region Constructors
+
+        public WriteOffCollection(IEnumerable<WriteOff> source)
+            : base(source)
+        {
+            
+        }
+
+        public WriteOffCollection()
+        {
+            
+        }
+
+        #endregion
+
+        #region Private
+
+        /// <summary>
+        /// Очищаем введённые 
+        /// </summary>
+        /// <param name="maxHoursPerDay"></param>
+        private void UpdateByCapacity(int maxHoursPerDay)
+        {
+            // Часы, которая программа поставила на ожидание
+            var manual = GetManual(this);
+
+            // Сколько пользователь начекинил
+            var alreadyRecorded = CheckinedTime();
+            // сколько программа поставила в очередь
+            var schedule = ScheduledTime();
+
+            // Поставили в очередь больше, чем планировали, вырезаем
+            while (schedule > maxHoursPerDay && manual.Any())
+            {
+                Remove(manual[0]);
+                manual.RemoveAt(0);
+
+                schedule--;
+            }
+
+            // Ничего не чекинил, выходим
+            if (alreadyRecorded < 1)
+            {
+                Trace.WriteLine(
+                    $"{nameof(WorkItemCollection)}.{nameof(UpdateByCapacity)}: User is not write off work hours today");
+                return;
+            }
+
+            Trace.WriteLine(
+                $"{nameof(WorkItemCollection)}.{nameof(UpdateByCapacity)}: User wrote off {alreadyRecorded} " +
+                $"hour(s), capacity is {maxHoursPerDay}");
+
+            // Пользователь уже начекинил на рабочее время, 
+            // вырезаем всё.
+            if (alreadyRecorded >= maxHoursPerDay)
+            {
+                RemoveRange(manual);
+                return;
+            }
+
+            // Вырезаем часы, поставленные в очередь
+            // программой, начиная с самых новых
+            while (alreadyRecorded > 0 && manual.Any())
+            {
+                this.Remove(manual[0]);
+                manual.RemoveAt(0);
+
+                alreadyRecorded--;
+            }
+
+
+            Trace.WriteLine(
+                $"{nameof(WorkItemCollection)}.{nameof(UpdateByCapacity)}: Scheduled {manual.Count} records:");
+        }
+
+        private void RemoveAll(Func<WriteOff, bool> condition)
+        {
+            var toRemove = this.Where(condition).ToList();
+            foreach (var item in toRemove)
+            {
+                this.Remove(item);
+            }
+        }
+
+        private void RemoveRange(IList<WriteOff> source)
+        {
+            foreach (var item in source)
+            {
+                Remove(item);
+            }
+        }
+
+        #endregion
+
+        #region static
+
+        /// <summary>
+        /// Мерджит чекины пользователя и запланированные программой
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        private static List<WriteOff> Merge(IList<WriteOff> source)
+        {
+            var result = new List<WriteOff>();
+
+            void MergeByCondition(Func<WriteOff, bool> func)
+            {
+                foreach (var off in source.Where(func))
+                {
+                    var first = result.FirstOrDefault(x => x.Id == off.Id
+                                                           && x.CreatedByUser == off.CreatedByUser
+                                                           && x.Recorded == off.Recorded);
+
+                    if (first != null)
+                    {
+                        first.Increase(off.Hours);
+                    }
+                    else
+                    {
+                        result.Add(off);
+                    }
+                }
+            }
+
+            MergeByCondition(x => x.CreatedByUser && x.Recorded);
+            MergeByCondition(x => !x.CreatedByUser && !x.Recorded);
+            
+
+            return result;
+        }
+
+        /// <summary>
+        /// Возвращает список запланированных программой чекинов. Отсортированы от свежих к старым
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        private static List<WriteOff> GetManual(IList<WriteOff> source)
+        {
+            return source.Where(x => !x.Recorded && !x.CreatedByUser)
+                .OrderByDescending(x => x.Time)
+                .ToList();
+        }
+
+        #endregion
     }
 }
