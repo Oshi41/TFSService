@@ -1,26 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace Gui.Interfaces
 {
     public interface ISystemObserver
     {
         /// <summary>
-        /// пользователь зашёл в систему
+        /// Новые элементы переведены на меня
         /// </summary>
-        event EventHandler Login;
+        event EventHandler<List<WorkItem>> ItemsAssigned;
 
         /// <summary>
-        /// Пользователь вышел из системы
+        /// Элементы были удалены
         /// </summary>
-        event EventHandler Logogff;
+        event EventHandler<List<WorkItem>> ItemsRemoved;
 
-        /// <summary>
-        /// Необходимо списать опр. кол-во часов
-        /// </summary>
-        event EventHandler<int> WriteHours;
+
+        ///// <summary>
+        ///// пользователь зашёл в систему
+        ///// </summary>
+        //event EventHandler Login;
+
+        ///// <summary>
+        ///// Пользователь вышел из системы
+        ///// </summary>
+        //event EventHandler Logogff;
+
+        ///// <summary>
+        ///// Необходимо списать опр. кол-во часов
+        ///// </summary>
+        //event EventHandler<int> WriteHours;
     }
 }

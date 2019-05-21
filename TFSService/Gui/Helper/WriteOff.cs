@@ -41,8 +41,16 @@ namespace Gui.Helper
 
         #endregion
 
+        /// <summary>
+        /// Записанный программой чекин
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="hours"></param>
+        /// <param name="time"></param>
+        /// <param name="createdByUser"></param>
+        /// <param name="recorded"></param>
         [JsonConstructor]
-        private WriteOff(int id, int hours, DateTime time, bool createdByUser, bool recorded)
+        public WriteOff(int id, int hours, DateTime time, bool createdByUser, bool recorded)
         {
             Id = id;
             Hours = hours;
@@ -112,18 +120,24 @@ namespace Gui.Helper
             {
                 try
                 {
-                    tfs.WriteHours(tfs.FindById(item.Id), (byte) item.Hours, true);
+                    var revision = tfs.WriteHours(tfs.FindById(item.Id), (byte) item.Hours, true);
 
                     RemoveAll(x => x.Id == item.Id);
+
+                    if (revision != null)
+                    {
+                        Add(new WriteOff(revision.WorkItem.Id,
+                            item.Hours,
+                            (DateTime) revision.Fields[CoreField.ChangedDate].Value,
+                            false,
+                            true));
+                    }
                 }
                 catch (Exception e)
                 {
                     Trace.WriteLine(e);
                 }
             }
-
-            // обновил значения
-            SyncCheckins(tfs);
         }
 
         /// <summary>
@@ -168,6 +182,14 @@ namespace Gui.Helper
         public int CheckinedTime()
         {
             return this.Where(x => x.Recorded && x.CreatedByUser).Sum(x => x.Hours);
+        }
+
+        /// <summary>
+        /// Очищаем предыдущие записи
+        /// </summary>
+        public void ClearPrevRecords()
+        {
+            RemoveAll(x => !x.Time.IsToday());
         }
 
         #endregion

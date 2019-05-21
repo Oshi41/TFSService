@@ -117,11 +117,21 @@ namespace TfsAPI.TFS
         /// <inheritdoc cref="ITfs.WriteHours"/>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="Exception"></exception>
-        public void WriteHours(WorkItem item, byte hours, bool setActive)
+        public Revision WriteHours(WorkItem item, byte hours, bool setActive)
         {
             item.AddHours(hours, setActive);
             item.Save();
             Trace.WriteLine($"From task {item.Id} was writed off {hours} hour(s)");
+
+            // TODO продебажить корректную ревизию
+
+            return item
+                .Revisions
+                .OfType<Revision>()
+                .Where(x => Equals(_itemStore.UserDisplayName, x.Fields[CoreField.ChangedBy].Value)
+                            && x.Fields[WorkItems.Fields.Complited].Value != null)
+                .OrderByDescending(x => x.Fields[CoreField.ChangedDate])
+                .FirstOrDefault();
         }
 
         /// <inheritdoc cref="ITfs.GetAssociateItems"/>

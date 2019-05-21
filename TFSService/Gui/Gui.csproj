@@ -235,7 +235,7 @@
     <Compile Include="Converters\SwitchConverter.cs" />
     <Compile Include="Helper\ActionArbiter.cs" />
     <Compile Include="Helper\ObservableCommand.cs" />
-    <Compile Include="Helper\SystemObserver.cs" />
+    <Compile Include="Helper\Observer.cs" />
     <Compile Include="Helper\TimedAction.cs" />
     <Compile Include="Helper\WindowManager.cs" />
     <Compile Include="Helper\WriteOff.cs" />

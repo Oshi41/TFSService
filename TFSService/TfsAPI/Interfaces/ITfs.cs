@@ -18,7 +18,7 @@ namespace TfsAPI.Interfaces
         /// <param name="item">Таск, куда списываю</param>
         /// <param name="hours">Кол-во часов</param>
         /// <param name="setActive">Нужно ли выставить состояние таска в Active</param>
-        void WriteHours(WorkItem item, byte hours, bool setActive);
+        Revision WriteHours(WorkItem item, byte hours, bool setActive);
 
         /// <summary>
         /// Возвращает список прилинкованных рабочих элементов к набору изменений

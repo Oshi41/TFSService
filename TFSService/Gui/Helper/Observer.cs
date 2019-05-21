@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace Gui.Helper
     /// <summary>
     /// Класс, обозревающий состояние сессии.
     /// </summary>
-    class SystemObserver : ISystemObserver
+    class Observer : ISystemObserver
     {
         #region Fields
 
@@ -31,18 +32,13 @@ namespace Gui.Helper
 
         #region Events
 
-        public event EventHandler Login;
-        public event EventHandler Logogff;
-        public event EventHandler<int> WriteHours;
+        public event EventHandler<List<WorkItem>> ItemsAssigned;
+        public event EventHandler<List<WorkItem>> ItemsRemoved;
 
         #endregion
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tfs"></param>
         /// <param name="requestItem">Возвращает WorkItem, для которого будут списываться часы </param>
-        public SystemObserver(ITfs tfs, Func<WorkItem> requestItem)
+        public Observer(ITfs tfs, Func<WorkItem> requestItem)
         {
             _tfs = tfs;
             _requestItem = requestItem;
@@ -79,11 +75,11 @@ namespace Gui.Helper
                 case SessionSwitchReason.SessionRemoteControl:
                 case SessionSwitchReason.SessionLogon:
                 case SessionSwitchReason.SessionUnlock:
-                    Login?.Invoke(this, e);
+                    // Login?.Invoke(this, e);
                     break;
 
                 default:
-                    Logogff?.Invoke(this, e);
+                    // Logogff?.Invoke(this, e);
                     break;
             }
 
@@ -121,16 +117,20 @@ namespace Gui.Helper
                     return;
                 }
 
+                if (TryEndWorkDay(settings.CompletedWork))
+                {
+                    // TODO сообщение об окончании рабочего дня
+
+                    return;
+                }
+
                 if (schedule)
                 {
                     ScheduleHour(settings);
                 }
-
-                if (TryEndWorkDay(settings.CompletedWork))
-                {
-                    // TODO сообщение об окончании рабочего дня
-                }
             }
+
+            SyncMyWorkItems();
         }
 
         #endregion
@@ -149,10 +149,12 @@ namespace Gui.Helper
             if (settings.CompletedWork.ScheduledTime() > 0)
             {
                 // TODO Спрашиваем у пользователя, если не успели зачекинить рабочее время
+
+                settings.CompletedWork.CheckInWork(_tfs);
             }
             else
             {
-                settings.CompletedWork.Clear();
+                settings.CompletedWork.ClearPrevRecords();
             }
 
             Trace.WriteLine("Welcome to a new work day!");
@@ -182,7 +184,7 @@ namespace Gui.Helper
             // Запланированное и списанное время равно дневному пределу
             if (scheduled + checkedIn >= capacity
                 // Либо судя по времени, надо закончить рабочий день
-                || DateTime.Now.AddHours(capacity * -1).IsNear(_prevDate, 60))
+                || DateTime.Now - _prevDate >= TimeSpan.FromHours(capacity))
             {
                 work.CheckInWork(_tfs);
                 return true;
@@ -191,111 +193,26 @@ namespace Gui.Helper
             return false;
         }
 
-        ///// <summary>
-        ///// Записываем в TFS всё, что запомнили
-        ///// </summary>
-        ///// <param name="collection"></param>
-        //private void WriteToTfs(WriteOffCollection collection)
-        //{
-        //    // Прохожу по всем незаписанным элементам
-        //    foreach (var item in collection.Manual)
-        //    {
-        //        try
-        //        {
-        //            if (_tfs.FindById(item.Id) is WorkItem task)
-        //            {
-        //                _tfs.WriteHours(task, (byte)item.Hours, true);
-        //            }
-        //            else
-        //            {
-        //                Trace.WriteLine($"Cannot find workitem - {item.Id}");
-        //            }
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            Trace.WriteLine(e);
-        //        }
-        //    }
+        private void SyncMyWorkItems()
+        {
+            List<WorkItem> added;
+            List<int> removed;
 
-        //    collection.Clear();
-        //}
+            using (var settings = Settings.Settings.Read())
+            {
+                var myItems = _tfs.GetMyWorkItems();
+                var newIds = myItems.Select(x => x.Id).ToList();
 
-        ///// <summary>
-        ///// Записываем все чекины, которые были созданы не программным образом
-        ///// </summary>
-        ///// <param name="settings"></param>
-        //private void SyncWriteOffs(Settings.Settings settings)
-        //{
-        //    // Получил список чекинов
-        //    var checkins = _tfs.GetCheckins(DateTime.Today, DateTime.Now);
+                added = myItems.Where(x => !settings.MyWorkItems.Contains(x.Id)).ToList();
+                removed = settings.MyWorkItems.Except(newIds).ToList();
 
-        //}
+                settings.MyWorkItems = new ObservableCollection<int>(newIds);
+            }
 
-        //private void TryEndWorkDay(Settings.Settings settings)
-        //{
-
-
-
-
-        //}
-
-        //private void TryEndWorkDay(Settings.Settings settings)
-        //{
-        //    var capacity = _tfs.GetCapacity();
-        //    var remembered = settings.CompletedWork.GetTotalHours();
-
-
-        //}
-
-        //private void WriteOffTasks()
-        //{
-        //    using (var settings = Settings.Settings.Read())
-        //    {
-        //        // Вытащили то, что не успели списать
-        //        var toWrite = settings.CompletedWork;
-        //        if (toWrite.IsNullOrEmpty())
-        //            return;
-
-        //        while (toWrite.Any())
-        //        {
-        //            // Вытаскиваем по первому элементу
-        //            var workitem = toWrite.First();
-
-        //            // Сразу удаляем
-        //            toWrite.Remove(workitem);
-
-        //            // Находим рабочий элемент
-        //            var item = _tfs.FindById(workitem.Id);
-        //            if (item == null)
-        //            {
-        //                Trace.WriteLine($"{nameof(SystemObserver)}.{nameof(WriteOffTasks)}:Cannot find task {workitem.Id}");
-        //                continue;
-        //            }
-
-        //            // И списываем указанное время
-        //            _tfs.WriteHours(item, (byte) workitem.Hours, true);
-        //        }
-
-        //        // Очищаем список незаписанной работы
-        //        settings.CompletedWork.Clear();
-        //    }
-        //}
-
-        //private void ScheduleWorkHour()
-        //{
-        //    using (var settings = Settings.Settings.Read())
-        //    {
-        //        var current = _requestItem?.Invoke();
-
-        //        if (current == null)
-        //        {
-        //            Trace.WriteLine($"{nameof(SystemObserver)}.{nameof(ScheduleWorkHour)}: Current task is null");
-        //            return;
-        //        }
-
-        //        settings.CompletedWork.ScheduleWork(current.Id, 1);
-        //    }
-        //}
+            // Вызываем события после записи настроек
+            ItemsAssigned?.Invoke(this, added);
+            ItemsRemoved?.Invoke(this, removed.Select(x => _tfs.FindById(x)).ToList());
+        }
 
         #endregion
     }

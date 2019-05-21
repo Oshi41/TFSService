@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Gui.Helper;
 using Mvvm;
 using Newtonsoft.Json;
@@ -27,6 +29,7 @@ namespace Gui.Settings
         private bool _changed;
         private ObservableCollection<string> _connections;
         private WriteOffCollection _completedWork;
+        private ObservableCollection<int> _myWorkItems;
 
         #endregion
 
@@ -36,6 +39,7 @@ namespace Gui.Settings
 
             CompletedWork = new WriteOffCollection();
             Connections = new ObservableCollection<string>();
+            MyWorkItems = new ObservableCollection<int>();
         }
 
         #region Properties
@@ -73,17 +77,7 @@ namespace Gui.Settings
         public WriteOffCollection CompletedWork
         {
             get => _completedWork;
-            set
-            {
-                if (value == _completedWork)
-                    return;
-
-                _completedWork.CollectionChanged -= OnCollectionChanged;
-                _completedWork = value;
-                _completedWork.CollectionChanged += OnCollectionChanged;
-
-                OnPropertyChanged();
-            }
+            set => Set(ref _completedWork, value);
         }
 
         /// <summary>
@@ -92,17 +86,16 @@ namespace Gui.Settings
         public ObservableCollection<string> Connections
         {
             get => _connections;
-            set
-            {
-                if (value == _connections)
-                    return;
+            set => Set(ref _connections, value);
+        }
 
-                _connections.CollectionChanged -= OnCollectionChanged;
-                _connections = value;
-                _connections.CollectionChanged += OnCollectionChanged;
-
-                OnPropertyChanged();
-            }
+        /// <summary>
+        /// Список рабочих элементов на мне
+        /// </summary>
+        public ObservableCollection<int> MyWorkItems
+        {
+            get => _myWorkItems;
+            set => Set(ref _myWorkItems, value);
         }
 
         [JsonIgnore]
@@ -140,6 +133,19 @@ namespace Gui.Settings
             Trace.WriteLine("Settings saved");
         }
 
+        private bool Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (!Equals(storage, value)
+                && storage is INotifyCollectionChanged old 
+                && value is INotifyCollectionChanged added)
+            {
+                old.CollectionChanged -= OnCollectionChanged;
+                added.CollectionChanged += OnCollectionChanged;
+            }
+
+            return SetProperty(ref storage, value, propertyName);
+        }
+
         protected override bool SetProperty<T>(ref T storage, T value, string propertyName = null)
         {
             var result = base.SetProperty(ref storage, value, propertyName);
@@ -157,6 +163,7 @@ namespace Gui.Settings
         {
             _changed = true;
         } 
+
 
         #endregion
     }
