@@ -7,10 +7,10 @@ namespace Gui.ViewModels.DialogViewModels
 {
     class ChooseTaskViewModel : BindableExtended
     {
-        private readonly ITfs _tfs;
+        private readonly ITfsApi _tfs;
         private WorkItemSearcher _searcher;
 
-        public ChooseTaskViewModel(ITfs tfs)
+        public ChooseTaskViewModel(ITfsApi tfs)
         {
             _tfs = tfs;
 

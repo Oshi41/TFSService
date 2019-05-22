@@ -4,6 +4,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace TfsAPI.Interfaces
 {
+    [Obsolete]
     public interface IItemTracker : IResumable, IDisposable
     {
         /// <summary>

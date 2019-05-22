@@ -15,8 +15,6 @@ namespace Gui.ViewModels.DialogViewModels
     {
         #region Fields
 
-        private ITfs _tfs;
-
         private string _text;
         private IList<string> _rememberedConnections;
         private readonly ActionArbiterAsync _arbiter = new ActionArbiterAsync();
@@ -104,41 +102,16 @@ namespace Gui.ViewModels.DialogViewModels
 
         private async Task Connect()
         {
-            await _arbiter.DoAsync(() =>
-            {
-                try
-                {
-                    _tfs = new Tfs(Text);
-                }
-                catch (Exception e)
-                {
-                    Trace.Write(e);
-                }
-            });
+            var connected = await TfsApi.CheckConnection(Text);
 
             SafeExecute(() =>
             {
-                IsConnected = _tfs != null;
+                IsConnected = connected;
 
                 // необходимо для валидации данных
                 OnPropertyChanged(nameof(Text));
                 SubmitCommand.RaiseCanExecuteChanged();
             });
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// После удачного подключения возвращает TFS API
-        /// </summary>
-        /// <returns></returns>
-        public ITfs GetConnection()
-        {
-            return IsConnected == true
-                ? _tfs
-                : null;
         }
 
         #endregion

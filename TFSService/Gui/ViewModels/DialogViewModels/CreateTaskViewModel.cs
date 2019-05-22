@@ -7,7 +7,7 @@ namespace Gui.ViewModels.DialogViewModels
 {
     class CreateTaskViewModel : BindableExtended
     {
-        private readonly ITfs _tfs;
+        private readonly ITfsApi _tfs;
         private string _title;
         private uint _hours;
 
@@ -25,7 +25,7 @@ namespace Gui.ViewModels.DialogViewModels
 
         public WorkItemSearcher Searcher { get; set; }
 
-        public CreateTaskViewModel(ITfs tfs)
+        public CreateTaskViewModel(ITfsApi tfs)
         {
             _tfs = tfs;
             Searcher = new WorkItemSearcher(tfs,

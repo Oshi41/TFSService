@@ -12,7 +12,7 @@ namespace Gui.ViewModels.DialogViewModels
     {
         #region Fields
 
-        private readonly ITfs _api;
+        private readonly ITfsApi _api;
         private readonly TimedAction<string, IList<WorkItemVm>> _action;
 
         private WorkItemVm _selected;
@@ -31,7 +31,7 @@ namespace Gui.ViewModels.DialogViewModels
         /// Базовый конструктор
         /// </summary>
         /// <param name="api"></param>
-        public WorkItemSearcher(ITfs api)
+        public WorkItemSearcher(ITfsApi api)
         {
             _api = api;
             _action = new TimedAction<string, IList<WorkItemVm>>(PerformSearch);
@@ -45,7 +45,7 @@ namespace Gui.ViewModels.DialogViewModels
         /// </summary>
         /// <param name="api"></param>
         /// <param name="types">Типы элементов, который хочу вывести. Cм. <see cref="WorkItemTypes"/></param>
-        public WorkItemSearcher(ITfs api, params string[] types)
+        public WorkItemSearcher(ITfsApi api, params string[] types)
             : this(api)
         {
             _types = types;

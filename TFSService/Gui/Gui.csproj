@@ -244,6 +244,7 @@
     <Compile Include="ViewModels\DialogViewModels\ChooseTaskViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\CreateTaskViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\FirstConnectionViewModel.cs" />
+    <Compile Include="ViewModels\DialogViewModels\MonthScheduleViewModel.cs" />
     <Compile Include="ViewModels\WorkItemVm.cs" />
     <Compile Include="View\ChooseTaskView.xaml.cs">
       <DependentUpon>ChooseTaskView.xaml</DependentUpon>

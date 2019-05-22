@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.TeamFoundation.VersionControl.Client;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using TfsAPI.Constants;
 
 namespace TfsAPI.Interfaces
 {
-    [Obsolete]
-    public interface ITfs : IItemTracker, IDisposable
+    public interface ITfsApi
     {
-        /// <summary>
-        /// Пользователь закоммитил изменения
-        /// </summary>
-        event EventHandler<CommitCheckinEventArgs> Checkin;
-
         /// <summary>
         /// Списываю часы в указанный таск
         /// </summary>

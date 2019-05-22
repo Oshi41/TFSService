@@ -18,11 +18,12 @@ namespace Gui.Helper
     /// <summary>
     /// Класс, обозревающий состояние сессии.
     /// </summary>
+    [Obsolete]
     class Observer : ISystemObserver
     {
         #region Fields
 
-        private readonly ITfs _tfs;
+        private readonly ITfsApi _tfs;
         private readonly Func<WorkItem> _requestItem;
         private readonly Timer _timer;
 
@@ -38,7 +39,7 @@ namespace Gui.Helper
         #endregion
 
         /// <param name="requestItem">Возвращает WorkItem, для которого будут списываться часы </param>
-        public Observer(ITfs tfs, Func<WorkItem> requestItem)
+        public Observer(ITfsApi tfs, Func<WorkItem> requestItem)
         {
             _tfs = tfs;
             _requestItem = requestItem;

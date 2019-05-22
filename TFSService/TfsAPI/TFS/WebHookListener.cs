@@ -11,6 +11,7 @@ using TfsAPI.Interfaces;
 
 namespace TfsAPI.TFS
 {
+    [Obsolete]
     public class WebHookListener : IItemTracker
     {
         #region Fields

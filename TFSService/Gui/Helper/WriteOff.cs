@@ -107,7 +107,7 @@ namespace Gui.Helper
         /// <summary>
         /// Записываем всю работу в TFS
         /// </summary>
-        public void CheckInWork(ITfs tfs)
+        public void CheckInWork(ITfsApi tfs)
         {
             // Стянул свежие чекины
             SyncCheckins(tfs);
@@ -144,7 +144,7 @@ namespace Gui.Helper
         /// Проверяем, записали ли чекины от пользователя
         /// </summary>
         /// <param name="tfs"></param>
-        public void SyncCheckins(ITfs tfs)
+        public void SyncCheckins(ITfsApi tfs)
         {
             var checkins = tfs.GetCheckins(DateTime.Today, DateTime.Now);
 

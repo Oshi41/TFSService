@@ -2,122 +2,41 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Common;
-using Microsoft.TeamFoundation.ProcessConfiguration.Client;
-using Microsoft.TeamFoundation.Server;
-using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.VisualStudio.Services.Common;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
-using Field = Microsoft.TeamFoundation.WorkItemTracking.Client.Field;
 
 namespace TfsAPI.TFS
 {
-    [Obsolete]
-    public class Tfs : ITfs
+    public class TfsApi : ITfsApi
     {
         #region Fields
 
-        private readonly TfsTeamProjectCollection _project;
-        private readonly ILinking _linking;
+        protected readonly TfsTeamProjectCollection _project;
         private readonly WorkItemStore _itemStore;
-        private readonly VersionControlServer _versionControl;
-        private readonly TfsTeamService _teamService;
-        private TeamSettingsConfigurationService _teamConfiguration;
-        private ICommonStructureService4 _structureService;
-
-        private readonly WebHookListener _listener;
-
-        private bool _paused;
+        private readonly ILinking _linking;
 
         #endregion
 
-        #region Events
-
-        public event EventHandler<CommitCheckinEventArgs> Checkin;
-
-        public event EventHandler<List<WorkItem>> NewItems
+        public TfsApi(string url)
         {
-            add => _listener.NewItems += value;
-            remove => _listener.NewItems -= value;
-        }
-
-        public event EventHandler<Dictionary<WorkItem, List<WorkItemEventArgs>>> ItemsChanged
-        {
-            add => _listener.ItemsChanged += value;
-            remove => _listener.ItemsChanged -= value;
-        }
-
-
-        #endregion
-
-        public Tfs(string uri)
-        {
-            _project = new TfsTeamProjectCollection(new Uri(uri));
+            _project = new TfsTeamProjectCollection(new Uri(url));
 
             Trace.WriteLine("Connected to " + _project.Name);
 
-            _versionControl = _project.GetService<VersionControlServer>();
             _itemStore = _project.GetService<WorkItemStore>();
             _linking = _project.GetService<ILinking>();
-            _teamService = _project.GetService<TfsTeamService>();
-            _teamConfiguration = _project.GetService<TeamSettingsConfigurationService>();
-            _structureService = _project.GetService<ICommonStructureService4>();
-            _listener = new WebHookListener(GetMyWorkItems);
         }
 
-        #region Private methods
-
-        private void Subscribe()
-        {
-            _versionControl.CommitCheckin += FireCheckinEvent;
-            
-            _listener.Start();
-        }
-
-        private void Unsubscribe()
-        {
-            _versionControl.CommitCheckin -= FireCheckinEvent;
-            Checkin.Unsubscribe();
-        }
-
-        #endregion
-
-        #region handlers
-
-        private void FireCheckinEvent(object sender, CommitCheckinEventArgs e)
-        {
-            if (_paused)
-                return;
-
-            Trace.WriteLine($"Chageset ID: {e.ChangesetId}, created by {e.Workspace.DisplayName} at {e.CreationDate:G}");
-
-            Checkin?.Invoke(sender, e);
-        }
-
-        #endregion
-
-        #region IDisposable
-
-        public void Dispose()
-        {
-            Unsubscribe();
-
-            _project.Dispose();
-            _listener?.Dispose();
-        }
-
-        #endregion
-
-        #region ITfs
+        #region ITfsApi
         
-        /// <inheritdoc cref="ITfs.WriteHours"/>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="Exception"></exception>
         public Revision WriteHours(WorkItem item, byte hours, bool setActive)
         {
             item.AddHours(hours, setActive);
@@ -135,7 +54,6 @@ namespace TfsAPI.TFS
                 .FirstOrDefault();
         }
 
-        /// <inheritdoc cref="ITfs.GetAssociateItems"/>
         public IList<WorkItem> GetAssociateItems(int changeset)
         {
             var result = new List<WorkItem>();
@@ -200,8 +118,8 @@ namespace TfsAPI.TFS
             if (!allowedTypes.IsNullOrEmpty())
             {
                 quarry += " and (" +
-                                    $"{string.Join("or ", allowedTypes.Select(x => $"{Sql.Fields.WorkItemType} = '{x}'"))}" +
-                                    $")";
+                          $"{string.Join("or ", allowedTypes.Select(x => $"{Sql.Fields.WorkItemType} = '{x}'"))}" +
+                          $")";
             }
 
             var items = _itemStore.Query(quarry);
@@ -213,93 +131,7 @@ namespace TfsAPI.TFS
 
         public int GetCapacity()
         {
-            //var workClient = _project.GetClient<WorkHttpClient>();
-
-            //var myTeams = _teamService.QueryTeams(_project.AuthorizedIdentity.Descriptor);
-            //var projects = _structureService.ListProjects();
-
-            //foreach (var team in myTeams)
-            //{
-            //    var config = _teamConfiguration.GetTeamConfigurations(new[] {team.Identity.TeamFoundationId}).FirstOrDefault();
-            //    if (config == null)
-            //        continue;
-
-            //    foreach (var project in projects)
-            //    {
-            //        var iterationID = workClient
-            //            .GetTeamIterationsAsync(new TeamContext(project.Name))
-            //            .Result;
-
-            //        var url = $"{_project.ConfigurationServer.Name}/{team.Name}/{project.Name}" +
-            //                  $"/_apis/work/teamsettings/iterations/{iterationID}" +
-            //                  "capacities?api-version=4.0";
-            //    }
-            //}
-
-            //var workClient = _project.GetClient<WorkHttpClient>();
-
-            //foreach (Project project in _itemStore.Projects)
-            //{
-            //    var iterations = workClient.GetTeamIterationsAsync(new TeamContext(project.Name)).Result;
-            //    var current = iterations.FirstOrDefault(x => x.IsCurrent());
-
-            //    var uri = current.Path;
-            //}
-
-            //var myTeams = _teamService.QueryTeams(_project.AuthorizedIdentity.Descriptor);
-            //int capacity = 0;
-
-
-            //var configs = _teamConfiguration.GetTeamConfigurations(myTeams.Select(x => x.Identity.TeamFoundationId));
-
-            //foreach (var config in configs)
-            //{
-            //    var name = config.TeamName;
-            //    var iteractions = config.TeamSettings.CurrentIterationPath;
-            //}
-
-
-
-            //var projects = _itemStore.Projects.OfType<Project>().ToList();
-            //int capacity = 0;
-
-            //foreach (var project in projects)
-            //{
-            //    var team = _teamService.QueryTeams(project.Uri.ToString()).FirstOrDefault();
-            //    if (team == null)
-            //        continue;
-
-            //    var config = _teamConfiguration.GetTeamConfigurations(new[] {team.Identity.TeamFoundationId})
-            //        .FirstOrDefault();
-
-            //    if (config == null)
-            //        continue;
-
-            //    foreach (var iteration in config.TeamSettings.IterationPaths)
-            //    {
-            //        var projectNameIndex = iteration.IndexOf("\\", 2);
-            //        var fullPath = iteration.Insert(projectNameIndex, "\\Iteration");
-            //        var nodeInfo = _smth.GetNodeFromPath(fullPath);
-            //    }
-            //}
-            //var team = _teamService.QueryTeams(_project.Uri.ToString()).FirstOrDefault();
-
-            //if (team != null)
-            //{
-            //    var configs = _teamConfiguration.GetTeamConfigurationsForUser(
-            //        .Select(x => x.Uri.ToString())).ToList();
-
-            //    if (configs.Any())
-            //    {
-            //        foreach (var config in configs)
-            //        {
-            //            var iterations = config
-            //                .TeamSettings
-            //                .IterationPaths
-            //                .Select(x => )
-            //        }
-            //    }
-            //}
+            // TODO scan inet for answer!!!
 
             return 7;
         }
@@ -464,25 +296,23 @@ namespace TfsAPI.TFS
 
         #endregion
 
-        #region IItemTracker
-
-        public void Start()
+        public static async Task<bool> CheckConnection(string url)
         {
-            _paused = false;
-            Subscribe();
+            bool CheckConnectSync()
+            {
+                try
+                {
+                    var proj = new TfsTeamProjectCollection(new Uri(url));
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    Trace.WriteLine(e);
+                    return false;
+                }
+            }
 
-            Trace.WriteLine("Starting observe work items changes");
+            return await Task.Run((Func<bool>) CheckConnectSync);
         }
-
-        public void Pause()
-        {
-            _paused = true;
-
-            _listener.Pause();
-
-            Trace.WriteLine("Pausing observe work items changes");
-        }
-
-        #endregion
     }
 }

@@ -220,10 +220,14 @@
     <Compile Include="Interfaces\IItemTracker.cs" />
     <Compile Include="Interfaces\IResumable.cs" />
     <Compile Include="Interfaces\ITfs.cs" />
+    <Compile Include="Interfaces\ITfsApi.cs" />
+    <Compile Include="Interfaces\ITFsObservable.cs" />
     <Compile Include="TFS\Tfs.cs" />
     <Compile Include="Constants\WorkItems.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extentions\WorkItemExtensions.cs" />
+    <Compile Include="TFS\TfsApi.cs" />
+    <Compile Include="TFS\TfsObservable.cs" />
     <Compile Include="TFS\WebHookListener.cs" />
   </ItemGroup>
   <ItemGroup>
