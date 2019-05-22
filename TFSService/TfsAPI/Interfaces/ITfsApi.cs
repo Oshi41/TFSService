@@ -65,9 +65,9 @@ namespace TfsAPI.Interfaces
         /// <summary>
         /// Возвращает список ревизий рабочих элементов с кол-вом их списанных часов
         /// </summary>
-        /// <param name="from">Начиная с...</param>
-        /// <param name="to">Заканчивая...</param>
+        /// <param name="from">Начиная с указанной даты, включая её</param>
+        /// <param name="to">Заканчивая указанной датой, включая ей</param>
         /// <returns></returns>
-        SortedList<Revision, int> GetCheckins(DateTime from, DateTime to);
+        List<KeyValuePair<Revision, int>> GetCheckins(DateTime from, DateTime to);
     }
 }

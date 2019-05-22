@@ -229,6 +229,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include=".Tests\TestDialogViewModel.cs" />
+    <Compile Include="Converters\HoursColorConverter.cs" />
     <Compile Include="Converters\NoDataErrorConverter.cs" />
     <Compile Include="Converters\IdWorkitemConverter.cs" />
     <Compile Include="Converters\InvertBoolConverter.cs" />
@@ -257,6 +258,9 @@
     </Compile>
     <Compile Include="View\FirstConnectView.xaml.cs">
       <DependentUpon>FirstConnectView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ScheduleView.xaml.cs">
+      <DependentUpon>ScheduleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\WorkItemSearcherView.xaml.cs">
       <DependentUpon>WorkItemSearcherView.xaml</DependentUpon>
@@ -298,6 +302,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\ScheduleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\WorkItemSearcherView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

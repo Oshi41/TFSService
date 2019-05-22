@@ -219,9 +219,9 @@ namespace TfsAPI.TFS
             return task;
         }
 
-        public SortedList<Revision, int> GetCheckins(DateTime from, DateTime to)
+        public List<KeyValuePair<Revision, int>> GetCheckins(DateTime from, DateTime to)
         {
-            var result = new SortedList<Revision, int>();
+            var result = new List<KeyValuePair<Revision, int>>();
 
             if (from > to)
                 throw new Exception($"{nameof(from)} should be earlier than {nameof(to)}");
@@ -229,8 +229,8 @@ namespace TfsAPI.TFS
             var querry = $"select * from {Sql.Tables.WorkItems} " +
                          $"where {Sql.Fields.WorkItemType} = '{WorkItemTypes.Task}' " +
                          $"and {Sql.WasEverChangedByMeCondition} " +
-                         $"and {Sql.Fields.ChangedDate} >= '{from.ToShortDateString()}' " +
-                         $"and {Sql.Fields.ChangedDate} <= '{to.ToShortDateString()}' ";
+                         $"and {Sql.Fields.ChangedDate} >= '{$"{from:MM/dd/yyyy}".Replace(".", "/")}' "/* +
+                         $"and {Sql.Fields.ChangedDate} <= '{$"{to:MM/dd/yyyy}".Replace(".", "/")}' "*/;
 
             var tasks = _itemStore.Query(querry);
 
@@ -287,7 +287,7 @@ namespace TfsAPI.TFS
                         continue;
                     }
 
-                    result.Add(revision, delta);
+                    result.Add(new KeyValuePair<Revision, int>(revision, delta));
                 }
             }
 

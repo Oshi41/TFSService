@@ -25,4 +25,8 @@
         <view:CreateTaksView/>
     </DataTemplate>
     
+    <DataTemplate DataType="{x:Type dialogViewModels:CheckinHistoryViewModel}">
+        <view:ScheduleView/>
+    </DataTemplate>
+    
 </ResourceDictionary>

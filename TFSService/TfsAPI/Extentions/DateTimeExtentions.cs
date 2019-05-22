@@ -16,6 +16,14 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
+        /// Даты из одного месяца
+        /// </summary>
+        public static bool SameMonth(this DateTime x, DateTime y)
+        {
+            return x.Year == y.Year && x.Month == y.Month;
+        }
+
+        /// <summary>
         /// Даты приблизительно равны, в пределах нескольких минут
         /// </summary>
         /// <param name="source">С каким временем сверяем</param>

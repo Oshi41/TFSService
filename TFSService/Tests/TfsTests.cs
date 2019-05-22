@@ -141,5 +141,29 @@ namespace Tests
                 Trace.WriteLine($"Yesterday was - {checkins.Sum(x => x.Value)}");
             }
         }
+
+        [TestMethod]
+        public void GetHours5()
+        {
+            var date = new DateTime(2019, 5, 6);
+            var hours = 13;
+            var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+
+            var checkins = tfs.GetCheckins(date.AddDays(-1), date.AddDays(1));
+
+            Assert.AreEqual(checkins.Select(x => x.Value).Sum(), hours);
+        }
+
+        [TestMethod]
+        public void GetHours21()
+        {
+            var date = new DateTime(2019, 5, 21);
+            var hours = 14;
+            var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+
+            var checkins = tfs.GetCheckins(date, date);
+
+            Assert.AreEqual(checkins.Select(x => x.Value).Sum(), hours);
+        }
     }
 }

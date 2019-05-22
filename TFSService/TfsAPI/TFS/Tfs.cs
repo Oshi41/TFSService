@@ -397,8 +397,8 @@ namespace TfsAPI.TFS
             var querry = $"select * from {Sql.Tables.WorkItems} " +
                          $"where {Sql.Fields.WorkItemType} = '{WorkItemTypes.Task}' " +
                          $"and {Sql.WasEverChangedByMeCondition} " +
-                         $"and {Sql.Fields.ChangedDate} >= '{from.ToShortDateString()}' " +
-                         $"and {Sql.Fields.ChangedDate} <= '{to.ToShortDateString()}' ";
+                         $"and {Sql.Fields.ChangedDate} >= '{$"{from:MM/dd/yyyy}".Replace(".", "/")}' " +
+                         $"and {Sql.Fields.ChangedDate} <= '{$"{to:MM/dd/yyyy}".Replace(".", "/")}' ";
 
             var tasks = _itemStore.Query(querry);
 
