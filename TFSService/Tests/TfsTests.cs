@@ -16,7 +16,7 @@ namespace Tests
         [TestMethod]
         public void GetCapacity()
         {
-            using (var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"))
+            var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
             {
                 var cap = tfs.GetCapacity();
             }
@@ -25,7 +25,7 @@ namespace Tests
         //[TestMethod]
         //public void GetLatestTask()
         //{
-        //    using (var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"))
+        //    var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
         //    {
         //        var latest = tfs.GetMyTasks().OrderByDescending(x => x.CreatedDate).FirstOrDefault();
         //    }
@@ -34,7 +34,7 @@ namespace Tests
         //[TestMethod]
         //public void TryWriteHour()
         //{
-        //    using (var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"))
+        //    var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
         //    {
         //        var latest = tfs.GetMyTasks().OrderByDescending(x => x.CreatedDate).FirstOrDefault();
 
@@ -64,7 +64,7 @@ namespace Tests
         [TestMethod]
         public void GetLinkedItems()
         {
-            using (var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"))
+            var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
             {
                 var id = 40952;
 
@@ -76,7 +76,7 @@ namespace Tests
         [TestMethod]
         public void GetMyItems()
         {
-            using (var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"))
+            var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
             {
                 var all = tfs.GetMyWorkItems();
             }
@@ -107,7 +107,7 @@ namespace Tests
         [TestMethod]
         public void GetTaskLinks()
         {
-            using (var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"))
+            var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
             {
                 var items = tfs.GetMyWorkItems().Where(x => x.Type.Name.Equals(WorkItemTypes.Task)).ToList();
 
@@ -126,7 +126,7 @@ namespace Tests
         [TestMethod]
         public void CheckMyWriteOff()
         {
-            using (var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"))
+            var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
             {
                 var from = DateTime.Today;
 

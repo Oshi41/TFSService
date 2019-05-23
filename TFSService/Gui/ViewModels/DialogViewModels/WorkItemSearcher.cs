@@ -8,7 +8,7 @@ using TfsAPI.Interfaces;
 
 namespace Gui.ViewModels.DialogViewModels
 {
-    class WorkItemSearcher : BindableExtended
+    public class WorkItemSearcher : BindableExtended
     {
         #region Fields
 

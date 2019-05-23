@@ -99,6 +99,8 @@ namespace TfsAPI.TFS
         private void OnCheckIn(object sender, CommitCheckinEventArgs e)
         {
             Trace.WriteLine($"Changeset {e.ChangesetId} was made");
+
+            Checkin?.Invoke(this, e);
         }
 
         private void OnSessionSwitched(object sender, SessionSwitchEventArgs e)

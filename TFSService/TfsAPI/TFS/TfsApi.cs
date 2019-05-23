@@ -223,14 +223,20 @@ namespace TfsAPI.TFS
         {
             var result = new List<KeyValuePair<Revision, int>>();
 
-            if (from > to)
+            // Рабочие элементы в TFS находятся по дате
+            // Т.к. TFS некорректно отрабатывает с ">=",
+            // работаем с ">". Для этого нужно исключить переданный день
+            from = from.AddDays(-1).Date;
+            to = to.AddDays(1).Date;
+
+            if (from >= to)
                 throw new Exception($"{nameof(from)} should be earlier than {nameof(to)}");
 
             var querry = $"select * from {Sql.Tables.WorkItems} " +
                          $"where {Sql.Fields.WorkItemType} = '{WorkItemTypes.Task}' " +
                          $"and {Sql.WasEverChangedByMeCondition} " +
-                         $"and {Sql.Fields.ChangedDate} >= '{$"{from:MM/dd/yyyy}".Replace(".", "/")}' "/* +
-                         $"and {Sql.Fields.ChangedDate} <= '{$"{to:MM/dd/yyyy}".Replace(".", "/")}' "*/;
+                         $"and {Sql.Fields.ChangedDate} > '{$"{from:MM/dd/yyyy}".Replace(".", "/")}' " +
+                         $"and {Sql.Fields.ChangedDate} < '{$"{to:MM/dd/yyyy}".Replace(".", "/")}' ";
 
             var tasks = _itemStore.Query(querry);
 
@@ -292,6 +298,15 @@ namespace TfsAPI.TFS
             }
 
             return result;
+        }
+
+        public bool IsAssignedToMe(WorkItem item)
+        {
+            if (item == null)
+                return false;
+
+            return item.Fields[CoreField.AssignedTo]?.Value is string owner
+                   && string.Equals(owner, _itemStore.UserDisplayName);
         }
 
         #endregion

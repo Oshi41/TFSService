@@ -1,11 +1,12 @@
 ﻿using Gui.Helper;
+using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Mvvm.Commands;
 using TfsAPI.Constants;
 using TfsAPI.Interfaces;
 
 namespace Gui.ViewModels.DialogViewModels
 {
-    class CreateTaskViewModel : BindableExtended
+    public class CreateTaskViewModel : BindableExtended
     {
         private readonly ITfsApi _tfs;
         private string _title;
@@ -25,6 +26,8 @@ namespace Gui.ViewModels.DialogViewModels
 
         public WorkItemSearcher Searcher { get; set; }
 
+        public WorkItem CreatedItem { get; private set; }
+
         public CreateTaskViewModel(ITfsApi tfs)
         {
             _tfs = tfs;
@@ -43,7 +46,7 @@ namespace Gui.ViewModels.DialogViewModels
 
         private void CreateTask()
         {
-            _tfs.CreateTask(Title, Searcher.Selected, Hours);
+            CreatedItem = _tfs.CreateTask(Title, Searcher.Selected, Hours);
         }
 
         protected override string ValidateProperty(string prop)

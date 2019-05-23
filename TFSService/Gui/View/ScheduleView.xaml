@@ -16,8 +16,8 @@
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             
             <converters:HoursColorConverter x:Key="HoursColorConverter"
-                                            NormalColor="LightGreen"
-                                            OverflowColor="LightSalmon"
+                                            NormalColor="Transparent"
+                                            OverflowColor="DarkGreen"
                                             LessColor="IndianRed"
                                             ZeroColor="DarkRed"/>
 

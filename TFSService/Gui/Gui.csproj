@@ -236,7 +236,6 @@
     <Compile Include="Converters\SwitchConverter.cs" />
     <Compile Include="Helper\ActionArbiter.cs" />
     <Compile Include="Helper\ObservableCommand.cs" />
-    <Compile Include="Helper\Observer.cs" />
     <Compile Include="Helper\TimedAction.cs" />
     <Compile Include="Helper\WindowManager.cs" />
     <Compile Include="Helper\WriteOff.cs" />
@@ -246,6 +245,7 @@
     <Compile Include="ViewModels\DialogViewModels\CreateTaskViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\FirstConnectionViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\MonthScheduleViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\WorkItemVm.cs" />
     <Compile Include="View\ChooseTaskView.xaml.cs">
       <DependentUpon>ChooseTaskView.xaml</DependentUpon>

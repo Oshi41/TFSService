@@ -17,6 +17,20 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
+        /// Доступен ли данный таск для списания времени
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public static bool IsTaskAvailable(this WorkItem item)
+        {
+            return item.IsTask()
+                   && (
+                       item.IsActive()
+                       || string.Equals(item?.State, WorkItemStates.New)
+                   );
+        }
+
+        /// <summary>
         /// Является ли данный рабочий элемент таском
         /// </summary>
         /// <param name="item">Рабочий элемент</param>

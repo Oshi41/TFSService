@@ -5,7 +5,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace TfsAPI.Interfaces
 {
-    public interface ITFsObservable : IResumable
+    public interface ITFsObservable : ITfsApi, IResumable
     {
         /// <summary>
         /// Пользователь закоммитил изменения

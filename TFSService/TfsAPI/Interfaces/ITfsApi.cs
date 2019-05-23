@@ -69,5 +69,12 @@ namespace TfsAPI.Interfaces
         /// <param name="to">Заканчивая указанной датой, включая ей</param>
         /// <returns></returns>
         List<KeyValuePair<Revision, int>> GetCheckins(DateTime from, DateTime to);
+
+        /// <summary>
+        /// Переданный рабочий элемент ассоциирован со мной
+        /// </summary>
+        /// <param name="item">Рабочий элемент</param>
+        /// <returns></returns>
+        bool IsAssignedToMe(WorkItem item);
     }
 }

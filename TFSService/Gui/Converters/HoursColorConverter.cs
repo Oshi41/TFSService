@@ -8,10 +8,50 @@ namespace Gui.Converters
 {
     class HoursColorConverter : IValueConverter
     {
-        public Brush OverflowColor { get; set; }
-        public Brush NormalColor { get; set; }
-        public Brush LessColor { get; set; }
-        public Brush ZeroColor { get; set; }
+        private Brush _overflowColor;
+        private Brush _normalColor;
+        private Brush _lessColor;
+        private Brush _zeroColor;
+
+        public Brush OverflowColor
+        {
+            get => _overflowColor;
+            set
+            {
+                _overflowColor = value.Clone();
+                _overflowColor.Opacity = 0.5;
+            }
+        }
+
+        public Brush NormalColor
+        {
+            get => _normalColor;
+            set
+            {
+                _overflowColor = value.Clone();
+                _normalColor.Opacity = 0.5;
+            }
+        }
+
+        public Brush LessColor
+        {
+            get => _lessColor;
+            set
+            {
+                _overflowColor = value.Clone();
+                _lessColor.Opacity = 0.5;
+            }
+        }
+
+        public Brush ZeroColor
+        {
+            get => _zeroColor;
+            set
+            {
+                _overflowColor = value.Clone();
+                _zeroColor.Opacity = 0.5;
+            }
+        }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

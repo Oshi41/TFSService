@@ -94,13 +94,13 @@ namespace Gui.ViewModels.DialogViewModels
 
         #region Command handlers
 
-        private bool CanConnect()
+        public bool CanConnect()
         {
             return _arbiter.IsFree()
                    && !string.IsNullOrWhiteSpace(Text);
         }
 
-        private async Task Connect()
+        public async Task Connect()
         {
             var connected = await TfsApi.CheckConnection(Text);
 
