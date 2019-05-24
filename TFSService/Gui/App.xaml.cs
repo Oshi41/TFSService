@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Navigation;
 using Gui.Helper;
 using Gui.Tests;
+using Gui.ViewModels.Notifications;
 
 namespace Gui
 {
@@ -22,9 +23,13 @@ namespace Gui
         
         public void RunTests()
         {
-            WindowManager.ShowDialog(new TestDialogViewModel(true, true), "Wait for error", width: 300, height: 200);
+            WindowManager.ShowBaloon(new WriteOffBaloonViewModel("Таймер списания времени"));
 
-            WindowManager.ShowDialog(new TestDialogViewModel(false, false), "No error no awaiting", width: 300, height: 200);
+            // App.Current.Shutdown();
+
+            //WindowManager.ShowDialog(new TestDialogViewModel(true, true), "Wait for error", width: 300, height: 200);
+
+            //WindowManager.ShowDialog(new TestDialogViewModel(false, false), "No error no awaiting", width: 300, height: 200);
         }
 #endif
 

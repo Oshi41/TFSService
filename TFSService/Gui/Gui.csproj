@@ -219,6 +219,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="ToastNotifications, Version=2.5.1.0, Culture=neutral, PublicKeyToken=e89d9d7314a7c797, processorArchitecture=MSIL">
+      <HintPath>..\packages\ToastNotifications.2.5.1\lib\net40\ToastNotifications.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -246,6 +249,8 @@
     <Compile Include="ViewModels\DialogViewModels\FirstConnectionViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\MonthScheduleViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\Notifications\BindableNotificationBase.cs" />
+    <Compile Include="ViewModels\Notifications\WriteOffBaloonViewModel.cs" />
     <Compile Include="ViewModels\WorkItemVm.cs" />
     <Compile Include="View\ChooseTaskView.xaml.cs">
       <DependentUpon>ChooseTaskView.xaml</DependentUpon>
@@ -258,6 +263,9 @@
     </Compile>
     <Compile Include="View\FirstConnectView.xaml.cs">
       <DependentUpon>FirstConnectView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Notifications\WriteOffNotificationView.xaml.cs">
+      <DependentUpon>WriteOffNotificationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ScheduleView.xaml.cs">
       <DependentUpon>ScheduleView.xaml</DependentUpon>
@@ -302,6 +310,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\Notifications\WriteOffNotificationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ScheduleView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

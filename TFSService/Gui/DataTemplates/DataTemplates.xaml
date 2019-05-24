@@ -3,7 +3,9 @@
                     xmlns:client="clr-namespace:Microsoft.TeamFoundation.WorkItemTracking.Client;assembly=Microsoft.TeamFoundation.WorkItemTracking.Client"
                     xmlns:view="clr-namespace:Gui.View"
                     xmlns:viewModels="clr-namespace:Gui.ViewModels"
-                    xmlns:dialogViewModels="clr-namespace:Gui.ViewModels.DialogViewModels">
+                    xmlns:dialogViewModels="clr-namespace:Gui.ViewModels.DialogViewModels"
+                    xmlns:notifications="clr-namespace:Gui.ViewModels.Notifications"
+                    xmlns:baloonVms="clr-namespace:Gui.View.Notifications">
     
     <DataTemplate DataType="{x:Type viewModels:WorkItemVm}">
         <view:WorkItemView DataContext="{Binding Item}"/>
@@ -27,6 +29,10 @@
     
     <DataTemplate DataType="{x:Type dialogViewModels:CheckinHistoryViewModel}">
         <view:ScheduleView/>
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type notifications:WriteOffBaloonViewModel}">
+        <baloonVms:WriteOffNotificationView/>
     </DataTemplate>
     
 </ResourceDictionary>
