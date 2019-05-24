@@ -73,6 +73,10 @@ namespace TfsAPI.TFS
 
         public void Start()
         {
+            // Уже работаем
+            if (!_paused)
+                return;
+
             _paused = false;
 
             _versionControl.CommitCheckin += OnCheckIn;
@@ -81,6 +85,10 @@ namespace TfsAPI.TFS
 
         public void Pause()
         {
+            // Уже остановлены
+            if (_paused)
+                return;
+
             _paused = true;
 
             _versionControl.CommitCheckin -= OnCheckIn;

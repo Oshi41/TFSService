@@ -17,7 +17,7 @@ namespace Gui.Helper
         /// <summary>
         /// ID раочего элемента
         /// </summary>
-        public int Id { get;  }
+        public int Id { get; }
 
         /// <summary>
         /// Кол-во списанных часов
@@ -67,7 +67,7 @@ namespace Gui.Helper
         public WriteOff(int id, int hours)
             : this(id, hours, DateTime.Now, false, false)
         {
-            
+
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Gui.Helper
         public WriteOff(int id, int hours, DateTime time)
             : this(id, hours, time, true, true)
         {
-            
+
         }
 
         public void Increase(int hours)
@@ -91,7 +91,7 @@ namespace Gui.Helper
     public class WriteOffCollection : ObservableCollection<WriteOff>
     {
         #region Public methods
-                /// <summary>
+        /// <summary>
         /// Прошел час штатной работы программы
         /// </summary>
         /// <param name="id"></param>
@@ -102,42 +102,6 @@ namespace Gui.Helper
             Add(item);
 
             Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(ScheduleWork)}: Hour scheduled at {item.Time.ToShortTimeString()}");
-        }
-
-        /// <summary>
-        /// Записываем всю работу в TFS
-        /// </summary>
-        public void CheckInWork(ITfsApi tfs)
-        {
-            // Стянул свежие чекины
-            SyncCheckins(tfs);
-
-            UpdateByCapacity(tfs.GetCapacity());
-
-            var manual = Merge(GetManual(this));
-
-            foreach (var item in manual)
-            {
-                try
-                {
-                    var revision = tfs.WriteHours(tfs.FindById(item.Id), (byte) item.Hours, true);
-
-                    RemoveAll(x => x.Id == item.Id);
-
-                    if (revision != null)
-                    {
-                        Add(new WriteOff(revision.WorkItem.Id,
-                            item.Hours,
-                            (DateTime) revision.Fields[CoreField.ChangedDate].Value,
-                            false,
-                            true));
-                    }
-                }
-                catch (Exception e)
-                {
-                    Trace.WriteLine(e);
-                }
-            }
         }
 
         /// <summary>
@@ -153,7 +117,7 @@ namespace Gui.Helper
             foreach (var checkin in checkins)
             {
                 var id = checkin.Key.WorkItem.Id;
-                var date = (DateTime) checkin.Key.Fields[CoreField.ChangedDate].Value;
+                var date = (DateTime)checkin.Key.Fields[CoreField.ChangedDate].Value;
 
                 if (!this.Any(x => x.Time == date && x.Id == id))
                 {
@@ -176,7 +140,7 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Сколько сегодня было зачекинено
+        /// Сколько сегодня было зачекинено пользователем
         /// </summary>
         /// <returns></returns>
         public int CheckinedTime()
@@ -192,6 +156,100 @@ namespace Gui.Helper
             RemoveAll(x => !x.Time.IsToday());
         }
 
+        /// <summary>
+        /// Списываем запланированную работу
+        /// </summary>
+        /// <param name="api">TFS API</param>
+        /// <param name="capacity">Кол-во рабочих часов в этом дне</param>
+        public void CheckinScheduledWork(ITfsApi api, int capacity)
+        {
+            // Обновили историю чекинов
+            SyncCheckins(api);
+
+            // Обрезали, если вышли за предел кол-ва часов
+            CutOffByCapacity(capacity);
+
+            CheckinWork(api);
+        }
+
+        /// <summary>
+        /// Синхронизируем дневной плн списания времени. Кол-во списанного времени должно быть равно дневной норме.
+        /// </summary>
+        /// <param name="api"></param>
+        /// <param name="capacity"></param>
+        /// <param name="currentItem"></param>
+        public void SyncDailyPlan(ITfsApi api, int capacity, Func<WorkItem> currentItem)
+        {
+            // Обновили историю чекинов
+            SyncCheckins(api);
+
+            // Обрезали, если вышли за предел кол-ва часов
+            CutOffByCapacity(capacity);
+
+            // сколько было списно пользователем
+            var byUser = CheckinedTime();
+            // сколько было списано
+            var scheduled = ScheduledTime();
+
+            var delta = capacity - byUser - scheduled;
+
+            // Нужно распланировать ещё времени
+            if (delta > 0)
+            {
+                var item = currentItem();
+
+                ScheduleWork(item.Id, delta);
+            }
+
+            CheckinWork(api);
+        }
+
+        ///// <summary>
+        ///// Нужно списать время которое было указано
+        ///// </summary>
+        ///// <param name="api"></param>
+        ///// <param name="capacity"></param>
+        //public void CheckinOldWork(ITfsApi api, int capacity)
+        //{
+        //    // TODO implement
+        //}
+
+        //public void CheckinWork(ITfsApi api, int capacity, Func<WorkItem> currentItem)
+        //{
+        //    // Обновили историю чекинов
+        //    SyncCheckins(api);
+
+        //    // Обрезали, если вышли за предел кол-ва часов
+        //    CutOffByCapacity(capacity);
+
+
+        //}
+
+        ///// <summary>
+        ///// Обновляю список запланированной работы на целый день.
+        ///// Планируется вызывать в конце рабочего дня, чтобы узнать сколько
+        ///// часов необходимо списать в итоге.
+        ///// </summary>
+        ///// <param name="capacity"></param>
+        //public void CheckinWork(ITfsApi api, int capacity)
+        //{
+        //    // Ещё раз синхронизируем мою работу
+        //    SyncCheckins(api);
+
+        //    CutOffByCapacity(capacity);
+
+
+
+        //    // Нужно добить до дневного предела.
+        //    // По каким то причинам не записали рабочий элемент
+        //    if (delta > 0)
+        //    {
+
+        //    }
+
+        //    CheckInWork(api);
+        //}
+
         #endregion
 
         #region Constructors
@@ -199,12 +257,12 @@ namespace Gui.Helper
         public WriteOffCollection(IEnumerable<WriteOff> source)
             : base(source)
         {
-            
+
         }
 
         public WriteOffCollection()
         {
-            
+
         }
 
         #endregion
@@ -212,10 +270,50 @@ namespace Gui.Helper
         #region Private
 
         /// <summary>
-        /// Очищаем введённые 
+        /// Записываем всю работу в TFS.
+        /// В случаем с чекином вчерашней работы, она записывается отдельно и не мешает
+        /// дневному кол-ву работы
+        /// </summary>
+        private void CheckinWork(ITfsApi tfs)
+        {
+            var manual = Merge(GetManual(this));
+
+            foreach (var item in manual)
+            {
+                try
+                {
+                    var revision = tfs.WriteHours(tfs.FindById(item.Id), (byte)item.Hours, true);
+
+                    RemoveAll(x => x.Id == item.Id);
+
+                    if (revision != null)
+                    {
+                        var time = (DateTime)revision.Fields[CoreField.ChangedDate].Value;
+
+                        Add(new WriteOff(revision.WorkItem.Id,
+                            item.Hours,
+                            time,
+                            // Если запись была запланирована сегодня, считаем это обычным
+                            // чекином юзера
+                            item.Time.IsToday(),
+                            true));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Trace.WriteLine(e);
+                }
+            }
+
+            ClearPrevRecords();
+        }
+
+        /// <summary>
+        /// Обрезаю запланированную работу по чекинам пользователя
+        /// или по его дневному графику 
         /// </summary>
         /// <param name="maxHoursPerDay"></param>
-        private void UpdateByCapacity(int maxHoursPerDay)
+        private void CutOffByCapacity(int maxHoursPerDay)
         {
             // Часы, которая программа поставила на ожидание
             var manual = GetManual(this);
@@ -223,27 +321,29 @@ namespace Gui.Helper
             // Сколько пользователь начекинил
             var alreadyRecorded = CheckinedTime();
             // сколько программа поставила в очередь
-            var schedule = ScheduledTime();
+            var scheduled = ScheduledTime();
 
             // Поставили в очередь больше, чем планировали, вырезаем
-            while (schedule > maxHoursPerDay && manual.Any())
+            while (scheduled > maxHoursPerDay && manual.Any())
             {
-                Remove(manual[0]);
-                manual.RemoveAt(0);
+                var item = manual.First();
 
-                schedule--;
+                Remove(item);
+                manual.Remove(item);
+
+                scheduled -= item.Hours;
             }
 
             // Ничего не чекинил, выходим
             if (alreadyRecorded < 1)
             {
                 Trace.WriteLine(
-                    $"{nameof(WorkItemCollection)}.{nameof(UpdateByCapacity)}: User is not write off work hours today");
+                    $"{nameof(WorkItemCollection)}.{nameof(CutOffByCapacity)}: User is not write off work hours today");
                 return;
             }
 
             Trace.WriteLine(
-                $"{nameof(WorkItemCollection)}.{nameof(UpdateByCapacity)}: User wrote off {alreadyRecorded} " +
+                $"{nameof(WorkItemCollection)}.{nameof(CutOffByCapacity)}: User wrote off {alreadyRecorded} " +
                 $"hour(s), capacity is {maxHoursPerDay}");
 
             // Пользователь уже начекинил на рабочее время, 
@@ -266,7 +366,7 @@ namespace Gui.Helper
 
 
             Trace.WriteLine(
-                $"{nameof(WorkItemCollection)}.{nameof(UpdateByCapacity)}: Scheduled {manual.Count} records:");
+                $"{nameof(WorkItemCollection)}.{nameof(CutOffByCapacity)}: Scheduled {manual.Count} records:");
         }
 
         private void RemoveAll(Func<WriteOff, bool> condition)
@@ -320,7 +420,7 @@ namespace Gui.Helper
 
             MergeByCondition(x => x.CreatedByUser && x.Recorded);
             MergeByCondition(x => !x.CreatedByUser && !x.Recorded);
-            
+
 
             return result;
         }
