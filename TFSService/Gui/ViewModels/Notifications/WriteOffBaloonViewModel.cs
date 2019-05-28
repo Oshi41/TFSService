@@ -19,7 +19,7 @@ namespace Gui.ViewModels.Notifications
             Item = e.Item;
             Hours = e.Hours;
 
-            Options.NotificationClickAction = OnClick;
+            Options.NotificationClickAction = OnClick;            
         }
 
         public byte Hours { get; }

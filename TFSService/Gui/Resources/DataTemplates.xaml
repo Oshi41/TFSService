@@ -5,7 +5,8 @@
                     xmlns:viewModels="clr-namespace:Gui.ViewModels"
                     xmlns:dialogViewModels="clr-namespace:Gui.ViewModels.DialogViewModels"
                     xmlns:notifications="clr-namespace:Gui.ViewModels.Notifications"
-                    xmlns:baloonVms="clr-namespace:Gui.View.Notifications">
+                    xmlns:baloonVms="clr-namespace:Gui.View.Notifications"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
     
     <DataTemplate DataType="{x:Type viewModels:WorkItemVm}">
         <view:WorkItemView DataContext="{Binding Item}"/>
@@ -33,6 +34,6 @@
     
     <DataTemplate DataType="{x:Type notifications:WriteOffBaloonViewModel}">
         <baloonVms:WriteOffNotificationView/>
-    </DataTemplate>
+    </DataTemplate>    
     
 </ResourceDictionary>

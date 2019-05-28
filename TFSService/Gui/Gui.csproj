@@ -264,6 +264,9 @@
     <Compile Include="View\FirstConnectView.xaml.cs">
       <DependentUpon>FirstConnectView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Notifications\ToastViewBase.xaml.cs">
+      <DependentUpon>ToastViewBase.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Notifications\WriteOffNotificationView.xaml.cs">
       <DependentUpon>WriteOffNotificationView.xaml</DependentUpon>
     </Compile>
@@ -276,7 +279,7 @@
     <Compile Include="View\WorkItemView.xaml.cs">
       <DependentUpon>WorkItemView.xaml</DependentUpon>
     </Compile>
-    <Page Include="DataTemplates\DataTemplates.xaml">
+    <Page Include="Resources\DataTemplates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -310,6 +313,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\Notifications\ToastViewBase.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Notifications\WriteOffNotificationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

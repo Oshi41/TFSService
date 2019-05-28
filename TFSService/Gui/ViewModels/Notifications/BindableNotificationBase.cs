@@ -6,6 +6,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Gui.View.Notifications;
+using MaterialDesignThemes.Wpf;
 using Mvvm;
 using ToastNotifications.Core;
 
@@ -14,6 +16,7 @@ namespace Gui.ViewModels.Notifications
     public class BindableNotificationBase : NotificationBase, INotifyPropertyChanged, INotification
     {
         private NotificationDisplayPart _displayPart;
+        private PackIconKind? _icon;
 
         #region INotifyPropertyChanged
 
@@ -24,7 +27,7 @@ namespace Gui.ViewModels.Notifications
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool Set<T>(ref T source, T value, Action<T, T> onChange,
+        protected bool Set<T>(ref T source, T value, Action<T, T> onChange = null,
             [CallerMemberName] string propertyName = null)
         {
             if (Equals(source, value))
@@ -41,7 +44,7 @@ namespace Gui.ViewModels.Notifications
         protected BindableNotificationBase(string message) 
             : base(message, new MessageOptions())
         {
-            Options.FontSize = 20;
+            Options.FontSize = 11;
             Options.ShowCloseButton = true;
         }
 
@@ -51,14 +54,10 @@ namespace Gui.ViewModels.Notifications
             {
                 if (_displayPart == null)
                 {
-                    var key = new DataTemplateKey(GetType());
+                    _displayPart = new ToastViewBase();
+                    _displayPart.Bind(this);
 
-                    if (App.Current.TryFindResource(key) is DataTemplate template 
-                        && template.LoadContent() is NotificationDisplayPart loaded)
-                    {
-                        _displayPart = loaded;
-                        _displayPart.Bind(this);
-                    }
+                    _displayPart.DataContext = this;
                 }
 
                 return _displayPart;

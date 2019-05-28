@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using Gui.View;
 using Gui.ViewModels.DialogViewModels;
+using Gui.ViewModels.Notifications;
 using ToastNotifications;
 using ToastNotifications.Core;
 using ToastNotifications.Events;
@@ -70,7 +71,7 @@ namespace Gui.Helper
             return window.ShowDialog();
         }
 
-        public static void ShowBaloon(NotificationBase vm)
+        public static void ShowBaloon(BindableNotificationBase vm)
         {
             _notifier.Notify(() => vm);
         }
