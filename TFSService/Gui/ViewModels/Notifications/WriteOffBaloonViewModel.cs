@@ -8,13 +8,19 @@ namespace Gui.ViewModels.Notifications
 {
     class WriteOffBaloonViewModel : BindableNotificationBase
     {
+        public WriteOffBaloonViewModel()
+            : base("Запланированое списание времени")
+        {
+
+        }
+
         public WriteOffBaloonViewModel(string caption) 
             : base(caption)
         {
         }
 
-        public WriteOffBaloonViewModel(string caption, ScheduleWorkArgs e)
-            : this(caption)
+        public WriteOffBaloonViewModel(ScheduleWorkArgs e)
+            : this()
         {
             Item = e.Item;
             Hours = e.Hours;

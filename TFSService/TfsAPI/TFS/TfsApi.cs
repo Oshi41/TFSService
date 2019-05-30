@@ -9,6 +9,7 @@ using System.Xml;
 using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Common;
+using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.VisualStudio.Services.Common;
 using TfsAPI.Constants;
@@ -46,11 +47,11 @@ namespace TfsAPI.TFS
         }
 
         #region ITfsApi
-        
+
         public Revision WriteHours(WorkItem item, byte hours, bool setActive)
         {
             item.AddHours(hours, setActive);
-            item.Save();
+            SaveElemnt(item);
             Trace.WriteLine($"From task {item.Id} was writed off {hours} hour(s)");
 
             // TODO продебажить корректную ревизию
@@ -80,7 +81,7 @@ namespace TfsAPI.TFS
             var uri = LinkingUtilities.EncodeUri(setId);
 
             // Нашел связи
-            var linked = _linking.GetReferencingArtifacts(new[] {uri});
+            var linked = _linking.GetReferencingArtifacts(new[] { uri });
 
             Trace.WriteLine($"{nameof(GetAssociateItems)}: Founded {linked.Length} links");
 
@@ -148,11 +149,7 @@ namespace TfsAPI.TFS
 
         public IList<WorkItem> GetMyWorkItems()
         {
-            var quarry = _myItemsQuerry +
-                         // Все, кроме Код ревью, они мусорные
-                         $"and {Sql.Fields.WorkItemType} <> '{WorkItemTypes.CodeReview}'";
-
-            var items = _itemStore.Query(quarry);
+            var items = _itemStore.Query(_myItemsQuerry);
 
             return items.OfType<WorkItem>().ToList();
         }
@@ -202,13 +199,13 @@ namespace TfsAPI.TFS
             }
 
             // Сначала сохраняем как новый таск
-            task.Save();
+            SaveElemnt(task);
 
             Trace.WriteLine($"Created task {task.Id}");
 
             // Потом меняем статус в актив
             task.State = WorkItemStates.Active;
-            task.Save();
+            SaveElemnt(task);
 
             Trace.WriteLine($"Task status changed to {task.State}\n" +
                             "--------- BEFORE LINKING --------\n" +
@@ -217,7 +214,7 @@ namespace TfsAPI.TFS
 
             // После сохранения привязываем
             parent.Links.Add(new RelatedLink(link.ReverseEnd, task.Id));
-            parent.Save();
+            SaveElemnt(task);
 
             Trace.WriteLine($"--------- AFTER LINKING --------\n" +
                             $"Task links count: {task.Links.Count}, " +
@@ -273,10 +270,10 @@ namespace TfsAPI.TFS
                                            && from <= time
                                            && time <= to;
 
-                    var completed = (double) revision.Fields[WorkItems.Fields.Complited].Value;
+                    var completed = (double)revision.Fields[WorkItems.Fields.Complited].Value;
 
                     // Списанное время
-                    var delta = (int) (completed - previouse);
+                    var delta = (int)(completed - previouse);
 
                     previouse = completed;
 
@@ -344,24 +341,59 @@ namespace TfsAPI.TFS
                     .Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse))
                     .ToList();
 
-                Trace.WriteLine($"Request {request.Id} has {responses.Count} responses");                  
-                
-                if (responses.Any() 
+                Trace.WriteLine($"Request {request.Id} has {responses.Count} responses");
+
+                if (responses.Any()
                     && responses.All(x => x.HasClosedReason(allowed)))
                 {
                     result.Add(request);
 
                     request.Close();
-                    request.Save();
+                    SaveElemnt(request);
                 }
             }
 
             Trace.WriteLineIf(result.Any(), $"Closed {result.Count} requests");
 
-            return result;            
+            return result;
+        }
+
+        public List<WorkItem> GetParents(params WorkItem[] items)
+        {
+            var result = new List<WorkItem>();
+
+            foreach (var item in items.Where(x => x != null
+                                             && x.WorkItemLinks.Count > 0))
+            {
+                var parentLinks = item
+                    .WorkItemLinks
+                    .OfType<WorkItemLink>()
+                    .Where(x => x.LinkTypeEnd.Name == "Parent")
+                    .ToList();
+
+                foreach (var link in parentLinks)
+                {
+                    var parent = _itemStore.GetWorkItem(link.TargetId);
+                    if (parent != null)
+                    {
+                        result.Add(parent);
+                    }
+                }                
+            }
+
+            return result;
         }
 
         #endregion
+
+        private void SaveElemnt(WorkItem item)
+        {
+#if DEBUG
+            Trace.WriteLine($"Представь, что мы сохранили {item.Id}");
+#else
+            item?.Save();
+#endif
+        }
 
         public static async Task<bool> CheckConnection(string url)
         {
@@ -379,7 +411,7 @@ namespace TfsAPI.TFS
                 }
             }
 
-            return await Task.Run((Func<bool>) CheckConnectSync);
-        }        
+            return await Task.Run((Func<bool>)CheckConnectSync);
+        }
     }
 }

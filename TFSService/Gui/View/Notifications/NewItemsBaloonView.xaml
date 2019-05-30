@@ -5,9 +5,20 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Gui.View.Notifications"
              xmlns:notifications="clr-namespace:Gui.ViewModels.Notifications"
+             xmlns:converters="clr-namespace:Gui.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type={x:Type notifications:ItemsAssignedBaloonViewModel}}">
+    
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:WorkTypeToColorConverter x:Key="ColorConverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <UserControl.Background>
+        <Binding Path="Items" Converter="{StaticResource ColorConverter}"/>
+    </UserControl.Background>
 
     <ListBox ItemsSource="{Binding Path=Items}"/>
 </UserControl>

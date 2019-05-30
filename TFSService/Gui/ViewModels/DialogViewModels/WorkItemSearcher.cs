@@ -4,6 +4,7 @@ using Gui.Helper;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Constants;
+using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
 
 namespace Gui.ViewModels.DialogViewModels
@@ -53,7 +54,7 @@ namespace Gui.ViewModels.DialogViewModels
 
             if (!types.IsNullOrEmpty())
             {
-                mine = mine.Where(x => types.Contains(x.Type.Name)).ToList();
+                mine = mine.Where(x => x.IsTypeOf(types)).ToList();
             }
 
             foreach (var item in mine)

@@ -35,8 +35,6 @@ namespace Gui.Settings
 
         public Settings()
         {
-            IsDefault = true;
-
             CompletedWork = new WriteOffCollection();
             Connections = new ObservableCollection<string>();
             MyWorkItems = new ObservableCollection<int>();
@@ -98,9 +96,6 @@ namespace Gui.Settings
             set => Set(ref _myWorkItems, value);
         }
 
-        [JsonIgnore]
-        public bool IsDefault { get; private set; }
-
         #endregion
 
         #region Methods
@@ -152,7 +147,6 @@ namespace Gui.Settings
 
             if (result)
             {
-                IsDefault = false;
                 _changed = true;
             }
 

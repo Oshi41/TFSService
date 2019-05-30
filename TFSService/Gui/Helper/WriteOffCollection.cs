@@ -123,53 +123,7 @@ namespace Gui.Helper
             }
 
             CheckinWork(api);
-        }
-
-        ///// <summary>
-        ///// Нужно списать время которое было указано
-        ///// </summary>
-        ///// <param name="api"></param>
-        ///// <param name="capacity"></param>
-        //public void CheckinOldWork(ITfsApi api, int capacity)
-        //{
-        //    // TODO implement
-        //}
-
-        //public void CheckinWork(ITfsApi api, int capacity, Func<WorkItem> currentItem)
-        //{
-        //    // Обновили историю чекинов
-        //    SyncCheckins(api);
-
-        //    // Обрезали, если вышли за предел кол-ва часов
-        //    CutOffByCapacity(capacity);
-
-
-        //}
-
-        ///// <summary>
-        ///// Обновляю список запланированной работы на целый день.
-        ///// Планируется вызывать в конце рабочего дня, чтобы узнать сколько
-        ///// часов необходимо списать в итоге.
-        ///// </summary>
-        ///// <param name="capacity"></param>
-        //public void CheckinWork(ITfsApi api, int capacity)
-        //{
-        //    // Ещё раз синхронизируем мою работу
-        //    SyncCheckins(api);
-
-        //    CutOffByCapacity(capacity);
-
-
-
-        //    // Нужно добить до дневного предела.
-        //    // По каким то причинам не записали рабочий элемент
-        //    if (delta > 0)
-        //    {
-
-        //    }
-
-        //    CheckInWork(api);
-        //}
+        }        
 
         #endregion
 

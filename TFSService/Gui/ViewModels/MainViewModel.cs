@@ -7,8 +7,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Gui.Helper;
 using Gui.ViewModels.DialogViewModels;
+using Gui.ViewModels.Notifications;
+using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Mvvm;
+using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
 using TfsAPI.TFS;
@@ -41,6 +44,7 @@ namespace Gui.ViewModels
                     ApiObservable.Logoff -= OnLogoff;
                     ApiObservable.Logon -= OnLogon;
                     ApiObservable.NewItems -= OnNewItems;
+                    ApiObservable.ItemsChanged -= OnItemsChanged;
                 }
 
                 _apiObserve = value;
@@ -51,11 +55,10 @@ namespace Gui.ViewModels
                     ApiObservable.Logoff += OnLogoff;
                     ApiObservable.Logon += OnLogon;
                     ApiObservable.NewItems += OnNewItems;
+                    ApiObservable.ItemsChanged += OnItemsChanged;
                 }
             }
-        }
-
-        
+        }        
 
         /// <summary>
         /// Диалог запроса рабочего элемента, над которым работаем
@@ -75,14 +78,30 @@ namespace Gui.ViewModels
         /// <summary>
         /// Расписание моих месячных трудозатрат
         /// </summary>
-        public MonthScheduleViewModel MonthScheduleViewModel { get; set; }
+        public CheckinHistoryViewModel MonthScheduleViewModel { get; set; }
+
+        #endregion
+
+        #region Commands
+
+        /// <summary>
+        /// Подключение к TFS 
+        /// </summary>
+        public ICommand TfsConnectCommand { get; private set; }
+
+        /// <summary>
+        /// Списание моих часов за месяц
+        /// </summary>
+        public ICommand ShowMonthlyCommand { get; private set; }
 
         #endregion
 
         public MainViewModel()
         {
             Init();
-        }
+
+            ShowMonthlyCommand = new ObservableCommand(ShowMonthly);
+        }       
 
         private async void Init()
         {
@@ -105,11 +124,29 @@ namespace Gui.ViewModels
             _apiObserve.Start();
         }
 
+        #region Command handler
+        private void ShowMonthly()
+        {
+            if (MonthScheduleViewModel == null)
+            {
+                MonthScheduleViewModel = new CheckinHistoryViewModel(_apiObserve);
+            }
+
+            WindowManager.ShowDialog(MonthScheduleViewModel, "Месячное списание часов") ;
+        }
+
+        #endregion
+
         #region EventHandlers
 
         private void ScheduleHour(object sender, ScheduleWorkArgs e)
         {
             ScheduleHour(e.Item.Id, e.Hours);
+
+            if (e?.Item != null)
+            {
+                WindowManager.ShowBaloon(new WriteOffBaloonViewModel(e));
+            }
         }
 
         private void OnLogoff(object sender, EventArgs e)
@@ -130,7 +167,58 @@ namespace Gui.ViewModels
 
         private void OnNewItems(object sender, List<WorkItem> e)
         {
-            
+            if (!e.IsNullOrEmpty())
+            {
+                var bugs = e.Where(x => x.IsTypeOf(WorkItemTypes.Bug)).ToList();
+                var works = e.Where(x => x.IsTypeOf(WorkItemTypes.Pbi, WorkItemTypes.Improvement)).ToList();
+                var rare = e.Where(x => x.IsTypeOf(WorkItemTypes.Incident, WorkItemTypes.Feature)).ToList();
+                var responses = e.Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse)).ToList();
+                var requests = e.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)).ToList();
+
+                if (bugs.Any())
+                {
+                    WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(bugs, "Новые баги"));
+                }
+
+                if (works.Any())
+                {
+                    WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(works, "Новая работа"));
+                }
+
+                if (rare.Any())
+                {
+                    WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(rare, "Важная вещь, посмотри"));
+                }
+
+                if (responses.Any())
+                {
+                    var vms = new NewResponsesBaloonViewModel(responses, requests, _apiObserve, "Запросили проверку кода");
+                }
+
+                var rest = e.Except(bugs).Except(works).Except(rare).Except(responses).Except(requests).ToList();
+
+                if (rest.Any())
+                {
+                    WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(rest, "Новые рабочие элементы были назначены"));
+                }
+            }
+        }
+
+        private void OnItemsChanged(object sender, Dictionary<WorkItem, List<WorkItemEventArgs>> e)
+        {
+            if (!e.IsNullOrEmpty())
+            {
+                // Закрытые элемента
+                var closed = e.Where(x => x.Key.HasState(WorkItemStates.Closed));
+
+                // запросы кода
+                // var requests = e.Where(x => x.Key.IsTypeOf(WorkItemTypes.ReviewResponse) && x.Key.IsNotClosed());
+
+                foreach (var item in e)
+                {
+                    
+                }
+            }
         }
 
         #endregion

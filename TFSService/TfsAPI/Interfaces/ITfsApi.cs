@@ -83,5 +83,12 @@ namespace TfsAPI.Interfaces
         /// <param name="reasons">Допустимые для закрытия проверки причины</param>
         /// <returns></returns>
         List<WorkItem> CloseCompletedReviews(params string[] reasons);
+
+        /// <summary>
+        /// Получает родителей переданных элементов
+        /// </summary>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        List<WorkItem> GetParents(params WorkItem[] items);
     }
 }

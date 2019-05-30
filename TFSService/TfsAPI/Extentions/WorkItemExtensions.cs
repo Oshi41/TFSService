@@ -21,14 +21,18 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
-        /// Сверяет переданный тип рабочего элемента с фактическим
+        /// Сверяет переданные типы рабочего элемента с фактическим
         /// </summary>
         /// <param name="item">Рабочий элемент</param>
-        /// <param name="type">Тип рабочего элемента. См. <see cref="WorkItemTypes"/></param>
+        /// <param name="type">Типы рабочего элемента. См. <see cref="WorkItemTypes"/></param>
         /// <returns></returns>
-        public static bool IsTypeOf(this WorkItem item, string type)
+        public static bool IsTypeOf(this WorkItem item, params string[] types)
         {
-            return string.Equals(item?.Type?.Name, type);
+            if (types.IsNullOrEmpty())
+                return false;
+
+            var closedReason = item?.Type?.Name;
+            return types.Contains(closedReason);
         }
 
         /// <summary>
@@ -94,6 +98,48 @@ namespace TfsAPI.Extentions
 
             item[WorkItems.Fields.Complited] = total;
             item[WorkItems.Fields.Remaining] = remain;
+        }
+
+        /// <summary>
+        /// Работа по элементу не прекращена
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public static bool IsNotClosed(this WorkItem item)
+        {
+            return !item.HasState(WorkItemStates.Closed);
+        }
+
+        
+        
+        /// <summary>
+        /// Важные рабочие элемента с высочайшим приоритетом
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public static bool IsRare(this WorkItem item)
+        {
+            return item.IsTypeOf(WorkItemTypes.Feature, WorkItemTypes.Incident);
+        }
+
+        /// <summary>
+        /// Стандартные рабочие элементы
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public static bool IsWorkItem(this WorkItem item)
+        {
+            return item.IsTypeOf(WorkItemTypes.Pbi, WorkItemTypes.Improvement);
+        }
+
+        /// <summary>
+        /// Рабочий элемент - баг
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public static bool IsBug(this WorkItem item)
+        {
+            return item.IsTypeOf(WorkItemTypes.Bug);
         }
     }
 }

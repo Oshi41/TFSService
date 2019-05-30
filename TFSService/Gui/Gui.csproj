@@ -237,6 +237,7 @@
     <Compile Include="Converters\IdWorkitemConverter.cs" />
     <Compile Include="Converters\InvertBoolConverter.cs" />
     <Compile Include="Converters\SwitchConverter.cs" />
+    <Compile Include="Converters\WorkTypeToColorConverter.cs" />
     <Compile Include="Helper\ActionArbiter.cs" />
     <Compile Include="Helper\ObservableCommand.cs" />
     <Compile Include="Helper\TimedAction.cs" />
@@ -252,6 +253,7 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\Notifications\BindableNotificationBase.cs" />
     <Compile Include="ViewModels\Notifications\ItemsAssignedBaloonViewModel.cs" />
+    <Compile Include="ViewModels\Notifications\NewResponsesBaloonViewModel.cs" />
     <Compile Include="ViewModels\Notifications\WriteOffBaloonViewModel.cs" />
     <Compile Include="ViewModels\WorkItemVm.cs" />
     <Compile Include="View\ChooseTaskView.xaml.cs">

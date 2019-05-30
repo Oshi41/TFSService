@@ -1,15 +1,18 @@
-﻿using Microsoft.TeamFoundation.WorkItemTracking.Client;
+﻿using Microsoft.TeamFoundation.Common;
+using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using System.Collections.Generic;
 using System.Linq;
+using TfsAPI.Extentions;
 
 namespace Gui.ViewModels.Notifications
 {
     class ItemsAssignedBaloonViewModel : BindableNotificationBase
     {
-        public ItemsAssignedBaloonViewModel(List<WorkItem> e) 
-            : base("Назначены новые рабочие элементы")
+        public ItemsAssignedBaloonViewModel(List<WorkItem> e, 
+            string title = "Назначены новые рабочие элементы") 
+            : base(title)
         {
-            Items = e.Select(x => new WorkItemVm(x)).ToList();
+            Items = e.Select(x => new WorkItemVm(x)).ToList();            
         }
 
         public List<WorkItemVm> Items { get; private set; }

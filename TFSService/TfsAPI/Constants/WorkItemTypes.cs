@@ -13,5 +13,6 @@
         public const string Improvement = nameof(Improvement);
         public const string CodeReview = "Code Review Request";
         public const string ReviewResponse = "Code Review Response";
+        public const string Feature = nameof(Feature);
     }
 }
