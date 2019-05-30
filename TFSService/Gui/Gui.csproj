@@ -242,6 +242,7 @@
     <Compile Include="Helper\TimedAction.cs" />
     <Compile Include="Helper\WindowManager.cs" />
     <Compile Include="Helper\WriteOff.cs" />
+    <Compile Include="Helper\WriteOffCollection.cs" />
     <Compile Include="Interfaces\ISystemObserver.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="ViewModels\DialogViewModels\ChooseTaskViewModel.cs" />
@@ -250,6 +251,7 @@
     <Compile Include="ViewModels\DialogViewModels\MonthScheduleViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\Notifications\BindableNotificationBase.cs" />
+    <Compile Include="ViewModels\Notifications\ItemsAssignedBaloonViewModel.cs" />
     <Compile Include="ViewModels\Notifications\WriteOffBaloonViewModel.cs" />
     <Compile Include="ViewModels\WorkItemVm.cs" />
     <Compile Include="View\ChooseTaskView.xaml.cs">
@@ -263,6 +265,9 @@
     </Compile>
     <Compile Include="View\FirstConnectView.xaml.cs">
       <DependentUpon>FirstConnectView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Notifications\NewItemsBaloonView.xaml.cs">
+      <DependentUpon>NewItemsBaloonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Notifications\ToastViewBase.xaml.cs">
       <DependentUpon>ToastViewBase.xaml</DependentUpon>
@@ -313,6 +318,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\Notifications\NewItemsBaloonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Notifications\ToastViewBase.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

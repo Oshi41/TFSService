@@ -76,5 +76,12 @@ namespace TfsAPI.Interfaces
         /// <param name="item">Рабочий элемент</param>
         /// <returns></returns>
         bool IsAssignedToMe(WorkItem item);
+
+        /// <summary>
+        /// Закрываю запросы проверки кода, которые проверили
+        /// </summary>
+        /// <param name="reasons">Допустимые для закрытия проверки причины</param>
+        /// <returns></returns>
+        List<WorkItem> CloseCompletedReviews(params string[] reasons);
     }
 }

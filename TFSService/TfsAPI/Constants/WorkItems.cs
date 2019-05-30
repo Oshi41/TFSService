@@ -25,6 +25,11 @@ namespace TfsAPI.Constants
             /// Поле рабочего элемента и ревизии. Кем было изменено
             /// </summary>
             public const string ChangedBy = "Changed By";
+
+            /// <summary>
+            /// Причина закрытия. Для Code Response см 
+            /// </summary>
+            public const string ClosedStatus = "Closed Status";
         }
 
         public static class LinkTypes
@@ -33,6 +38,29 @@ namespace TfsAPI.Constants
             /// Тип связи Parent -> Child
             /// </summary>
             public const string ParentLink = "Syste.LinkTypes.Hierarhy";
+        }
+
+        public static class ClosedStatus
+        {
+            /// <summary>
+            /// Все ок
+            /// </summary>
+            public static string LooksGood = "Looks Good";
+
+            /// <summary>
+            /// В ходе проверки найдено несколько замечаний
+            /// </summary>
+            public static string WithComments = "With Comments";
+
+            /// <summary>
+            /// Требуется доработка
+            /// </summary>
+            public static string NeedsWork = "Needs Work";
+
+            /// <summary>
+            /// Отклонён
+            /// </summary>
+            public static string Declined = nameof(Declined);
         }
     }
 }

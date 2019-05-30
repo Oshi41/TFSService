@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Constants;
 
@@ -7,13 +10,40 @@ namespace TfsAPI.Extentions
     public static class WorkItemExtensions
     {
         /// <summary>
-        /// Является ли данный рабочий элемент активным
+        /// Сверяет переданное состояние рабочего элемента с фактическим.
         /// </summary>
         /// <param name="item">Рабочий элемент</param>
+        /// <param name="type">Состояние. См <see cref="WorkItemStates"/></param>
         /// <returns></returns>
-        public static bool IsActive(this WorkItem item)
+        public static bool HasState(this WorkItem item, string type)
         {
-            return string.Equals(item?.State, WorkItemStates.Active);
+            return string.Equals(item?.State, type);
+        }
+
+        /// <summary>
+        /// Сверяет переданный тип рабочего элемента с фактическим
+        /// </summary>
+        /// <param name="item">Рабочий элемент</param>
+        /// <param name="type">Тип рабочего элемента. См. <see cref="WorkItemTypes"/></param>
+        /// <returns></returns>
+        public static bool IsTypeOf(this WorkItem item, string type)
+        {
+            return string.Equals(item?.Type?.Name, type);
+        }
+
+        /// <summary>
+        /// Сверяет причину закрытия рабочего элемента
+        /// </summary>
+        /// <param name="item">Рабочий элемент</param>
+        /// <param name="type">Список причин закрытия. См. <see cref="WorkItems.ClosedStatus"/></param>
+        /// <returns></returns>
+        public static bool HasClosedReason(this WorkItem item, params string[] types)
+        {
+            if (types.IsNullOrEmpty())
+                return false;
+
+            var closedReason = item?.Fields[WorkItems.Fields.ClosedStatus]?.Value?.ToString();
+            return types.Contains(closedReason);
         }
 
         /// <summary>
@@ -23,31 +53,11 @@ namespace TfsAPI.Extentions
         /// <returns></returns>
         public static bool IsTaskAvailable(this WorkItem item)
         {
-            return item.IsTask()
+            return item.IsTypeOf(WorkItemTypes.Task)
                    && (
-                       item.IsActive()
-                       || string.Equals(item?.State, WorkItemStates.New)
+                       item.HasState(WorkItemStates.Active)
+                       || item.HasState(WorkItemStates.New)
                    );
-        }
-
-        /// <summary>
-        /// Является ли данный рабочий элемент таском
-        /// </summary>
-        /// <param name="item">Рабочий элемент</param>
-        /// <returns></returns>
-        public static bool IsTask(this WorkItem item)
-        {
-            return string.Equals(item?.Type?.Name, WorkItemTypes.Task);
-        }
-
-        /// <summary>
-        /// Является ли данный элемент запросом кода на проверку
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        public static bool IsReviewRequest(this WorkItem item)
-        {
-            return string.Equals(item?.Type?.Name, WorkItemTypes.ReviewRequest);
         }
 
         /// <summary>
@@ -66,10 +76,10 @@ namespace TfsAPI.Extentions
             if (hours == 0)
                 throw new ArgumentException(nameof(hours));
 
-            if (!item.IsTask())
+            if (!item.IsTypeOf(WorkItemTypes.Task))
                 throw new Exception("item must be have a Task type");
 
-            if (!item.IsActive())
+            if (!item.HasState(WorkItemStates.Active))
             {
                 if (!setActive)
                 {

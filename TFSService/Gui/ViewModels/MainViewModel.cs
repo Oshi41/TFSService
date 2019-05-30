@@ -52,13 +52,6 @@ namespace Gui.ViewModels
                     ApiObservable.Logon += OnLogon;
                     ApiObservable.NewItems += OnNewItems;
                 }
-
-                //if (SetProperty(ref _apiObserve, value) 
-                //    && ApiObservable != null)
-                //{
-                //    ApiObservable.WriteOff += ScheduleHour;
-                //    ApiObservable.Logoff += OnLogoff;
-                //}
             }
         }
 
@@ -175,7 +168,8 @@ namespace Gui.ViewModels
             {
                 var vm = new ChooseTaskViewModel(_apiObserve);
 
-                if (WindowManager.ShowDialog(vm, "Выберите элемент для списания времени", 400, 200) != true)
+                // Нужно 100% выбрать таск
+                while (WindowManager.ShowDialog(vm, "Выберите элемент для списания времени", 400, 200) != true)
                 {
                     Trace.WriteLine("User denied to choose task");
                 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Gui.Helper;
+using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Mvvm.Commands;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
@@ -49,7 +50,7 @@ namespace Gui.ViewModels.DialogViewModels
         protected override string ValidateProperty(string prop)
         {
             if (prop == nameof(Searcher.Selected)
-                && !Searcher.Selected.Item.IsTask())
+                && !Searcher.Selected.Item.IsTypeOf(WorkItemTypes.Task))
             {
                 return "Рабочий элемент не является таском";
             }

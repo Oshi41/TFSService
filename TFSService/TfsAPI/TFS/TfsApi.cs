@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Common;
@@ -22,6 +24,14 @@ namespace TfsAPI.TFS
         protected readonly TfsTeamProjectCollection _project;
         private readonly WorkItemStore _itemStore;
         private readonly ILinking _linking;
+
+        /// <summary>
+        /// Запрос на получение всех элементов на мне
+        /// </summary>
+        private readonly string _myItemsQuerry = $"select * from {Sql.Tables.WorkItems} " +
+                                                 $"where {Sql.AssignedToMeCondition} " +
+                                                 $"and {Sql.Fields.State} <> '{WorkItemStates.Closed}' " +
+                                                 $"and {Sql.Fields.State} <> '{WorkItemStates.Removed}' ";
 
         #endregion
 
@@ -138,10 +148,7 @@ namespace TfsAPI.TFS
 
         public IList<WorkItem> GetMyWorkItems()
         {
-            var quarry = $"select * from {Sql.Tables.WorkItems} " +
-                         $"where {Sql.AssignedToMeCondition} " +
-                         $"and {Sql.Fields.State} <> '{WorkItemStates.Closed}' " +
-                         $"and {Sql.Fields.State} <> '{WorkItemStates.Removed}' " +
+            var quarry = _myItemsQuerry +
                          // Все, кроме Код ревью, они мусорные
                          $"and {Sql.Fields.WorkItemType} <> '{WorkItemTypes.CodeReview}'";
 
@@ -309,6 +316,51 @@ namespace TfsAPI.TFS
                    && string.Equals(owner, _itemStore.UserDisplayName);
         }
 
+        public List<WorkItem> CloseCompletedReviews(params string[] allowed)
+        {
+            var quarry = _myItemsQuerry +
+                         // Ищем только Code Review Request
+                         $"and {Sql.Fields.WorkItemType} = '{WorkItemTypes.CodeReview}'";
+
+            var requests = _itemStore.Query(quarry).OfType<WorkItem>().ToList();
+
+            Trace.WriteLineIf(requests.Any(), $"Founded {requests.Count} requests");
+
+            // По дефолту только Looks Good
+            if (allowed == null)
+            {
+                allowed = new[] { WorkItems.ClosedStatus.LooksGood };
+            }
+
+            Trace.WriteLine($"Allowed closed statuses: {string.Join(", ", allowed)}");
+
+            var result = new List<WorkItem>();
+
+            foreach (var request in requests)
+            {
+                var responses = request
+                    .WorkItemLinks
+                    .OfType<WorkItem>()
+                    .Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse))
+                    .ToList();
+
+                Trace.WriteLine($"Request {request.Id} has {responses.Count} responses");                  
+                
+                if (responses.Any() 
+                    && responses.All(x => x.HasClosedReason(allowed)))
+                {
+                    result.Add(request);
+
+                    request.Close();
+                    request.Save();
+                }
+            }
+
+            Trace.WriteLineIf(result.Any(), $"Closed {result.Count} requests");
+
+            return result;            
+        }
+
         #endregion
 
         public static async Task<bool> CheckConnection(string url)
@@ -328,6 +380,6 @@ namespace TfsAPI.TFS
             }
 
             return await Task.Run((Func<bool>) CheckConnectSync);
-        }
+        }        
     }
 }
