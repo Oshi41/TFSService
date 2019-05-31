@@ -36,6 +36,11 @@
             /// Поле содержащее время последнего изменения рабочего элемента
             /// </summary>
             public const string ChangedDate = "[Changed Date]";
+
+            /// <summary>
+            /// Поле кому назначено
+            /// </summary>
+            public const string AssignedTo = "[Assigned To]";
         }
 
         /// <summary>

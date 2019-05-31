@@ -7,33 +7,47 @@
                     xmlns:notifications="clr-namespace:Gui.ViewModels.Notifications"
                     xmlns:baloonVms="clr-namespace:Gui.View.Notifications"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
-    
+
     <DataTemplate DataType="{x:Type viewModels:WorkItemVm}">
         <view:WorkItemView DataContext="{Binding Item}"/>
     </DataTemplate>
-    
+
     <DataTemplate DataType="{x:Type dialogViewModels:WorkItemSearcher}">
         <view:WorkItemSearcherView/>
     </DataTemplate>
-    
+
     <DataTemplate DataType="{x:Type dialogViewModels:FirstConnectionViewModel}">
         <view:FirstConnectView/>
     </DataTemplate>
-    
+
     <DataTemplate DataType="{x:Type dialogViewModels:ChooseTaskViewModel}">
         <view:ChooseTaskView/>
     </DataTemplate>
-    
+
     <DataTemplate DataType="{x:Type dialogViewModels:CreateTaskViewModel}">
         <view:CreateTaksView/>
     </DataTemplate>
-    
+
     <DataTemplate DataType="{x:Type dialogViewModels:CheckinHistoryViewModel}">
         <view:ScheduleView/>
     </DataTemplate>
-    
+
     <DataTemplate DataType="{x:Type notifications:WriteOffBaloonViewModel}">
         <baloonVms:WriteOffNotificationView/>
-    </DataTemplate>    
-    
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type notifications:NewResponsesBaloonViewModel}">
+        <baloonVms:NewItemsBaloonView>
+            <baloonVms:NewItemsBaloonView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Закрыть оконченные Code Reviews"
+                              Command="{Binding Path=CloseReviewes}"/>
+                    
+                    <MenuItem Header="Закрыть старые Code Reviews"
+                              Command="{Binding Path=CloseOldReviewes}"/>
+                </ContextMenu>
+            </baloonVms:NewItemsBaloonView.ContextMenu>
+        </baloonVms:NewItemsBaloonView>
+    </DataTemplate>
+
 </ResourceDictionary>

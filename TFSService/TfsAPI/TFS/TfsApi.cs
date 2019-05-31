@@ -29,14 +29,13 @@ namespace TfsAPI.TFS
         /// <summary>
         /// Запрос на получение всех элементов на мне
         /// </summary>
-        private readonly string _myItemsQuerry = $"select * from {Sql.Tables.WorkItems} " +
-                                                 $"where {Sql.AssignedToMeCondition} " +
-                                                 $"and {Sql.Fields.State} <> '{WorkItemStates.Closed}' " +
-                                                 $"and {Sql.Fields.State} <> '{WorkItemStates.Removed}' ";
+        private readonly string _myItemsQuerry;
 
         #endregion
 
-        public TfsApi(string url)
+        /// <param name="url">Строка подключения к TFS</param>
+        /// <param name="owner">От какого имени действуем</param>
+        public TfsApi(string url, string owner = null)
         {
             _project = new TfsTeamProjectCollection(new Uri(url));
 
@@ -44,6 +43,15 @@ namespace TfsAPI.TFS
 
             _itemStore = _project.GetService<WorkItemStore>();
             _linking = _project.GetService<ILinking>();
+            
+            Name = owner ?? _itemStore.UserDisplayName;
+
+            Trace.WriteLine($"{nameof(TfsApi)}.ctor: Acting from {Name}");
+
+            _myItemsQuerry = $"select * from {Sql.Tables.WorkItems} " +
+                                                 $"where {Sql.Fields.State} = '{Name}' " +
+                                                 $"and {Sql.Fields.State} <> '{WorkItemStates.Closed}' " +
+                                                 $"and {Sql.Fields.State} <> '{WorkItemStates.Removed}' ";
         }
 
         #region ITfsApi
@@ -59,7 +67,7 @@ namespace TfsAPI.TFS
             return item
                 .Revisions
                 .OfType<Revision>()
-                .Where(x => Equals(_itemStore.UserDisplayName, x.Fields[CoreField.ChangedBy].Value)
+                .Where(x => Equals(Name, x.Fields[CoreField.ChangedBy].Value)
                             && x.Fields[WorkItems.Fields.Complited].Value != null)
                 .OrderByDescending(x => x.Fields[CoreField.ChangedDate])
                 .FirstOrDefault();
@@ -238,7 +246,7 @@ namespace TfsAPI.TFS
 
             var querry = $"select * from {Sql.Tables.WorkItems} " +
                          $"where {Sql.Fields.WorkItemType} = '{WorkItemTypes.Task}' " +
-                         $"and {Sql.WasEverChangedByMeCondition} " +
+                         $"and ever [Changed By] = '{Name}' " +
                          $"and {Sql.Fields.ChangedDate} > '{$"{from:MM/dd/yyyy}".Replace(".", "/")}' " +
                          $"and {Sql.Fields.ChangedDate} < '{$"{to:MM/dd/yyyy}".Replace(".", "/")}' ";
 
@@ -260,11 +268,11 @@ namespace TfsAPI.TFS
                 {
                     // Был ли в этот момент таск на мне
                     var assignedToMe = revision.Fields[CoreField.AssignedTo]?.Value is string assigned
-                                       && string.Equals(_itemStore.UserDisplayName, assigned);
+                                       && string.Equals(Name, assigned);
 
                     // Был ли таск изменен мной
                     var changedByMe = revision.Fields[WorkItems.Fields.ChangedBy]?.Value is string owner
-                                       && string.Equals(_itemStore.UserDisplayName, owner);
+                                       && string.Equals(Name, owner);
 
                     var correctTime = revision.Fields[CoreField.ChangedDate].Value is DateTime time
                                            && from <= time
@@ -310,11 +318,14 @@ namespace TfsAPI.TFS
                 return false;
 
             return item.Fields[CoreField.AssignedTo]?.Value is string owner
-                   && string.Equals(owner, _itemStore.UserDisplayName);
+                   && string.Equals(owner, Name);
         }
 
-        public List<WorkItem> CloseCompletedReviews(params string[] allowed)
+        public List<WorkItem> CloseCompletedReviews(CanCloseReview canClose)
         {
+            if (canClose == null)
+                throw new ArgumentException(nameof(canClose));
+
             var quarry = _myItemsQuerry +
                          // Ищем только Code Review Request
                          $"and {Sql.Fields.WorkItemType} = '{WorkItemTypes.CodeReview}'";
@@ -322,14 +333,6 @@ namespace TfsAPI.TFS
             var requests = _itemStore.Query(quarry).OfType<WorkItem>().ToList();
 
             Trace.WriteLineIf(requests.Any(), $"Founded {requests.Count} requests");
-
-            // По дефолту только Looks Good
-            if (allowed == null)
-            {
-                allowed = new[] { WorkItems.ClosedStatus.LooksGood };
-            }
-
-            Trace.WriteLine($"Allowed closed statuses: {string.Join(", ", allowed)}");
 
             var result = new List<WorkItem>();
 
@@ -343,8 +346,7 @@ namespace TfsAPI.TFS
 
                 Trace.WriteLine($"Request {request.Id} has {responses.Count} responses");
 
-                if (responses.Any()
-                    && responses.All(x => x.HasClosedReason(allowed)))
+                if (canClose(request, responses))
                 {
                     result.Add(request);
 
@@ -378,11 +380,13 @@ namespace TfsAPI.TFS
                     {
                         result.Add(parent);
                     }
-                }                
+                }
             }
 
             return result;
         }
+
+        public string Name { get; }
 
         #endregion
 
@@ -390,8 +394,16 @@ namespace TfsAPI.TFS
         {
 #if DEBUG
             Trace.WriteLine($"Представь, что мы сохранили {item.Id}");
+
 #else
-            item?.Save();
+            if (_itemStore.UserDisplayName != _userName)
+            {
+                Trace.WriteLine($"Can't check-in from {_userName}, authorized as {_itemStore.UserDisplayName}");
+            }
+            else
+            {
+                item?.Save();
+            }
 #endif
         }
 

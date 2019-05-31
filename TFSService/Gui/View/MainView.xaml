@@ -1,0 +1,58 @@
+﻿<Window x:Class="Gui.View.MainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Gui.View"
+        xmlns:viewmodels="clr-namespace:Gui.ViewModels"
+        mc:Ignorable="d"
+        Height="450" Width="800"
+        d:DataContext="{d:DesignInstance Type={x:Type viewmodels:MainViewModel}}"
+        Title="{Binding Path=StatsViewModel.Name}">
+    
+    <Window.DataContext>
+        <viewmodels:MainViewModel/>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Трудосгорание"/>
+
+        <ProgressBar Grid.Row="1"
+                     Margin="0,7"
+                     HorizontalAlignment="Stretch"
+                     DataContext="{Binding Path=StatsViewModel}"
+                     Maximum="{Binding Path=Capacity}"
+                     Value="{Binding Path=WroteOff}"/>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <ListBox ItemsSource="{Binding Path=StatsViewModel.Items}"/>
+
+            <Button Grid.Column="1"
+                    Content="Обновить"
+                    Command="{Binding Path=UpdateCommand}"/>
+            
+            <Button Grid.Column="1"
+                    Content="Обновить"
+                    Command="{Binding Path=ShowMonthlyCommand}"/>
+        </Grid>
+
+    </Grid>
+
+</Window>

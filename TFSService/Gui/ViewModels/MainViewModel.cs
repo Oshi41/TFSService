@@ -25,6 +25,8 @@ namespace Gui.ViewModels
         private ITFsObservable _apiObserve;
 
         private WorkItemVm _currentTask;
+        private StatsViewModel statsViewModel = new StatsViewModel();
+        private bool isBusy;
 
         #endregion
 
@@ -58,7 +60,7 @@ namespace Gui.ViewModels
                     ApiObservable.ItemsChanged += OnItemsChanged;
                 }
             }
-        }        
+        }
 
         /// <summary>
         /// Диалог запроса рабочего элемента, над которым работаем
@@ -80,12 +82,19 @@ namespace Gui.ViewModels
         /// </summary>
         public CheckinHistoryViewModel MonthScheduleViewModel { get; set; }
 
+        /// <summary>
+        /// Основная статистика пользователя
+        /// </summary>
+        public StatsViewModel StatsViewModel { get => statsViewModel; set => SetProperty(ref statsViewModel, value); }
+
+        public bool IsBusy { get => isBusy; set => SetProperty(ref isBusy, value); }
+
         #endregion
 
         #region Commands
 
         /// <summary>
-        /// Подключение к TFS 
+        /// Подключение к разным TFS (WIP)
         /// </summary>
         public ICommand TfsConnectCommand { get; private set; }
 
@@ -94,6 +103,8 @@ namespace Gui.ViewModels
         /// </summary>
         public ICommand ShowMonthlyCommand { get; private set; }
 
+        public ICommand UpdateCommand { get; private set; }
+
         #endregion
 
         public MainViewModel()
@@ -101,10 +112,13 @@ namespace Gui.ViewModels
             Init();
 
             ShowMonthlyCommand = new ObservableCommand(ShowMonthly);
-        }       
+            UpdateCommand = ObservableCommand.FromAsyncHandler(Update);
+        }
 
         private async void Init()
         {
+            IsBusy = true;
+
             var connect = await TryConnect() == true;
 
             if (!connect)
@@ -122,6 +136,8 @@ namespace Gui.ViewModels
 
             // Начинаем наблюдение
             _apiObserve.Start();
+
+            IsBusy = false;
         }
 
         #region Command handler
@@ -132,7 +148,18 @@ namespace Gui.ViewModels
                 MonthScheduleViewModel = new CheckinHistoryViewModel(_apiObserve);
             }
 
-            WindowManager.ShowDialog(MonthScheduleViewModel, "Месячное списание часов") ;
+            WindowManager.ShowDialog(MonthScheduleViewModel, "Месячное списание часов");
+        }
+
+        private async Task Update()
+        {
+            IsBusy = true;
+
+            await Task.Run(() => _apiObserve.RequestUpdate());
+
+            StatsViewModel.Refresh(_apiObserve);
+
+            IsBusy = false;
         }
 
         #endregion
@@ -216,7 +243,7 @@ namespace Gui.ViewModels
 
                 foreach (var item in e)
                 {
-                    
+
                 }
             }
         }
@@ -308,6 +335,8 @@ namespace Gui.ViewModels
                 }
 
                 work.ClearPrevRecords();
+
+                work.SyncCheckins(_apiObserve);
 
                 // Выставлили сколько надо списать часов сегодня
                 settings.Capacity = _apiObserve.GetCapacity();

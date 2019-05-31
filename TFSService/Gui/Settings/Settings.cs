@@ -21,7 +21,6 @@ namespace Gui.Settings
             "TfsService",
             "config.json");
 
-        private int _completed;
         private int _capacity;
         private TimeSpan _duration;
         private DateTime _begin;
@@ -108,14 +107,22 @@ namespace Gui.Settings
 
         public static Settings Read()
         {
+            Settings settings;
+
             if (File.Exists(_savePath))
             {
-                return JsonConvert.DeserializeObject<Settings>(File.ReadAllText(_savePath));
+                settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(_savePath));
             }
+            else
+            {
+                Trace.WriteLine("Creating new settings");
 
-            Trace.WriteLine("Creating new settings");
+                settings = new Settings();
+            }
+            
+            settings._changed = false;
 
-            return new Settings();
+            return settings;
         }
 
         private void Write()

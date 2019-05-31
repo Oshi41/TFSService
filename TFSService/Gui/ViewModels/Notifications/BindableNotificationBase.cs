@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Gui.View.Notifications;
 using MaterialDesignThemes.Wpf;
+using Microsoft.TeamFoundation.Client.CommandLine;
 using Mvvm;
 using ToastNotifications.Core;
 
@@ -46,6 +47,7 @@ namespace Gui.ViewModels.Notifications
         {
             Options.FontSize = 11;
             Options.ShowCloseButton = true;
+            Options.FreezeOnMouseEnter = true;
         }
 
         public override NotificationDisplayPart DisplayPart

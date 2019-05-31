@@ -21,10 +21,10 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
+
         <TextBlock Text="Введите строку подключения к Team Foundation Server"
                    TextWrapping="Wrap"/>
-        
+
         <ComboBox Grid.Row="1"
                   Margin="0,5"
                   BorderThickness="1"
@@ -33,5 +33,6 @@
                   Text="{Binding Path=Text, 
                          UpdateSourceTrigger=PropertyChanged,
                          ValidatesOnDataErrors=True}"/>
+
     </Grid>
 </UserControl>

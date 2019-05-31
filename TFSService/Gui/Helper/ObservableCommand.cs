@@ -110,12 +110,12 @@ namespace Gui.Helper
             {
                 IsExecuting = true;
 
-                await Execute(parameter);
-                Executed?.Invoke(this, EventArgs.Empty);
+                await Execute(parameter);                
             }
             finally
             {
                 IsExecuting = false;
+                Executed?.Invoke(this, EventArgs.Empty);
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,14 @@ using TfsAPI.Constants;
 
 namespace TfsAPI.Interfaces
 {
+    /// <summary>
+    /// Можем ли закрыть данную проверку кода
+    /// </summary>
+    /// <param name="myRequest">Мой запрос на проверку</param>
+    /// <param name="responses">Ответы от коллег</param>
+    /// <returns></returns>
+    public delegate bool CanCloseReview(WorkItem myRequest, IList<WorkItem> responses);
+
     public interface ITfsApi
     {
         /// <summary>
@@ -80,9 +89,9 @@ namespace TfsAPI.Interfaces
         /// <summary>
         /// Закрываю запросы проверки кода, которые проверили
         /// </summary>
-        /// <param name="reasons">Допустимые для закрытия проверки причины</param>
+        /// <param name="reasons">Можем ли закрыть проверку</param>
         /// <returns></returns>
-        List<WorkItem> CloseCompletedReviews(params string[] reasons);
+        List<WorkItem> CloseCompletedReviews(CanCloseReview canRemove);
 
         /// <summary>
         /// Получает родителей переданных элементов
@@ -90,5 +99,10 @@ namespace TfsAPI.Interfaces
         /// <param name="items"></param>
         /// <returns></returns>
         List<WorkItem> GetParents(params WorkItem[] items);
+
+        /// <summary>
+        /// Имя владельца
+        /// </summary>
+        string Name { get;}
     }
 }
