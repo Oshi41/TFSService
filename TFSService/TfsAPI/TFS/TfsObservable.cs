@@ -24,7 +24,7 @@ namespace TfsAPI.TFS
         private readonly Dictionary<WorkItem, List<WorkItemEventArgs>> _changes =
             new Dictionary<WorkItem, List<WorkItemEventArgs>>();
 
-        private bool _paused;
+        private bool _paused = true;
         private List<WorkItem> _myItems = new List<WorkItem>();
 
         #endregion

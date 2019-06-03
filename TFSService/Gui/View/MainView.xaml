@@ -5,16 +5,112 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Gui.View"
         xmlns:viewmodels="clr-namespace:Gui.ViewModels"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:p="clr-namespace:Gui.Properties"
         mc:Ignorable="d"
-        Height="450" Width="800"
-        d:DataContext="{d:DesignInstance Type={x:Type viewmodels:MainViewModel}}"
+        Height="400" Width="600"
         Title="{Binding Path=StatsViewModel.Name}">
-    
+
     <Window.DataContext>
         <viewmodels:MainViewModel/>
     </Window.DataContext>
 
-    <Grid>
+
+    <materialDesign:DialogHost IsOpen="False">
+
+        <materialDesign:DialogHost.DialogContent>
+            <StackPanel Orientation="Vertical"
+                        Margin="10">
+                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                             Maximum="10" 
+                             Value="5"
+                             IsIndeterminate="True"/>
+                <TextBlock Text="{x:Static p:Resources.AS_Load}"
+                           Margin="0,5"/>
+            </StackPanel>
+        </materialDesign:DialogHost.DialogContent>
+
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Трудосгорание"/>
+
+            <ProgressBar Grid.Row="1"    
+                         HorizontalAlignment="Stretch"                         
+                         Maximum="{Binding Path=StatsViewModel.Capacity}"
+                         Value="{Binding Path=StatsViewModel.WroteOff}"
+                         Margin="5">
+                <ProgressBar.ToolTip>
+                    <ToolTip>
+                        <StackPanel Orientation="Vertical"
+                                    Margin="5">
+
+                            <TextBlock Text="{Binding Path=StatsViewModel.WroteOff, StringFormat={}Списано: {0} ч}"
+                                       Margin="5"/>
+                            <TextBlock Text="{Binding Path=StatsViewModel.Capacity, StringFormat={}Дневной предел: {0} ч}"
+                                       Margin="5"/>
+
+                        </StackPanel>
+                    </ToolTip>
+                </ProgressBar.ToolTip>
+            </ProgressBar>
+
+            <TextBlock Grid.Row="1"
+                       Grid.Column="1"
+                       Text="{Binding Path=StatsViewModel.TfsCapacity, StringFormat={}Дневная занятость: {0} ч}"
+                       Margin="5"
+                       ToolTip="Данные из TFS"/>
+
+            <TextBlock Text="Рабочие элементы на мне:"
+                       Grid.Row="2"/>
+
+            <ListBox Grid.Row="3"
+                     Grid.Column="0"
+                     ItemsSource="{Binding }">
+
+            </ListBox>
+
+            <StackPanel Grid.Row="3"
+                        Grid.Column="1"
+                        Grid.RowSpan="2"
+                        Orientation="Vertical">
+                
+                <Button Content="Обновить"
+                        Margin="5"
+                        Command="{Binding Path=UpdateCommand}"
+                        ToolTip="Обновить мою статистику">
+                </Button>
+                
+                <Button Content="Расписание" 
+                        Margin="5"
+                        Command="{Binding Path=ShowMonthlyCommand}"
+                        ToolTip="Открыть месячное расписание трудозатрат">
+                </Button>
+            </StackPanel>
+
+        </Grid>
+    </materialDesign:DialogHost>
+
+
+
+    <!--<Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -53,6 +149,6 @@
                     Command="{Binding Path=ShowMonthlyCommand}"/>
         </Grid>
 
-    </Grid>
+    </Grid>-->
 
 </Window>

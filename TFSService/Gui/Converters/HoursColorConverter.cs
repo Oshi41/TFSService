@@ -28,7 +28,7 @@ namespace Gui.Converters
             get => _normalColor;
             set
             {
-                _overflowColor = value.Clone();
+                _normalColor = value.Clone();
                 _normalColor.Opacity = 0.5;
             }
         }
@@ -38,7 +38,7 @@ namespace Gui.Converters
             get => _lessColor;
             set
             {
-                _overflowColor = value.Clone();
+                _lessColor = value.Clone();
                 _lessColor.Opacity = 0.5;
             }
         }
@@ -48,7 +48,7 @@ namespace Gui.Converters
             get => _zeroColor;
             set
             {
-                _overflowColor = value.Clone();
+                _zeroColor = value.Clone();
                 _zeroColor.Opacity = 0.5;
             }
         }

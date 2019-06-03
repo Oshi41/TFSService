@@ -137,12 +137,17 @@ namespace Gui.Settings
 
         private bool Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
-            if (!Equals(storage, value)
-                && storage is INotifyCollectionChanged old 
-                && value is INotifyCollectionChanged added)
+            if (!Equals(storage, value))
             {
-                old.CollectionChanged -= OnCollectionChanged;
-                added.CollectionChanged += OnCollectionChanged;
+                if (storage is INotifyCollectionChanged old)
+                {
+                    old.CollectionChanged -= OnCollectionChanged;
+                }
+
+                if (value is INotifyCollectionChanged added)
+                {
+                    added.CollectionChanged += OnCollectionChanged;
+                }                
             }
 
             return SetProperty(ref storage, value, propertyName);

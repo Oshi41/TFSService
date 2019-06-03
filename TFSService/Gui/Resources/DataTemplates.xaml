@@ -49,5 +49,21 @@
             </baloonVms:NewItemsBaloonView.ContextMenu>
         </baloonVms:NewItemsBaloonView>
     </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type dialogViewModels:DayViewModel}">
+        <ProgressBar x:Name="bar"
+                     Style="{StaticResource MaterialDesignCircularProgressBar}"
+                     Maximum="{Binding Path=Capacity, Mode=OneWay}"
+                     Value="{Binding Path=Hours, Mode=OneWay}"
+                     Foreground="DarkGreen"/>
+        
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding IsHolliday}" Value="True">
+                <Setter TargetName="bar"
+                        Property="Background"
+                        Value="DarkGreen"/>
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
 
 </ResourceDictionary>

@@ -7,6 +7,9 @@
              xmlns:dialogViewModels="clr-namespace:Gui.ViewModels.DialogViewModels"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:Gui.Converters"
+             xmlns:p="clr-namespace:Gui.Properties"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:b="clr-namespace:Gui.Behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type={x:Type dialogViewModels:CheckinHistoryViewModel}}">
@@ -14,7 +17,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-            
+
             <converters:HoursColorConverter x:Key="HoursColorConverter"
                                             NormalColor="Transparent"
                                             OverflowColor="DarkGreen"
@@ -24,7 +27,34 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid>
+    <materialDesign:DialogHost IsOpen="{Binding Path=Schedule.IsBusy}">
+        
+        <materialDesign:DialogHost.DialogContent>
+            <StackPanel Orientation="Vertical"
+                        Margin="10">
+                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                             Maximum="10" 
+                             Value="5"
+                             IsIndeterminate="True"/>
+                <TextBlock Text="{x:Static p:Resources.AS_Load}"
+                           Margin="0,5"/>
+            </StackPanel>
+        </materialDesign:DialogHost.DialogContent>
+        
+        <Grid Background="White">
+            <Calendar SelectedDate="{Binding Path=Month, Mode=TwoWay}"
+                      DisplayDateChanged="SelectFirst"
+                      SelectionMode="SingleDate"
+                      CalendarDayButtonStyle="{StaticResource MaterialBased.CalendarButton.Style}">
+                <i:Interaction.Behaviors>
+                    <b:CalendarItemSourceBehavior
+                        Items="{Binding Path=Schedule.Days}"/>
+                </i:Interaction.Behaviors>
+            </Calendar>
+        </Grid>
+    </materialDesign:DialogHost>
+
+    <!--<Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -44,7 +74,7 @@
                             VerticalAlignment="Center"
                             Orientation="Vertical"
                             Margin="7">
-                    <TextBlock Text="Загрузка..." 
+                    <TextBlock Text="{x:Static p:Resources.AS_Load}" 
                                Margin="7"/>
                     <ProgressBar IsIndeterminate="True"
                                  Margin="7"/>
@@ -65,7 +95,8 @@
                     <DataGridTextColumn Header="День недели"
                                         Binding="{Binding Path=Time.DayOfWeek}"/>
 
-                    <!--<DataGridTemplateColumn>
+                    -->
+    <!--<DataGridTemplateColumn>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}"
@@ -73,6 +104,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>-->
+    <!--
                 </DataGrid.Columns>
 
                 <DataGrid.RowDetailsTemplate>
@@ -110,6 +142,8 @@
             </DataGrid>
         </materialDesign:DialogHost>
 
-    </Grid>
+    </Grid>-->
+
+
 </UserControl>
 

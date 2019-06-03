@@ -49,7 +49,7 @@ namespace TfsAPI.TFS
             Trace.WriteLine($"{nameof(TfsApi)}.ctor: Acting from {Name}");
 
             _myItemsQuerry = $"select * from {Sql.Tables.WorkItems} " +
-                                                 $"where {Sql.Fields.State} = '{Name}' " +
+                                                 $"where {Sql.Fields.AssignedTo} = '{Name}' " +
                                                  $"and {Sql.Fields.State} <> '{WorkItemStates.Closed}' " +
                                                  $"and {Sql.Fields.State} <> '{WorkItemStates.Removed}' ";
         }
@@ -247,8 +247,8 @@ namespace TfsAPI.TFS
             var querry = $"select * from {Sql.Tables.WorkItems} " +
                          $"where {Sql.Fields.WorkItemType} = '{WorkItemTypes.Task}' " +
                          $"and ever [Changed By] = '{Name}' " +
-                         $"and {Sql.Fields.ChangedDate} > '{$"{from:MM/dd/yyyy}".Replace(".", "/")}' " +
-                         $"and {Sql.Fields.ChangedDate} < '{$"{to:MM/dd/yyyy}".Replace(".", "/")}' ";
+                         $"and {Sql.Fields.ChangedDate} > '{from.ToShortDateString().Replace(".", "/")}' " +
+                         $"and {Sql.Fields.ChangedDate} < '{to.ToShortDateString().Replace(".", "/")}' ";
 
             var tasks = _itemStore.Query(querry);
 

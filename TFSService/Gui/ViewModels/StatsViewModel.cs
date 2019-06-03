@@ -16,12 +16,15 @@ namespace Gui.ViewModels
     {
         private string _name;
         private int capacity;
+        private int _tfsCapacity;
         private int wroteOff;
-        private ObservableCollection<WorkItemVm> myItems;
+        private ObservableCollection<WorkItemVm> myItems;        
 
         public string Name { get => _name; set => SetProperty(ref _name, value); }
 
         public int Capacity { get => capacity; set => SetProperty(ref capacity, value); }
+
+        public int TfsCapacity { get => _tfsCapacity; set => SetProperty(ref _tfsCapacity, value); }
 
         public int WroteOff { get => wroteOff; set => SetProperty(ref wroteOff, value); }
 
@@ -35,10 +38,12 @@ namespace Gui.ViewModels
             var now = DateTime.Now;
 
             Name = api.Name;
-            Capacity = api.GetCapacity();
+            TfsCapacity = api.GetCapacity();
             WroteOff = api.GetCheckins(now, now).Sum(x => x.Value);
 
             MyItems = new ObservableCollection<WorkItemVm>(api.GetMyWorkItems().Select(x => new WorkItemVm(x)));
+
+            Capacity = Settings.Settings.Read().Capacity;
         }
     }
 }

@@ -109,10 +109,10 @@ namespace Gui.ViewModels
 
         public MainViewModel()
         {
-            Init();
-
             ShowMonthlyCommand = new ObservableCommand(ShowMonthly);
             UpdateCommand = ObservableCommand.FromAsyncHandler(Update);
+
+            Init();            
         }
 
         private async void Init()
@@ -130,6 +130,11 @@ namespace Gui.ViewModels
             using (var settings = Settings.Settings.Read())
             {
                 ApiObservable = new TfsObservable(FirstConnectionViewModel.Text, settings.MyWorkItems, GetTask);
+                
+                if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
+                {
+                    settings.Connections.Add(FirstConnectionViewModel.Text);
+                }
             }
 
             TryStartWorkDay();
@@ -157,7 +162,7 @@ namespace Gui.ViewModels
 
             await Task.Run(() => _apiObserve.RequestUpdate());
 
-            StatsViewModel.Refresh(_apiObserve);
+            RefreshStats();
 
             IsBusy = false;
         }
@@ -201,6 +206,7 @@ namespace Gui.ViewModels
                 var rare = e.Where(x => x.IsTypeOf(WorkItemTypes.Incident, WorkItemTypes.Feature)).ToList();
                 var responses = e.Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse)).ToList();
                 var requests = e.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)).ToList();
+                var rest = e.Except(bugs).Except(works).Except(rare).Except(responses).Except(requests).ToList();
 
                 if (bugs.Any())
                 {
@@ -220,14 +226,14 @@ namespace Gui.ViewModels
                 if (responses.Any())
                 {
                     var vms = new NewResponsesBaloonViewModel(responses, requests, _apiObserve, "Запросили проверку кода");
-                }
-
-                var rest = e.Except(bugs).Except(works).Except(rare).Except(responses).Except(requests).ToList();
+                }                
 
                 if (rest.Any())
                 {
                     WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(rest, "Новые рабочие элементы были назначены"));
                 }
+
+                RefreshStats();
             }
         }
 
@@ -235,6 +241,8 @@ namespace Gui.ViewModels
         {
             if (!e.IsNullOrEmpty())
             {
+                RefreshStats();
+
                 // Закрытые элемента
                 var closed = e.Where(x => x.Key.HasState(WorkItemStates.Closed));
 
@@ -311,6 +319,11 @@ namespace Gui.ViewModels
             return true;
         }
 
+        private void RefreshStats()
+        {
+            StatsViewModel.Refresh(ApiObservable);
+        }
+
         #endregion
 
         #region Actions
@@ -319,14 +332,17 @@ namespace Gui.ViewModels
         {
             using (var settings = Settings.Settings.Read())
             {
+                var work = settings.CompletedWork;
+                work.SyncCheckins(_apiObserve);
+
+                RefreshStats();
+
                 if (settings.Begin.IsToday())
                 {
                     return false;
                 }
 
-                settings.Begin = DateTime.Now;
-
-                var work = settings.CompletedWork;
+                settings.Begin = DateTime.Now;                
 
                 // Что-то не зачекинили с утра
                 if (work.ScheduledTime() != 0)
@@ -334,9 +350,7 @@ namespace Gui.ViewModels
                     work.CheckinScheduledWork(_apiObserve, settings.Capacity);
                 }
 
-                work.ClearPrevRecords();
-
-                work.SyncCheckins(_apiObserve);
+                work.ClearPrevRecords();                
 
                 // Выставлили сколько надо списать часов сегодня
                 settings.Capacity = _apiObserve.GetCapacity();
@@ -355,11 +369,15 @@ namespace Gui.ViewModels
 
                 // Сразу же списываем час работы
                 settigs.CompletedWork.CheckinScheduledWork(_apiObserve, settigs.Capacity);
+
+                RefreshStats();
             }
         }
 
         private bool TryEndWorkDay()
         {
+            bool result = false;
+
             using (var settings = Settings.Settings.Read())
             {
                 var now = DateTime.Now;
@@ -369,18 +387,23 @@ namespace Gui.ViewModels
                 if (now - settings.Begin > TimeSpan.FromHours(settings.Capacity))
                 {
                     work.SyncDailyPlan(_apiObserve, settings.Capacity, GetTask);
-                    return true;
+                    result = true;
                 }
-
-                // 2) Пользователь уже распланировал достаточно времени
-                if (settings.Capacity <= work.ScheduledTime() + work.CheckinedTime())
+                else
                 {
-                    work.CheckinScheduledWork(_apiObserve, settings.Capacity);
-                    return true;
+                    // 2) Пользователь уже распланировал достаточно времени
+                    if (settings.Capacity <= work.ScheduledTime() + work.CheckinedTime())
+                    {
+                        work.CheckinScheduledWork(_apiObserve, settings.Capacity);
+                        result = true;
+                    }
                 }
+                
             }
 
-            return false;
+            RefreshStats();
+
+            return result;
         }
 
         #endregion

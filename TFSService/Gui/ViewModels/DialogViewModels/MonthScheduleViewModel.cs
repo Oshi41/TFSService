@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation.Build.WebApi.Events;
 using Microsoft.TeamFoundation.Common;
+using Microsoft.TeamFoundation.TestManagement.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Mvvm;
 using TfsAPI.Extentions;
@@ -32,7 +34,7 @@ namespace Gui.ViewModels.DialogViewModels
             {
                 if (SetProperty(ref _month, value))
                 {
-                    var first = _cache.FirstOrDefault(x => x.Days.Any(y => y.Time.SameMonth(Month)));
+                    var first = _cache.FirstOrDefault(x => x?.Days?.Any(y => y.Time.SameMonth(Month)) == true);
 
                     if (first == null)
                     {
@@ -87,24 +89,18 @@ namespace Gui.ViewModels.DialogViewModels
             var start = new DateTime(time.Year, time.Month, 1);
             var now = DateTime.Now;
 
-            var collection = new ConcurrentBag<DayViewModel>();
-            var tasks = new List<Task>();
+            var collection = new List<DayViewModel>();
+
+            // чекины за месяц (один запрос к TFS)
+            var checkins = await Task.Run(() => api.GetCheckins(start, now));
+            var capacity = api.GetCapacity();
 
             while (start.Month == time.Month
                    && start <= now)
             {
-                var startCopy = start;
-
-                tasks.Add(
-                    Task.Run(() =>
-                    {
-                        collection.Add(new DayViewModel(api, startCopy));
-                    }));
-
+                collection.Add(new DayViewModel(start, checkins, capacity));
                 start = start.AddDays(1);
             }
-
-            await Task.WhenAll(tasks);
 
             Days = new ObservableCollection<DayViewModel>(collection.OrderBy(x => x.Time));
 
@@ -121,7 +117,12 @@ namespace Gui.ViewModels.DialogViewModels
         }
     }
 
-    public class DayViewModel : BindableBase
+    public interface ITimable
+    {
+        DateTime Time { get; }
+    }
+
+    public class DayViewModel : BindableBase, ITimable
     {
         public DateTime Time { get; }
 
@@ -133,14 +134,16 @@ namespace Gui.ViewModels.DialogViewModels
 
         public int Capacity { get; }
 
-        public DayViewModel(ITfsApi api, DateTime time)
+        public DayViewModel(DateTime time, List<KeyValuePair<Revision, int>> checkins, int capacity)
         {
+            Capacity = capacity;
+
             Time = time.Date;
             IsHolliday = GetIsHolliday(Time);
 
-            Checkins = api.GetCheckins(time, time.AddHours(24));
+            Checkins = checkins.Where(x => x.Key.Fields[CoreField.ChangedDate]?.Value is DateTime t
+                    && t.IsToday(Time)).ToList();
             Hours = Checkins.Select(x => x.Value).Sum();
-            Capacity = api.GetCapacity();
         }
 
         private static bool GetIsHolliday(DateTime time)

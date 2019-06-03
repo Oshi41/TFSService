@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/materialdesigncolor.amber.xaml" />
 
                 <ResourceDictionary Source="Resources/DataTemplates.xaml"/>
+                <ResourceDictionary Source="Resources/CalendarStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>            
         </ResourceDictionary>
     </Application.Resources>
