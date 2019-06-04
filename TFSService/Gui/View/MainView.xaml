@@ -35,7 +35,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -81,11 +81,21 @@
             <TextBlock Text="Рабочие элементы на мне:"
                        Grid.Row="2"/>
 
-            <ListBox Grid.Row="3"
-                     Grid.Column="0"
-                     ItemsSource="{Binding }">
-
-            </ListBox>
+            <ScrollViewer Grid.Row="3"
+                          Grid.Column="0"
+                          VerticalScrollBarVisibility="Auto">
+                <ListBox Grid.Row="3"
+                     Grid.Column="0"                     
+                     ItemsSource="{Binding Path=StatsViewModel.MyItems}">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}"
+                               BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                            <Setter Property="MaxWidth" Value="350"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </ScrollViewer>
+            
 
             <StackPanel Grid.Row="3"
                         Grid.Column="1"

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using Microsoft.TeamFoundation.Client.Reporting;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
