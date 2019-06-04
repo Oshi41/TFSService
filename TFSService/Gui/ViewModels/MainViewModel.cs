@@ -320,6 +320,8 @@ namespace Gui.ViewModels
 
         private bool TryStartWorkDay()
         {
+            var result = false;
+
             using (var settings = Settings.Settings.Read())
             {
                 var work = settings.CompletedWork;
@@ -327,28 +329,28 @@ namespace Gui.ViewModels
 
                 RefreshStats();
 
-                if (settings.Begin.IsToday())
+                if (!settings.Begin.IsToday())
                 {
-                    return false;
-                }
+                    // Что-то не зачекинили с утра
+                    if (work.ScheduledTime() != 0)
+                    {
+                        work.CheckinScheduledWork(_apiObserve, settings.Capacity);
+                    }
 
-                settings.Begin = DateTime.Now;                
+                    // Выставлили сколько надо списать часов сегодня
+                    settings.Capacity = _apiObserve.GetCapacity();
 
-                // Что-то не зачекинили с утра
-                if (work.ScheduledTime() != 0)
-                {
-                    work.CheckinScheduledWork(_apiObserve, settings.Capacity);
+                    settings.Begin = DateTime.Now;
+
+                    Trace.WriteLine($"{settings.Begin.ToShortTimeString()}: Welcome to a new day!");
+
+                    result = true;
                 }
 
                 work.ClearPrevRecords();                
-
-                // Выставлили сколько надо списать часов сегодня
-                settings.Capacity = _apiObserve.GetCapacity();
-
-                Trace.WriteLine($"{settings.Begin.ToShortTimeString()}: Welcome to a new day!");
             }
 
-            return true;
+            return result;
         }
 
         private void ScheduleHour(int id, byte hours)

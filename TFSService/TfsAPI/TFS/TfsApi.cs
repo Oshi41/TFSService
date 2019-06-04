@@ -275,8 +275,8 @@ namespace TfsAPI.TFS
                                        && string.Equals(Name, owner);
 
                     var correctTime = revision.Fields[CoreField.ChangedDate].Value is DateTime time
-                                           && from <= time
-                                           && time <= to;
+                                           && from < time.Date
+                                           && time.Date < to;
 
                     var completed = (double)revision.Fields[WorkItems.Fields.Complited].Value;
 
