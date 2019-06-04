@@ -6,6 +6,7 @@
                     xmlns:dialogViewModels="clr-namespace:Gui.ViewModels.DialogViewModels"
                     xmlns:notifications="clr-namespace:Gui.ViewModels.Notifications"
                     xmlns:baloonVms="clr-namespace:Gui.View.Notifications"
+                    xmlns:conv="clr-namespace:Gui.Converters"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
     <DataTemplate DataType="{x:Type viewModels:WorkItemVm}">
@@ -28,7 +29,7 @@
         <view:CreateTaksView/>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type dialogViewModels:CheckinHistoryViewModel}">
+    <DataTemplate DataType="{x:Type dialogViewModels:MonthCheckinsViewModel}">
         <view:ScheduleView/>
     </DataTemplate>
 
@@ -36,32 +37,68 @@
         <baloonVms:WriteOffNotificationView/>
     </DataTemplate>
 
+
+
     <DataTemplate DataType="{x:Type notifications:NewResponsesBaloonViewModel}">
         <baloonVms:NewItemsBaloonView>
             <baloonVms:NewItemsBaloonView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Закрыть оконченные Code Reviews"
                               Command="{Binding Path=CloseReviewes}"/>
-                    
+
                     <MenuItem Header="Закрыть старые Code Reviews"
                               Command="{Binding Path=CloseOldReviewes}"/>
                 </ContextMenu>
             </baloonVms:NewItemsBaloonView.ContextMenu>
         </baloonVms:NewItemsBaloonView>
     </DataTemplate>
-    
+
     <DataTemplate DataType="{x:Type dialogViewModels:DayViewModel}">
+        <DataTemplate.Resources>
+            <conv:MathCompareConverter x:Key="MoreConverter"
+                                       Operation="More"/>
+            <conv:MathCompareConverter x:Key="EquilityConverter"
+                                       Operation="Equals"/>
+        </DataTemplate.Resources>
+
         <ProgressBar x:Name="bar"
+                     Width="25"
+                     Height="25"
                      Style="{StaticResource MaterialDesignCircularProgressBar}"
                      Maximum="{Binding Path=Capacity, Mode=OneWay}"
                      Value="{Binding Path=Hours, Mode=OneWay}"
                      Foreground="DarkGreen"/>
-        
+
         <DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding IsHolliday}" Value="True">
+            <DataTrigger Value="True">
+                <DataTrigger.Binding>
+                    <MultiBinding Converter="{StaticResource EquilityConverter}">
+                        <Binding Path="Hours"/>
+                        <Binding Path="Capacity"/>
+                    </MultiBinding>
+                </DataTrigger.Binding>
                 <Setter TargetName="bar"
                         Property="Background"
                         Value="DarkGreen"/>
+            </DataTrigger>
+
+            <DataTrigger Value="True">
+                <DataTrigger.Binding>
+                    <MultiBinding Converter="{StaticResource MoreConverter}">
+                        <Binding Path="Hours"/>
+                        <Binding Path="Capacity"/>
+                    </MultiBinding>
+                </DataTrigger.Binding>
+                <Setter TargetName="bar"
+                        Property="Background"
+                        Value="Orange"/>
+            </DataTrigger>
+
+            <!-- Highest priority -->
+            <DataTrigger Binding="{Binding IsHolliday}" Value="True">
+                <Setter TargetName="bar"
+                        Property="Visibility"
+                        Value="Collapsed"/>
             </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>

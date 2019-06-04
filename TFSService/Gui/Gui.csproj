@@ -235,6 +235,7 @@
     <Compile Include=".Tests\TestDialogViewModel.cs" />
     <Compile Include="Behaviors\CalendarItemSourceBehavior.cs" />
     <Compile Include="Converters\HoursColorConverter.cs" />
+    <Compile Include="Converters\MathCompareConverter.cs" />
     <Compile Include="Converters\NoDataErrorConverter.cs" />
     <Compile Include="Converters\IdWorkitemConverter.cs" />
     <Compile Include="Converters\InvertBoolConverter.cs" />

@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using Microsoft.TeamFoundation.Build.WebApi.Events;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.TestManagement.Common;
@@ -16,104 +17,91 @@ using TfsAPI.Interfaces;
 
 namespace Gui.ViewModels.DialogViewModels
 {
-    public class CheckinHistoryViewModel : BindableExtended
+    public class MonthCheckinsViewModel : BindableExtended
     {
+        private DateTime date;
+        private DayViewModel selectedDay;
+        private bool _isBusy;
+        private List<DayViewModel> _month;
+        private int sum;
         private readonly ITfsApi _api;
-        private MonthScheduleViewModel _schedule;
-        private DateTime _month;
 
-        /// <summary>
-        /// Кэшированные месячные расписания
-        /// </summary>
-        private readonly List<MonthScheduleViewModel> _cache = new List<MonthScheduleViewModel>();
+        // Храним кэш заргуженный дней
+        private readonly Dictionary<DateTime, List<DayViewModel>> _cache = new Dictionary<DateTime, List<DayViewModel>>();
 
-        public DateTime Month
+        public DateTime Date
         {
-            get => _month;
+            get => date;
             set
             {
-                if (SetProperty(ref _month, value))
+                if (SetProperty(ref date, value))
                 {
-                    var first = _cache.FirstOrDefault(x => x?.Days?.Any(y => y.Time.SameMonth(Month)) == true);
-
-                    if (first == null)
-                    {
-                        first = new MonthScheduleViewModel(_api, Month);
-                        _cache.Add(first);
-                    }
-
-                    Schedule = first;
+                    OnDateChanged();
                 }
             }
         }
 
-        public MonthScheduleViewModel Schedule
+        public DayViewModel SelectedDay { get => selectedDay; set => SetProperty(ref selectedDay, value); }
+
+        public bool IsBusy { get => _isBusy; set => SetProperty(ref _isBusy, value); }
+
+        public List<DayViewModel> Month { get => _month; set => SetProperty(ref _month, value); }
+
+        public int Sum { get => sum; set => SetProperty(ref sum, value); }
+
+        public MonthCheckinsViewModel(ITfsApi api)
         {
-            get => _schedule;
-            set => SetProperty(ref _schedule, value);
+            this._api = api;
+
+            Date = DateTime.Now;
         }
 
-        public CheckinHistoryViewModel(ITfsApi api)
-        {
-            _api = api;
-            Month = DateTime.Today;
-        }
-    }
-
-    public class MonthScheduleViewModel : BindableBase
-    {
-        private ObservableCollection<DayViewModel> _days;
-        private bool _isBusy = true;
-
-        public ObservableCollection<DayViewModel> Days
-        {
-            get => _days;
-            private set => SetProperty(ref _days, value);
-        }
-
-        public bool IsBusy
-        {
-            get => _isBusy;
-            set => SetProperty(ref _isBusy, value);
-        }
-
-        public MonthScheduleViewModel(ITfsApi api, DateTime time)
-        {
-            Init(api, time);
-        }
-
-        private async void Init(ITfsApi api, DateTime time)
+        private async void OnDateChanged()
         {
             IsBusy = true;
 
-            var start = new DateTime(time.Year, time.Month, 1);
-            var now = DateTime.Now;
+            var start = new DateTime(Date.Year, Date.Month, 1);
+            // Последний день месяца
+            var end = (new DateTime(Date.Year, Date.Month + 1, 1)).AddDays(-1);
 
-            var collection = new List<DayViewModel>();
-
-            // чекины за месяц (один запрос к TFS)
-            var checkins = await Task.Run(() => api.GetCheckins(start, now));
-            var capacity = api.GetCapacity();
-
-            while (start.Month == time.Month
-                   && start <= now)
+            // ограничили сегодняшним днем
+            if (end > DateTime.Now)
             {
-                collection.Add(new DayViewModel(start, checkins, capacity));
-                start = start.AddDays(1);
+                end = DateTime.Now;
             }
 
-            Days = new ObservableCollection<DayViewModel>(collection.OrderBy(x => x.Time));
+            // Выбрали будущий месяц, смысла в поиске нет
+            if (start > end)
+                return;
+
+            if (!_cache.ContainsKey(start))
+            {
+                // чекины за месяц (один запрос к TFS)
+                var checkins = await Task.Run(() => _api.GetCheckins(start, end));
+                var capacity = await Task.Run(() => _api.GetCapacity());
+
+                var collection = new List<DayViewModel>();
+
+                var i = start;
+                while (i <= end)
+                {
+                    collection.Add(new DayViewModel(i, checkins, capacity));
+                    i = i.AddDays(1);
+                }
+
+                _cache[start] = collection;
+            }
+
+            // Выставляем новый месяц
+            if (Month?.FirstOrDefault()?.Time.SameMonth(Date) != true)
+            {
+                Month = _cache[start].ToList();
+                Sum = Month.Sum(x => x.Hours);
+            }
+
+            SelectedDay = Month.FirstOrDefault(x => x.Time.IsToday(Date));
 
             IsBusy = false;
-        }
-
-        public override string ToString()
-        {
-            if (Days.IsNullOrEmpty())
-                return "";
-
-            return $"{Days.Where(x => !x.IsHolliday).Sum(x => x.Hours)} часов " +
-                   $"из {Days.Where(x => !x.IsHolliday).Sum(x => x.Capacity)} запланированных";
         }
     }
 

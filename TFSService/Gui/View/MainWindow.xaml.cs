@@ -34,7 +34,7 @@ namespace Gui.View
             //    });
 
 
-            var vm = new CheckinHistoryViewModel(new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
+            var vm = new MonthCheckinsViewModel(new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
             WindowManager.ShowDialog(vm, "Расписание на месяц", width: 500, height:500);
 
             //var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");

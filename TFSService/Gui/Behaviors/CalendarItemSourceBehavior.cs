@@ -42,13 +42,11 @@ namespace Gui.Behaviors
 
             if (e.NewValue is INotifyCollectionChanged add)
             {
-                add.CollectionChanged += behavior.ThrowBinding;
-
-                behavior.ThrowBinding(behavior, EventArgs.Empty);
+                add.CollectionChanged += behavior.ThrowBinding;                
             }
+
+            behavior.ThrowBinding(behavior, EventArgs.Empty);
         }
-
-
 
         public static object GetDaylyDataContext(DependencyObject obj)
         {

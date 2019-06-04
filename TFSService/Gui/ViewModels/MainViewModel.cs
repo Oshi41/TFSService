@@ -78,11 +78,6 @@ namespace Gui.ViewModels
         public CreateTaskViewModel CreateTaskViewModel { get; set; }
 
         /// <summary>
-        /// Расписание моих месячных трудозатрат
-        /// </summary>
-        public CheckinHistoryViewModel MonthScheduleViewModel { get; set; }
-
-        /// <summary>
         /// Основная статистика пользователя
         /// </summary>
         public StatsViewModel StatsViewModel { get => statsViewModel; set => SetProperty(ref statsViewModel, value); }
@@ -148,12 +143,7 @@ namespace Gui.ViewModels
         #region Command handler
         private void ShowMonthly()
         {
-            if (MonthScheduleViewModel == null)
-            {
-                MonthScheduleViewModel = new CheckinHistoryViewModel(_apiObserve);
-            }
-
-            WindowManager.ShowDialog(MonthScheduleViewModel, "Месячное списание часов");
+            WindowManager.ShowDialog(new MonthCheckinsViewModel(_apiObserve), "Месячное списание часов", 700, 500);
         }
 
         private async Task Update()
