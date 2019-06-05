@@ -237,6 +237,7 @@
     </ApplicationDefinition>
     <Compile Include=".Tests\TestDialogViewModel.cs" />
     <Compile Include="Behaviors\CalendarItemSourceBehavior.cs" />
+    <Compile Include="Converters\DescriptionConverter.cs" />
     <Compile Include="Converters\HoursColorConverter.cs" />
     <Compile Include="Converters\MathCompareConverter.cs" />
     <Compile Include="Converters\NoDataErrorConverter.cs" />
@@ -257,6 +258,7 @@
     <Compile Include="ViewModels\DialogViewModels\CreateTaskViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\FirstConnectionViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\MonthScheduleViewModel.cs" />
+    <Compile Include="ViewModels\DialogViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\Notifications\BindableNotificationBase.cs" />
     <Compile Include="ViewModels\Notifications\ItemsAssignedBaloonViewModel.cs" />
@@ -290,6 +292,9 @@
     </Compile>
     <Compile Include="View\ScheduleView.xaml.cs">
       <DependentUpon>ScheduleView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\WorkItemSearcherView.xaml.cs">
       <DependentUpon>WorkItemSearcherView.xaml</DependentUpon>
@@ -352,6 +357,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\ScheduleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

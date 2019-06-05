@@ -81,7 +81,9 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <materialDesign:Card Padding="7">
+    <materialDesign:Card Padding="7"
+                         HorizontalAlignment="Stretch"
+                         HorizontalContentAlignment="Stretch">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

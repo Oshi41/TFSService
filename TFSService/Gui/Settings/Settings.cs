@@ -29,6 +29,7 @@ namespace Gui.Settings
         private ObservableCollection<string> _connections;
         private WriteOffCollection _completedWork;
         private ObservableCollection<int> _myWorkItems;
+        private WroteOffStrategy strategy;
 
         #endregion
 
@@ -95,6 +96,11 @@ namespace Gui.Settings
             set => Set(ref _myWorkItems, value);
         }
 
+        /// <summary>
+        /// Стратегия как выбираем таск для списывания времени
+        /// </summary>
+        public WroteOffStrategy Strategy { get => strategy; set => SetProperty(ref strategy, value); }
+
         #endregion
 
         #region Methods
@@ -119,7 +125,7 @@ namespace Gui.Settings
 
                 settings = new Settings();
             }
-            
+
             settings._changed = false;
 
             return settings;
@@ -147,7 +153,7 @@ namespace Gui.Settings
                 if (value is INotifyCollectionChanged added)
                 {
                     added.CollectionChanged += OnCollectionChanged;
-                }                
+                }
             }
 
             return SetProperty(ref storage, value, propertyName);
@@ -168,9 +174,18 @@ namespace Gui.Settings
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             _changed = true;
-        } 
+        }
 
 
         #endregion
+    }
+
+    public enum WroteOffStrategy
+    {
+        [Description("Выбираем случайно")]
+        Random,
+
+        [Description("Выбираем сами")]
+        Watch,
     }
 }

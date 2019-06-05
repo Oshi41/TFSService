@@ -81,26 +81,22 @@
             <TextBlock Text="Рабочие элементы на мне:"
                        Grid.Row="2"/>
 
-            <ScrollViewer Grid.Row="3"
-                          Grid.Column="0"
-                          VerticalScrollBarVisibility="Auto">
-                <ListBox Grid.Row="3"
-                     Grid.Column="0"                     
-                     ItemsSource="{Binding Path=StatsViewModel.MyItems}">
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListBoxItem}"
-                               BasedOn="{StaticResource {x:Type ListBoxItem}}">
-                            <Setter Property="MaxWidth" Value="350"/>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                </ListBox>
-            </ScrollViewer>
-            
+
+            <ListView Grid.Column="0"
+                      Grid.Row="3"
+                      BorderThickness="2"
+                      BorderBrush="Black"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                      HorizontalAlignment="Left"
+                      ItemsSource="{Binding Path=StatsViewModel.MyItems}"/>
+
 
             <StackPanel Grid.Row="3"
                         Grid.Column="1"
                         Grid.RowSpan="2"
-                        Orientation="Vertical">
+                        Orientation="Vertical"
+                        MaxWidth="200">
                 
                 <Button Content="Обновить"
                         Margin="5"
@@ -113,6 +109,10 @@
                         Command="{Binding Path=ShowMonthlyCommand}"
                         ToolTip="Открыть месячное расписание трудозатрат">
                 </Button>
+
+                <TextBlock Text="Действия"
+                           Margin="0,20,0,0"/>
+               
             </StackPanel>
 
         </Grid>

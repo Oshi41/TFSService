@@ -81,6 +81,8 @@
 
 
             <ListBox Grid.Column="1"
+                     Grid.RowSpan="3"
+                     ScrollViewer.VerticalScrollBarVisibility="Hidden"
                      ItemsSource="{Binding Path=SelectedDay.Checkins}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
