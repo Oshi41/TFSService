@@ -6,9 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Gui.Helper;
+using Gui.Settings;
 using Gui.ViewModels.DialogViewModels;
 using Gui.ViewModels.Notifications;
 using Microsoft.TeamFoundation.Common;
+using Microsoft.TeamFoundation.VersionControl.Common.Internal;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Mvvm;
 using TfsAPI.Constants;
@@ -27,6 +29,7 @@ namespace Gui.ViewModels
         private WorkItemVm _currentTask;
         private StatsViewModel statsViewModel = new StatsViewModel();
         private bool isBusy;
+        private WroteOffStrategy strategy;
 
         #endregion
 
@@ -84,6 +87,11 @@ namespace Gui.ViewModels
 
         public bool IsBusy { get => isBusy; set => SetProperty(ref isBusy, value); }
 
+        /// <summary>
+        /// Стратегия закрытия Code Rreview
+        /// </summary>
+        public WroteOffStrategy Strategy { get => strategy; set => SetProperty(ref strategy, value); }
+
         #endregion
 
         #region Commands
@@ -99,6 +107,8 @@ namespace Gui.ViewModels
         public ICommand ShowMonthlyCommand { get; private set; }
 
         public ICommand UpdateCommand { get; private set; }
+        public ICommand SettingsCommand { get; private set; }
+        
 
         #endregion
 
@@ -106,9 +116,10 @@ namespace Gui.ViewModels
         {
             ShowMonthlyCommand = new ObservableCommand(ShowMonthly);
             UpdateCommand = ObservableCommand.FromAsyncHandler(Update);
+            SettingsCommand = new ObservableCommand(ShowSettings);
 
-            Init();            
-        }
+            Init();
+        }        
 
         private async void Init()
         {
@@ -125,7 +136,7 @@ namespace Gui.ViewModels
             using (var settings = Settings.Settings.Read())
             {
                 ApiObservable = new TfsObservable(FirstConnectionViewModel.Text, settings.MyWorkItems, GetTask);
-                
+
                 if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
                 {
                     settings.Connections.Add(FirstConnectionViewModel.Text);
@@ -155,6 +166,20 @@ namespace Gui.ViewModels
             RefreshStats();
 
             IsBusy = false;
+        }
+
+        private void ShowSettings()
+        {
+            var vm = new SettingsViewModel(FirstConnectionViewModel.Text);
+
+            if (WindowManager.ShowDialog(vm, "Настройки", 400, 600) == true)
+            {
+                using (var settings = Settings.Settings.Read())
+                {
+                    settings.Capacity = vm.Capacity;
+                    settings.Duration = vm.DayDuration;
+                }
+            }
         }
 
         #endregion
@@ -216,7 +241,7 @@ namespace Gui.ViewModels
                 if (responses.Any())
                 {
                     var vms = new NewResponsesBaloonViewModel(responses, requests, _apiObserve, "Запросили проверку кода");
-                }                
+                }
 
                 if (rest.Any())
                 {
@@ -347,7 +372,7 @@ namespace Gui.ViewModels
                     result = true;
                 }
 
-                work.ClearPrevRecords();                
+                work.ClearPrevRecords();
             }
 
             return result;
@@ -390,7 +415,7 @@ namespace Gui.ViewModels
                         result = true;
                     }
                 }
-                
+
             }
 
             RefreshStats();

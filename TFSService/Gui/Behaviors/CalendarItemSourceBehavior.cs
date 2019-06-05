@@ -91,9 +91,6 @@ namespace Gui.Behaviors
 
         private void ThrowBinding(object sender, EventArgs e)
         {
-            if (Items == null || Items.Count == 0)
-                return;
-
             var month = MonthView;
 
             foreach (var item in month.Children.OfType<CalendarDayButton>())
@@ -103,7 +100,7 @@ namespace Gui.Behaviors
 
                 if (item.DataContext is DateTime itemTime)
                 {
-                    var first = Items.OfType<ITimable>().FirstOrDefault(x => x.Time.IsToday(itemTime));
+                    var first = Items?.OfType<ITimable>().FirstOrDefault(x => x.Time.IsToday(itemTime));
                     if (first != null)
                     {
                         SetDaylyDataContext(item, first);
