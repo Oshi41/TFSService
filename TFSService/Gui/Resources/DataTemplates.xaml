@@ -36,11 +36,10 @@
     <DataTemplate DataType="{x:Type notifications:WriteOffBaloonViewModel}">
         <baloonVms:WriteOffNotificationView/>
     </DataTemplate>
-    
+
     <DataTemplate DataType="{x:Type dialogViewModels:SettingsViewModel}">
         <view:SettingsView/>
     </DataTemplate>
-
 
 
     <DataTemplate DataType="{x:Type notifications:NewResponsesBaloonViewModel}">

@@ -5,11 +5,21 @@
                               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                               xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                              xmlns:baloonVms="clr-namespace:Gui.View.Notifications"
+                              xmlns:notifications="clr-namespace:Gui.ViewModels.Notifications"
                               mc:Ignorable="d" 
                               d:DesignHeight="450" d:DesignWidth="800">
-    
+
     <core:NotificationDisplayPart.Resources>
-        <materialDesign:NullableToVisibilityConverter x:Key="NillVisConverter"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../Resources/DataTemplates.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+
+            <materialDesign:NullableToVisibilityConverter x:Key="NillVisConverter"/>
+        </ResourceDictionary>
+
     </core:NotificationDisplayPart.Resources>
 
     <materialDesign:Card Padding="7"

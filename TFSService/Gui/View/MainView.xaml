@@ -72,8 +72,10 @@
                 </MenuItem>
                 
                 <MenuItem Header="Действия">
-                    <MenuItem Header="Закрыть проверенные Code Review"/>
-                    <MenuItem Header="Закрыть все Code Review, учитывая старые"/>
+                    <MenuItem Header="Закрыть проверенные Code Review"
+                              Command="{Binding Path=CodeResponsesViewModel.CloseReviewes}"/>
+                    <MenuItem Header="Закрыть все Code Review, учитывая старые"
+                              Command="{Binding Path=CodeResponsesViewModel.CloseOldReviewes}"/>
                 </MenuItem>
 
                 <MenuItem Header="Настройки"

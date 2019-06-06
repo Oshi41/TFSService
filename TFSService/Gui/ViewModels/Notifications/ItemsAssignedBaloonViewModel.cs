@@ -6,7 +6,7 @@ using TfsAPI.Extentions;
 
 namespace Gui.ViewModels.Notifications
 {
-    class ItemsAssignedBaloonViewModel : BindableNotificationBase
+    public class ItemsAssignedBaloonViewModel : BindableNotificationBase
     {
         public ItemsAssignedBaloonViewModel(List<WorkItem> e, 
             string title = "Назначены новые рабочие элементы") 

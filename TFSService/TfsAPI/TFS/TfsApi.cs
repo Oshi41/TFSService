@@ -155,7 +155,7 @@ namespace TfsAPI.TFS
             return 7;
         }
 
-        public IList<WorkItem> GetMyWorkItems()
+        public virtual IList<WorkItem> GetMyWorkItems()
         {
             var items = _itemStore.Query(_myItemsQuerry);
 

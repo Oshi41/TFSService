@@ -10,6 +10,7 @@ using Gui.Settings;
 using Gui.ViewModels.DialogViewModels;
 using Gui.ViewModels.Notifications;
 using Microsoft.TeamFoundation.Common;
+using Microsoft.TeamFoundation.TestManagement.WebApi;
 using Microsoft.TeamFoundation.VersionControl.Common.Internal;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Mvvm;
@@ -30,6 +31,7 @@ namespace Gui.ViewModels
         private StatsViewModel statsViewModel = new StatsViewModel();
         private bool isBusy;
         private WroteOffStrategy strategy;
+        private NewResponsesBaloonViewModel codeResponsesViewModel;
 
         #endregion
 
@@ -85,6 +87,8 @@ namespace Gui.ViewModels
         /// </summary>
         public StatsViewModel StatsViewModel { get => statsViewModel; set => SetProperty(ref statsViewModel, value); }
 
+        public NewResponsesBaloonViewModel CodeResponsesViewModel { get => codeResponsesViewModel; set => SetProperty(ref codeResponsesViewModel, value); }
+
         public bool IsBusy { get => isBusy; set => SetProperty(ref isBusy, value); }
 
         /// <summary>
@@ -108,7 +112,6 @@ namespace Gui.ViewModels
 
         public ICommand UpdateCommand { get; private set; }
         public ICommand SettingsCommand { get; private set; }
-
 
         #endregion
 
@@ -363,6 +366,13 @@ namespace Gui.ViewModels
         private void RefreshStats()
         {
             StatsViewModel.Refresh(ApiObservable);
+
+            var all = ApiObservable
+                .GetMyWorkItems();
+
+            CodeResponsesViewModel = new NewResponsesBaloonViewModel(all.Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse)).ToList(),
+                                                                     all.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)).ToList(),
+                                                                     ApiObservable);
         }
 
         #endregion

@@ -8,9 +8,12 @@ using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.VisualStudio.Services.Common;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Win32;
 using TfsAPI.Comarers;
 using TfsAPI.Interfaces;
+using System.Collections;
+using Microsoft.TeamFoundation.Client;
 
 namespace TfsAPI.TFS
 {
@@ -18,7 +21,8 @@ namespace TfsAPI.TFS
     {
         #region Fields
         private readonly VersionControlServer _versionControl;
-        private readonly Timer _timer;
+        private readonly Timer _hourTimer;
+        private readonly Timer _itemsTimer;
         private readonly Func<WorkItem> _currentItem;
         private readonly IEqualityComparer<WorkItem> _comparer = new WorkItemComparer();
         private readonly Dictionary<WorkItem, List<WorkItemEventArgs>> _changes =
@@ -26,6 +30,8 @@ namespace TfsAPI.TFS
 
         private bool _paused = true;
         private List<WorkItem> _myItems = new List<WorkItem>();
+
+        private MemoryCache _cache;
 
         #endregion
 
@@ -54,12 +60,18 @@ namespace TfsAPI.TFS
         {
             _currentItem = currentItem;
             _versionControl = _project.GetService<VersionControlServer>();
-            _timer = new Timer(1000 * 60 * 60);
-            _timer.Elapsed += (sender, args) => RequestUpdate(true);
+            _hourTimer = new Timer(1000 * 60 * 60);
+            _hourTimer.Elapsed += (sender, args) => RequestUpdate(true);
+
+            // Каждые 5 минут запрашиваем рабочие элементы
+            _itemsTimer = new Timer(1000 * 60 * 5);
+            _hourTimer.Elapsed += (sender, args) => RequestUpdate();
 
             SystemEvents.SessionSwitch += OnSessionSwitched;
 
             MyItems = new List<WorkItem>(myItems.Select(FindById).Where(x => x != null));
+
+            _cache = new MemoryCache(new MemoryCacheOptions());
         }
 
         #region ITFsObservable
@@ -80,7 +92,8 @@ namespace TfsAPI.TFS
             _paused = false;
 
             _versionControl.CommitCheckin += OnCheckIn;
-            _timer.Start();
+            _hourTimer.Start();
+            _itemsTimer.Start();
         }
 
         public void Pause()
@@ -92,7 +105,8 @@ namespace TfsAPI.TFS
             _paused = true;
 
             _versionControl.CommitCheckin -= OnCheckIn;
-            _timer.Stop();
+            _hourTimer.Stop();
+            _itemsTimer.Stop();
         }
 
         public void RequestUpdate()
@@ -133,13 +147,16 @@ namespace TfsAPI.TFS
 
         private void RememberChange(object sender, WorkItemEventArgs e)
         {
+            if (e?.Field?.WorkItem == null)
+                return;
+
             if (_changes.ContainsKey(e.Field.WorkItem))
             {
                 _changes[e.Field.WorkItem].Add(e);
             }
             else
             {
-                _changes[e.Field.WorkItem] = new List<WorkItemEventArgs> {e};
+                _changes[e.Field.WorkItem] = new List<WorkItemEventArgs> { e };
             }
         }
 
@@ -185,5 +202,33 @@ namespace TfsAPI.TFS
                 _changes.Clear();
             }
         }
+
+        #region Override
+
+        private const string _myWorkItemsKey = "myItemsCachePolicyName";
+
+        public override IList<WorkItem> GetMyWorkItems()
+        {
+            // 
+            // Сделано хэширование, чтобы не делать запросы чаще, чем раз в минуту
+            //
+
+            if (!_cache.TryGetValue<IList<WorkItem>>(_myWorkItemsKey, out var result))
+            {
+                result = base.GetMyWorkItems();
+
+                var options = new MemoryCacheEntryOptions()
+                        .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
+
+                lock (_myWorkItemsKey)
+                {                    
+                    _cache.Set(_myWorkItemsKey, result, options);
+                }
+            }
+
+            return result;
+        }
+
+        #endregion
     }
 }

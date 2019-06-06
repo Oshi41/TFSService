@@ -15,7 +15,7 @@ using static TfsAPI.Constants.WorkItems;
 
 namespace Gui.ViewModels.Notifications
 {
-    class NewResponsesBaloonViewModel : ItemsAssignedBaloonViewModel
+    public class NewResponsesBaloonViewModel : ItemsAssignedBaloonViewModel
     {
         private readonly List<WorkItem> _reviews;
         private readonly ITfsApi _api;
