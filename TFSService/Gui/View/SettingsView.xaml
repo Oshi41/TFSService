@@ -68,7 +68,8 @@
 
                 <Button HorizontalAlignment="Left" 
                         Margin="0,14" 
-                        Content="Изменить..."/>
+                        Content="Изменить..."
+                        Command="{Binding Path=ConnectCommand}"/>
             </StackPanel>
         </materialDesign:Card>
 
@@ -89,7 +90,11 @@
                 <TextBlock Text="Длина рабочего дня:"  
                            FontWeight="Bold"/>
 
-                <TextBox Text="{Binding Path=DayDuration, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" 
+                <TextBox Text="{Binding Path=DayDuration, 
+                                Mode=TwoWay,
+                                ValidatesOnDataErrors=True, 
+                                UpdateSourceTrigger=PropertyChanged,
+                                StringFormat={}{0:hh}:{0:mm}}" 
                          Margin="0,14,0,10"/>
             </StackPanel>
         </materialDesign:Card>

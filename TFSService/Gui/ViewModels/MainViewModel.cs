@@ -108,7 +108,7 @@ namespace Gui.ViewModels
 
         public ICommand UpdateCommand { get; private set; }
         public ICommand SettingsCommand { get; private set; }
-        
+
 
         #endregion
 
@@ -119,7 +119,7 @@ namespace Gui.ViewModels
             SettingsCommand = new ObservableCommand(ShowSettings);
 
             Init();
-        }        
+        }
 
         private async void Init()
         {
@@ -172,14 +172,7 @@ namespace Gui.ViewModels
         {
             var vm = new SettingsViewModel(FirstConnectionViewModel.Text);
 
-            if (WindowManager.ShowDialog(vm, "Настройки", 400, 600) == true)
-            {
-                using (var settings = Settings.Settings.Read())
-                {
-                    settings.Capacity = vm.Capacity;
-                    settings.Duration = vm.DayDuration;
-                }
-            }
+            WindowManager.ShowDialog(vm, "Настройки", 400, 600);
         }
 
         #endregion
@@ -302,31 +295,64 @@ namespace Gui.ViewModels
             // Обновляем наблюдаемый рабочий элемент
             _currentTask?.Item?.SyncToLatest();
 
-            if (_currentTask == null || !IsTaskAvailable())
+            if (_currentTask == null || !IsTaskAvailable(_currentTask))
             {
-                var vm = new ChooseTaskViewModel(_apiObserve);
+                var strategy = Settings.Settings.Read().Strategy;
 
-                // Нужно 100% выбрать таск
-                while (WindowManager.ShowDialog(vm, "Выберите элемент для списания времени", 400, 200) != true)
-                {
-                    Trace.WriteLine("User denied to choose task");
-                }
-
-                _currentTask = vm.Searcher.Selected;
+                _currentTask = FindAvailableTask(strategy);
             }
 
             return _currentTask;
         }
 
-        private bool IsTaskAvailable()
+        private WorkItemVm FindAvailableTask(WroteOffStrategy strategy)
         {
-            if (!_currentTask.Item.IsTaskAvailable())
+            // Тут уже запрашиваем все таски
+            var vm = new ChooseTaskViewModel(_apiObserve);
+
+            switch (strategy)
             {
-                Trace.WriteLine($"{nameof(MainViewModel)}: Task {_currentTask?.Item?.Id} is not exist or has been closed");
+                case WroteOffStrategy.Random:
+                    var tasks = vm
+                        .Searcher
+                        .Items
+                        .Where(x => IsTaskAvailable(x))
+                        .ToList();
+
+                    if (tasks.Any())
+                    {
+                        var random = (new Random()).Next(tasks.Count);
+                        return tasks[random];
+                    }
+
+                    // Нет доступных тасков, надо выбрать самому
+                    return FindAvailableTask(WroteOffStrategy.Watch);
+
+                case WroteOffStrategy.Watch:
+
+                    if (WindowManager.ShowDialog(vm, "Выберите элемент для списания времени", 400, 200) == true)
+                    {
+                        return vm.Searcher.Selected;
+                    }
+
+                    // Выбрать нужно обязательно
+                    return FindAvailableTask(strategy);
+
+
+                default:
+                    throw new Exception("Unknown strategy");
+            }
+        }
+
+        private bool IsTaskAvailable(WorkItem item)
+        {
+            if (!item.IsTaskAvailable())
+            {
+                Trace.WriteLine($"{nameof(MainViewModel)}: Task {item?.Id} is not exist or has been closed");
                 return false;
             }
 
-            if (!_apiObserve.IsAssignedToMe(_currentTask))
+            if (!_apiObserve.IsAssignedToMe(item))
             {
                 Trace.WriteLine($"{nameof(MainViewModel)}: Task is not assigned to me");
             }

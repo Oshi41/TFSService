@@ -7,6 +7,8 @@
         xmlns:viewmodels="clr-namespace:Gui.ViewModels"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:p="clr-namespace:Gui.Properties"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:behaviors="clr-namespace:Gui.Behaviors"
         mc:Ignorable="d"
         Height="400" Width="600"
         Title="{Binding Path=StatsViewModel.Name}">
@@ -36,8 +38,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -122,6 +124,7 @@
                       ScrollViewer.VerticalScrollBarVisibility="Hidden"
                       HorizontalAlignment="Left"
                       ItemsSource="{Binding Path=StatsViewModel.MyItems}"/>
+
 
 
             <!--<StackPanel Grid.Row="3"

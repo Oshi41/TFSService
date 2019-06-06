@@ -24,6 +24,31 @@ namespace Gui.Helper
             return FindChildByName<T>(childName, maxDepth, parent);
         }
 
+        public static T TryFindParent<T>(DependencyObject parent)
+                where T : DependencyObject
+        {
+            if (parent is T find)
+                return find;
+
+            find = default(T);
+
+            var visual = VisualTreeHelper.GetParent(parent);
+            var logical = LogicalTreeHelper.GetParent(parent);
+
+            if (visual != null)
+            {
+                find = TryFindParent<T>(visual);
+            }
+
+            if (logical != null
+                && find == null)
+            {
+                find = TryFindParent<T>(logical);
+            }
+
+            return find;
+        }
+
         /// <summary>
         /// Ищет потомка по имени
         /// </summary>
@@ -64,5 +89,6 @@ namespace Gui.Helper
             // Спускаюсь вниз на шаг, поэтому его вычитаю
             return FindChildByName<T>(childName, maxSteps - 1, directChilds.ToArray());
         }
+
     }
 }

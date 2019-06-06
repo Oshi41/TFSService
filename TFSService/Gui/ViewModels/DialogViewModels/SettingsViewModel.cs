@@ -1,5 +1,6 @@
 ﻿using Gui.Helper;
 using Gui.Settings;
+using Microsoft.TeamFoundation.VersionControl.Common.Internal;
 using Mvvm.Commands;
 using System;
 using System.Collections.Generic;
@@ -39,10 +40,42 @@ namespace Gui.ViewModels.DialogViewModels
 
         public SettingsViewModel(string currentConnection)
         {
-            connection = currentConnection;
+            Init(currentConnection);
 
             ConnectCommand = new ObservableCommand(OnConnect);
-            SubmitCommand = new ObservableCommand(() => { }, () => _changed);
+            SubmitCommand = new ObservableCommand(OnSave, () => _changed);
+        }
+
+        /// <summary>
+        /// Обновляем по настройкам
+        /// </summary>
+        /// <param name="currentConnection"></param>
+        private void Init(string currentConnection)
+        {
+            using (var settings = Settings.Settings.Read())
+            {
+                dayDuration = settings.Duration;
+                capacity = settings.Capacity;
+                connection = currentConnection;
+                strategy = settings.Strategy;
+            }
+        }
+
+        private void OnSave()
+        {
+            using (var settings = Settings.Settings.Read())
+            {
+                settings.Duration = DayDuration;
+                settings.Capacity = Capacity;
+
+                if (string.IsNullOrEmpty(Connection)
+                    && !settings.Connections.Contains(Connection))
+                {
+                    settings.Connections.Add(Connection);
+                }
+
+                settings.Strategy = Strategy;
+            }
         }
 
         private void OnConnect()
