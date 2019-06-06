@@ -373,6 +373,11 @@ namespace Gui.ViewModels
             CodeResponsesViewModel = new NewResponsesBaloonViewModel(all.Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse)).ToList(),
                                                                      all.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)).ToList(),
                                                                      ApiObservable);
+
+            using (var settings = Settings.Settings.Read())
+            {
+                settings.MyWorkItems = new System.Collections.ObjectModel.ObservableCollection<int>(all.Select(x => x.Id));
+            }
         }
 
         #endregion
@@ -451,7 +456,6 @@ namespace Gui.ViewModels
                         result = true;
                     }
                 }
-
             }
 
             RefreshStats();

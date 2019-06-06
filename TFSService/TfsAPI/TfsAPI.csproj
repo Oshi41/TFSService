@@ -249,6 +249,7 @@
     <Compile Include="Extentions\DateTimeExtentions.cs" />
     <Compile Include="Extentions\EventHandlerExtentions.cs" />
     <Compile Include="Extentions\IterationExtentions.cs" />
+    <Compile Include="Extentions\LinqExtensions.cs" />
     <Compile Include="Interfaces\IResumable.cs" />
     <Compile Include="Interfaces\ITfsApi.cs" />
     <Compile Include="Interfaces\ITFsObservable.cs" />

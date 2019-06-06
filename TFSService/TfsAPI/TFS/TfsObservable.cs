@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.VersionControl.Client;
@@ -12,8 +11,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Win32;
 using TfsAPI.Comarers;
 using TfsAPI.Interfaces;
-using System.Collections;
-using Microsoft.TeamFoundation.Client;
+using System.Windows.Forms;
 
 namespace TfsAPI.TFS
 {
@@ -21,8 +19,8 @@ namespace TfsAPI.TFS
     {
         #region Fields
         private readonly VersionControlServer _versionControl;
-        private readonly Timer _hourTimer;
-        private readonly Timer _itemsTimer;
+        private readonly System.Timers.Timer _hourTimer;
+        private readonly System.Timers.Timer _itemsTimer;
         private readonly Func<WorkItem> _currentItem;
         private readonly IEqualityComparer<WorkItem> _comparer = new WorkItemComparer();
         private readonly Dictionary<WorkItem, List<WorkItemEventArgs>> _changes =
@@ -60,14 +58,15 @@ namespace TfsAPI.TFS
         {
             _currentItem = currentItem;
             _versionControl = _project.GetService<VersionControlServer>();
-            _hourTimer = new Timer(1000 * 60 * 60);
+            _hourTimer = new System.Timers.Timer(1000 * 60 * 60);
             _hourTimer.Elapsed += (sender, args) => RequestUpdate(true);
 
             // Каждые 5 минут запрашиваем рабочие элементы
-            _itemsTimer = new Timer(1000 * 60 * 5);
+            _itemsTimer = new System.Timers.Timer(1000 * 60 * 5);
             _hourTimer.Elapsed += (sender, args) => RequestUpdate();
 
             SystemEvents.SessionSwitch += OnSessionSwitched;
+            AppDomain.CurrentDomain.ProcessExit += (sender, e) => Logoff?.Invoke(this, e);
 
             MyItems = new List<WorkItem>(myItems.Select(FindById).Where(x => x != null));
 

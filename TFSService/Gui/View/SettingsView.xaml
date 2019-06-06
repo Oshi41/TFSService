@@ -43,8 +43,8 @@
     <Grid IsSharedSizeScope="true">
         <Grid.ColumnDefinitions>
             <ColumnDefinition SharedSizeGroup="G1"
-                              Width="Auto"/>
-            <ColumnDefinition />
+                              Width="*"/>
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>

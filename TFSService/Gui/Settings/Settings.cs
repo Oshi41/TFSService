@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -9,6 +10,7 @@ using System.Runtime.CompilerServices;
 using Gui.Helper;
 using Mvvm;
 using Newtonsoft.Json;
+using TfsAPI.Extentions;
 
 namespace Gui.Settings
 {
@@ -153,6 +155,14 @@ namespace Gui.Settings
                 if (value is INotifyCollectionChanged added)
                 {
                     added.CollectionChanged += OnCollectionChanged;
+                }
+
+                // Проверка на совпадение списков
+                if (storage is IEnumerable x 
+                    && value is IEnumerable y
+                    && x.IsTermwiseEquals(y))
+                {
+                    return false;
                 }
             }
 

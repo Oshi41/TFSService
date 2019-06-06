@@ -338,9 +338,12 @@ namespace TfsAPI.TFS
 
             foreach (var request in requests)
             {
+                // Проверено
+
                 var responses = request
                     .WorkItemLinks
-                    .OfType<WorkItem>()
+                    .OfType<WorkItemLink>()
+                    .Select(x => FindById(x.TargetId))
                     .Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse))
                     .ToList();
 
