@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
+using System.Windows.Media;
 using Gui.ViewModels.DialogViewModels;
-using Brush = System.Windows.Media.Brush;
 
 namespace Gui.Converters
 {
-    class HoursColorConverter : IValueConverter
+    internal class HoursColorConverter : IValueConverter
     {
-        private Brush _overflowColor;
-        private Brush _normalColor;
         private Brush _lessColor;
+        private Brush _normalColor;
+        private Brush _overflowColor;
         private Brush _zeroColor;
 
         public Brush OverflowColor
@@ -55,18 +55,12 @@ namespace Gui.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is DayViewModel vm))
-            {
-                return Binding.DoNothing;
-            }
+            if (!(value is DayViewModel vm)) return Binding.DoNothing;
 
             if (vm.IsHolliday || vm.Capacity == vm.Hours)
                 return NormalColor;
 
-            if (vm.Capacity > 0 && vm.Hours < 1)
-            {
-                return ZeroColor;
-            }
+            if (vm.Capacity > 0 && vm.Hours < 1) return ZeroColor;
 
             return vm.Capacity > vm.Hours
                 ? LessColor

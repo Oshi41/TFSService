@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
 using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Common;
-using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.VisualStudio.Services.Common;
 using TfsAPI.Constants;
@@ -20,19 +16,6 @@ namespace TfsAPI.TFS
 {
     public class TfsApi : ITfsApi
     {
-        #region Fields
-
-        protected readonly TfsTeamProjectCollection _project;
-        private readonly WorkItemStore _itemStore;
-        private readonly ILinking _linking;
-
-        /// <summary>
-        /// Запрос на получение всех элементов на мне
-        /// </summary>
-        private readonly string _myItemsQuerry;
-
-        #endregion
-
         /// <param name="url">Строка подключения к TFS</param>
         /// <param name="owner">От какого имени действуем</param>
         public TfsApi(string url, string owner = null)
@@ -43,16 +26,65 @@ namespace TfsAPI.TFS
 
             _itemStore = _project.GetService<WorkItemStore>();
             _linking = _project.GetService<ILinking>();
-            
+
             Name = owner ?? _itemStore.UserDisplayName;
 
             Trace.WriteLine($"{nameof(TfsApi)}.ctor: Acting from {Name}");
 
             _myItemsQuerry = $"select * from {Sql.Tables.WorkItems} " +
-                                                 $"where {Sql.Fields.AssignedTo} = '{Name}' " +
-                                                 $"and {Sql.Fields.State} <> '{WorkItemStates.Closed}' " +
-                                                 $"and {Sql.Fields.State} <> '{WorkItemStates.Removed}' ";
+                             $"where {Sql.Fields.AssignedTo} = '{Name}' " +
+                             $"and {Sql.Fields.State} <> '{WorkItemStates.Closed}' " +
+                             $"and {Sql.Fields.State} <> '{WorkItemStates.Removed}' ";
         }
+
+        private void SaveElemnt(WorkItem item)
+        {
+#if DEBUG
+            Trace.WriteLine($"Представь, что мы сохранили {item.Id}");
+
+#else
+            if (_itemStore.UserDisplayName != _userName)
+            {
+                Trace.WriteLine($"Can't check-in from {_userName}, authorized as {_itemStore.UserDisplayName}");
+            }
+            else
+            {
+                item?.Save();
+            }
+#endif
+        }
+
+        public static async Task<bool> CheckConnection(string url)
+        {
+            bool CheckConnectSync()
+            {
+                try
+                {
+                    var proj = new TfsTeamProjectCollection(new Uri(url));
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    Trace.WriteLine(e);
+                    return false;
+                }
+            }
+
+            return await Task.Run((Func<bool>) CheckConnectSync);
+        }
+
+        #region Fields
+
+        protected readonly TfsTeamProjectCollection _project;
+        private readonly WorkItemStore _itemStore;
+        private readonly ILinking _linking;
+
+        /// <summary>
+        ///     Запрос на получение всех элементов на мне
+        /// </summary>
+        private readonly string _myItemsQuerry;
+
+        #endregion
 
         #region ITfsApi
 
@@ -82,14 +114,14 @@ namespace TfsAPI.TFS
             {
                 Tool = ToolNames.VersionControl,
                 ArtifactType = WorkItemTypes.ChangeSet,
-                ToolSpecificId = changeset.ToString(),
+                ToolSpecificId = changeset.ToString()
             };
 
             // По этому URL буду искать линкованные элементы
             var uri = LinkingUtilities.EncodeUri(setId);
 
             // Нашел связи
-            var linked = _linking.GetReferencingArtifacts(new[] { uri });
+            var linked = _linking.GetReferencingArtifacts(new[] {uri});
 
             Trace.WriteLine($"{nameof(GetAssociateItems)}: Founded {linked.Length} links");
 
@@ -104,11 +136,11 @@ namespace TfsAPI.TFS
                     var item = _itemStore.GetWorkItem(Convert.ToInt32(artifactId.ToolSpecificId));
                     // Добавил
                     result.Add(item);
-
                 }
             }
 
-            Trace.WriteLineIf(result.Any(), $"Changeset {changeset} linked with items: {string.Join(", ", result.Select(x => x.Id))}");
+            Trace.WriteLineIf(result.Any(),
+                $"Changeset {changeset} linked with items: {string.Join(", ", result.Select(x => x.Id))}");
 
             return result;
         }
@@ -135,11 +167,9 @@ namespace TfsAPI.TFS
 
             // Ищу только указанные типы
             if (!allowedTypes.IsNullOrEmpty())
-            {
                 quarry += " and (" +
                           $"{string.Join("or ", allowedTypes.Select(x => $"{Sql.Fields.WorkItemType} = '{x}'"))}" +
-                          $")";
-            }
+                          ")";
 
             var items = _itemStore.Query(quarry);
 
@@ -186,7 +216,7 @@ namespace TfsAPI.TFS
                 State = WorkItemStates.New,
                 Title = title,
                 AreaPath = parent.AreaPath,
-                IterationPath = parent.IterationPath,
+                IterationPath = parent.IterationPath
             };
 
             task.Fields[CoreField.AssignedTo].Value = _project.AuthorizedIdentity.DisplayName;
@@ -224,7 +254,7 @@ namespace TfsAPI.TFS
             parent.Links.Add(new RelatedLink(link.ReverseEnd, task.Id));
             SaveElemnt(task);
 
-            Trace.WriteLine($"--------- AFTER LINKING --------\n" +
+            Trace.WriteLine("--------- AFTER LINKING --------\n" +
                             $"Task links count: {task.Links.Count}, " +
                             $"Parent links count: {task.Links.Count}");
 
@@ -272,30 +302,28 @@ namespace TfsAPI.TFS
 
                     // Был ли таск изменен мной
                     var changedByMe = revision.Fields[WorkItems.Fields.ChangedBy]?.Value is string owner
-                                       && string.Equals(Name, owner);
+                                      && string.Equals(Name, owner);
 
                     var correctTime = revision.Fields[CoreField.ChangedDate].Value is DateTime time
-                                           && from < time.Date
-                                           && time.Date < to;
+                                      && from < time.Date
+                                      && time.Date < to;
 
-                    var completed = (double)revision.Fields[WorkItems.Fields.Complited].Value;
+                    var completed = (double) revision.Fields[WorkItems.Fields.Complited].Value;
 
                     // Списанное время
-                    var delta = (int)(completed - previouse);
+                    var delta = (int) (completed - previouse);
 
                     previouse = completed;
 
                     if (delta < 1)
                         continue;
 
-                    if (!correctTime)
-                    {
-                        continue;
-                    }
+                    if (!correctTime) continue;
 
                     if (!changedByMe)
                     {
-                        Trace.WriteLine($"{revision.Fields[WorkItems.Fields.ChangedBy]?.Value} is changed completed work for you");
+                        Trace.WriteLine(
+                            $"{revision.Fields[WorkItems.Fields.ChangedBy]?.Value} is changed completed work for you");
                         continue;
                     }
 
@@ -368,7 +396,7 @@ namespace TfsAPI.TFS
             var result = new List<WorkItem>();
 
             foreach (var item in items.Where(x => x != null
-                                             && x.WorkItemLinks.Count > 0))
+                                                  && x.WorkItemLinks.Count > 0))
             {
                 var parentLinks = item
                     .WorkItemLinks
@@ -379,10 +407,7 @@ namespace TfsAPI.TFS
                 foreach (var link in parentLinks)
                 {
                     var parent = _itemStore.GetWorkItem(link.TargetId);
-                    if (parent != null)
-                    {
-                        result.Add(parent);
-                    }
+                    if (parent != null) result.Add(parent);
                 }
             }
 
@@ -392,41 +417,5 @@ namespace TfsAPI.TFS
         public string Name { get; }
 
         #endregion
-
-        private void SaveElemnt(WorkItem item)
-        {
-#if DEBUG
-            Trace.WriteLine($"Представь, что мы сохранили {item.Id}");
-
-#else
-            if (_itemStore.UserDisplayName != _userName)
-            {
-                Trace.WriteLine($"Can't check-in from {_userName}, authorized as {_itemStore.UserDisplayName}");
-            }
-            else
-            {
-                item?.Save();
-            }
-#endif
-        }
-
-        public static async Task<bool> CheckConnection(string url)
-        {
-            bool CheckConnectSync()
-            {
-                try
-                {
-                    var proj = new TfsTeamProjectCollection(new Uri(url));
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    Trace.WriteLine(e);
-                    return false;
-                }
-            }
-
-            return await Task.Run((Func<bool>)CheckConnectSync);
-        }
     }
 }

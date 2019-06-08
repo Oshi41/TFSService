@@ -5,20 +5,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Gui.Helper;
-using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
-using static TfsAPI.Constants.WorkItems;
 
 namespace Gui.ViewModels.Notifications
 {
     public class NewResponsesBaloonViewModel : ItemsAssignedBaloonViewModel
     {
-        private readonly List<WorkItem> _reviews;
         private readonly ITfsApi _api;
+        private readonly List<WorkItem> _reviews;
         private bool _isExecuted;
 
         public NewResponsesBaloonViewModel(List<WorkItem> responses,
@@ -35,8 +33,8 @@ namespace Gui.ViewModels.Notifications
             CloseOldReviewes = ObservableCommand.FromAsyncHandler(OnCloseOld, OnCanCloseOld);
         }
 
-        public ICommand CloseReviewes { get; private set; }
-        public ICommand CloseOldReviewes { get; private set; }
+        public ICommand CloseReviewes { get; }
+        public ICommand CloseOldReviewes { get; }
 
 
         private bool OnCanCloseGoodLooking()
@@ -48,8 +46,8 @@ namespace Gui.ViewModels.Notifications
         {
             var now = DateTime.Now;
 
-            return OnCanCloseGoodLooking()              
-                && _reviews.Any(x => IsOld(x.CreatedDate));
+            return OnCanCloseGoodLooking()
+                   && _reviews.Any(x => IsOld(x.CreatedDate));
         }
 
         private async Task OnCloseOld()
@@ -57,10 +55,8 @@ namespace Gui.ViewModels.Notifications
             await Task.Run(() => _api.CloseCompletedReviews((request, responses) =>
             {
                 if (responses.IsNullOrEmpty()
-                || request.HasState(WorkItemStates.Closed))
-                {
+                    || request.HasState(WorkItemStates.Closed))
                     return false;
-                }
 
                 // Что-то нуждается в доработке
                 if (responses.Any(x => x.HasClosedReason(WorkItems.ClosedStatus.NeedsWork)))
@@ -78,10 +74,8 @@ namespace Gui.ViewModels.Notifications
             await Task.Run(() => _api.CloseCompletedReviews((request, responses) =>
             {
                 if (responses.IsNullOrEmpty()
-                || request.HasState(WorkItemStates.Closed))
-                {
+                    || request.HasState(WorkItemStates.Closed))
                     return false;
-                }
 
                 return responses.All(x => x.HasClosedReason(WorkItems.ClosedStatus.LooksGood));
             }));
@@ -89,7 +83,7 @@ namespace Gui.ViewModels.Notifications
 
 
         /// <summary>
-        /// Вынес для гибкости дальнейшего функционала
+        ///     Вынес для гибкости дальнейшего функционала
         /// </summary>
         /// <param name="createdDate">Дата создания запроса кода</param>
         /// <returns></returns>
@@ -100,6 +94,5 @@ namespace Gui.ViewModels.Notifications
             // Считаю старым 100-дневные запросы кода
             return (now - createdDate).Duration() > TimeSpan.FromDays(100);
         }
-        
     }
 }

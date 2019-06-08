@@ -9,39 +9,39 @@
         mc:Ignorable="d"
         Title="DialogWindow" Height="450" Width="800"
         d:DataContext="{d:DesignInstance Type={x:Type dialogViewModels:BindableExtended}}">
-    
+
     <Window.Resources>
         <ResourceDictionary>
-            <converters:InvertBoolConverter x:Key="InvertBoolConverter"/>
-            <converters:NoDataErrorConverter x:Key="NoDataErrorConverter"/>
-            
-            <materialDesign:NullableToVisibilityConverter x:Key="NullableToVisibilityConverter"/>
+            <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
+            <converters:NoDataErrorConverter x:Key="NoDataErrorConverter" />
+
+            <materialDesign:NullableToVisibilityConverter x:Key="NullableToVisibilityConverter" />
         </ResourceDictionary>
     </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
+
         <ContentControl Content="{Binding}"
-                        Margin="10"/>
-        
+                        Margin="10" />
+
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
                 <ColumnDefinition Width="Auto"
-                                  MinWidth="50"/>
-                <ColumnDefinition Width="Auto"/>
+                                  MinWidth="50" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            
+
             <Button x:Name="SpecialBtn"
                     Command="{Binding Path=SpecialCommand}"
                     Margin="7"
-                    Visibility="{Binding Path=SpecialCommand, Converter={StaticResource NullableToVisibilityConverter}}"/>
-            
+                    Visibility="{Binding Path=SpecialCommand, Converter={StaticResource NullableToVisibilityConverter}}" />
+
             <Button Grid.Column="2"
                     x:Name="OkBtn"
                     Command="{Binding Path=SubmitCommand}"
@@ -54,18 +54,18 @@
                     MinWidth="{Binding ElementName=ExitBtn, Path=ActualWidth}"
                     IsEnabled="{Binding Path=Error, 
                                 Converter={StaticResource NoDataErrorConverter}, 
-                                ValidatesOnDataErrors=True}"/>
-            
+                                ValidatesOnDataErrors=True}" />
+
             <Button Grid.Column="3"
                     x:Name="ExitBtn"
                     Style="{StaticResource MaterialDesignRaisedAccentButton}"
                     Click="Deny"
                     Margin="7"
                     MinWidth="{Binding ElementName=OkBtn, Path=ActualWidth}"
-                    IsCancel="True"/>
+                    IsCancel="True" />
         </Grid>
-        
+
     </Grid>
-    
+
 
 </Window>

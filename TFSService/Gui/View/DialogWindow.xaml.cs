@@ -6,7 +6,7 @@ using Gui.Helper;
 namespace Gui.View
 {
     /// <summary>
-    /// Interaction logic for DialogWindow.xaml
+    ///     Interaction logic for DialogWindow.xaml
     /// </summary>
     public partial class DialogWindow : Window
     {
@@ -16,18 +16,18 @@ namespace Gui.View
         }
 
         /// <summary>
-        /// Закрываю окно с отриц. результатом
+        ///     Закрываю окно с отриц. результатом
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Deny(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = false;
+            DialogResult = false;
             Close();
         }
 
         /// <summary>
-        /// Пытаемся закрыть окно на кнопку подтверждения
+        ///     Пытаемся закрыть окно на кнопку подтверждения
         /// </summary>
         private void TryClose(object sender, RoutedEventArgs e)
         {
@@ -36,14 +36,9 @@ namespace Gui.View
 
             // Если команды нет, сразу пытаемся закрыть
             if (command == null)
-            {
                 Submit();
-            }
             else
-            {
-                // Инчае ждем окончания выполнения команды
                 command.Executed += OnExecuted;
-            }
         }
 
         private void OnExecuted(object sender, EventArgs e)
@@ -60,10 +55,10 @@ namespace Gui.View
         private void Submit()
         {
             // Подтверждаем только если кнопка доступна
-            if (!OkBtn.IsEnabled) 
+            if (!OkBtn.IsEnabled)
                 return;
 
-            this.DialogResult = true;
+            DialogResult = true;
             Close();
         }
     }

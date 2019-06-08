@@ -1,15 +1,15 @@
 ﻿<UserControl x:Class="Gui.View.SettingsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Gui.View"
              xmlns:vm="clr-namespace:Gui.ViewModels.DialogViewModels"
              xmlns:s="clr-namespace:Gui.Settings"
              xmlns:c="clr-namespace:Gui.Converters"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type={x:Type vm:SettingsViewModel}}">
 
@@ -18,23 +18,23 @@
 
             <Style TargetType="{x:Type materialDesign:Card}"
                    BasedOn="{StaticResource {x:Type materialDesign:Card}}">
-                <Setter Property="Padding" Value="5"/>
-                <Setter Property="HorizontalAlignment" Value="Left"/>
-                <Setter Property="Grid.Column" Value="0"/>
-                <Setter Property="Margin" Value="5"/>
-                <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                <Setter Property="MinWidth" Value="250"/>
+                <Setter Property="Padding" Value="5" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="Grid.Column" Value="0" />
+                <Setter Property="Margin" Value="5" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="MinWidth" Value="250" />
             </Style>
 
             <ObjectDataProvider x:Key="wroteOffEnums" MethodName="GetValues"
-                            ObjectType="{x:Type system:Enum}">
+                                ObjectType="{x:Type system:Enum}">
                 <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="s:WroteOffStrategy"/>
+                    <x:Type TypeName="s:WroteOffStrategy" />
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
 
-            <c:DescriptionConverter x:Key="DescriptionConverter"/>
+            <c:DescriptionConverter x:Key="DescriptionConverter" />
 
         </ResourceDictionary>
     </UserControl.Resources>
@@ -43,69 +43,71 @@
     <Grid IsSharedSizeScope="true">
         <Grid.ColumnDefinitions>
             <ColumnDefinition SharedSizeGroup="G1"
-                              Width="*"/>
+                              Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <materialDesign:Card >
+        <materialDesign:Card>
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="Текущее подключение:"  
-                           FontWeight="Bold"/>
+                <TextBlock Text="Текущее подключение:"
+                           FontWeight="Bold" />
 
-                <TextBlock Text="{Binding Path=Connection, Mode=OneWay}" 
-                           TextTrimming="WordEllipsis" 
-                           ToolTip="{Binding Path=Connection, Mode=OneWay, FallbackValue=-}"/>
+                <TextBlock Text="{Binding Path=Connection, Mode=OneWay}"
+                           TextTrimming="WordEllipsis"
+                           ToolTip="{Binding Path=Connection, Mode=OneWay, FallbackValue=-}" />
 
-                <Button HorizontalAlignment="Left" 
-                        Margin="0,14" 
+                <Button HorizontalAlignment="Left"
+                        Margin="0,14"
                         Content="Изменить..."
-                        Command="{Binding Path=ConnectCommand}"/>
+                        Command="{Binding Path=ConnectCommand}" />
             </StackPanel>
         </materialDesign:Card>
 
         <materialDesign:Card Grid.Row="1"
                              Padding="5,5,5,10">
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="Дневная норма часов:"  
-                           FontWeight="Bold"/>
+                <TextBlock Text="Дневная норма часов:"
+                           FontWeight="Bold" />
 
-                <TextBox Text="{Binding Path=Capacity, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"                          
-                         Margin="0,14,0,10"/>
+                <TextBox
+                    Text="{Binding Path=Capacity, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                    Margin="0,14,0,10" />
             </StackPanel>
         </materialDesign:Card>
 
         <materialDesign:Card Grid.Row="2"
                              Padding="5,5,5,10">
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="Длина рабочего дня:"  
-                           FontWeight="Bold"/>
+                <TextBlock Text="Длина рабочего дня:"
+                           FontWeight="Bold" />
 
-                <TextBox Text="{Binding Path=DayDuration, 
+                <TextBox
+                    Text="{Binding Path=DayDuration, 
                                 Mode=TwoWay,
                                 ValidatesOnDataErrors=True, 
                                 UpdateSourceTrigger=PropertyChanged,
-                                StringFormat={}{0:hh}:{0:mm}}" 
-                         Margin="0,14,0,10"/>
+                                StringFormat={}{0:hh}:{0:mm}}"
+                    Margin="0,14,0,10" />
             </StackPanel>
         </materialDesign:Card>
 
         <materialDesign:Card Grid.Row="3">
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="Стратегия списывания времени:"  
-                           FontWeight="Bold"/>
+                <TextBlock Text="Стратегия списывания времени:"
+                           FontWeight="Bold" />
 
                 <TextBlock Text="Как выбираем рабочий элемент для запланированного списания часов?"
-                           TextWrapping="Wrap"/>
+                           TextWrapping="Wrap" />
 
                 <ComboBox Margin="0,10"
                           ItemsSource="{Binding Source={StaticResource wroteOffEnums}}"
@@ -113,7 +115,7 @@
                           IsSynchronizedWithCurrentItem="True">
                     <ComboBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type ComboBoxItem}">
-                            <TextBlock Text="{Binding Converter={StaticResource DescriptionConverter}}"/>
+                            <TextBlock Text="{Binding Converter={StaticResource DescriptionConverter}}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>

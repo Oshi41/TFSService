@@ -266,7 +266,6 @@
     <Compile Include="Helper\WpfUtil.cs" />
     <Compile Include="Helper\WriteOff.cs" />
     <Compile Include="Helper\WriteOffCollection.cs" />
-    <Compile Include="Interfaces\ISystemObserver.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="ViewModels\DialogViewModels\ChooseTaskViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\CreateTaskViewModel.cs" />

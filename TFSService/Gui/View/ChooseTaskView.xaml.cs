@@ -3,7 +3,7 @@
 namespace Gui.View
 {
     /// <summary>
-    /// Interaction logic for ChooseTaskView.xaml
+    ///     Interaction logic for ChooseTaskView.xaml
     /// </summary>
     public partial class ChooseTaskView : UserControl
     {

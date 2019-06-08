@@ -7,42 +7,37 @@ using Timer = System.Timers.Timer;
 namespace Gui.Helper
 {
     /// <summary>
-    /// Класс для выполнения действий с интервалом.
-    /// Предназначен для Web запросов
+    ///     Класс для выполнения действий с интервалом.
+    ///     Предназначен для Web запросов
     /// </summary>
     /// <typeparam name="TIn">Что передаем</typeparam>
     /// <typeparam name="TOut">Что получаем</typeparam>
     public class TimedAction<TIn, TOut>
     {
         /// <summary>
-        /// Функция выполнения
+        ///     Функция выполнения
         /// </summary>
         private readonly Func<TIn, TOut> _action;
 
         /// <summary>
-        /// Таймер
-        /// </summary>
-        private readonly Timer _timer;
-
-        /// <summary>
-        /// Контекст для GUI потока
+        ///     Контекст для GUI потока
         /// </summary>
         private readonly SynchronizationContext _sync;
 
         /// <summary>
-        /// Параметр
+        ///     Таймер
+        /// </summary>
+        private readonly Timer _timer;
+
+        /// <summary>
+        ///     Параметр
         /// </summary>
         private TIn _param;
 
         /// <summary>
-        /// Запрос на выполнение от пользователя
+        ///     Запрос на выполнение от пользователя
         /// </summary>
         private bool _sheduledByUser;
-
-        /// <summary>
-        /// Событие по окончанию асинхронного действия
-        /// </summary>
-        public event EventHandler<TOut> Performed;
 
         /// <param name="action">Длительное действие</param>
         /// <param name="interval">Интервал для выполнения действия</param>
@@ -56,7 +51,12 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Асинхронно выполняем действие и запускаем событие в GUI потоке
+        ///     Событие по окончанию асинхронного действия
+        /// </summary>
+        public event EventHandler<TOut> Performed;
+
+        /// <summary>
+        ///     Асинхронно выполняем действие и запускаем событие в GUI потоке
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -71,7 +71,7 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Ставим событие в очередь, чтобы избежать ложных срабатываний
+        ///     Ставим событие в очередь, чтобы избежать ложных срабатываний
         /// </summary>
         /// <param name="param"></param>
         public void Shedule(TIn param)

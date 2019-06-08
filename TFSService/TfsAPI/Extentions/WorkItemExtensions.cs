@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Constants;
@@ -10,10 +9,10 @@ namespace TfsAPI.Extentions
     public static class WorkItemExtensions
     {
         /// <summary>
-        /// Сверяет переданное состояние рабочего элемента с фактическим.
+        ///     Сверяет переданное состояние рабочего элемента с фактическим.
         /// </summary>
         /// <param name="item">Рабочий элемент</param>
-        /// <param name="type">Состояние. См <see cref="WorkItemStates"/></param>
+        /// <param name="type">Состояние. См <see cref="WorkItemStates" /></param>
         /// <returns></returns>
         public static bool HasState(this WorkItem item, string type)
         {
@@ -21,10 +20,10 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
-        /// Сверяет переданные типы рабочего элемента с фактическим
+        ///     Сверяет переданные типы рабочего элемента с фактическим
         /// </summary>
         /// <param name="item">Рабочий элемент</param>
-        /// <param name="type">Типы рабочего элемента. См. <see cref="WorkItemTypes"/></param>
+        /// <param name="type">Типы рабочего элемента. См. <see cref="WorkItemTypes" /></param>
         /// <returns></returns>
         public static bool IsTypeOf(this WorkItem item, params string[] types)
         {
@@ -36,10 +35,10 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
-        /// Сверяет причину закрытия рабочего элемента
+        ///     Сверяет причину закрытия рабочего элемента
         /// </summary>
         /// <param name="item">Рабочий элемент</param>
-        /// <param name="type">Список причин закрытия. См. <see cref="WorkItems.ClosedStatus"/></param>
+        /// <param name="type">Список причин закрытия. См. <see cref="WorkItems.ClosedStatus" /></param>
         /// <returns></returns>
         public static bool HasClosedReason(this WorkItem item, params string[] types)
         {
@@ -51,7 +50,7 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
-        /// Доступен ли данный таск для списания времени
+        ///     Доступен ли данный таск для списания времени
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -65,7 +64,7 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
-        /// Списывает часы у задания. Не сохраняет изменения!
+        ///     Списывает часы у задания. Не сохраняет изменения!
         /// </summary>
         /// <param name="item">рабочий элемента</param>
         /// <param name="hours">Кол-во часов для списывания</param>
@@ -85,10 +84,7 @@ namespace TfsAPI.Extentions
 
             if (!item.HasState(WorkItemStates.Active))
             {
-                if (!setActive)
-                {
-                    throw new Exception("Task should have an active state");
-                }
+                if (!setActive) throw new Exception("Task should have an active state");
 
                 item.State = "Active";
             }
@@ -101,7 +97,7 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
-        /// Работа по элементу не прекращена
+        ///     Работа по элементу не прекращена
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -110,10 +106,9 @@ namespace TfsAPI.Extentions
             return !item.HasState(WorkItemStates.Closed);
         }
 
-        
-        
+
         /// <summary>
-        /// Важные рабочие элемента с высочайшим приоритетом
+        ///     Важные рабочие элемента с высочайшим приоритетом
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -123,7 +118,7 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
-        /// Стандартные рабочие элементы
+        ///     Стандартные рабочие элементы
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -133,7 +128,7 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
-        /// Рабочий элемент - баг
+        ///     Рабочий элемент - баг
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>

@@ -5,9 +5,9 @@ using System.Windows.Data;
 namespace Gui.Converters
 {
     /// <summary>
-    /// Конвертер для индикации наличия ошибки Data Error
+    ///     Конвертер для индикации наличия ошибки Data Error
     /// </summary>
-    class NoDataErrorConverter : IValueConverter
+    internal class NoDataErrorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

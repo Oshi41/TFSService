@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using Gui.Helper;
 using Gui.ViewModels.DialogViewModels;
 using TfsAPI.TFS;
@@ -7,7 +6,7 @@ using TfsAPI.TFS;
 namespace Gui.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -35,7 +34,7 @@ namespace Gui.View
 
 
             var vm = new MonthCheckinsViewModel(new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
-            WindowManager.ShowDialog(vm, "Расписание на месяц", width: 500, height:500);
+            WindowManager.ShowDialog(vm, "Расписание на месяц", 500, 500);
 
             //var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
             //tfs.ItemsChanged += (sender, item) => { MessageBox.Show(string.Join(", ", item.Keys.Select(x => x.Id))); };
@@ -45,7 +44,6 @@ namespace Gui.View
 
             //WindowManager.ShowDialog(vm, "Первое подключение", width: 400, height:200);
 #endif
-
         }
     }
 }

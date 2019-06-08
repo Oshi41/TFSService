@@ -3,35 +3,40 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Timers;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.VisualStudio.Services.Common;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Win32;
 using TfsAPI.Comarers;
 using TfsAPI.Interfaces;
-using System.Windows.Forms;
 
 namespace TfsAPI.TFS
 {
     public class TfsObservable : TfsApi, ITFsObservable
     {
-        #region Fields
-        private readonly VersionControlServer _versionControl;
-        private readonly System.Timers.Timer _hourTimer;
-        private readonly System.Timers.Timer _itemsTimer;
-        private readonly Func<WorkItem> _currentItem;
-        private readonly IEqualityComparer<WorkItem> _comparer = new WorkItemComparer();
-        private readonly Dictionary<WorkItem, List<WorkItemEventArgs>> _changes =
-            new Dictionary<WorkItem, List<WorkItemEventArgs>>();
+        public TfsObservable(string url,
+            IList<int> myItems,
+            Func<WorkItem> currentItem)
+            : base(url)
+        {
+            _currentItem = currentItem;
+            _versionControl = _project.GetService<VersionControlServer>();
+            _hourTimer = new Timer(1000 * 60 * 60);
+            _hourTimer.Elapsed += (sender, args) => RequestUpdate(true);
 
-        private bool _paused = true;
-        private List<WorkItem> _myItems = new List<WorkItem>();
+            // Каждые 5 минут запрашиваем рабочие элементы
+            _itemsTimer = new Timer(1000 * 60 * 5);
+            _hourTimer.Elapsed += (sender, args) => RequestUpdate();
 
-        private MemoryCache _cache;
+            SystemEvents.SessionSwitch += OnSessionSwitched;
+            AppDomain.CurrentDomain.ProcessExit += (sender, e) => Logoff?.Invoke(this, e);
 
-        #endregion
+            MyItems = new List<WorkItem>(myItems.Select(FindById).Where(x => x != null));
+
+            _cache = new MemoryCache(new MemoryCacheOptions());
+        }
 
         private IEnumerable<WorkItem> MyItems
         {
@@ -51,27 +56,58 @@ namespace TfsAPI.TFS
             }
         }
 
-        public TfsObservable(string url,
-            IList<int> myItems,
-            Func<WorkItem> currentItem)
-            : base(url)
+        private void RequestUpdate(bool timerEllapsed)
         {
-            _currentItem = currentItem;
-            _versionControl = _project.GetService<VersionControlServer>();
-            _hourTimer = new System.Timers.Timer(1000 * 60 * 60);
-            _hourTimer.Elapsed += (sender, args) => RequestUpdate(true);
+            // Находимся в режиме ожилания
+            if (_paused) return;
 
-            // Каждые 5 минут запрашиваем рабочие элементы
-            _itemsTimer = new System.Timers.Timer(1000 * 60 * 5);
-            _hourTimer.Elapsed += (sender, args) => RequestUpdate();
+            // По запросу таймера спишем время
+            if (timerEllapsed) WriteOff?.Invoke(this, new ScheduleWorkArgs(_currentItem(), 1));
 
-            SystemEvents.SessionSwitch += OnSessionSwitched;
-            AppDomain.CurrentDomain.ProcessExit += (sender, e) => Logoff?.Invoke(this, e);
+            var current = GetMyWorkItems();
 
-            MyItems = new List<WorkItem>(myItems.Select(FindById).Where(x => x != null));
+            var added = current.Except(MyItems, _comparer).ToList();
+            var removed = MyItems.Except(current, _comparer).ToList();
 
-            _cache = new MemoryCache(new MemoryCacheOptions());
+            if (added.Any()) NewItems?.Invoke(this, added.ToList());
+
+            if (removed.Any())
+            {
+                // TODO подумать что с ними делать
+            }
+
+            // Обновляю оставшиеся, они сыпят миллионы событий,
+            // я их собираю и потом выбрасываю одним ивентом
+            MyItems.Except(removed, _comparer).ForEach(x => x.SyncToLatest());
+
+            // Записываю новые значения
+            MyItems = current.ToList();
+
+            if (_changes.Any())
+            {
+                ItemsChanged?.Invoke(this, _changes);
+
+                _changes.Clear();
+            }
         }
+
+        #region Fields
+
+        private readonly VersionControlServer _versionControl;
+        private readonly Timer _hourTimer;
+        private readonly Timer _itemsTimer;
+        private readonly Func<WorkItem> _currentItem;
+        private readonly IEqualityComparer<WorkItem> _comparer = new WorkItemComparer();
+
+        private readonly Dictionary<WorkItem, List<WorkItemEventArgs>> _changes =
+            new Dictionary<WorkItem, List<WorkItemEventArgs>>();
+
+        private bool _paused = true;
+        private List<WorkItem> _myItems = new List<WorkItem>();
+
+        private readonly MemoryCache _cache;
+
+        #endregion
 
         #region ITFsObservable
 
@@ -150,57 +186,12 @@ namespace TfsAPI.TFS
                 return;
 
             if (_changes.ContainsKey(e.Field.WorkItem))
-            {
                 _changes[e.Field.WorkItem].Add(e);
-            }
             else
-            {
-                _changes[e.Field.WorkItem] = new List<WorkItemEventArgs> { e };
-            }
+                _changes[e.Field.WorkItem] = new List<WorkItemEventArgs> {e};
         }
 
         #endregion
-
-        private void RequestUpdate(bool timerEllapsed)
-        {
-            // Находимся в режиме ожилания
-            if (_paused) return;
-
-            // По запросу таймера спишем время
-            if (timerEllapsed)
-            {
-                WriteOff?.Invoke(this, new ScheduleWorkArgs(_currentItem(), 1));
-            }
-
-            var current = GetMyWorkItems();
-
-            var added = current.Except(MyItems, _comparer).ToList();
-            var removed = MyItems.Except(current, _comparer).ToList();
-
-            if (added.Any())
-            {
-                NewItems?.Invoke(this, added.ToList());
-            }
-
-            if (removed.Any())
-            {
-                // TODO подумать что с ними делать
-            }
-
-            // Обновляю оставшиеся, они сыпят миллионы событий,
-            // я их собираю и потом выбрасываю одним ивентом
-            MyItems.Except(removed, _comparer).ForEach(x => x.SyncToLatest());
-
-            // Записываю новые значения
-            MyItems = current.ToList();
-
-            if (_changes.Any())
-            {
-                ItemsChanged?.Invoke(this, _changes);
-
-                _changes.Clear();
-            }
-        }
 
         #region Override
 
@@ -217,10 +208,10 @@ namespace TfsAPI.TFS
                 result = base.GetMyWorkItems();
 
                 var options = new MemoryCacheEntryOptions()
-                        .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
 
                 lock (_myWorkItemsKey)
-                {                    
+                {
                     _cache.Set(_myWorkItemsKey, result, options);
                 }
             }

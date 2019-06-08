@@ -4,12 +4,12 @@ namespace Gui.ViewModels
 {
     public class WorkItemVm
     {
-        public WorkItem Item { get; }
-
         public WorkItemVm(WorkItem item)
         {
             Item = item;
         }
+
+        public WorkItem Item { get; }
 
         public override string ToString()
         {

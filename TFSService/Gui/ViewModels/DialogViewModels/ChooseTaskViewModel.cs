@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Gui.Helper;
-using Microsoft.TeamFoundation.WorkItemTracking.Client;
-using Mvvm.Commands;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
@@ -25,6 +22,12 @@ namespace Gui.ViewModels.DialogViewModels
             };
         }
 
+        public WorkItemSearcher Searcher
+        {
+            get => _searcher;
+            set => SetProperty(ref _searcher, value);
+        }
+
         private void CreateTask()
         {
             var vm = new CreateTaskViewModel(_tfs);
@@ -41,19 +44,11 @@ namespace Gui.ViewModels.DialogViewModels
             }
         }
 
-        public WorkItemSearcher Searcher
-        {
-            get => _searcher;
-            set => SetProperty(ref _searcher, value);
-        }
-
         protected override string ValidateProperty(string prop)
         {
             if (prop == nameof(Searcher.Selected)
                 && !Searcher.Selected.Item.IsTypeOf(WorkItemTypes.Task))
-            {
                 return "Рабочий элемент не является таском";
-            }
 
             return base.ValidateProperty(prop);
         }

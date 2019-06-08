@@ -7,11 +7,11 @@ namespace Gui.Helper
 {
     public class ActionArbiter
     {
-        private bool _isExecuting;
         private bool _block;
+        private bool _isExecuting;
 
         /// <summary>
-        /// Выполняем операцию
+        ///     Выполняем операцию
         /// </summary>
         /// <param name="action"></param>
         public void Do(Action action)
@@ -36,7 +36,7 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Выставляем блокирование для операции
+        ///     Выставляем блокирование для операции
         /// </summary>
         /// <param name="isBlock"></param>
         public virtual void SetBlock(bool isBlock)
@@ -45,7 +45,7 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Может ли арбитр выполнить действие
+        ///     Может ли арбитр выполнить действие
         /// </summary>
         /// <returns></returns>
         public bool IsFree()
@@ -53,7 +53,7 @@ namespace Gui.Helper
             return !_isExecuting && !_block;
         }
 
-        
+
         protected void Capture()
         {
             _isExecuting = true;
@@ -78,7 +78,7 @@ namespace Gui.Helper
 
                 Capture();
 
-                await Task.Factory.StartNew(action, (_token = new CancellationToken()));
+                await Task.Factory.StartNew(action, _token = new CancellationToken());
             }
             catch (Exception e)
             {
@@ -95,10 +95,7 @@ namespace Gui.Helper
         {
             base.SetBlock(isBlock);
 
-            if (isBlock)
-            {
-                _token.ThrowIfCancellationRequested();
-            }
+            if (isBlock) _token.ThrowIfCancellationRequested();
         }
     }
 }

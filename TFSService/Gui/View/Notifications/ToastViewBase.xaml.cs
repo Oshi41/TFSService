@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using ToastNotifications.Core;
+using FlowDirection = System.Windows.Forms.FlowDirection;
 
 namespace Gui.View.Notifications
 {
     /// <summary>
-    /// Interaction logic for ToastViewBase.xaml
+    ///     Interaction logic for ToastViewBase.xaml
     /// </summary>
     public partial class ToastViewBase : NotificationDisplayPart
     {
         public ToastViewBase()
-            : base()
         {
             InitializeComponent();
 
@@ -23,15 +22,13 @@ namespace Gui.View.Notifications
         {
             Loaded -= SubscribeOnce;
 
-            this.MouseDown += (s, args) => DetectClosingSlide(args);
-            this.MouseUp += (s, args) =>
+            MouseDown += (s, args) => DetectClosingSlide(args);
+            MouseUp += (s, args) =>
             {
                 DetectClosingSlide(args);
 
                 if (!_isClosed && Notification.CanClose)
-                {
                     Notification.Options?.NotificationClickAction?.Invoke(Notification as NotificationBase);
-                }
             };
         }
 
@@ -40,36 +37,29 @@ namespace Gui.View.Notifications
         private void DetectClosingSlide(MouseButtonEventArgs e)
         {
             var isPressed = e.LeftButton == MouseButtonState.Pressed
-                || e.RightButton == MouseButtonState.Pressed;
+                            || e.RightButton == MouseButtonState.Pressed;
 
             var pos = e.GetPosition(this);
 
-            if (_isClosed)
-            {
-                e.Handled = true;
-            }
+            if (_isClosed) e.Handled = true;
 
-            if (!TryClose(pos, isPressed))
-            {
-                TryStartDragging(pos, isPressed);
-            }
+            if (!TryClose(pos, isPressed)) TryStartDragging(pos, isPressed);
         }
 
         private bool _isClosed;
         private bool _isDragging;
         private Point _lastPos;
+
         private bool TryStartDragging(Point pos, bool isPressed)
         {
             if (_isDragging
                 || !isPressed)
-            {
                 return false;
-            }
 
             _isClosed = false;
             _isDragging = true;
             _lastPos = pos;
-            this.CaptureMouse();
+            CaptureMouse();
             return _isDragging;
         }
 
@@ -81,19 +71,18 @@ namespace Gui.View.Notifications
                 _isDragging = false;
                 _isClosed = true;
                 OnClose();
-                this.ReleaseMouseCapture();
+                ReleaseMouseCapture();
                 return true;
             }
 
             return false;
         }
 
-        private bool DetectClosingSlide(Point endPoint, params System.Windows.Forms.FlowDirection[] directions)
+        private bool DetectClosingSlide(Point endPoint, params FlowDirection[] directions)
         {
             var delta = _lastPos - endPoint;
 
             foreach (var o in directions)
-            {
                 switch (o)
                 {
                     case System.Windows.Forms.FlowDirection.LeftToRight:
@@ -111,7 +100,6 @@ namespace Gui.View.Notifications
                     default:
                         throw new Exception("Wrong parameter");
                 }
-            }
 
             return false;
         }

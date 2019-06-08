@@ -1,13 +1,8 @@
-﻿using Microsoft.TeamFoundation;
-using Microsoft.TeamFoundation.VersionControl.Common.Internal;
-using Microsoft.TeamFoundation.WorkItemTracking.Client;
-using Mvvm;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Mvvm;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
@@ -17,20 +12,40 @@ namespace Gui.ViewModels
     public class StatsViewModel : BindableBase
     {
         private string _name;
-        private int capacity;
         private int _tfsCapacity;
+        private int capacity;
+        private ObservableCollection<WorkItemVm> myItems;
         private int wroteOff;
-        private ObservableCollection<WorkItemVm> myItems;        
 
-        public string Name { get => _name; set => SetProperty(ref _name, value); }
+        public string Name
+        {
+            get => _name;
+            set => SetProperty(ref _name, value);
+        }
 
-        public int Capacity { get => capacity; set => SetProperty(ref capacity, value); }
+        public int Capacity
+        {
+            get => capacity;
+            set => SetProperty(ref capacity, value);
+        }
 
-        public int TfsCapacity { get => _tfsCapacity; set => SetProperty(ref _tfsCapacity, value); }
+        public int TfsCapacity
+        {
+            get => _tfsCapacity;
+            set => SetProperty(ref _tfsCapacity, value);
+        }
 
-        public int WroteOff { get => wroteOff; set => SetProperty(ref wroteOff, value); }
+        public int WroteOff
+        {
+            get => wroteOff;
+            set => SetProperty(ref wroteOff, value);
+        }
 
-        public ObservableCollection<WorkItemVm> MyItems { get => myItems; set => SetProperty(ref myItems, value); }
+        public ObservableCollection<WorkItemVm> MyItems
+        {
+            get => myItems;
+            set => SetProperty(ref myItems, value);
+        }
 
         public async void Refresh(ITfsApi api)
         {
@@ -47,7 +62,8 @@ namespace Gui.ViewModels
             var all = await Task.Run(() => api.GetMyWorkItems().Select(x => new WorkItemVm(x)));
 
 
-            MyItems = new ObservableCollection<WorkItemVm>(all.Where(x => !x.Item.IsTypeOf(WorkItemTypes.CodeReview, WorkItemTypes.ReviewResponse)));            
+            MyItems = new ObservableCollection<WorkItemVm>(all.Where(x =>
+                !x.Item.IsTypeOf(WorkItemTypes.CodeReview, WorkItemTypes.ReviewResponse)));
         }
     }
 }

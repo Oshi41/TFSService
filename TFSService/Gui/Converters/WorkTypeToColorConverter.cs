@@ -1,36 +1,33 @@
-﻿using Microsoft.TeamFoundation.WorkItemTracking.Client;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
+using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Extentions;
 
 namespace Gui.Converters
 {
-    class WorkTypeToColorConverter : IValueConverter
+    internal class WorkTypeToColorConverter : IValueConverter
     {
         /// <summary>
-        /// обычный фон
+        ///     обычный фон
         /// </summary>
         public Brush RegularBrush { get; set; } = Brushes.Transparent;
 
         /// <summary>
-        /// Если есть баг
+        ///     Если есть баг
         /// </summary>
-        public Brush BugBrush { get; set; } = Brushes.LightPink;        
+        public Brush BugBrush { get; set; } = Brushes.LightPink;
 
         /// <summary>
-        /// Если есть PBi и похожие элементы
+        ///     Если есть PBi и похожие элементы
         /// </summary>
         public Brush WorkBrush { get; set; } = Brushes.LightGreen;
 
         /// <summary>
-        /// Критически важные рабочие элементы
+        ///     Критически важные рабочие элементы
         /// </summary>
         public Brush CryticalBrush { get; set; } = Brushes.Orange;
 
@@ -40,20 +37,11 @@ namespace Gui.Converters
             {
                 // ОТ высшего приоритета и ниже
 
-                if (items.Any(x => x.IsRare()))
-                {
-                    return CryticalBrush;
-                }
+                if (items.Any(x => x.IsRare())) return CryticalBrush;
 
-                if (items.Any(x => x.IsWorkItem()))
-                {
-                    return WorkBrush;
-                }
+                if (items.Any(x => x.IsWorkItem())) return WorkBrush;
 
-                if (items.Any(x => x.IsBug()))
-                {
-                    return BugBrush;
-                }
+                if (items.Any(x => x.IsBug())) return BugBrush;
 
                 return RegularBrush;
             }

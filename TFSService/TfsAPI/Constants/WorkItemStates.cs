@@ -1,7 +1,7 @@
 ﻿namespace TfsAPI.Constants
 {
     /// <summary>
-    /// Статус рабочего элемента
+    ///     Статус рабочего элемента
     /// </summary>
     public static class WorkItemStates
     {

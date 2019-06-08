@@ -8,10 +8,7 @@ namespace Gui.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool b)
-            {
-                return !b;
-            }
+            if (value is bool b) return !b;
 
             return Binding.DoNothing;
         }

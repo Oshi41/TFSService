@@ -1,33 +1,31 @@
-﻿using System.Collections.Specialized;
-
-namespace TfsAPI.Constants
+﻿namespace TfsAPI.Constants
 {
     public static class WorkItems
     {
         public static class Fields
         {
             /// <summary>
-            /// Поле рабочего элемента с оставшимся временем
+            ///     Поле рабочего элемента с оставшимся временем
             /// </summary>
             public const string Remaining = "Remaining Work";
 
             /// <summary>
-            /// Поле рабочего элемента со списанным временем
+            ///     Поле рабочего элемента со списанным временем
             /// </summary>
             public const string Complited = "Completed Work";
 
             /// <summary>
-            /// Поле рабочего элемента с планируемыми трудозатратами
+            ///     Поле рабочего элемента с планируемыми трудозатратами
             /// </summary>
             public const string Planning = "Original Estimate";
 
             /// <summary>
-            /// Поле рабочего элемента и ревизии. Кем было изменено
+            ///     Поле рабочего элемента и ревизии. Кем было изменено
             /// </summary>
             public const string ChangedBy = "Changed By";
 
             /// <summary>
-            /// Причина закрытия. Для Code Response см 
+            ///     Причина закрытия. Для Code Response см
             /// </summary>
             public const string ClosedStatus = "Closed Status";
         }
@@ -35,7 +33,7 @@ namespace TfsAPI.Constants
         public static class LinkTypes
         {
             /// <summary>
-            /// Тип связи Parent -> Child
+            ///     Тип связи Parent -> Child
             /// </summary>
             public const string ParentLink = "Syste.LinkTypes.Hierarhy";
         }
@@ -43,22 +41,22 @@ namespace TfsAPI.Constants
         public static class ClosedStatus
         {
             /// <summary>
-            /// Все ок
+            ///     Все ок
             /// </summary>
             public static string LooksGood = "Looks Good";
 
             /// <summary>
-            /// В ходе проверки найдено несколько замечаний
+            ///     В ходе проверки найдено несколько замечаний
             /// </summary>
             public static string WithComments = "With Comments";
 
             /// <summary>
-            /// Требуется доработка
+            ///     Требуется доработка
             /// </summary>
             public static string NeedsWork = "Needs Work";
 
             /// <summary>
-            /// Отклонён
+            ///     Отклонён
             /// </summary>
             public static string Declined = nameof(Declined);
         }

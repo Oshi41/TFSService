@@ -11,25 +11,8 @@ namespace Gui.ViewModels.DialogViewModels
 {
     public class WorkItemSearcher : BindableExtended
     {
-        #region Fields
-
-        private readonly ITfsApi _api;
-        private readonly TimedAction<string, IList<WorkItemVm>> _action;
-
-        private WorkItemVm _selected;
-        private IList<WorkItemVm> _items;
-        private string _text;
-        private string _help;
-
         /// <summary>
-        /// Разрешенные типы рабочих элементов
-        /// </summary>
-        private readonly string[] _types;
-
-        #endregion
-
-        /// <summary>
-        /// Базовый конструктор
+        ///     Базовый конструктор
         /// </summary>
         /// <param name="api"></param>
         public WorkItemSearcher(ITfsApi api)
@@ -42,26 +25,37 @@ namespace Gui.ViewModels.DialogViewModels
         }
 
         /// <summary>
-        /// Заполняем выпадающий список элементами, привязанными на меня
+        ///     Заполняем выпадающий список элементами, привязанными на меня
         /// </summary>
         /// <param name="api"></param>
-        /// <param name="types">Типы элементов, который хочу вывести. Cм. <see cref="WorkItemTypes"/></param>
+        /// <param name="types">Типы элементов, который хочу вывести. Cм. <see cref="WorkItemTypes" /></param>
         public WorkItemSearcher(ITfsApi api, params string[] types)
             : this(api)
         {
             _types = types;
             var mine = _api.GetMyWorkItems();
 
-            if (!types.IsNullOrEmpty())
-            {
-                mine = mine.Where(x => x.IsTypeOf(types)).ToList();
-            }
+            if (!types.IsNullOrEmpty()) mine = mine.Where(x => x.IsTypeOf(types)).ToList();
 
-            foreach (var item in mine)
-            {
-                _items.Add(item);
-            }
+            foreach (var item in mine) _items.Add(item);
         }
+
+        #region Fields
+
+        private readonly ITfsApi _api;
+        private readonly TimedAction<string, IList<WorkItemVm>> _action;
+
+        private WorkItemVm _selected;
+        private IList<WorkItemVm> _items;
+        private string _text;
+        private string _help;
+
+        /// <summary>
+        ///     Разрешенные типы рабочих элементов
+        /// </summary>
+        private readonly string[] _types;
+
+        #endregion
 
         #region Propeties
 
@@ -76,10 +70,7 @@ namespace Gui.ViewModels.DialogViewModels
             get => _text;
             set
             {
-                if (SetProperty(ref _text, value))
-                {
-                    TryScheduleSearch(Text);
-                }
+                if (SetProperty(ref _text, value)) TryScheduleSearch(Text);
             }
         }
 
@@ -118,7 +109,7 @@ namespace Gui.ViewModels.DialogViewModels
 
             // Сначала ищем по ID
             if (int.TryParse(arg, out var id)
-             && _api.FindById(id) is WorkItem find)
+                && _api.FindById(id) is WorkItem find)
             {
                 list.Add(find);
             }
@@ -126,10 +117,7 @@ namespace Gui.ViewModels.DialogViewModels
             else
             {
                 var finded = _api.Search(arg, _types);
-                foreach (var item in finded)
-                {
-                    list.Add(item);
-                }
+                foreach (var item in finded) list.Add(item);
             }
 
             return list;

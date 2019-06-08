@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -16,9 +15,16 @@ namespace Gui.Settings
 {
     public class Settings : BindableBase, IDisposable
     {
+        public Settings()
+        {
+            CompletedWork = new WriteOffCollection();
+            Connections = new ObservableCollection<string>();
+            MyWorkItems = new ObservableCollection<int>();
+        }
+
         #region Fields
 
-        private static string _savePath = Path.Combine(
+        private static readonly string _savePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "TfsService",
             "config.json");
@@ -35,17 +41,10 @@ namespace Gui.Settings
 
         #endregion
 
-        public Settings()
-        {
-            CompletedWork = new WriteOffCollection();
-            Connections = new ObservableCollection<string>();
-            MyWorkItems = new ObservableCollection<int>();
-        }
-
         #region Properties
 
         /// <summary>
-        /// Начало рабочего дня
+        ///     Начало рабочего дня
         /// </summary>
         public DateTime Begin
         {
@@ -54,7 +53,7 @@ namespace Gui.Settings
         }
 
         /// <summary>
-        /// Продолжительность рабочего дня
+        ///     Продолжительность рабочего дня
         /// </summary>
         public TimeSpan Duration
         {
@@ -63,7 +62,7 @@ namespace Gui.Settings
         }
 
         /// <summary>
-        /// Сколько часов надо списать
+        ///     Сколько часов надо списать
         /// </summary>
         public int Capacity
         {
@@ -72,7 +71,7 @@ namespace Gui.Settings
         }
 
         /// <summary>
-        /// Сколько часов было списано на разные рабочие элементы
+        ///     Сколько часов было списано на разные рабочие элементы
         /// </summary>
         public WriteOffCollection CompletedWork
         {
@@ -81,7 +80,7 @@ namespace Gui.Settings
         }
 
         /// <summary>
-        /// Строка подключения к TFS
+        ///     Строка подключения к TFS
         /// </summary>
         public ObservableCollection<string> Connections
         {
@@ -90,7 +89,7 @@ namespace Gui.Settings
         }
 
         /// <summary>
-        /// Список рабочих элементов на мне
+        ///     Список рабочих элементов на мне
         /// </summary>
         public ObservableCollection<int> MyWorkItems
         {
@@ -99,9 +98,13 @@ namespace Gui.Settings
         }
 
         /// <summary>
-        /// Стратегия как выбираем таск для списывания времени
+        ///     Стратегия как выбираем таск для списывания времени
         /// </summary>
-        public WroteOffStrategy Strategy { get => strategy; set => SetProperty(ref strategy, value); }
+        public WroteOffStrategy Strategy
+        {
+            get => strategy;
+            set => SetProperty(ref strategy, value);
+        }
 
         #endregion
 
@@ -147,23 +150,15 @@ namespace Gui.Settings
         {
             if (!Equals(storage, value))
             {
-                if (storage is INotifyCollectionChanged old)
-                {
-                    old.CollectionChanged -= OnCollectionChanged;
-                }
+                if (storage is INotifyCollectionChanged old) old.CollectionChanged -= OnCollectionChanged;
 
-                if (value is INotifyCollectionChanged added)
-                {
-                    added.CollectionChanged += OnCollectionChanged;
-                }
+                if (value is INotifyCollectionChanged added) added.CollectionChanged += OnCollectionChanged;
 
                 // Проверка на совпадение списков
-                if (storage is IEnumerable x 
+                if (storage is IEnumerable x
                     && value is IEnumerable y
                     && x.IsTermwiseEquals(y))
-                {
                     return false;
-                }
             }
 
             return SetProperty(ref storage, value, propertyName);
@@ -173,10 +168,7 @@ namespace Gui.Settings
         {
             var result = base.SetProperty(ref storage, value, propertyName);
 
-            if (result)
-            {
-                _changed = true;
-            }
+            if (result) _changed = true;
 
             return result;
         }
@@ -186,16 +178,13 @@ namespace Gui.Settings
             _changed = true;
         }
 
-
         #endregion
     }
 
     public enum WroteOffStrategy
     {
-        [Description("Выбираем случайно")]
-        Random,
+        [Description("Выбираем случайно")] Random,
 
-        [Description("Выбираем сами")]
-        Watch,
+        [Description("Выбираем сами")] Watch
     }
 }

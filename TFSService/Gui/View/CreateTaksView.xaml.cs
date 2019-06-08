@@ -5,7 +5,7 @@ using System.Windows.Input;
 namespace Gui.View
 {
     /// <summary>
-    /// Interaction logic for CreateTaksView.xaml
+    ///     Interaction logic for CreateTaksView.xaml
     /// </summary>
     public partial class CreateTaksView : UserControl
     {

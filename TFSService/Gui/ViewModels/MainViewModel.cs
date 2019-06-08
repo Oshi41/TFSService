@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using Gui.Helper;
 using Gui.Settings;
 using Gui.ViewModels.DialogViewModels;
 using Gui.ViewModels.Notifications;
 using Microsoft.TeamFoundation.Common;
-using Microsoft.TeamFoundation.TestManagement.WebApi;
-using Microsoft.TeamFoundation.VersionControl.Common.Internal;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Mvvm;
 using TfsAPI.Constants;
@@ -23,6 +22,43 @@ namespace Gui.ViewModels
 {
     public class MainViewModel : BindableBase
     {
+        public MainViewModel()
+        {
+            ShowMonthlyCommand = new ObservableCommand(ShowMonthly);
+            UpdateCommand = ObservableCommand.FromAsyncHandler(Update);
+            SettingsCommand = new ObservableCommand(ShowSettings);
+
+            Init();
+        }
+
+        private async void Init()
+        {
+            IsBusy = true;
+
+            var connect = await TryConnect() == true;
+
+            if (!connect)
+            {
+                Trace.WriteLine("User denied to connect, exit the program");
+                Application.Current.Shutdown(0);
+            }
+
+            using (var settings = Settings.Settings.Read())
+            {
+                ApiObservable = new TfsObservable(FirstConnectionViewModel.Text, settings.MyWorkItems, GetTask);
+
+                if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
+                    settings.Connections.Add(FirstConnectionViewModel.Text);
+            }
+
+            TryStartWorkDay();
+
+            // Начинаем наблюдение
+            _apiObserve.Start();
+
+            IsBusy = false;
+        }
+
         #region Fields
 
         private ITFsObservable _apiObserve;
@@ -68,93 +104,71 @@ namespace Gui.ViewModels
         }
 
         /// <summary>
-        /// Диалог запроса рабочего элемента, над которым работаем
+        ///     Диалог запроса рабочего элемента, над которым работаем
         /// </summary>
         public ChooseTaskViewModel ChooseTaskViewModel { get; private set; }
 
         /// <summary>
-        /// Строка подключения к TFS
+        ///     Строка подключения к TFS
         /// </summary>
         public FirstConnectionViewModel FirstConnectionViewModel { get; set; }
 
         /// <summary>
-        /// Создание рабочего элемента
+        ///     Создание рабочего элемента
         /// </summary>
         public CreateTaskViewModel CreateTaskViewModel { get; set; }
 
         /// <summary>
-        /// Основная статистика пользователя
+        ///     Основная статистика пользователя
         /// </summary>
-        public StatsViewModel StatsViewModel { get => statsViewModel; set => SetProperty(ref statsViewModel, value); }
+        public StatsViewModel StatsViewModel
+        {
+            get => statsViewModel;
+            set => SetProperty(ref statsViewModel, value);
+        }
 
-        public NewResponsesBaloonViewModel CodeResponsesViewModel { get => codeResponsesViewModel; set => SetProperty(ref codeResponsesViewModel, value); }
+        public NewResponsesBaloonViewModel CodeResponsesViewModel
+        {
+            get => codeResponsesViewModel;
+            set => SetProperty(ref codeResponsesViewModel, value);
+        }
 
-        public bool IsBusy { get => isBusy; set => SetProperty(ref isBusy, value); }
+        public bool IsBusy
+        {
+            get => isBusy;
+            set => SetProperty(ref isBusy, value);
+        }
 
         /// <summary>
-        /// Стратегия закрытия Code Rreview
+        ///     Стратегия закрытия Code Rreview
         /// </summary>
-        public WroteOffStrategy Strategy { get => strategy; set => SetProperty(ref strategy, value); }
+        public WroteOffStrategy Strategy
+        {
+            get => strategy;
+            set => SetProperty(ref strategy, value);
+        }
 
         #endregion
 
         #region Commands
 
         /// <summary>
-        /// Подключение к разным TFS (WIP)
+        ///     Подключение к разным TFS (WIP)
         /// </summary>
         public ICommand TfsConnectCommand { get; private set; }
 
         /// <summary>
-        /// Списание моих часов за месяц
+        ///     Списание моих часов за месяц
         /// </summary>
-        public ICommand ShowMonthlyCommand { get; private set; }
+        public ICommand ShowMonthlyCommand { get; }
 
-        public ICommand UpdateCommand { get; private set; }
-        public ICommand SettingsCommand { get; private set; }
+        public ICommand UpdateCommand { get; }
+        public ICommand SettingsCommand { get; }
 
         #endregion
 
-        public MainViewModel()
-        {
-            ShowMonthlyCommand = new ObservableCommand(ShowMonthly);
-            UpdateCommand = ObservableCommand.FromAsyncHandler(Update);
-            SettingsCommand = new ObservableCommand(ShowSettings);
-
-            Init();
-        }
-
-        private async void Init()
-        {
-            IsBusy = true;
-
-            var connect = await TryConnect() == true;
-
-            if (!connect)
-            {
-                Trace.WriteLine("User denied to connect, exit the program");
-                App.Current.Shutdown(0);
-            }
-
-            using (var settings = Settings.Settings.Read())
-            {
-                ApiObservable = new TfsObservable(FirstConnectionViewModel.Text, settings.MyWorkItems, GetTask);
-
-                if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
-                {
-                    settings.Connections.Add(FirstConnectionViewModel.Text);
-                }
-            }
-
-            TryStartWorkDay();
-
-            // Начинаем наблюдение
-            _apiObserve.Start();
-
-            IsBusy = false;
-        }
-
         #region Command handler
+
         private void ShowMonthly()
         {
             WindowManager.ShowDialog(new MonthCheckinsViewModel(_apiObserve), "Месячное списание часов", 700, 500);
@@ -186,26 +200,17 @@ namespace Gui.ViewModels
         {
             ScheduleHour(e.Item.Id, e.Hours);
 
-            if (e?.Item != null)
-            {
-                WindowManager.ShowBaloon(new WriteOffBaloonViewModel(e));
-            }
+            if (e?.Item != null) WindowManager.ShowBaloon(new WriteOffBaloonViewModel(e));
         }
 
         private void OnLogoff(object sender, EventArgs e)
         {
-            if (TryEndWorkDay())
-            {
-                _apiObserve.Pause();
-            }
+            if (TryEndWorkDay()) _apiObserve.Pause();
         }
 
         private void OnLogon(object sender, EventArgs e)
         {
-            if (TryStartWorkDay())
-            {
-                _apiObserve.Start();
-            }
+            if (TryStartWorkDay()) _apiObserve.Start();
         }
 
         private void OnNewItems(object sender, List<WorkItem> e)
@@ -219,30 +224,22 @@ namespace Gui.ViewModels
                 var requests = e.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)).ToList();
                 var rest = e.Except(bugs).Except(works).Except(rare).Except(responses).Except(requests).ToList();
 
-                if (bugs.Any())
-                {
-                    WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(bugs, "Новые баги"));
-                }
+                if (bugs.Any()) WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(bugs, "Новые баги"));
 
-                if (works.Any())
-                {
-                    WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(works, "Новая работа"));
-                }
+                if (works.Any()) WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(works, "Новая работа"));
 
                 if (rare.Any())
-                {
                     WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(rare, "Важная вещь, посмотри"));
-                }
 
                 if (responses.Any())
                 {
-                    var vms = new NewResponsesBaloonViewModel(responses, requests, _apiObserve, "Запросили проверку кода");
+                    var vms = new NewResponsesBaloonViewModel(responses, requests, _apiObserve,
+                        "Запросили проверку кода");
                 }
 
                 if (rest.Any())
-                {
-                    WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(rest, "Новые рабочие элементы были назначены"));
-                }
+                    WindowManager.ShowBaloon(
+                        new ItemsAssignedBaloonViewModel(rest, "Новые рабочие элементы были назначены"));
 
                 RefreshStats();
             }
@@ -262,7 +259,6 @@ namespace Gui.ViewModels
 
                 foreach (var item in e)
                 {
-
                 }
             }
         }
@@ -272,7 +268,7 @@ namespace Gui.ViewModels
         #region Methods
 
         /// <summary>
-        /// Первый шаг - подключение к TFS
+        ///     Первый шаг - подключение к TFS
         /// </summary>
         /// <returns></returns>
         private async Task<bool?> TryConnect()
@@ -290,7 +286,7 @@ namespace Gui.ViewModels
         }
 
         /// <summary>
-        /// Таск, с которого списываем время. Строго not null!
+        ///     Таск, с которого списываем время. Строго not null!
         /// </summary>
         /// <returns></returns>
         private WorkItem GetTask()
@@ -324,7 +320,7 @@ namespace Gui.ViewModels
 
                     if (tasks.Any())
                     {
-                        var random = (new Random()).Next(tasks.Count);
+                        var random = new Random().Next(tasks.Count);
                         return tasks[random];
                     }
 
@@ -334,9 +330,7 @@ namespace Gui.ViewModels
                 case WroteOffStrategy.Watch:
 
                     if (WindowManager.ShowDialog(vm, "Выберите элемент для списания времени", 400, 200) == true)
-                    {
                         return vm.Searcher.Selected;
-                    }
 
                     // Выбрать нужно обязательно
                     return FindAvailableTask(strategy);
@@ -356,9 +350,7 @@ namespace Gui.ViewModels
             }
 
             if (!_apiObserve.IsAssignedToMe(item))
-            {
                 Trace.WriteLine($"{nameof(MainViewModel)}: Task is not assigned to me");
-            }
 
             return true;
         }
@@ -370,13 +362,14 @@ namespace Gui.ViewModels
             var all = ApiObservable
                 .GetMyWorkItems();
 
-            CodeResponsesViewModel = new NewResponsesBaloonViewModel(all.Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse)).ToList(),
-                                                                     all.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)).ToList(),
-                                                                     ApiObservable);
+            CodeResponsesViewModel = new NewResponsesBaloonViewModel(
+                all.Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse)).ToList(),
+                all.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)).ToList(),
+                ApiObservable);
 
             using (var settings = Settings.Settings.Read())
             {
-                settings.MyWorkItems = new System.Collections.ObjectModel.ObservableCollection<int>(all.Select(x => x.Id));
+                settings.MyWorkItems = new ObservableCollection<int>(all.Select(x => x.Id));
             }
         }
 
@@ -398,10 +391,7 @@ namespace Gui.ViewModels
                 if (!settings.Begin.IsToday())
                 {
                     // Что-то не зачекинили с утра
-                    if (work.ScheduledTime() != 0)
-                    {
-                        work.CheckinScheduledWork(_apiObserve, settings.Capacity);
-                    }
+                    if (work.ScheduledTime() != 0) work.CheckinScheduledWork(_apiObserve, settings.Capacity);
 
                     // Выставлили сколько надо списать часов сегодня
                     settings.Capacity = _apiObserve.GetCapacity();
@@ -434,7 +424,7 @@ namespace Gui.ViewModels
 
         private bool TryEndWorkDay()
         {
-            bool result = false;
+            var result = false;
 
             using (var settings = Settings.Settings.Read())
             {

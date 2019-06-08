@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Constants;
 
 namespace TfsAPI.Interfaces
 {
     /// <summary>
-    /// Можем ли закрыть данную проверку кода
+    ///     Можем ли закрыть данную проверку кода
     /// </summary>
     /// <param name="myRequest">Мой запрос на проверку</param>
     /// <param name="responses">Ответы от коллег</param>
@@ -20,7 +16,12 @@ namespace TfsAPI.Interfaces
     public interface ITfsApi
     {
         /// <summary>
-        /// Списываю часы в указанный таск
+        ///     Имя владельца
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        ///     Списываю часы в указанный таск
         /// </summary>
         /// <param name="item">Таск, куда списываю</param>
         /// <param name="hours">Кол-во часов</param>
@@ -28,21 +29,21 @@ namespace TfsAPI.Interfaces
         Revision WriteHours(WorkItem item, byte hours, bool setActive);
 
         /// <summary>
-        /// Возвращает список прилинкованных рабочих элементов к набору изменений
+        ///     Возвращает список прилинкованных рабочих элементов к набору изменений
         /// </summary>
         /// <param name="changeset">ID набора изменений</param>
         /// <returns></returns>
         IList<WorkItem> GetAssociateItems(int changeset);
 
         /// <summary>
-        /// Ищет рабочий эжлемент по номеру
+        ///     Ищет рабочий эжлемент по номеру
         /// </summary>
         /// <param name="id">Номер рабочего элемента</param>
         /// <returns></returns>
         WorkItem FindById(int id);
 
         /// <summary>
-        /// Производит поиск в названии, описании
+        ///     Производит поиск в названии, описании
         /// </summary>
         /// <param name="text"></param>
         /// <param name="allowedTypes">Ищем только по указанным типам</param>
@@ -50,20 +51,20 @@ namespace TfsAPI.Interfaces
         IList<WorkItem> Search(string text, params string[] allowedTypes);
 
         /// <summary>
-        /// Возвращает кол-во часов, которое необходимо списать за день
+        ///     Возвращает кол-во часов, которое необходимо списать за день
         /// </summary>
         /// <returns></returns>
         int GetCapacity();
 
         /// <summary>
-        /// Получает список моих рабочих элементов. 
+        ///     Получает список моих рабочих элементов.
         /// </summary>
-        /// <param name="type">Тип рабочего элемента. См. <see cref="WorkItemTypes"/></param>
+        /// <param name="type">Тип рабочего элемента. См. <see cref="WorkItemTypes" /></param>
         /// <returns></returns>
         IList<WorkItem> GetMyWorkItems();
 
         /// <summary>
-        /// Создание нового рабочего элемента
+        ///     Создание нового рабочего элемента
         /// </summary>
         /// <param name="title">Заголовок таска</param>
         /// <param name="parent">Рабочий элемент, к которому таск привязан</param>
@@ -72,7 +73,7 @@ namespace TfsAPI.Interfaces
         WorkItem CreateTask(string title, WorkItem parent, uint hours);
 
         /// <summary>
-        /// Возвращает список ревизий рабочих элементов с кол-вом их списанных часов
+        ///     Возвращает список ревизий рабочих элементов с кол-вом их списанных часов
         /// </summary>
         /// <param name="from">Начиная с указанной даты, включая её</param>
         /// <param name="to">Заканчивая указанной датой, включая ей</param>
@@ -80,29 +81,24 @@ namespace TfsAPI.Interfaces
         List<KeyValuePair<Revision, int>> GetCheckins(DateTime from, DateTime to);
 
         /// <summary>
-        /// Переданный рабочий элемент ассоциирован со мной
+        ///     Переданный рабочий элемент ассоциирован со мной
         /// </summary>
         /// <param name="item">Рабочий элемент</param>
         /// <returns></returns>
         bool IsAssignedToMe(WorkItem item);
 
         /// <summary>
-        /// Закрываю запросы проверки кода, которые проверили
+        ///     Закрываю запросы проверки кода, которые проверили
         /// </summary>
         /// <param name="reasons">Можем ли закрыть проверку</param>
         /// <returns></returns>
         List<WorkItem> CloseCompletedReviews(CanCloseReview canRemove);
 
         /// <summary>
-        /// Получает родителей переданных элементов
+        ///     Получает родителей переданных элементов
         /// </summary>
         /// <param name="items"></param>
         /// <returns></returns>
         List<WorkItem> GetParents(params WorkItem[] items);
-
-        /// <summary>
-        /// Имя владельца
-        /// </summary>
-        string Name { get;}
     }
 }

@@ -5,14 +5,11 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace Gui.Converters
 {
-    class IdWorkitemConverter : IValueConverter
+    internal class IdWorkitemConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is WorkItem item)
-            {
-                return item.Id;
-            }
+            if (value is WorkItem item) return item.Id;
 
             return value;
         }

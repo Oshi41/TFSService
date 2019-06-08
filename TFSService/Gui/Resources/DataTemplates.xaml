@@ -10,35 +10,35 @@
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
     <DataTemplate DataType="{x:Type viewModels:WorkItemVm}">
-        <view:WorkItemView DataContext="{Binding Item}"/>
+        <view:WorkItemView DataContext="{Binding Item}" />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type dialogViewModels:WorkItemSearcher}">
-        <view:WorkItemSearcherView/>
+        <view:WorkItemSearcherView />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type dialogViewModels:FirstConnectionViewModel}">
-        <view:FirstConnectView/>
+        <view:FirstConnectView />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type dialogViewModels:ChooseTaskViewModel}">
-        <view:ChooseTaskView/>
+        <view:ChooseTaskView />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type dialogViewModels:CreateTaskViewModel}">
-        <view:CreateTaksView/>
+        <view:CreateTaksView />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type dialogViewModels:MonthCheckinsViewModel}">
-        <view:ScheduleView/>
+        <view:ScheduleView />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type notifications:WriteOffBaloonViewModel}">
-        <baloonVms:WriteOffNotificationView/>
+        <baloonVms:WriteOffNotificationView />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type dialogViewModels:SettingsViewModel}">
-        <view:SettingsView/>
+        <view:SettingsView />
     </DataTemplate>
 
 
@@ -47,10 +47,10 @@
             <baloonVms:NewItemsBaloonView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Закрыть оконченные Code Reviews"
-                              Command="{Binding Path=CloseReviewes}"/>
+                              Command="{Binding Path=CloseReviewes}" />
 
                     <MenuItem Header="Закрыть старые Code Reviews"
-                              Command="{Binding Path=CloseOldReviewes}"/>
+                              Command="{Binding Path=CloseOldReviewes}" />
                 </ContextMenu>
             </baloonVms:NewItemsBaloonView.ContextMenu>
         </baloonVms:NewItemsBaloonView>
@@ -59,9 +59,9 @@
     <DataTemplate DataType="{x:Type dialogViewModels:DayViewModel}">
         <DataTemplate.Resources>
             <conv:MathCompareConverter x:Key="MoreConverter"
-                                       Operation="More"/>
+                                       Operation="More" />
             <conv:MathCompareConverter x:Key="EquilityConverter"
-                                       Operation="Equals"/>
+                                       Operation="Equals" />
         </DataTemplate.Resources>
 
         <ProgressBar x:Name="bar"
@@ -70,38 +70,38 @@
                      Style="{StaticResource MaterialDesignCircularProgressBar}"
                      Maximum="{Binding Path=Capacity, Mode=OneWay}"
                      Value="{Binding Path=Hours, Mode=OneWay}"
-                     Foreground="DarkGreen"/>
+                     Foreground="DarkGreen" />
 
         <DataTemplate.Triggers>
             <DataTrigger Value="True">
                 <DataTrigger.Binding>
                     <MultiBinding Converter="{StaticResource EquilityConverter}">
-                        <Binding Path="Hours"/>
-                        <Binding Path="Capacity"/>
+                        <Binding Path="Hours" />
+                        <Binding Path="Capacity" />
                     </MultiBinding>
                 </DataTrigger.Binding>
                 <Setter TargetName="bar"
                         Property="Background"
-                        Value="DarkGreen"/>
+                        Value="DarkGreen" />
             </DataTrigger>
 
             <DataTrigger Value="True">
                 <DataTrigger.Binding>
                     <MultiBinding Converter="{StaticResource MoreConverter}">
-                        <Binding Path="Hours"/>
-                        <Binding Path="Capacity"/>
+                        <Binding Path="Hours" />
+                        <Binding Path="Capacity" />
                     </MultiBinding>
                 </DataTrigger.Binding>
                 <Setter TargetName="bar"
                         Property="Background"
-                        Value="Orange"/>
+                        Value="Orange" />
             </DataTrigger>
 
             <!-- Highest priority -->
             <DataTrigger Binding="{Binding IsHolliday}" Value="True">
                 <Setter TargetName="bar"
                         Property="Visibility"
-                        Value="Collapsed"/>
+                        Value="Collapsed" />
             </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>

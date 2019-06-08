@@ -8,23 +8,23 @@
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    
+
     <Window.Resources>
         <ObjectDataProvider x:Key="enumValues"
                             MethodName="GetValues" ObjectType="{x:Type System:Enum}">
             <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="materialDesign:PackIconKind"/>
+                <x:Type TypeName="materialDesign:PackIconKind" />
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </Window.Resources>
-    
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
+
         <ComboBox ItemsSource="{Binding Source={StaticResource enumValues}}"
                   Grid.IsSharedSizeScope="True">
             <ComboBox.ItemTemplate>
@@ -32,22 +32,22 @@
                     <Grid IsSharedSizeScope="True">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"
-                                              SharedSizeGroup="G"/>
-                            <ColumnDefinition Width="Auto"/>
+                                              SharedSizeGroup="G" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Margin="5"
-                                   Text="{Binding}"/>
-                        
-                        <materialDesign:PackIcon Kind="{Binding}" 
-                                                 Grid.Column="1"/>
+                                   Text="{Binding}" />
+
+                        <materialDesign:PackIcon Kind="{Binding}"
+                                                 Grid.Column="1" />
                     </Grid>
                 </DataTemplate>
             </ComboBox.ItemTemplate>
-            
+
             <ComboBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <VirtualizingStackPanel/>
+                    <VirtualizingStackPanel />
                 </ItemsPanelTemplate>
             </ComboBox.ItemsPanel>
         </ComboBox>

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Windows.Input;
 using Gui.View;
 using Gui.ViewModels.DialogViewModels;
 using Gui.ViewModels.Notifications;
 using ToastNotifications;
-using ToastNotifications.Core;
-using ToastNotifications.Events;
 using ToastNotifications.Lifetime;
 using ToastNotifications.Position;
 
@@ -13,7 +10,7 @@ namespace Gui.Helper
 {
     public class WindowManager
     {
-        private static Notifier _notifier = new Notifier(cfg =>
+        private static readonly Notifier _notifier = new Notifier(cfg =>
         {
             cfg.PositionProvider = new PrimaryScreenPositionProvider(Corner.BottomRight, 10, 10);
 
@@ -21,7 +18,7 @@ namespace Gui.Helper
                 MaximumNotificationCount.FromCount(10));
         });
 
-        public static bool? ShowDialog(BindableExtended vm, 
+        public static bool? ShowDialog(BindableExtended vm,
             string title,
             double? width = null,
             double? height = null,
@@ -54,15 +51,9 @@ namespace Gui.Helper
             }
             else
             {
-                if (height == null)
-                {
-                    height = width.Value * 1.25;
-                }
+                if (height == null) height = width.Value * 1.25;
 
-                if (width == null)
-                {
-                    width = height.Value / 1.25;
-                }
+                if (width == null) width = height.Value / 1.25;
             }
 
             window.Width = width.Value;

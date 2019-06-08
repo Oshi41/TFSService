@@ -3,7 +3,7 @@
 namespace Gui.View
 {
     /// <summary>
-    /// Interaction logic for FirstConnectView.xaml
+    ///     Interaction logic for FirstConnectView.xaml
     /// </summary>
     public partial class FirstConnectView : UserControl
     {

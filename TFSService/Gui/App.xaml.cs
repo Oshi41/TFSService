@@ -1,17 +1,12 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
-using System.Windows.Navigation;
 using Gui.Helper;
-using Gui.Tests;
 using Gui.ViewModels.Notifications;
-using Microsoft.TeamFoundation.WorkItemTracking.Client.Wiql;
-using Condition = System.Windows.Condition;
 
 namespace Gui
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    ///     Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
     {

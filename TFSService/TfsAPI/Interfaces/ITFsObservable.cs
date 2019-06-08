@@ -8,37 +8,37 @@ namespace TfsAPI.Interfaces
     public interface ITFsObservable : ITfsApi, IResumable
     {
         /// <summary>
-        /// Пользователь закоммитил изменения
+        ///     Пользователь закоммитил изменения
         /// </summary>
         event EventHandler<CommitCheckinEventArgs> Checkin;
 
         /// <summary>
-        /// На пользователя назначили новый рабочий элемент
+        ///     На пользователя назначили новый рабочий элемент
         /// </summary>
         event EventHandler<List<WorkItem>> NewItems;
 
         /// <summary>
-        /// Рабочий элемент был изменен
+        ///     Рабочий элемент был изменен
         /// </summary>
         event EventHandler<Dictionary<WorkItem, List<WorkItemEventArgs>>> ItemsChanged;
 
         /// <summary>
-        /// Нужно списать время у указанного рабочего элемента
+        ///     Нужно списать время у указанного рабочего элемента
         /// </summary>
         event EventHandler<ScheduleWorkArgs> WriteOff;
 
         /// <summary>
-        /// Юзер вышел из-за компа
+        ///     Юзер вышел из-за компа
         /// </summary>
         event EventHandler Logoff;
 
         /// <summary>
-        /// Юзер залогинился
+        ///     Юзер залогинился
         /// </summary>
         event EventHandler Logon;
 
         /// <summary>
-        /// Запрашиваем обновление 
+        ///     Запрашиваем обновление
         /// </summary>
         void RequestUpdate();
     }

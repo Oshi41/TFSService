@@ -1,7 +1,7 @@
 ﻿namespace TfsAPI.Constants
 {
     /// <summary>
-    /// Типы элементов
+    ///     Типы элементов
     /// </summary>
     public static class WorkItemTypes
     {

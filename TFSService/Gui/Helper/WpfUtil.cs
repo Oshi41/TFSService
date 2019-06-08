@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -11,7 +8,7 @@ namespace Gui.Helper
     public static class WpfUtil
     {
         /// <summary>
-        /// Ищет потомка по имени
+        ///     Ищет потомка по имени
         /// </summary>
         /// <typeparam name="T">Тип контрола</typeparam>
         /// <param name="parent">Родитель</param>
@@ -25,7 +22,7 @@ namespace Gui.Helper
         }
 
         public static T TryFindParent<T>(DependencyObject parent)
-                where T : DependencyObject
+            where T : DependencyObject
         {
             if (parent is T find)
                 return find;
@@ -35,22 +32,17 @@ namespace Gui.Helper
             var visual = VisualTreeHelper.GetParent(parent);
             var logical = LogicalTreeHelper.GetParent(parent);
 
-            if (visual != null)
-            {
-                find = TryFindParent<T>(visual);
-            }
+            if (visual != null) find = TryFindParent<T>(visual);
 
             if (logical != null
                 && find == null)
-            {
                 find = TryFindParent<T>(logical);
-            }
 
             return find;
         }
 
         /// <summary>
-        /// Ищет потомка по имени
+        ///     Ищет потомка по имени
         /// </summary>
         /// <typeparam name="T">Тип потомка</typeparam>
         /// <param name="childName">Имя контрола</param>
@@ -64,14 +56,11 @@ namespace Gui.Helper
             if (!parents.Any()
                 || string.IsNullOrEmpty(childName)
                 || maxSteps <= 0)
-            {
                 return null;
-            }
 
             // обходим список непосредственных потомков
-            List<DependencyObject> directChilds = new List<DependencyObject>();
+            var directChilds = new List<DependencyObject>();
             foreach (var parent in parents)
-            {
                 for (int i = 0, end = VisualTreeHelper.GetChildrenCount(parent); i < end; i++)
                 {
                     //  добавили контрол в список непосредственных потомков
@@ -79,16 +68,11 @@ namespace Gui.Helper
                     directChilds.Add(child);
 
                     // если имя и тип совпадает, возвращаем
-                    if (child is T result && result.Name == childName)
-                    {
-                        return result;
-                    }
+                    if (child is T result && result.Name == childName) return result;
                 }
-            }
 
             // Спускаюсь вниз на шаг, поэтому его вычитаю
             return FindChildByName<T>(childName, maxSteps - 1, directChilds.ToArray());
         }
-
     }
 }

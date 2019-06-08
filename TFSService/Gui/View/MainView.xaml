@@ -14,7 +14,7 @@
         Title="{Binding Path=StatsViewModel.Name}">
 
     <Window.DataContext>
-        <viewmodels:MainViewModel/>
+        <viewmodels:MainViewModel />
     </Window.DataContext>
 
 
@@ -24,33 +24,33 @@
             <StackPanel Orientation="Vertical"
                         Margin="10">
                 <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
-                             Maximum="10" 
+                             Maximum="10"
                              Value="5"
-                             IsIndeterminate="True"/>
+                             IsIndeterminate="True" />
                 <TextBlock Text="{x:Static p:Resources.AS_Load}"
-                           Margin="0,5"/>
+                           Margin="0,5" />
             </StackPanel>
         </materialDesign:DialogHost.DialogContent>
 
 
         <Grid Margin="5">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <Menu FontSize="12"
@@ -59,37 +59,37 @@
                     <MenuItem Header="Обновить"
                               Command="{Binding Path=UpdateCommand}">
                         <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="Update"/>
-                        </MenuItem.Icon>                        
+                            <materialDesign:PackIcon Kind="Update" />
+                        </MenuItem.Icon>
                     </MenuItem>
-                    
+
                     <MenuItem Header="История"
                               Command="{Binding Path=ShowMonthlyCommand}">
                         <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="History"/>
-                        </MenuItem.Icon>                          
+                            <materialDesign:PackIcon Kind="History" />
+                        </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                
+
                 <MenuItem Header="Действия">
                     <MenuItem Header="Закрыть проверенные Code Review"
-                              Command="{Binding Path=CodeResponsesViewModel.CloseReviewes}"/>
+                              Command="{Binding Path=CodeResponsesViewModel.CloseReviewes}" />
                     <MenuItem Header="Закрыть все Code Review, учитывая старые"
-                              Command="{Binding Path=CodeResponsesViewModel.CloseOldReviewes}"/>
+                              Command="{Binding Path=CodeResponsesViewModel.CloseOldReviewes}" />
                 </MenuItem>
 
                 <MenuItem Header="Настройки"
-                          Command="{Binding Path=SettingsCommand}"/>
+                          Command="{Binding Path=SettingsCommand}" />
 
 
             </Menu>
 
             <TextBlock Text="Трудосгорание"
                        Margin="0,10,0,0"
-                       Grid.Row="1"/>
+                       Grid.Row="1" />
 
-            <ProgressBar Grid.Row="2"    
-                         HorizontalAlignment="Stretch"                         
+            <ProgressBar Grid.Row="2"
+                         HorizontalAlignment="Stretch"
                          Maximum="{Binding Path=StatsViewModel.Capacity}"
                          Value="{Binding Path=StatsViewModel.WroteOff}"
                          Margin="5">
@@ -99,9 +99,10 @@
                                     Margin="5">
 
                             <TextBlock Text="{Binding Path=StatsViewModel.WroteOff, StringFormat={}Списано: {0} ч}"
-                                       Margin="5"/>
-                            <TextBlock Text="{Binding Path=StatsViewModel.Capacity, StringFormat={}Дневной предел: {0} ч}"
-                                       Margin="5"/>
+                                       Margin="5" />
+                            <TextBlock
+                                Text="{Binding Path=StatsViewModel.Capacity, StringFormat={}Дневной предел: {0} ч}"
+                                Margin="5" />
 
                         </StackPanel>
                     </ToolTip>
@@ -112,10 +113,10 @@
                        Grid.Column="1"
                        Text="{Binding Path=StatsViewModel.TfsCapacity, StringFormat={}Дневная занятость: {0} ч}"
                        Margin="5"
-                       ToolTip="Данные из TFS"/>
+                       ToolTip="Данные из TFS" />
 
             <TextBlock Text="Рабочие элементы на мне:"
-                       Grid.Row="3"/>
+                       Grid.Row="3" />
 
 
             <ListView Grid.Column="0"
@@ -125,8 +126,7 @@
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       ScrollViewer.VerticalScrollBarVisibility="Hidden"
                       HorizontalAlignment="Left"
-                      ItemsSource="{Binding Path=StatsViewModel.MyItems}"/>
-
+                      ItemsSource="{Binding Path=StatsViewModel.MyItems}" />
 
 
             <!--<StackPanel Grid.Row="3"
@@ -161,7 +161,6 @@
 
         </Grid>
     </materialDesign:DialogHost>
-
 
 
     <!--<Grid>

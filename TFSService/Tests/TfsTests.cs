@@ -46,17 +46,15 @@ namespace Tests
         public void GetMyQuarries()
         {
             // подключаемся к ТФС
-            var tfs = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
+            var tfs = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(
+                new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
 
             // Выбираем проект
             var project = tfs.GetService<ITestManagementService>().GetTeamProject("SNES");
 
             var quarries = string.Empty;
 
-            foreach (var query in project.Queries)
-            {
-                quarries += $"{query.Name}\n{query.QueryText}\n\n";
-            }
+            foreach (var query in project.Queries) quarries += $"{query.Name}\n{query.QueryText}\n\n";
 
             Trace.WriteLine(quarries);
         }
@@ -69,7 +67,6 @@ namespace Tests
                 var id = 40952;
 
                 var items = tfs.GetAssociateItems(id);
-
             }
         }
 
@@ -87,7 +84,8 @@ namespace Tests
         {
             var name = "Щеглов Аркадий";
 
-            using (var project = new TfsTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security")))
+            using (var project =
+                new TfsTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security")))
             {
                 Assert.AreEqual(name, project.AuthorizedIdentity.DisplayName);
             }
@@ -96,7 +94,8 @@ namespace Tests
         [TestMethod]
         public void GetAllLinkTypes()
         {
-            using (var project = new TfsTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security")))
+            using (var project =
+                new TfsTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security")))
             {
                 var store = project.GetService<WorkItemStore>();
 
@@ -117,7 +116,6 @@ namespace Tests
 
                     foreach (Link link in task.Links)
                     {
-                        
                     }
                 }
             }

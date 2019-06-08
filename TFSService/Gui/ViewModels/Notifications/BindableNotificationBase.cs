@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using Gui.View.Notifications;
 using MaterialDesignThemes.Wpf;
-using Microsoft.TeamFoundation.Client.CommandLine;
-using Mvvm;
 using ToastNotifications.Core;
 
 namespace Gui.ViewModels.Notifications
@@ -18,6 +11,30 @@ namespace Gui.ViewModels.Notifications
     {
         private NotificationDisplayPart _displayPart;
         private PackIconKind? _icon;
+
+        protected BindableNotificationBase(string message)
+            : base(message, new MessageOptions())
+        {
+            Options.FontSize = 11;
+            Options.ShowCloseButton = true;
+            Options.FreezeOnMouseEnter = true;
+        }
+
+        public override NotificationDisplayPart DisplayPart
+        {
+            get
+            {
+                if (_displayPart == null)
+                {
+                    _displayPart = new ToastViewBase();
+                    _displayPart.Bind(this);
+
+                    _displayPart.DataContext = this;
+                }
+
+                return _displayPart;
+            }
+        }
 
         #region INotifyPropertyChanged
 
@@ -41,29 +58,5 @@ namespace Gui.ViewModels.Notifications
         }
 
         #endregion
-        
-        protected BindableNotificationBase(string message) 
-            : base(message, new MessageOptions())
-        {
-            Options.FontSize = 11;
-            Options.ShowCloseButton = true;
-            Options.FreezeOnMouseEnter = true;
-        }
-
-        public override NotificationDisplayPart DisplayPart
-        {
-            get
-            {
-                if (_displayPart == null)
-                {
-                    _displayPart = new ToastViewBase();
-                    _displayPart.Bind(this);
-
-                    _displayPart.DataContext = this;
-                }
-
-                return _displayPart;
-            }
-        }
     }
 }

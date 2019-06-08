@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using System.Windows;
 using System.Windows.Data;
 
 namespace Gui.Converters
@@ -11,12 +10,28 @@ namespace Gui.Converters
     {
         More,
         Less,
-        Equals,
+        Equals
     }
 
     public class MathCompareConverter : IMultiValueConverter
     {
         public OperationTypes Operation { get; set; }
+
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values != null
+                && values.Count() >= 2
+                && double.TryParse(values[0]?.ToString(), out var x)
+                && double.TryParse(values[1]?.ToString(), out var y))
+                return GetResult(x, y, Operation);
+
+            return Binding.DoNothing;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
 
         private bool GetResult(double x, double y, OperationTypes singleOperation)
         {
@@ -32,24 +47,6 @@ namespace Gui.Converters
                 default:
                     throw new Exception("Unknonw situation");
             }
-        }
-
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (values != null
-                && values.Count() >= 2
-                && double.TryParse(values[0]?.ToString(), out var x)
-                && double.TryParse(values[1]?.ToString(), out var y))
-            {
-                return GetResult(x, y, Operation);
-            }
-
-            return Binding.DoNothing;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 }

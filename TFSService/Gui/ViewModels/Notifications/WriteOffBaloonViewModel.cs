@@ -1,20 +1,18 @@
-﻿using Gui.Converters;
-using Microsoft.TeamFoundation.VersionControl.Client;
+﻿using System.Diagnostics;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Interfaces;
 using ToastNotifications.Core;
 
 namespace Gui.ViewModels.Notifications
 {
-    class WriteOffBaloonViewModel : BindableNotificationBase
+    internal class WriteOffBaloonViewModel : BindableNotificationBase
     {
         public WriteOffBaloonViewModel()
             : base("Запланированое списание времени")
         {
-
         }
 
-        public WriteOffBaloonViewModel(string caption) 
+        public WriteOffBaloonViewModel(string caption)
             : base(caption)
         {
         }
@@ -25,7 +23,7 @@ namespace Gui.ViewModels.Notifications
             Item = e.Item;
             Hours = e.Hours;
 
-            Options.NotificationClickAction = OnClick;            
+            Options.NotificationClickAction = OnClick;
         }
 
         public byte Hours { get; }
@@ -33,15 +31,12 @@ namespace Gui.ViewModels.Notifications
         public WorkItem Item { get; }
 
         /// <summary>
-        /// Открываем ссылку на элемент
+        ///     Открываем ссылку на элемент
         /// </summary>
         /// <param name="obj"></param>
         private void OnClick(NotificationBase obj)
         {
-            if (Item?.Uri != null)
-            {
-                System.Diagnostics.Process.Start(Item.Uri.ToString());
-            }
+            if (Item?.Uri != null) Process.Start(Item.Uri.ToString());
         }
     }
 }

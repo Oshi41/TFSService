@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using Microsoft.TeamFoundation.Client.Reporting;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
@@ -13,8 +12,9 @@ namespace Gui.Helper
     public class WriteOffCollection : ObservableCollection<WriteOff>
     {
         #region Public methods
+
         /// <summary>
-        /// Прошел час штатной работы программы
+        ///     Прошел час штатной работы программы
         /// </summary>
         /// <param name="id"></param>
         /// <param name="hours"></param>
@@ -23,11 +23,12 @@ namespace Gui.Helper
             var item = new WriteOff(id, hours);
             Add(item);
 
-            Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(ScheduleWork)}: Hour scheduled at {item.Time.ToShortTimeString()}");
+            Trace.WriteLine(
+                $"{nameof(WriteOffCollection)}.{nameof(ScheduleWork)}: Hour scheduled at {item.Time.ToShortTimeString()}");
         }
 
         /// <summary>
-        /// Проверяем, записали ли чекины от пользователя
+        ///     Проверяем, записали ли чекины от пользователя
         /// </summary>
         /// <param name="tfs"></param>
         public void SyncCheckins(ITfsApi tfs)
@@ -39,7 +40,7 @@ namespace Gui.Helper
             foreach (var checkin in checkins)
             {
                 var id = checkin.Key.WorkItem.Id;
-                var date = (DateTime)checkin.Key.Fields[CoreField.ChangedDate].Value;
+                var date = (DateTime) checkin.Key.Fields[CoreField.ChangedDate].Value;
 
                 if (!this.Any(x => x.Time == date && x.Id == id))
                 {
@@ -53,7 +54,7 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Сколько часов программа поставила в очередь
+        ///     Сколько часов программа поставила в очередь
         /// </summary>
         /// <returns></returns>
         public int ScheduledTime()
@@ -62,7 +63,7 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Сколько сегодня было зачекинено пользователем
+        ///     Сколько сегодня было зачекинено пользователем
         /// </summary>
         /// <returns></returns>
         public int CheckinedTime()
@@ -71,7 +72,7 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Очищаем предыдущие записи
+        ///     Очищаем предыдущие записи
         /// </summary>
         public void ClearPrevRecords()
         {
@@ -79,7 +80,7 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Списываем запланированную работу
+        ///     Списываем запланированную работу
         /// </summary>
         /// <param name="api">TFS API</param>
         /// <param name="capacity">Кол-во рабочих часов в этом дне</param>
@@ -95,7 +96,7 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Синхронизируем дневной плн списания времени. Кол-во списанного времени должно быть равно дневной норме.
+        ///     Синхронизируем дневной плн списания времени. Кол-во списанного времени должно быть равно дневной норме.
         /// </summary>
         /// <param name="api"></param>
         /// <param name="capacity"></param>
@@ -124,7 +125,7 @@ namespace Gui.Helper
             }
 
             CheckinWork(api);
-        }        
+        }
 
         #endregion
 
@@ -133,12 +134,10 @@ namespace Gui.Helper
         public WriteOffCollection(IEnumerable<WriteOff> source)
             : base(source)
         {
-
         }
 
         public WriteOffCollection()
         {
-
         }
 
         #endregion
@@ -146,25 +145,24 @@ namespace Gui.Helper
         #region Private
 
         /// <summary>
-        /// Записываем всю работу в TFS.
-        /// В случаем с чекином вчерашней работы, она записывается отдельно и не мешает
-        /// дневному кол-ву работы
+        ///     Записываем всю работу в TFS.
+        ///     В случаем с чекином вчерашней работы, она записывается отдельно и не мешает
+        ///     дневному кол-ву работы
         /// </summary>
         private void CheckinWork(ITfsApi tfs)
         {
             var manual = Merge(GetManual(this));
 
             foreach (var item in manual)
-            {
                 try
                 {
-                    var revision = tfs.WriteHours(tfs.FindById(item.Id), (byte)item.Hours, true);
+                    var revision = tfs.WriteHours(tfs.FindById(item.Id), (byte) item.Hours, true);
 
                     RemoveAll(x => x.Id == item.Id);
 
                     if (revision != null)
                     {
-                        var time = (DateTime)revision.Fields[CoreField.ChangedDate].Value;
+                        var time = (DateTime) revision.Fields[CoreField.ChangedDate].Value;
 
                         Add(new WriteOff(revision.WorkItem.Id,
                             item.Hours,
@@ -179,14 +177,13 @@ namespace Gui.Helper
                 {
                     Trace.WriteLine(e);
                 }
-            }
 
             ClearPrevRecords();
         }
 
         /// <summary>
-        /// Обрезаю запланированную работу по чекинам пользователя
-        /// или по его дневному графику 
+        ///     Обрезаю запланированную работу по чекинам пользователя
+        ///     или по его дневному графику
         /// </summary>
         /// <param name="maxHoursPerDay"></param>
         private void CutOffByCapacity(int maxHoursPerDay)
@@ -234,7 +231,7 @@ namespace Gui.Helper
             // программой, начиная с самых новых
             while (alreadyRecorded > 0 && manual.Any())
             {
-                this.Remove(manual[0]);
+                Remove(manual[0]);
                 manual.RemoveAt(0);
 
                 alreadyRecorded--;
@@ -248,18 +245,12 @@ namespace Gui.Helper
         private void RemoveAll(Func<WriteOff, bool> condition)
         {
             var toRemove = this.Where(condition).ToList();
-            foreach (var item in toRemove)
-            {
-                this.Remove(item);
-            }
+            foreach (var item in toRemove) Remove(item);
         }
 
         private void RemoveRange(IList<WriteOff> source)
         {
-            foreach (var item in source)
-            {
-                Remove(item);
-            }
+            foreach (var item in source) Remove(item);
         }
 
         #endregion
@@ -267,7 +258,7 @@ namespace Gui.Helper
         #region static
 
         /// <summary>
-        /// Мерджит чекины пользователя и запланированные программой
+        ///     Мерджит чекины пользователя и запланированные программой
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
@@ -284,13 +275,9 @@ namespace Gui.Helper
                                                            && x.Recorded == off.Recorded);
 
                     if (first != null)
-                    {
                         first.Increase(off.Hours);
-                    }
                     else
-                    {
                         result.Add(off);
-                    }
                 }
             }
 
@@ -302,7 +289,7 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Возвращает список запланированных программой чекинов. Отсортированы от свежих к старым
+        ///     Возвращает список запланированных программой чекинов. Отсортированы от свежих к старым
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>

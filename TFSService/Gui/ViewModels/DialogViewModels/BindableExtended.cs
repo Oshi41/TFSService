@@ -10,6 +10,35 @@ namespace Gui.ViewModels.DialogViewModels
 {
     public class BindableExtended : BindableBase, IDataErrorInfo
     {
+        /// <summary>
+        ///     Валидация свойства модели
+        /// </summary>
+        /// <param name="prop"></param>
+        /// <returns></returns>
+        protected virtual string ValidateProperty(string prop)
+        {
+            return null;
+        }
+
+        /// <summary>
+        ///     Валидация свойства, которое выдаёт некритичную ошибку
+        /// </summary>
+        /// <param name="prop"></param>
+        /// <returns></returns>
+        protected virtual string ValidateOptionalProperty(string prop)
+        {
+            return null;
+        }
+
+        /// <summary>
+        ///     Выполняет действие в GUI потоке, в приоритете Loaded
+        /// </summary>
+        /// <param name="action"></param>
+        public void SafeExecute(Action action)
+        {
+            Dispatcher.CurrentDispatcher.Invoke(action, DispatcherPriority.Loaded);
+        }
+
         #region Fields
 
         /// <summary>
@@ -36,7 +65,7 @@ namespace Gui.ViewModels.DialogViewModels
         public ObservableCommand SubmitCommand { get; protected set; }
 
         /// <summary>
-        /// Специальная команда для третьей кнопки
+        ///     Специальная команда для третьей кнопки
         /// </summary>
         public DelegateCommandBase SpecialCommand { get; protected set; }
 
@@ -77,34 +106,5 @@ namespace Gui.ViewModels.DialogViewModels
         }
 
         #endregion
-
-        /// <summary>
-        ///     Валидация свойства модели
-        /// </summary>
-        /// <param name="prop"></param>
-        /// <returns></returns>
-        protected virtual string ValidateProperty(string prop)
-        {
-            return null;
-        }
-
-        /// <summary>
-        ///     Валидация свойства, которое выдаёт некритичную ошибку
-        /// </summary>
-        /// <param name="prop"></param>
-        /// <returns></returns>
-        protected virtual string ValidateOptionalProperty(string prop)
-        {
-            return null;
-        }
-
-        /// <summary>
-        ///     Выполняет действие в GUI потоке, в приоритете Loaded
-        /// </summary>
-        /// <param name="action"></param>
-        public void SafeExecute(Action action)
-        {
-            Dispatcher.CurrentDispatcher.Invoke(action, DispatcherPriority.Loaded);
-        }
     }
 }

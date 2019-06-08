@@ -5,10 +5,10 @@ namespace TfsAPI.Extentions
     public static class DateTimeExtentions
     {
         /// <summary>
-        /// Дата сегодняшняя?
+        ///     Дата сегодняшняя?
         /// </summary>
         /// <param name="time">Время, которое надо проверить</param>
-        /// <param name="today">Для оптимизации можно передать <see cref="DateTime.Now"/></param>
+        /// <param name="today">Для оптимизации можно передать <see cref="DateTime.Now" /></param>
         /// <returns></returns>
         public static bool IsToday(this DateTime time, DateTime? today = null)
         {
@@ -16,7 +16,7 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
-        /// Даты из одного месяца
+        ///     Даты из одного месяца
         /// </summary>
         public static bool SameMonth(this DateTime x, DateTime y)
         {
@@ -24,7 +24,7 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
-        /// Даты приблизительно равны, в пределах нескольких минут
+        ///     Даты приблизительно равны, в пределах нескольких минут
         /// </summary>
         /// <param name="source">С каким временем сверяем</param>
         /// <param name="time">Что сравниваем</param>

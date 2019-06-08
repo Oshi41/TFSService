@@ -6,7 +6,7 @@ namespace TfsAPI.Extentions
     public static class IterationExtentions
     {
         /// <summary>
-        /// является ли это данной итерацией
+        ///     является ли это данной итерацией
         /// </summary>
         /// <param name="iteration"></param>
         /// <returns></returns>
@@ -14,9 +14,7 @@ namespace TfsAPI.Extentions
         {
             if (iteration?.Attributes?.StartDate == null
                 || iteration.Attributes?.FinishDate == null)
-            {
                 return false;
-            }
 
             var now = DateTime.Now;
 

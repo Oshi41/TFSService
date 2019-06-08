@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Documents;
-using Microsoft.TeamFoundation.Build.WebApi.Events;
-using Microsoft.TeamFoundation.Common;
-using Microsoft.TeamFoundation.TestManagement.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Mvvm;
 using TfsAPI.Extentions;
@@ -19,41 +11,56 @@ namespace Gui.ViewModels.DialogViewModels
 {
     public class MonthCheckinsViewModel : BindableExtended
     {
-        private DateTime date;
-        private DayViewModel selectedDay;
-        private bool _isBusy;
-        private List<DayViewModel> _month;
-        private int sum;
         private readonly ITfsApi _api;
 
         // Храним кэш заргуженный дней
-        private readonly Dictionary<DateTime, List<DayViewModel>> _cache = new Dictionary<DateTime, List<DayViewModel>>();
+        private readonly Dictionary<DateTime, List<DayViewModel>> _cache =
+            new Dictionary<DateTime, List<DayViewModel>>();
+
+        private bool _isBusy;
+        private List<DayViewModel> _month;
+        private DateTime date;
+        private DayViewModel selectedDay;
+        private int sum;
+
+        public MonthCheckinsViewModel(ITfsApi api)
+        {
+            _api = api;
+
+            Date = DateTime.Now;
+        }
 
         public DateTime Date
         {
             get => date;
             set
             {
-                if (SetProperty(ref date, value))
-                {
-                    OnDateChanged();
-                }
+                if (SetProperty(ref date, value)) OnDateChanged();
             }
         }
 
-        public DayViewModel SelectedDay { get => selectedDay; set => SetProperty(ref selectedDay, value); }
-
-        public bool IsBusy { get => _isBusy; set => SetProperty(ref _isBusy, value); }
-
-        public List<DayViewModel> Month { get => _month; set => SetProperty(ref _month, value); }
-
-        public int Sum { get => sum; set => SetProperty(ref sum, value); }
-
-        public MonthCheckinsViewModel(ITfsApi api)
+        public DayViewModel SelectedDay
         {
-            this._api = api;
+            get => selectedDay;
+            set => SetProperty(ref selectedDay, value);
+        }
 
-            Date = DateTime.Now;
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set => SetProperty(ref _isBusy, value);
+        }
+
+        public List<DayViewModel> Month
+        {
+            get => _month;
+            set => SetProperty(ref _month, value);
+        }
+
+        public int Sum
+        {
+            get => sum;
+            set => SetProperty(ref sum, value);
         }
 
         private async void OnDateChanged()
@@ -62,13 +69,10 @@ namespace Gui.ViewModels.DialogViewModels
 
             var start = new DateTime(Date.Year, Date.Month, 1);
             // Последний день месяца
-            var end = (new DateTime(Date.Year, Date.Month + 1, 1)).AddDays(-1);
+            var end = new DateTime(Date.Year, Date.Month + 1, 1).AddDays(-1);
 
             // ограничили сегодняшним днем
-            if (end > DateTime.Now)
-            {
-                end = DateTime.Now;
-            }
+            if (end > DateTime.Now) end = DateTime.Now;
 
             // Выбрали будущий месяц, смысла в поиске нет
             if (start > end)
@@ -112,16 +116,6 @@ namespace Gui.ViewModels.DialogViewModels
 
     public class DayViewModel : BindableBase, ITimable
     {
-        public DateTime Time { get; }
-
-        public bool IsHolliday { get; }
-
-        public List<KeyValuePair<Revision, int>> Checkins { get; }
-
-        public int Hours { get; }
-
-        public int Capacity { get; }
-
         public DayViewModel(DateTime time, List<KeyValuePair<Revision, int>> checkins, int capacity)
         {
             Capacity = capacity;
@@ -130,17 +124,23 @@ namespace Gui.ViewModels.DialogViewModels
             IsHolliday = GetIsHolliday(Time);
 
             Checkins = checkins.Where(x => x.Key.Fields[CoreField.ChangedDate]?.Value is DateTime t
-                    && t.IsToday(Time)).ToList();
+                                           && t.IsToday(Time)).ToList();
             Hours = Checkins.Select(x => x.Value).Sum();
         }
+
+        public bool IsHolliday { get; }
+
+        public List<KeyValuePair<Revision, int>> Checkins { get; }
+
+        public int Hours { get; }
+
+        public int Capacity { get; }
+        public DateTime Time { get; }
 
         private static bool GetIsHolliday(DateTime time)
         {
             // Выходной
-            if (time.DayOfWeek == DayOfWeek.Saturday || time.DayOfWeek == DayOfWeek.Sunday)
-            {
-                return true;
-            }
+            if (time.DayOfWeek == DayOfWeek.Saturday || time.DayOfWeek == DayOfWeek.Sunday) return true;
 
             // TODO учитывать выходные
 
