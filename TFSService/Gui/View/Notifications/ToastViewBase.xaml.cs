@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gui.ViewModels.Notifications;
+using System;
 using System.Windows;
 using System.Windows.Input;
 using ToastNotifications.Core;
@@ -21,6 +22,11 @@ namespace Gui.View.Notifications
         private void SubscribeOnce(object sender, RoutedEventArgs e)
         {
             Loaded -= SubscribeOnce;
+
+            this.MouseEnter += (s, args) => OnFreeze(true);
+            this.MouseLeave += (s, args) => OnFreeze(false);
+
+            this.MouseDoubleClick += DetectDoubleClick;
 
             MouseDown += (s, args) => DetectClosingSlide(args);
             MouseUp += (s, args) =>
@@ -66,7 +72,8 @@ namespace Gui.View.Notifications
         private bool TryClose(Point pos, bool isPressed)
         {
             if (_isDragging
-                && DetectClosingSlide(pos, System.Windows.Forms.FlowDirection.TopDown))
+                && DetectClosingSlide(pos, System.Windows.Forms.FlowDirection.TopDown,
+                                           System.Windows.Forms.FlowDirection.TopDown))
             {
                 _isDragging = false;
                 _isClosed = true;
@@ -105,5 +112,22 @@ namespace Gui.View.Notifications
         }
 
         #endregion
+
+        private void DetectDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (this.Notification.Options is EnhancedOptions options
+                && options.DoubleClickAction != null)
+            {
+                options.DoubleClickAction(this.Notification as BindableNotificationBase);
+            }
+        }
+
+        private void OnFreeze(bool shouldFreeze)
+        {
+            if (this.Notification?.Options?.FreezeOnMouseEnter == true)
+            {
+                Notification.CanClose = shouldFreeze;
+            }
+        }
     }
 }

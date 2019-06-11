@@ -6,13 +6,29 @@ namespace Gui.ViewModels.Notifications
 {
     public class ItemsAssignedBaloonViewModel : BindableNotificationBase
     {
+        private WorkItemVm _selected;
+
         public ItemsAssignedBaloonViewModel(List<WorkItem> e,
             string title = "Назначены новые рабочие элементы")
             : base(title)
         {
             Items = e.Select(x => new WorkItemVm(x)).ToList();
+
+            Options.DoubleClickAction = sender => OpenLink();
         }
 
         public List<WorkItemVm> Items { get; }
+
+        public WorkItemVm Selected { get => _selected; set => Set(ref _selected, value); }
+
+        private void OpenLink()
+        {
+            var link = Selected?.Item?.Uri?.ToString();
+
+            if (link != null)
+            {
+                System.Diagnostics.Process.Start(link);
+            }
+        }
     }
 }

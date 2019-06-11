@@ -158,7 +158,9 @@ namespace Gui.Settings
                 if (storage is IEnumerable x
                     && value is IEnumerable y
                     && x.IsTermwiseEquals(y))
+                {
                     return false;
+                }
             }
 
             return SetProperty(ref storage, value, propertyName);

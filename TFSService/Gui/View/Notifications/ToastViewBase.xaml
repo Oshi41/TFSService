@@ -12,9 +12,9 @@
 
     <core:NotificationDisplayPart.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
+            <!--<ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../../Resources/DataTemplates.xaml" />
-            </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary.MergedDictionaries>-->
 
 
             <materialDesign:NullableToVisibilityConverter x:Key="NillVisConverter" />

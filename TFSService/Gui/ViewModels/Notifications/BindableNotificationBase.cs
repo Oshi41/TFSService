@@ -13,7 +13,7 @@ namespace Gui.ViewModels.Notifications
         private PackIconKind? _icon;
 
         protected BindableNotificationBase(string message)
-            : base(message, new MessageOptions())
+            : base(message, new EnhancedOptions())
         {
             Options.FontSize = 11;
             Options.ShowCloseButton = true;
@@ -34,6 +34,11 @@ namespace Gui.ViewModels.Notifications
 
                 return _displayPart;
             }
+        }
+
+        public new EnhancedOptions Options
+        {
+            get => (EnhancedOptions)base.Options;
         }
 
         #region INotifyPropertyChanged
@@ -58,5 +63,10 @@ namespace Gui.ViewModels.Notifications
         }
 
         #endregion
+    }
+
+    public class EnhancedOptions : MessageOptions
+    {
+        public Action<BindableNotificationBase> DoubleClickAction { get; set; }
     }
 }
