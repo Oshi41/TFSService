@@ -229,6 +229,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NameTests.cs" />
+    <Compile Include="Tfs Api Tests\BaseTest.cs" />
+    <Compile Include="Tfs Api Tests\FindByIdTests.cs" />
+    <Compile Include="Tfs Api Tests\GetAssociateItemsTests.cs" />
+    <Compile Include="Tfs Api Tests\GetCheckinsTests.cs" />
+    <Compile Include="Tfs Api Tests\GetParentsTests.cs" />
     <Compile Include="TfsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
