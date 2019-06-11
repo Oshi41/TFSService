@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Gui.View.Notifications;
-using MaterialDesignThemes.Wpf;
 using ToastNotifications.Core;
 
 namespace Gui.ViewModels.Notifications
@@ -10,7 +9,6 @@ namespace Gui.ViewModels.Notifications
     public class BindableNotificationBase : NotificationBase, INotifyPropertyChanged, INotification
     {
         private NotificationDisplayPart _displayPart;
-        private PackIconKind? _icon;
 
         protected BindableNotificationBase(string message)
             : base(message, new EnhancedOptions())
@@ -36,10 +34,7 @@ namespace Gui.ViewModels.Notifications
             }
         }
 
-        public new EnhancedOptions Options
-        {
-            get => (EnhancedOptions)base.Options;
-        }
+        public new EnhancedOptions Options => (EnhancedOptions)base.Options;
 
         #region INotifyPropertyChanged
 

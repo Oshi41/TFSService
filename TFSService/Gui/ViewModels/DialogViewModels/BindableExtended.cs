@@ -53,8 +53,6 @@ namespace Gui.ViewModels.DialogViewModels
 
         private readonly Dictionary<string, string> _optionalErrors = new Dictionary<string, string>();
 
-        private bool _isExecuting;
-
         #endregion
 
         #region Properties

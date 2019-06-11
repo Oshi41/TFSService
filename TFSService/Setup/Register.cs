@@ -14,8 +14,10 @@ namespace Setup
     {
         #region Fields
 
-        private const string _exeKey = "exe";
-        private const string _appKey = "appname";
+        public const string ExeName = "Gui.exe";
+        public const string AppName = "TFS Service";
+
+        public const string AssemblyKey = "assemblypath";
 
         #endregion
 
@@ -27,23 +29,14 @@ namespace Setup
 
             ShowDebug();
 
-            var dict = this.Context.Parameters;
-            if (dict.ContainsKey(_exeKey)
-                && dict.ContainsKey(_appKey))
+            try
             {
-                try
-                {
-                    RegisterAsStartUp(dict[_appKey], dict[_exeKey]);
-                }
-                catch (Exception e)
-                {
-                    this.Context.LogMessage($"{nameof(Install)}: {e}");
-                    this.Context.LogMessage("Successfully register app as start-up");
-                }
+                RegisterAsStartup();
+                this.Context.LogMessage("Successfully register app as start-up");
             }
-            else
+            catch (Exception e)
             {
-                this.Context.LogMessage($"Required parameters not specisied:{_exeKey} or {_appKey}");
+                this.Context.LogMessage($"{nameof(Install)}: {e}");
             }
         }
 
@@ -66,31 +59,22 @@ namespace Setup
         [Conditional("DEBUG")]
         private void ShowDebug()
         {
-            int processId = Process.GetCurrentProcess().Id;
-            string message = string.Format("Please attach the debugger (elevated on Vista or Win 7) to process [{0}].", processId);
-            MessageBox.Show(message, "Debug");
+            string message = $"Please attach the debugger to process [{Process.GetCurrentProcess().Id}].";
+            MessageBox.Show(message, "Wait for debug attaching");
         }
 
         private void Undo()
         {
             ShowDebug();
 
-            var dict = this.Context.Parameters;
-            if (dict.ContainsKey(_appKey))
+            try
             {
-                try
-                {
-                    UnregisterAsStartUp(dict[_appKey]);
-                    this.Context.LogMessage("Successfully unregister app as start-up");
-                }
-                catch (Exception e)
-                {
-                    this.Context.LogMessage($"{nameof(Rollback)}: {e}");
-                }
+                UnregisterAsStartup();
+                this.Context.LogMessage("Successfully unregistered app as start-up");
             }
-            else
+            catch (Exception e)
             {
-                this.Context.LogMessage($"Required parameters not specisied: {_appKey}");
+                this.Context.LogMessage($"{nameof(Undo)}: {e}");
             }
         }
 
@@ -102,25 +86,33 @@ namespace Setup
         /// <returns></returns>
         private RegistryKey GetKey => Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
-        private void RegisterAsStartUp(string appName, string exe)
+        private void RegisterAsStartup()
         {
+            // Получили путь к dll, откуда вызывается метод
+            var executingDll = this.Context.Parameters[AssemblyKey];
+            var parent = Path.GetDirectoryName(executingDll);
+            var exe = Path.Combine(parent, ExeName);
+
             if (!File.Exists(exe))
                 throw new FileNotFoundException(exe);
 
-            var key = GetKey;
-            UnregisterAsStartUp(appName, key);
+            // Нужно экранировать путь кавычками
+            exe = $"\"{exe}\"";
 
-            key.SetValue(appName, exe);
+            var key = GetKey;
+            UnregisterAsStartup(key);
+
+            key.SetValue(AppName, exe);
         }
 
-        private void UnregisterAsStartUp(string appName, RegistryKey key = null)
+        private void UnregisterAsStartup(RegistryKey key = null)
         {
             if (key == null)
                 key = GetKey;
 
-            if (key.GetValue(appName) != null)
+            if (key.GetValue(AppName) != null)
             {
-                key.DeleteValue(appName);
+                key.DeleteValue(AppName);
             }
         }
 

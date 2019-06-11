@@ -67,6 +67,8 @@ namespace Gui.ViewModels.Notifications
 
                 return IsOld(request.CreatedDate);
             }));
+
+            _isExecuted = true;
         }
 
         private async Task OnCloseGoodLooking()
@@ -79,6 +81,8 @@ namespace Gui.ViewModels.Notifications
 
                 return responses.All(x => x.HasClosedReason(WorkItems.ClosedStatus.LooksGood));
             }));
+
+            _isExecuted = true;
         }
 
 

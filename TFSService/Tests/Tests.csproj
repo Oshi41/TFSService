@@ -204,6 +204,7 @@
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -227,6 +228,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NameTests.cs" />
     <Compile Include="TfsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -240,6 +242,10 @@
     <ProjectReference Include="..\Gui\Gui.csproj">
       <Project>{65242D50-E79C-4706-9532-457047487D30}</Project>
       <Name>Gui</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Setup\Setup.csproj">
+      <Project>{63f4ff38-d740-4c11-ae2d-86af85371469}</Project>
+      <Name>Setup</Name>
     </ProjectReference>
     <ProjectReference Include="..\TfsAPI\TfsAPI.csproj">
       <Project>{a16cca4c-9d08-4b28-aa58-f188fcbbd9a5}</Project>
