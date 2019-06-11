@@ -41,6 +41,7 @@ namespace Gui.ViewModels
             {
                 Trace.WriteLine("User denied to connect, exit the program");
                 Application.Current.Shutdown(0);
+                return;
             }
 
             using (var settings = Settings.Settings.Read())
