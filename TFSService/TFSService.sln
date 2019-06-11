@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsAPI", "TfsAPI\TfsAPI.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Setup", "Setup\Setup.csproj", "{63F4FF38-D740-4C11-AE2D-86AF85371469}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "Installer\Installer.vdproj", "{9AD81DC1-FF09-40EF-BC65-1C13657521EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		All|Any CPU = All|Any CPU
@@ -51,6 +53,10 @@ Global
 		{63F4FF38-D740-4C11-AE2D-86AF85371469}.Release|Any CPU.Build.0 = Release|Any CPU
 		{63F4FF38-D740-4C11-AE2D-86AF85371469}.Tests|Any CPU.ActiveCfg = Release|Any CPU
 		{63F4FF38-D740-4C11-AE2D-86AF85371469}.Tests|Any CPU.Build.0 = Release|Any CPU
+		{9AD81DC1-FF09-40EF-BC65-1C13657521EF}.All|Any CPU.ActiveCfg = Release
+		{9AD81DC1-FF09-40EF-BC65-1C13657521EF}.Debug|Any CPU.ActiveCfg = Debug
+		{9AD81DC1-FF09-40EF-BC65-1C13657521EF}.Release|Any CPU.ActiveCfg = Release
+		{9AD81DC1-FF09-40EF-BC65-1C13657521EF}.Tests|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -14,8 +14,8 @@ namespace Setup
     {
         #region Fields
 
-        private const string _exeKey = "Exe";
-        private const string _appKey = "AppName";
+        private const string _exeKey = "exe";
+        private const string _appKey = "appname";
 
         #endregion
 
@@ -25,13 +25,7 @@ namespace Setup
         {
             base.Install(stateSaver);
 
-#if DEBUG
-
-            int processId = Process.GetCurrentProcess().Id;
-            string message = string.Format("Please attach the debugger (elevated on Vista or Win 7) to process [{0}].", processId);
-            MessageBox.Show(message, "Debug");
-
-#endif
+            ShowDebug();
 
             var dict = this.Context.Parameters;
             if (dict.ContainsKey(_exeKey)
@@ -57,6 +51,30 @@ namespace Setup
         {
             base.Rollback(savedState);
 
+            Undo();
+        }
+
+        public override void Uninstall(IDictionary savedState)
+        {
+            base.Uninstall(savedState);
+
+            Undo();
+        }
+
+        #endregion
+
+        [Conditional("DEBUG")]
+        private void ShowDebug()
+        {
+            int processId = Process.GetCurrentProcess().Id;
+            string message = string.Format("Please attach the debugger (elevated on Vista or Win 7) to process [{0}].", processId);
+            MessageBox.Show(message, "Debug");
+        }
+
+        private void Undo()
+        {
+            ShowDebug();
+
             var dict = this.Context.Parameters;
             if (dict.ContainsKey(_appKey))
             {
@@ -75,8 +93,6 @@ namespace Setup
                 this.Context.LogMessage($"Required parameters not specisied: {_appKey}");
             }
         }
-
-        #endregion
 
         #region logic
 
