@@ -5,7 +5,6 @@ namespace Tests.Tfs_Api_Tests
     [TestClass]
     public class GetParentsTests : BaseTest
     {
-        // TODO вставить верные значения
         [DataTestMethod]
         [DataRow(75148, 2)]
 

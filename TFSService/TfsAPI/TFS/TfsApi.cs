@@ -437,6 +437,27 @@ namespace TfsAPI.TFS
             return innerResults.OfType<Changeset>().ToList();
         }
 
+        public IList<WorkItem> GetInconsistant(string querry)
+        {
+            var q = _myItemsQuerry + " and " + querry;
+
+            // По запросу
+            var items = _itemStore.Query(q).OfType<WorkItem>().ToList();
+            // На мне
+            var myItems = GetMyWorkItems();
+
+            foreach (var item in items)
+            {
+                var first = myItems.FirstOrDefault(x => x.Id == item.Id);
+                if (first != null)
+                {
+                    myItems.Remove(first);
+                }
+            }
+
+            return myItems;
+        }
+
         public string Name { get; }
 
         #endregion

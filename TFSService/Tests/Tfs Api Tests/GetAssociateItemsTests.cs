@@ -6,7 +6,6 @@ namespace Tests.Tfs_Api_Tests
     [TestClass]
     public class GetAssociateItemsTests : BaseTest
     {
-        // Todo вставить верное значение!
         [DataTestMethod]
         [DataRow(41914)]
         public void FindRelated(int id)
@@ -17,7 +16,6 @@ namespace Tests.Tfs_Api_Tests
         }
 
 
-        // Todo вставить верное значение!
         [DataTestMethod]
         [DataRow(-1)]
         [DataRow(0)]

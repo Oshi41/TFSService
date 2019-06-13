@@ -1,4 +1,6 @@
-﻿namespace TfsAPI.Constants
+﻿using Microsoft.TeamFoundation.ProcessConfiguration.Client;
+
+namespace TfsAPI.Constants
 {
     public static class Sql
     {
@@ -11,6 +13,11 @@
         ///     Условие, что рабочий элемент когда-то был изменен мной
         /// </summary>
         public const string WasEverChangedByMeCondition = "ever [Changed By] = @me";
+
+        /// <summary>
+        /// Задание является на данную итерацию
+        /// </summary>
+        public static string IsCurrentIteractionCondition = $"{Fields.IterationPath} = @CurrentIteration";
 
         /// <summary>
         ///     Операнд для поиска строки
@@ -56,6 +63,11 @@
             ///     Поле кому назначено
             /// </summary>
             public const string AssignedTo = "[Assigned To]";
+
+            /// <summary>
+            /// Поле, содержащее инф-у итерации
+            /// </summary>
+            public const string IterationPath = "[Iteration Path]";
         }
 
         /// <summary>
