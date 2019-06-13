@@ -14,6 +14,9 @@ namespace Gui
         {
             base.OnStartup(e);
 
+            Trace.Listeners.Add(new TextWriterTraceListener(Settings.Settings.Read().LogPath));
+            Trace.WriteLine("Starting application");
+
             RunTests();
         }
 

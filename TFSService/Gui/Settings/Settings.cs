@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Gui.Helper;
@@ -38,6 +39,7 @@ namespace Gui.Settings
         private WriteOffCollection _completedWork;
         private ObservableCollection<int> _myWorkItems;
         private WroteOffStrategy strategy;
+        private string logPath = Path.Combine(Path.GetDirectoryName(_savePath), "logs.log");
 
         #endregion
 
@@ -105,6 +107,11 @@ namespace Gui.Settings
             get => strategy;
             set => SetProperty(ref strategy, value);
         }
+
+        /// <summary>
+        /// Путь к файлу логов
+        /// </summary>
+        public string LogPath { get => logPath; set => Set(ref logPath, value); }
 
         #endregion
 

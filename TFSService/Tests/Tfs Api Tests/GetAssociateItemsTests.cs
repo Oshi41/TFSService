@@ -8,12 +8,12 @@ namespace Tests.Tfs_Api_Tests
     {
         // Todo вставить верное значение!
         [DataTestMethod]
-        [DataRow(15475)]
+        [DataRow(41914)]
         public void FindRelated(int id)
         {
             var changesets = GetConn().GetAssociateItems(id);
 
-            Assert.IsFalse(changesets.Any());
+            Assert.IsTrue(changesets.Any());
         }
 
 
@@ -22,11 +22,13 @@ namespace Tests.Tfs_Api_Tests
         [DataRow(-1)]
         [DataRow(0)]
         [DataRow(int.MaxValue)]
+        // Чекин без связей
+        [DataRow(40470)]
         public void FindRelated_IncorrectData_Empty(int id)
         {
             var changesets = GetConn().GetAssociateItems(id);
 
-            Assert.IsTrue(changesets.Any());
+            Assert.IsFalse(changesets.Any());
         }
     }
 }

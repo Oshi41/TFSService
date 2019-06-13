@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Constants;
 
@@ -78,7 +79,16 @@ namespace TfsAPI.Interfaces
         /// <param name="from">Начиная с указанной даты, включая её</param>
         /// <param name="to">Заканчивая указанной датой, включая ей</param>
         /// <returns></returns>
-        List<KeyValuePair<Revision, int>> GetCheckins(DateTime from, DateTime to);
+        List<KeyValuePair<Revision, int>> GetWriteoffs(DateTime from, DateTime to);
+
+        /// <summary>
+        /// Получаю список чекинов
+        /// </summary>
+        /// <param name="from">Дата от включительно</param>
+        /// <param name="to">Дата до включительно</param>
+        /// <param name="user">Имя пользователя. По умолчанию <see langword="null"/>, то есть все</param>
+        /// <returns></returns>
+        List<Changeset> GetCheckins(DateTime from, DateTime to, string user = null);
 
         /// <summary>
         ///     Переданный рабочий элемент ассоциирован со мной

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Common;
+using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.VisualStudio.Services.Common;
 using TfsAPI.Constants;
@@ -26,6 +27,7 @@ namespace TfsAPI.TFS
 
             _itemStore = _project.GetService<WorkItemStore>();
             _linking = _project.GetService<ILinking>();
+            _versionControl = _project.GetService<VersionControlServer>();
 
             Name = owner ?? _itemStore.UserDisplayName;
 
@@ -37,15 +39,15 @@ namespace TfsAPI.TFS
                              $"and {Sql.Fields.State} <> '{WorkItemStates.Removed}' ";
         }
 
-        private void SaveElemnt(WorkItem item)
+        private void SaveElement(WorkItem item)
         {
 #if DEBUG
             Trace.WriteLine($"Представь, что мы сохранили {item.Id}");
 
 #else
-            if (_itemStore.UserDisplayName != _userName)
+            if (_itemStore.UserDisplayName != Name)
             {
-                Trace.WriteLine($"Can't check-in from {_userName}, authorized as {_itemStore.UserDisplayName}");
+                Trace.WriteLine($"Can't check-in from {Name}, authorized as {_itemStore.UserDisplayName}");
             }
             else
             {
@@ -70,7 +72,7 @@ namespace TfsAPI.TFS
                 }
             }
 
-            return await Task.Run((Func<bool>) CheckConnectSync);
+            return await Task.Run((Func<bool>)CheckConnectSync);
         }
 
         #region Fields
@@ -78,6 +80,7 @@ namespace TfsAPI.TFS
         protected readonly TfsTeamProjectCollection _project;
         private readonly WorkItemStore _itemStore;
         private readonly ILinking _linking;
+        private readonly VersionControlServer _versionControl;
 
         /// <summary>
         ///     Запрос на получение всех элементов на мне
@@ -91,7 +94,7 @@ namespace TfsAPI.TFS
         public Revision WriteHours(WorkItem item, byte hours, bool setActive)
         {
             item.AddHours(hours, setActive);
-            SaveElemnt(item);
+            SaveElement(item);
             Trace.WriteLine($"From task {item.Id} was writed off {hours} hour(s)");
 
             // TODO продебажить корректную ревизию
@@ -121,7 +124,7 @@ namespace TfsAPI.TFS
             var uri = LinkingUtilities.EncodeUri(setId);
 
             // Нашел связи
-            var linked = _linking.GetReferencingArtifacts(new[] {uri});
+            var linked = _linking.GetReferencingArtifacts(new[] { uri });
 
             Trace.WriteLine($"{nameof(GetAssociateItems)}: Founded {linked.Length} links");
 
@@ -237,13 +240,13 @@ namespace TfsAPI.TFS
             }
 
             // Сначала сохраняем как новый таск
-            SaveElemnt(task);
+            SaveElement(task);
 
             Trace.WriteLine($"Created task {task.Id}");
 
             // Потом меняем статус в актив
             task.State = WorkItemStates.Active;
-            SaveElemnt(task);
+            SaveElement(task);
 
             Trace.WriteLine($"Task status changed to {task.State}\n" +
                             "--------- BEFORE LINKING --------\n" +
@@ -252,7 +255,7 @@ namespace TfsAPI.TFS
 
             // После сохранения привязываем
             parent.Links.Add(new RelatedLink(link.ReverseEnd, task.Id));
-            SaveElemnt(task);
+            SaveElement(task);
 
             Trace.WriteLine("--------- AFTER LINKING --------\n" +
                             $"Task links count: {task.Links.Count}, " +
@@ -261,9 +264,9 @@ namespace TfsAPI.TFS
             return task;
         }
 
-        public List<KeyValuePair<Revision, int>> GetCheckins(DateTime from, DateTime to)
+        public List<KeyValuePair<Revision, int>> GetWriteoffs(DateTime from, DateTime to)
         {
-            var result = new List<KeyValuePair<Revision, int>>();
+            var result = new List<KeyValuePair<Revision, int>>();            
 
             // Рабочие элементы в TFS находятся по дате
             // Т.к. TFS некорректно отрабатывает с ">=",
@@ -272,7 +275,8 @@ namespace TfsAPI.TFS
             to = to.AddDays(1).Date;
 
             if (from >= to)
-                throw new Exception($"{nameof(from)} should be earlier than {nameof(to)}");
+                throw new Exception($"{nameof(from)} should be earlier than {nameof(to)}");            
+
 
             var querry = $"select * from {Sql.Tables.WorkItems} " +
                          $"where {Sql.Fields.WorkItemType} = '{WorkItemTypes.Task}' " +
@@ -308,10 +312,10 @@ namespace TfsAPI.TFS
                                       && from < time.Date
                                       && time.Date < to;
 
-                    var completed = (double) revision.Fields[WorkItems.Fields.Complited].Value;
+                    var completed = (double)revision.Fields[WorkItems.Fields.Complited].Value;
 
                     // Списанное время
-                    var delta = (int) (completed - previouse);
+                    var delta = (int)(completed - previouse);
 
                     previouse = completed;
 
@@ -380,10 +384,13 @@ namespace TfsAPI.TFS
                 if (canClose(request, responses))
                 {
                     result.Add(request);
-
-                    request.Close();
-                    SaveElemnt(request);
                 }
+            }
+
+            foreach (var item in result)
+            {
+                item.State = WorkItemStates.Closed;
+                SaveElement(item);
             }
 
             Trace.WriteLineIf(result.Any(), $"Closed {result.Count} requests");
@@ -412,6 +419,22 @@ namespace TfsAPI.TFS
             }
 
             return result;
+        }
+
+        public List<Changeset> GetCheckins(DateTime from, DateTime to, string user = null)
+        {
+            var innerResults = _versionControl.QueryHistory(@"$\",
+                VersionSpec.Latest,
+                0,
+                RecursionType.Full,
+                user,
+                new DateVersionSpec(from),
+                new DateVersionSpec(to),
+                int.MaxValue,
+                false,
+                false);
+
+            return innerResults.OfType<Changeset>().ToList();
         }
 
         public string Name { get; }

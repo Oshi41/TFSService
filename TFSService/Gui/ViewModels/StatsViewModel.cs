@@ -57,7 +57,7 @@ namespace Gui.ViewModels
 
             // TFS API requests
             TfsCapacity = await Task.Run(() => api.GetCapacity());
-            WroteOff = await Task.Run(() => api.GetCheckins(now, now).Sum(x => x.Value));
+            WroteOff = await Task.Run(() => api.GetWriteoffs(now, now).Sum(x => x.Value));
             Name = await Task.Run(() => api.Name);
             var all = await Task.Run(() => api.GetMyWorkItems().Select(x => new WorkItemVm(x)));
 

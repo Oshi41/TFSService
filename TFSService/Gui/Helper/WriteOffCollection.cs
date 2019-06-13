@@ -33,7 +33,7 @@ namespace Gui.Helper
         /// <param name="tfs"></param>
         public void SyncCheckins(ITfsApi tfs)
         {
-            var checkins = tfs.GetCheckins(DateTime.Today, DateTime.Now);
+            var checkins = tfs.GetWriteoffs(DateTime.Today, DateTime.Now);
 
             Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(SyncCheckins)}: Founded {checkins.Count} changes");
 

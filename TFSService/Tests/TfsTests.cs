@@ -128,13 +128,13 @@ namespace Tests
             {
                 var from = DateTime.Today;
 
-                var checkins = tfs.GetCheckins(from, from.Add(TimeSpan.FromDays(1)));
+                var checkins = tfs.GetWriteoffs(from, from.Add(TimeSpan.FromDays(1)));
 
                 Trace.WriteLine($"Today was - {checkins.Sum(x => x.Value)}");
 
                 from = from.Add(TimeSpan.FromDays(-1));
 
-                checkins = tfs.GetCheckins(from, from.Add(TimeSpan.FromDays(1)));
+                checkins = tfs.GetWriteoffs(from, from.Add(TimeSpan.FromDays(1)));
 
                 Trace.WriteLine($"Yesterday was - {checkins.Sum(x => x.Value)}");
             }
@@ -147,7 +147,7 @@ namespace Tests
             var hours = 13;
             var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
 
-            var checkins = tfs.GetCheckins(date.AddDays(-1), date.AddDays(1));
+            var checkins = tfs.GetWriteoffs(date.AddDays(-1), date.AddDays(1));
 
             Assert.AreEqual(checkins.Select(x => x.Value).Sum(), hours);
         }
@@ -159,7 +159,7 @@ namespace Tests
             var hours = 14;
             var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
 
-            var checkins = tfs.GetCheckins(date, date);
+            var checkins = tfs.GetWriteoffs(date, date);
 
             Assert.AreEqual(checkins.Select(x => x.Value).Sum(), hours);
         }

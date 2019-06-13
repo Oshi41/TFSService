@@ -81,7 +81,7 @@ namespace Gui.ViewModels.DialogViewModels
             if (!_cache.ContainsKey(start))
             {
                 // чекины за месяц (один запрос к TFS)
-                var checkins = await Task.Run(() => _api.GetCheckins(start, end));
+                var checkins = await Task.Run(() => _api.GetWriteoffs(start, end));
                 var capacity = await Task.Run(() => _api.GetCapacity());
 
                 var collection = new List<DayViewModel>();
