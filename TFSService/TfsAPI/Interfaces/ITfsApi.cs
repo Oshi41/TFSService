@@ -65,6 +65,13 @@ namespace TfsAPI.Interfaces
         IList<WorkItem> GetMyWorkItems();
 
         /// <summary>
+        /// Запрашиваем рабочие элементы по строке
+        /// </summary>
+        /// <param name="additionalQuery"></param>
+        /// <returns></returns>
+        IList<WorkItem> QueryItems(string additionalQuery);
+
+        /// <summary>
         ///     Создание нового рабочего элемента
         /// </summary>
         /// <param name="title">Заголовок таска</param>

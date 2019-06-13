@@ -228,6 +228,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuilderTests.cs" />
     <Compile Include="NameTests.cs" />
     <Compile Include="Tfs Api Tests\BaseTest.cs" />
     <Compile Include="Tfs Api Tests\FindByIdTests.cs" />

@@ -190,7 +190,12 @@ namespace TfsAPI.TFS
 
         public virtual IList<WorkItem> GetMyWorkItems()
         {
-            var items = _itemStore.Query(_myItemsQuerry);
+            return QueryItems(_myItemsQuerry);
+        }
+
+        public IList<WorkItem> QueryItems(string additionalQuery)
+        {
+            var items = _itemStore.Query(additionalQuery);
 
             return items.OfType<WorkItem>().ToList();
         }

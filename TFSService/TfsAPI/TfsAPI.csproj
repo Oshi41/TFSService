@@ -265,6 +265,10 @@
     <Compile Include="Constants\WorkItems.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extentions\WorkItemExtensions.cs" />
+    <Compile Include="Rules\IRule.cs" />
+    <Compile Include="Rules\MyItems\MyItemsRule.cs" />
+    <Compile Include="Rules\MyItems\MyTaskInCurrentIterationRule.cs" />
+    <Compile Include="Rules\WiqlBuilder.cs" />
     <Compile Include="TFS\TfsApi.cs" />
     <Compile Include="TFS\TfsObservable.cs" />
   </ItemGroup>
