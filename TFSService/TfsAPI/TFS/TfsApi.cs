@@ -12,6 +12,7 @@ using Microsoft.VisualStudio.Services.Common;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
+using TfsAPI.Rules;
 
 namespace TfsAPI.TFS
 {
@@ -33,10 +34,10 @@ namespace TfsAPI.TFS
 
             Trace.WriteLine($"{nameof(TfsApi)}.ctor: Acting from {Name}");
 
-            _myItemsQuerry = $"select * from {Sql.Tables.WorkItems} " +
-                             $"where {Sql.Fields.AssignedTo} = '{Name}' " +
-                             $"and {Sql.Fields.State} <> '{WorkItemStates.Closed}' " +
-                             $"and {Sql.Fields.State} <> '{WorkItemStates.Removed}' ";
+            _myItemsQuerry = new WiqlBuilder()
+                .AssignedTo()
+                .WithStates("and", "<>", "and", WorkItemStates.Closed, WorkItemStates.Removed)
+                .ToString();
         }
 
         private void SaveElement(WorkItem item)
@@ -163,18 +164,20 @@ namespace TfsAPI.TFS
 
         public IList<WorkItem> Search(string text, params string[] allowedTypes)
         {
-            var quarry = $"select * from {Sql.Tables.WorkItems} " +
-                         $"where ({Sql.Fields.Description} {Sql.ContainsStrOperand} '{text}' " +
-                         $"or {Sql.Fields.History} {Sql.ContainsStrOperand} '{text}' " +
-                         $"or {Sql.Fields.Title} {Sql.ContainsStrOperand} '{text}' )";
+            var quarry = new WiqlBuilder()
+                .ContainsInFields("where", 
+                text, 
+                Sql.Fields.History, 
+                Sql.Fields.Title, 
+                Sql.Fields.Description);
 
             // Ищу только указанные типы
             if (!allowedTypes.IsNullOrEmpty())
-                quarry += " and (" +
-                          $"{string.Join("or ", allowedTypes.Select(x => $"{Sql.Fields.WorkItemType} = '{x}'"))}" +
-                          ")";
+            {
+                quarry.WithItemTypes("and", "=", allowedTypes);
+            }
 
-            var items = _itemStore.Query(quarry);
+            var items = _itemStore.Query(quarry.ToString());
 
             Trace.WriteLine($"Tfs.Search: Founded {items.Count} items");
 
@@ -282,14 +285,13 @@ namespace TfsAPI.TFS
             if (from >= to)
                 throw new Exception($"{nameof(from)} should be earlier than {nameof(to)}");            
 
+            var query = new WiqlBuilder()
+                .AssignedTo()
+                .EverChangedBy("and")
+                .ChangedDate("and", from, ">")
+                .ChangedDate("and", to, "<");
 
-            var querry = $"select * from {Sql.Tables.WorkItems} " +
-                         $"where {Sql.Fields.WorkItemType} = '{WorkItemTypes.Task}' " +
-                         $"and ever [Changed By] = '{Name}' " +
-                         $"and {Sql.Fields.ChangedDate} > '{from.ToShortDateString().Replace(".", "/")}' " +
-                         $"and {Sql.Fields.ChangedDate} < '{to.ToShortDateString().Replace(".", "/")}' ";
-
-            var tasks = _itemStore.Query(querry);
+            var tasks = _itemStore.Query(query.ToString());
 
             foreach (WorkItem task in tasks)
             {

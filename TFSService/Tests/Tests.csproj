@@ -32,7 +32,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -235,6 +235,7 @@
     <Compile Include="Tfs Api Tests\GetAssociateItemsTests.cs" />
     <Compile Include="Tfs Api Tests\GetCheckinsTests.cs" />
     <Compile Include="Tfs Api Tests\GetParentsTests.cs" />
+    <Compile Include="Tfs Api Tests\SearchTests.cs" />
     <Compile Include="TfsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

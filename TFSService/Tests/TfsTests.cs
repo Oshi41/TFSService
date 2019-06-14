@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.TestManagement.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
@@ -76,6 +77,8 @@ namespace Tests
             var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
             {
                 var all = tfs.GetMyWorkItems();
+
+                Assert.IsTrue(all.Any());
             }
         }
 

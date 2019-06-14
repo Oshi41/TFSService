@@ -25,7 +25,7 @@ namespace Tests
             var builder = new WiqlBuilder()
                 .WithItemTypes("and", "=", WorkItemTypes.Task)
                 .CurrentIteration()
-                .AssignedToMe()
+                .AssignedTo()
                 .WithStates("and", "<>", WorkItemStates.Closed)
                 .ToString();
 

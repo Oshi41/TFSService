@@ -19,7 +19,7 @@ namespace TfsAPI.Rules
         protected override string GetQuery()
         {
             var builder = new WiqlBuilder()
-                .AssignedToMe()
+                .AssignedTo()
                 .CurrentIteration()
                 .WithItemTypes("and", "=", WorkItemTypes.Task)
                 .WithStates("and", "<>", WorkItemStates.Closed);
