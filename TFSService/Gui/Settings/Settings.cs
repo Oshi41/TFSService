@@ -11,6 +11,7 @@ using Gui.Helper;
 using Mvvm;
 using Newtonsoft.Json;
 using TfsAPI.Extentions;
+using TfsAPI.RulesNew;
 
 namespace Gui.Settings
 {
@@ -21,6 +22,7 @@ namespace Gui.Settings
             CompletedWork = new WriteOffCollection();
             Connections = new ObservableCollection<string>();
             MyWorkItems = new ObservableCollection<int>();
+            Rules = new ObservableCollection<IRule>();
         }
 
         #region Fields
@@ -40,6 +42,7 @@ namespace Gui.Settings
         private ObservableCollection<int> _myWorkItems;
         private WroteOffStrategy strategy;
         private string logPath = Path.Combine(Path.GetDirectoryName(_savePath), "logs.log");
+        private ObservableCollection<IRule> rules;
 
         #endregion
 
@@ -98,6 +101,11 @@ namespace Gui.Settings
             get => _myWorkItems;
             set => Set(ref _myWorkItems, value);
         }
+
+        /// <summary>
+        /// Список правил валидации
+        /// </summary>
+        public ObservableCollection<IRule> Rules { get => rules; set => Set(ref rules, value); }
 
         /// <summary>
         ///     Стратегия как выбираем таск для списывания времени

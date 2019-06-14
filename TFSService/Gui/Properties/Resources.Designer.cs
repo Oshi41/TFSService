@@ -61,6 +61,24 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Правило запрашивает мои активные таски и проверяет, указана ли в них текущая итерация..
+        /// </summary>
+        public static string AS_AllTasksInCurrentIteration_Descr {
+            get {
+                return ResourceManager.GetString("AS_AllTasksInCurrentIteration_Descr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Правило проверяет мои рабочие элементы на наличие указанной области..
+        /// </summary>
+        public static string AS_CheckArea_Descr {
+            get {
+                return ResourceManager.GetString("AS_CheckArea_Descr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Загрузка....
         /// </summary>
         public static string AS_Load {

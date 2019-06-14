@@ -42,7 +42,7 @@ namespace TfsAPI.Rules
         {
             name = CheckMacros(name);
 
-            AddCondition(operand, $"ever [Changed By] '{name}'");
+            AddCondition(operand, $"[Changed By] ever {name}");
             return this;
         }
 
@@ -125,12 +125,19 @@ namespace TfsAPI.Rules
 
         public WiqlBuilder ChangedDate(string operand, DateTime date, string op)
         {
-            AddCondition(operand, $"{Sql.Fields.ChangedDate} {op} {date.ToShortDateString().Replace(".", "/")}");
+            AddCondition(operand, $"{Sql.Fields.ChangedDate} {op} '{date.ToShortDateString().Replace(".", "/")}'");
+            return this;
+        }
+
+        public WiqlBuilder WithAreaPath(string operand, string area)
+        {
+            AddCondition(operand, $"{Sql.Fields.AreaPath} = {area}");
             return this;
         }
 
         #endregion
 
+        #region Private
         private void AddCondition(string clause, string cond)
         {
             var result = string.Empty;
@@ -169,6 +176,7 @@ namespace TfsAPI.Rules
             WiqlOperators.cMacroMe,
             WiqlOperators.cMacroToday,
         };
+        #endregion
 
         #region Overrides of Object
 

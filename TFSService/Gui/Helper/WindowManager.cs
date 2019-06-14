@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Windows;
 using Gui.View;
+using Gui.View.Rule_Wizard;
 using Gui.ViewModels.DialogViewModels;
 using Gui.ViewModels.Notifications;
+using Gui.ViewModels.Rules;
+using Microsoft.TeamFoundation.Build.WebApi;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
 using ToastNotifications.Position;
@@ -62,9 +66,40 @@ namespace Gui.Helper
             return window.ShowDialog();
         }
 
+        public static bool? ShowDialog(AddRuleViewModel vm, string title, double width, double height)
+        {
+            var window = new RuleWizardView
+            {
+                DataContext = vm,
+                Title = title,
+                MinHeight = height,
+                MinWidth = width,
+
+                Width = width,
+                Height = height,
+            };
+
+            return window.ShowDialog();
+        }
+
         public static void ShowBaloon(BindableNotificationBase vm)
         {
             _notifier.Notify(() => vm);
+        }
+
+        public static bool? ShowConfirm(string text, string title)
+        {
+            switch (MessageBox.Show(text, title, MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
+            {
+                case MessageBoxResult.Yes:
+                    return true;
+
+                case MessageBoxResult.No:
+                    return false;
+
+                default:
+                    return null;
+            }
         }
     }
 }

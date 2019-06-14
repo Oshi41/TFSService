@@ -1,0 +1,175 @@
+﻿<Window x:Class="Gui.View.Rule_Wizard.RuleWizardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Gui.View.Rule_Wizard"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:api="clr-namespace:TfsAPI.RulesNew;assembly=TfsAPI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="400"
+             xmlns:vm="clr-namespace:Gui.ViewModels.Rules"
+             xmlns:converters="clr-namespace:Gui.Converters"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             d:DataContext="{d:DesignInstance Type={x:Type vm:AddRuleViewModel}}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
+                            ObjectType="{x:Type system:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="api:StaticRules"/>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+
+            <converters:DescriptionConverter x:Key="DescriptionConverter"/>
+            <converters:InvertBoolToVisConverter x:Key="InvertBoolToVisConverter"/>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <converters:EnumToVisConverter x:Key="EnumToVisConverter"/>
+            <materialDesign:EqualityToVisibilityConverter x:Key="EqualityToVisibilityConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.ColumnSpan="3"
+                   Text="Мастер создания правила"
+                   HorizontalAlignment="Center"/>
+
+        <materialDesign:Transitioner Grid.ColumnSpan="3"
+                                     Grid.Row="1"
+                                     SelectedIndex="0"
+                                     Name="Transition">
+            <!-- Первый шаг - тип правила -->
+            <materialDesign:TransitioningContent OpeningEffect="{materialDesign:TransitionEffect Kind=SlideInFromRight}">
+                <StackPanel Orientation="Vertical"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <RadioButton Content="Использовать пресеты"
+                                 GroupName="G1"
+                                 IsChecked="{Binding Path=UsePresets, Mode=TwoWay}"
+                                 Margin="5"/>
+
+                    <RadioButton Content="Создать свой"
+                                 Margin="5"
+                                 IsEnabled="False"
+                                 GroupName="G1"/>
+                </StackPanel>
+            </materialDesign:TransitioningContent>
+
+            <!-- Второй шаг -->
+            <materialDesign:TransitioningContent OpeningEffect="{materialDesign:TransitionEffect Kind=SlideInFromRight}">
+                <Grid>
+                    <StackPanel HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Orientation="Vertical"
+                                Visibility="{Binding Path=UsePresets, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ComboBox ItemsSource="{Binding Source={StaticResource dataFromEnum}}"
+                                  SelectedValue="{Binding Path=Preset}"
+                                  IsSynchronizedWithCurrentItem="True"
+                                  Margin="10"
+                                  MinWidth="180"
+                                  Name="Combo">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type ComboBoxItem}">
+                                    <TextBlock Text="{Binding Converter={StaticResource DescriptionConverter}}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <TextBox MinWidth="150"
+                                 Width="{Binding ElementName=Combo, Path=ActualWidth}"
+                                 IsReadOnly="True"
+                                 materialDesign:TextFieldAssist.HasOutlinedTextField="True"
+                                 Text="{Binding Path=PresetDescription}"
+                                 MaxLines="100"/>
+                    </StackPanel>
+                </Grid>
+            </materialDesign:TransitioningContent>
+
+            <!-- Третий шаг - доп инфа-->
+            <materialDesign:TransitioningContent OpeningEffect="{materialDesign:TransitionEffect Kind=SlideInFromRight}">
+                <Grid>
+                    <!-- Грид для пресетов-->
+                    <Grid Name="PresetGrid"
+                          Visibility="{Binding Path=UsePresets, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                        <!-- Для области элемента -->
+                        <StackPanel Visibility="{Binding Path=Preset, 
+                                                 Converter={StaticResource EnumToVisConverter},
+                                                 ConverterParameter=CheckTasksAreapath}"
+                                    Orientation="Vertical"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+
+                            <TextBox materialDesign:HintAssist.Hint="Вставьте необходимое имя области"
+                                     materialDesign:HintAssist.IsFloating="True"
+                                     Margin="5"
+                                     Width="200"
+                                     Text="{Binding Path=UserParameter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Грид для кастомных правил-->
+                    <Grid Visibility="{Binding ElementName=PresetGrid, Path=IsVisible, Converter={StaticResource InvertBoolToVisConverter}}">
+
+                    </Grid>
+                </Grid>
+            </materialDesign:TransitioningContent>
+        </materialDesign:Transitioner>
+
+        <Button Grid.Row="2"
+                Content="Отмена"
+                HorizontalAlignment="Left"
+                Margin="5"/>
+
+        <Button Grid.Column="2"
+                Grid.Row="2"
+                Content="Далее"
+                Command="{x:Static materialDesign:Transitioner.MoveNextCommand}"
+                Margin="5"/>
+
+        <Button Grid.Column="1"
+                Grid.Row="2"
+                Content="Назад"
+                Command="{x:Static materialDesign:Transitioner.MovePreviousCommand}"
+                Visibility="{Binding ElementName=DoneBtn, Path=IsVisible, Converter={StaticResource InvertBoolToVisConverter}}"
+                Margin="5"/>
+
+        <Button Grid.Column="2"
+                Grid.Row="2"
+                Name="DoneBtn"
+                Content="Готово"
+                Command="{x:Static materialDesign:Transitioner.MoveLastCommand}"
+                Margin="5">
+            <Button.CommandBindings>
+                <CommandBinding Command="{x:Static materialDesign:Transitioner.MoveLastCommand}"
+                                Executed="TryClose"/>
+            </Button.CommandBindings>
+            
+            <Button.Style>
+                <Style TargetType="{x:Type Button}" 
+                       BasedOn="{StaticResource {x:Type Button}}">
+                    <Setter Property="Visibility" Value="Visible"/>
+
+                    <Style.Triggers>
+                        <!-- TODO Добавить триггер-->
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+
+    </Grid>
+</Window>

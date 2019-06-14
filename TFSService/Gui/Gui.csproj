@@ -288,7 +288,9 @@
     <Compile Include=".Tests\TestDialogViewModel.cs" />
     <Compile Include="Behaviors\CalendarItemSourceBehavior.cs" />
     <Compile Include="Converters\DescriptionConverter.cs" />
+    <Compile Include="Converters\EnumToVisConverter.cs" />
     <Compile Include="Converters\HoursColorConverter.cs" />
+    <Compile Include="Converters\InvertBoolToVisConverter.cs" />
     <Compile Include="Converters\MathCompareConverter.cs" />
     <Compile Include="Converters\NoDataErrorConverter.cs" />
     <Compile Include="Converters\IdWorkitemConverter.cs" />
@@ -313,7 +315,7 @@
     <Compile Include="ViewModels\Notifications\ItemsAssignedBaloonViewModel.cs" />
     <Compile Include="ViewModels\Notifications\NewResponsesBaloonViewModel.cs" />
     <Compile Include="ViewModels\Notifications\WriteOffBaloonViewModel.cs" />
-    <Compile Include="ViewModels\Rules\RuleBaseViewModel.cs" />
+    <Compile Include="ViewModels\Rules\AddRuleViewModel.cs" />
     <Compile Include="ViewModels\StatsViewModel.cs" />
     <Compile Include="ViewModels\WorkItemVm.cs" />
     <Compile Include="View\ChooseTaskView.xaml.cs">
@@ -339,6 +341,9 @@
     </Compile>
     <Compile Include="View\Notifications\WriteOffNotificationView.xaml.cs">
       <DependentUpon>WriteOffNotificationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Rule Wizard\RuleWizardView.xaml.cs">
+      <DependentUpon>RuleWizardView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ScheduleView.xaml.cs">
       <DependentUpon>ScheduleView.xaml</DependentUpon>
@@ -403,6 +408,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Notifications\WriteOffNotificationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Rule Wizard\RuleWizardView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -188,7 +188,7 @@ namespace Gui.ViewModels
 
         private void ShowSettings()
         {
-            var vm = new SettingsViewModel(FirstConnectionViewModel.Text);
+            var vm = new SettingsViewModel(FirstConnectionViewModel.Text, _apiObserve);
 
             WindowManager.ShowDialog(vm, "Настройки", 400, 600);
         }

@@ -68,6 +68,11 @@ namespace TfsAPI.Constants
             /// Поле, содержащее инф-у итерации
             /// </summary>
             public const string IterationPath = "[Iteration Path]";
+
+            /// <summary>
+            /// Область данного рабочего элемента
+            /// </summary>
+            public const string AreaPath = "[Area Path]";
         }
 
         /// <summary>

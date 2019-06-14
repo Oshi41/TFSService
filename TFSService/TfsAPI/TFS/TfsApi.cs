@@ -198,6 +198,9 @@ namespace TfsAPI.TFS
 
         public IList<WorkItem> QueryItems(string additionalQuery)
         {
+            if (string.IsNullOrWhiteSpace(additionalQuery))
+                return new List<WorkItem>();
+
             var items = _itemStore.Query(additionalQuery);
 
             return items.OfType<WorkItem>().ToList();
@@ -287,6 +290,7 @@ namespace TfsAPI.TFS
 
             var query = new WiqlBuilder()
                 .AssignedTo()
+                .WithItemTypes("and", "=", WorkItemTypes.Task)
                 .EverChangedBy("and")
                 .ChangedDate("and", from, ">")
                 .ChangedDate("and", to, "<");
