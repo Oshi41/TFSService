@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation;
+using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.VersionControl.Client;
@@ -379,15 +380,22 @@ namespace TfsAPI.TFS
 
             var result = new List<WorkItem>();
 
+            var all = FindById(requests.SelectMany(x => x
+                      .WorkItemLinks
+                      .OfType<WorkItemLink>()
+                      .Select(y => y.TargetId)));
+
             foreach (var request in requests)
             {
-                // Проверено
-
-                var responses = request
+                var parents = request
                     .WorkItemLinks
                     .OfType<WorkItemLink>()
-                    .Select(x => FindById(x.TargetId))
-                    .Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse))
+                    .Select(x => x.TargetId)
+                    .ToList();
+
+                var responses = all.Where(x => parents.Contains(x.Key)
+                    && x.Value.IsTypeOf(WorkItemTypes.ReviewResponse))
+                    .Select(x => x.Value)
                     .ToList();
 
                 Trace.WriteLine($"Request {request.Id} has {responses.Count} responses");
@@ -446,6 +454,23 @@ namespace TfsAPI.TFS
                 false);
 
             return innerResults.OfType<Changeset>().ToList();
+        }
+
+        public Dictionary<int, WorkItem> FindById(IEnumerable<int> ids)
+        {
+            if (ids.IsNullOrEmpty())
+                return new Dictionary<int, WorkItem>();
+
+            var builder = new WiqlBuilder();
+
+            foreach (var id in ids.Distinct())
+            {
+                builder = builder.WithNumber("or", id);
+            }
+
+            var items = QueryItems(builder.ToString());
+
+            return items.ToDictionary(x => x.Id);
         }
 
         public string Name { get; }

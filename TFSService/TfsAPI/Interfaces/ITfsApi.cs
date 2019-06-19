@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
@@ -42,6 +43,13 @@ namespace TfsAPI.Interfaces
         /// <param name="id">Номер рабочего элемента</param>
         /// <returns></returns>
         WorkItem FindById(int id);
+
+        /// <summary>
+        /// Делаем один запрос на множество элементов
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        Dictionary<int, WorkItem> FindById(IEnumerable<int> ids);
 
         /// <summary>
         ///     Производит поиск в названии, описании

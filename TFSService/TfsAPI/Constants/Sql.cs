@@ -73,6 +73,11 @@ namespace TfsAPI.Constants
             /// Область данного рабочего элемента
             /// </summary>
             public const string AreaPath = "[Area Path]";
+
+            /// <summary>
+            /// ID элемента
+            /// </summary>
+            public const string ID = "[ID]";
         }
 
         /// <summary>

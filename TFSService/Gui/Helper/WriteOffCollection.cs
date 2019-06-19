@@ -40,7 +40,7 @@ namespace Gui.Helper
             foreach (var checkin in checkins)
             {
                 var id = checkin.Key.WorkItem.Id;
-                var date = (DateTime) checkin.Key.Fields[CoreField.ChangedDate].Value;
+                var date = (DateTime)checkin.Key.Fields[CoreField.ChangedDate].Value;
 
                 if (!this.Any(x => x.Time == date && x.Id == id))
                 {
@@ -151,32 +151,54 @@ namespace Gui.Helper
         /// </summary>
         private void CheckinWork(ITfsApi tfs)
         {
+            // Получили задачи на списание времени
             var manual = Merge(GetManual(this));
 
-            foreach (var item in manual)
+            // Нашли элементы одним запросом
+            var items = tfs.FindById(manual.Select(x => x.Id));
+
+            foreach (var toWrite in manual)
+            {
+                // какая-то ошибка, такого номера нет
+                if (!items.ContainsKey(toWrite.Id))
+                {
+                    Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(CheckinWork)}: Cannot find item {toWrite.Id}");
+                    continue;
+                }
+
+                // Получили рабочий элемента
+                var workItem = items[toWrite.Id];
+
                 try
                 {
-                    var revision = tfs.WriteHours(tfs.FindById(item.Id), (byte) item.Hours, true);
-
-                    RemoveAll(x => x.Id == item.Id);
-
-                    if (revision != null)
+                    // Записали время
+                    var revision = tfs.WriteHours(workItem, (byte)toWrite.Hours, true);
+                    // Удалили этот рабочий элемента
+                    RemoveAll(x => x.Id == toWrite.Id);
+                    
+                    // Не получилось запписать, ошибка
+                    if (revision == null)
                     {
-                        var time = (DateTime) revision.Fields[CoreField.ChangedDate].Value;
-
-                        Add(new WriteOff(revision.WorkItem.Id,
-                            item.Hours,
-                            time,
-                            // Если запись была запланирована сегодня, считаем это обычным
-                            // чекином юзера
-                            item.Time.IsToday(),
-                            true));
+                        Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(CheckinWork)}: Cannot write off hours of task {workItem.Id}");
+                        continue;
                     }
+
+                    var time = (DateTime)revision.Fields[CoreField.ChangedDate].Value;
+
+                    Add(new WriteOff(revision.WorkItem.Id,
+                        toWrite.Hours,
+                        time,
+                        // Если запись была запланирована сегодня, считаем это обычным
+                        // чекином юзера
+                        toWrite.Time.IsToday(),
+                        true));
+
                 }
                 catch (Exception e)
                 {
                     Trace.WriteLine(e);
                 }
+            }
 
             ClearPrevRecords();
         }

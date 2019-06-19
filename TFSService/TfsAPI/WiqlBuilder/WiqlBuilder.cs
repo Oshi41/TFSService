@@ -135,6 +135,12 @@ namespace TfsAPI.Rules
             return this;
         }
 
+        public WiqlBuilder WithNumber(string operand, int number)
+        {
+            AddCondition(operand, $"{Sql.Fields.ID} = {number}");
+            return this;
+        }
+
         #endregion
 
         #region Private

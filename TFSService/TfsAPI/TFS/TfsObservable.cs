@@ -33,7 +33,7 @@ namespace TfsAPI.TFS
             SystemEvents.SessionSwitch += OnSessionSwitched;
             AppDomain.CurrentDomain.ProcessExit += (sender, e) => Logoff?.Invoke(this, e);
 
-            MyItems = new List<WorkItem>(myItems.Select(FindById).Where(x => x != null));
+            MyItems = new List<WorkItem>(FindById(myItems).Values);
 
             _cache = new MemoryCache(new MemoryCacheOptions());
         }
