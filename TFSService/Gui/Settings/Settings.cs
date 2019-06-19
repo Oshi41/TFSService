@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using Gui.Helper;
 using Mvvm;
 using Newtonsoft.Json;
@@ -31,6 +32,12 @@ namespace Gui.Settings
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "TfsService",
             "config.json");
+
+        private static JsonSerializerSettings _settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto,
+            Formatting = Formatting.Indented,
+        };
 
         private int _capacity;
         private TimeSpan _duration;
@@ -105,6 +112,7 @@ namespace Gui.Settings
         /// <summary>
         /// Список правил валидации
         /// </summary>
+        [JsonConverter(typeof(JCollectionConverter<IRule, Rule>))]
         public ObservableCollection<IRule> Rules { get => rules; set => Set(ref rules, value); }
 
         /// <summary>
@@ -137,7 +145,7 @@ namespace Gui.Settings
 
             if (File.Exists(_savePath))
             {
-                settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(_savePath));
+                settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(_savePath), _settings);
             }
             else
             {
@@ -156,7 +164,7 @@ namespace Gui.Settings
             if (!Directory.Exists(Path.GetDirectoryName(_savePath)))
                 Directory.CreateDirectory(Path.GetDirectoryName(_savePath));
 
-            File.WriteAllText(_savePath, JsonConvert.SerializeObject(this, Formatting.Indented));
+            File.WriteAllText(_savePath, JsonConvert.SerializeObject(this, _settings));
 
             Trace.WriteLine("Settings saved");
         }

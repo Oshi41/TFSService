@@ -46,7 +46,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -305,6 +305,7 @@
     <Compile Include="Helper\WriteOff.cs" />
     <Compile Include="Helper\WriteOffCollection.cs" />
     <Compile Include="Settings\Settings.cs" />
+    <Compile Include="Settings\JCollectionConverter.cs" />
     <Compile Include="ViewModels\DialogViewModels\ChooseTaskViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\CreateTaskViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\FirstConnectionViewModel.cs" />
