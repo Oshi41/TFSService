@@ -117,98 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AS_AddRule_Master_Title" xml:space="preserve">
-    <value>Мастер добавления правила</value>
+  <data name="AS_CurrentIteration" xml:space="preserve">
+    <value>Текущая итерация</value>
   </data>
-  <data name="AS_AllTasksInCurrentIteration_Descr" xml:space="preserve">
-    <value>Правило запрашивает мои активные таски и проверяет, указана ли в них текущая итерация.</value>
+  <data name="AS_Rule_AreaCondition_Title" xml:space="preserve">
+    <value>Область моих рабочих элементов</value>
   </data>
-  <data name="AS_CheckArea_Descr" xml:space="preserve">
-    <value>Правило проверяет мои рабочие элементы на наличие указанной области.</value>
+  <data name="AS_Rule_CurrentIteration_Title" xml:space="preserve">
+    <value>Действующая итерация</value>
   </data>
-  <data name="AS_ChooseByMyOwn" xml:space="preserve">
-    <value>Выбираем сами</value>
-  </data>
-  <data name="AS_ChooseRandomly" xml:space="preserve">
-    <value>Выбираем случайно</value>
-  </data>
-  <data name="AS_ChooseTask" xml:space="preserve">
-    <value>Выберите рабочий элемент:</value>
-  </data>
-  <data name="AS_ChooseWriteoffTask" xml:space="preserve">
-    <value>Выберите элемент для списания времени</value>
-  </data>
-  <data name="AS_CodeReviewRequested" xml:space="preserve">
-    <value>Запросили проверку кода</value>
-  </data>
-  <data name="AS_ConnectError" xml:space="preserve">
-    <value>Не удалось подключиться</value>
-  </data>
-  <data name="AS_EmptyName_Error" xml:space="preserve">
-    <value>Название не может быть пустым</value>
-  </data>
-  <data name="AS_FirstConnection" xml:space="preserve">
-    <value>Первое подключение</value>
-  </data>
-  <data name="AS_ImportantNotice" xml:space="preserve">
-    <value>Важная вещь, посмотри</value>
-  </data>
-  <data name="AS_Load" xml:space="preserve">
-    <value>Загрузка...</value>
-  </data>
-  <data name="AS_MonthlySchedule" xml:space="preserve">
-    <value>Месячное списание часов</value>
-  </data>
-  <data name="AS_NewBugs" xml:space="preserve">
-    <value>Новые баги</value>
-  </data>
-  <data name="AS_NewItemsAssigned" xml:space="preserve">
-    <value>Новые рабочие элементы были назначены</value>
-  </data>
-  <data name="AS_NewWork" xml:space="preserve">
-    <value>Новая работа</value>
-  </data>
-  <data name="AS_NotATask_Error" xml:space="preserve">
-    <value>Рабочий элемент не является таском</value>
-  </data>
-  <data name="AS_NotAWebAddress_Error" xml:space="preserve">
-    <value>Строка не является веб-адресом</value>
-  </data>
-  <data name="AS_Open" xml:space="preserve">
-    <value>Открыть</value>
-  </data>
-  <data name="AS_PlannedTime_Error" xml:space="preserve">
-    <value>Необходимо указать кол-во запланированных часов на работу</value>
-  </data>
-  <data name="AS_PlannedWriteoffTime" xml:space="preserve">
-    <value>Запланированое списание времени</value>
-  </data>
-  <data name="AS_ReplaceRule_Asking" xml:space="preserve">
-    <value>Заменить правило?</value>
-  </data>
-  <data name="AS_Replacing" xml:space="preserve">
-    <value>Замена</value>
-  </data>
-  <data name="AS_Settings" xml:space="preserve">
-    <value>Настройки</value>
-  </data>
-  <data name="AS_ShutdownProgram" xml:space="preserve">
-    <value>Выйти из программы</value>
-  </data>
-  <data name="AS_TaskCreation" xml:space="preserve">
-    <value>Создание рабочего элемента</value>
-  </data>
-  <data name="AS_TfsConnection_Title" xml:space="preserve">
-    <value>TFS соединение</value>
-  </data>
-  <data name="AS_TooBigTask_Asking" xml:space="preserve">
-    <value>Уверен, что задачу нельзя разбить на меньшие части?</value>
-  </data>
-  <data name="AS_Update" xml:space="preserve">
-    <value>Обновить</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\logo.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="AS_SpecifiedArea" xml:space="preserve">
+    <value>Указанная область</value>
   </data>
 </root>

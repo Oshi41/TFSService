@@ -61,6 +61,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Мастер добавления правила.
+        /// </summary>
+        public static string AS_AddRule_Master_Title {
+            get {
+                return ResourceManager.GetString("AS_AddRule_Master_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Правило запрашивает мои активные таски и проверяет, указана ли в них текущая итерация..
         /// </summary>
         public static string AS_AllTasksInCurrentIteration_Descr {
@@ -79,11 +88,245 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Выбираем сами.
+        /// </summary>
+        public static string AS_ChooseByMyOwn {
+            get {
+                return ResourceManager.GetString("AS_ChooseByMyOwn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выбираем случайно.
+        /// </summary>
+        public static string AS_ChooseRandomly {
+            get {
+                return ResourceManager.GetString("AS_ChooseRandomly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выберите рабочий элемент:.
+        /// </summary>
+        public static string AS_ChooseTask {
+            get {
+                return ResourceManager.GetString("AS_ChooseTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выберите элемент для списания времени.
+        /// </summary>
+        public static string AS_ChooseWriteoffTask {
+            get {
+                return ResourceManager.GetString("AS_ChooseWriteoffTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Запросили проверку кода.
+        /// </summary>
+        public static string AS_CodeReviewRequested {
+            get {
+                return ResourceManager.GetString("AS_CodeReviewRequested", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Не удалось подключиться.
+        /// </summary>
+        public static string AS_ConnectError {
+            get {
+                return ResourceManager.GetString("AS_ConnectError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Название не может быть пустым.
+        /// </summary>
+        public static string AS_EmptyName_Error {
+            get {
+                return ResourceManager.GetString("AS_EmptyName_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Первое подключение.
+        /// </summary>
+        public static string AS_FirstConnection {
+            get {
+                return ResourceManager.GetString("AS_FirstConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Важная вещь, посмотри.
+        /// </summary>
+        public static string AS_ImportantNotice {
+            get {
+                return ResourceManager.GetString("AS_ImportantNotice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Загрузка....
         /// </summary>
         public static string AS_Load {
             get {
                 return ResourceManager.GetString("AS_Load", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Месячное списание часов.
+        /// </summary>
+        public static string AS_MonthlySchedule {
+            get {
+                return ResourceManager.GetString("AS_MonthlySchedule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Новые баги.
+        /// </summary>
+        public static string AS_NewBugs {
+            get {
+                return ResourceManager.GetString("AS_NewBugs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Новые рабочие элементы были назначены.
+        /// </summary>
+        public static string AS_NewItemsAssigned {
+            get {
+                return ResourceManager.GetString("AS_NewItemsAssigned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Новая работа.
+        /// </summary>
+        public static string AS_NewWork {
+            get {
+                return ResourceManager.GetString("AS_NewWork", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Рабочий элемент не является таском.
+        /// </summary>
+        public static string AS_NotATask_Error {
+            get {
+                return ResourceManager.GetString("AS_NotATask_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Строка не является веб-адресом.
+        /// </summary>
+        public static string AS_NotAWebAddress_Error {
+            get {
+                return ResourceManager.GetString("AS_NotAWebAddress_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Открыть.
+        /// </summary>
+        public static string AS_Open {
+            get {
+                return ResourceManager.GetString("AS_Open", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Необходимо указать кол-во запланированных часов на работу.
+        /// </summary>
+        public static string AS_PlannedTime_Error {
+            get {
+                return ResourceManager.GetString("AS_PlannedTime_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Запланированое списание времени.
+        /// </summary>
+        public static string AS_PlannedWriteoffTime {
+            get {
+                return ResourceManager.GetString("AS_PlannedWriteoffTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Заменить правило?.
+        /// </summary>
+        public static string AS_ReplaceRule_Asking {
+            get {
+                return ResourceManager.GetString("AS_ReplaceRule_Asking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Замена.
+        /// </summary>
+        public static string AS_Replacing {
+            get {
+                return ResourceManager.GetString("AS_Replacing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Настройки.
+        /// </summary>
+        public static string AS_Settings {
+            get {
+                return ResourceManager.GetString("AS_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выйти из программы.
+        /// </summary>
+        public static string AS_ShutdownProgram {
+            get {
+                return ResourceManager.GetString("AS_ShutdownProgram", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Создание рабочего элемента.
+        /// </summary>
+        public static string AS_TaskCreation {
+            get {
+                return ResourceManager.GetString("AS_TaskCreation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TFS соединение.
+        /// </summary>
+        public static string AS_TfsConnection_Title {
+            get {
+                return ResourceManager.GetString("AS_TfsConnection_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Уверен, что задачу нельзя разбить на меньшие части?.
+        /// </summary>
+        public static string AS_TooBigTask_Asking {
+            get {
+                return ResourceManager.GetString("AS_TooBigTask_Asking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Обновить.
+        /// </summary>
+        public static string AS_Update {
+            get {
+                return ResourceManager.GetString("AS_Update", resourceCulture);
             }
         }
         

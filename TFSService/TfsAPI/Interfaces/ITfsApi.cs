@@ -117,12 +117,5 @@ namespace TfsAPI.Interfaces
         /// <param name="items"></param>
         /// <returns></returns>
         List<WorkItem> GetParents(params WorkItem[] items);
-
-        /// <summary>
-        /// Получает список моих элементов, не подходящих под условие
-        /// </summary>
-        /// <param name="querry"></param>
-        /// <returns></returns>
-        IList<WorkItem> GetInconsistant(string querry);
     }
 }

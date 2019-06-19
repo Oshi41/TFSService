@@ -23,11 +23,11 @@ namespace Gui.View
                 Icon = Properties.Resources.logo,
                 ContextMenu = new ContextMenu(new[]
                 {
-                    new MenuItem("Открыть", OnOpenWindow),
+                    new MenuItem(Properties.Resources.AS_Open, OnOpenWindow),
                     new MenuItem("-"),
-                    new MenuItem("Обновить", OnUpdate),
+                    new MenuItem(Properties.Resources.AS_Update, OnUpdate),
                     new MenuItem("-"),
-                    new MenuItem("Выйти из программы", (sender, args) => Close()),
+                    new MenuItem(Properties.Resources.AS_ShutdownProgram, (sender, args) => Close()),
                 })
             };
 

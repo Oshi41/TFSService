@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 using Gui.Helper;
 using Mvvm;
 using Newtonsoft.Json;
+using TfsAPI.Attributes;
 using TfsAPI.Extentions;
 using TfsAPI.RulesNew;
 
@@ -208,8 +209,8 @@ namespace Gui.Settings
 
     public enum WroteOffStrategy
     {
-        [Description("Выбираем случайно")] Random,
+        [LocalizedDescription(nameof(Properties.Resources.AS_ChooseRandomly), typeof(Properties.Resources))] Random,
 
-        [Description("Выбираем сами")] Watch
+        [LocalizedDescription(nameof(Properties.Resources.AS_ChooseByMyOwn), typeof(Properties.Resources))] Watch
     }
 }

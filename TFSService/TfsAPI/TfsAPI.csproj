@@ -251,6 +251,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\LocalizedDescriptionAttribute.cs" />
     <Compile Include="Comarers\WorkItemComparer.cs" />
     <Compile Include="Constants\Sql.cs" />
     <Compile Include="Constants\WorkItemStates.cs" />
@@ -265,6 +266,11 @@
     <Compile Include="Constants\WorkItems.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extentions\WorkItemExtensions.cs" />
+    <Compile Include="Properties\Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
     <Compile Include="RulesNew\IRule.cs" />
     <Compile Include="RulesNew\IRuleBuilder.cs" />
     <Compile Include="RulesNew\RuleBuilder.cs" />
@@ -276,7 +282,12 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

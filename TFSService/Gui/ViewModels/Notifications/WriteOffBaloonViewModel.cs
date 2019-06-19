@@ -8,7 +8,7 @@ namespace Gui.ViewModels.Notifications
     internal class WriteOffBaloonViewModel : BindableNotificationBase
     {
         public WriteOffBaloonViewModel()
-            : base("Запланированое списание времени")
+            : base(Properties.Resources.AS_PlannedWriteoffTime)
         {
         }
 

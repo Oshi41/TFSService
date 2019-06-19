@@ -9,6 +9,8 @@ namespace Gui.Helper
 {
     public class ObservableCommand : DelegateCommandBase, ICommand, INotifyPropertyChanged
     {
+        private int _maxExecutionCount = -1;
+
         private bool _isExecuting;
 
         public bool IsExecuting
@@ -80,6 +82,12 @@ namespace Gui.Helper
                 throw new ArgumentNullException(nameof(executeMethod));
         }
 
+        public ObservableCommand ExecuteOnce()
+        {
+            _maxExecutionCount = 1;
+            return this;
+        }
+
         #endregion
 
         #region Static
@@ -126,6 +134,12 @@ namespace Gui.Helper
             }
             finally
             {
+                // Вычтем кол-во разрешённых кликов
+                if (_maxExecutionCount > 0)
+                {
+                    _maxExecutionCount--;
+                }
+
                 IsExecuting = false;
                 Executed?.Invoke(this, EventArgs.Empty);
             }
@@ -133,7 +147,9 @@ namespace Gui.Helper
 
         bool ICommand.CanExecute(object parameter)
         {
-            return !IsExecuting && CanExecute(parameter);
+            return !IsExecuting
+                && _maxExecutionCount != 0
+                && CanExecute(parameter);
         }
 
         #endregion

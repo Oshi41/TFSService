@@ -71,14 +71,14 @@ namespace Gui.ViewModels.DialogViewModels
         {
             var vm = new FirstConnectionViewModel();
 
-            if (WindowManager.ShowDialog(vm, "TFS соединение", 400, 200) == true) Connection = vm.Text;
+            if (WindowManager.ShowDialog(vm, Properties.Resources.AS_TfsConnection_Title, 400, 200) == true) Connection = vm.Text;
         }
 
         private void OnAdd()
         {
             var vm = new AddRuleViewModel();
 
-            if (WindowManager.ShowDialog(vm, "Мастер добавления правила", 400, 300) == true)
+            if (WindowManager.ShowDialog(vm, Properties.Resources.AS_AddRule_Master_Title, 400, 300) == true)
             {
                 var builder = new RuleBuilder(api);
 
@@ -91,7 +91,7 @@ namespace Gui.ViewModels.DialogViewModels
                         if (settings.Rules.Contains(rule))
                         {
                             // todo ask user
-                            if (WindowManager.ShowConfirm("Заменить правило?", "Замена") == true)
+                            if (WindowManager.ShowConfirm(Properties.Resources.AS_ReplaceRule_Asking, Properties.Resources.AS_Replacing) == true)
                             {
                                 settings.Rules.Remove(rule);
                             }

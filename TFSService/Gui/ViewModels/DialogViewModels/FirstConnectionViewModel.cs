@@ -27,7 +27,7 @@ namespace Gui.ViewModels.DialogViewModels
         {
             if (prop == nameof(Text))
                 if (!Uri.TryCreate(Text, UriKind.Absolute, out var result))
-                    return "Строка не является веб-адресом";
+                    return Properties.Resources.AS_NotAWebAddress_Error;
 
             return base.ValidateProperty(prop);
         }
@@ -36,7 +36,7 @@ namespace Gui.ViewModels.DialogViewModels
         {
             if (prop == nameof(Text))
                 if (IsConnected == false)
-                    return "Не удалось подключиться";
+                    return Properties.Resources.AS_ConnectError;
 
             return base.ValidateOptionalProperty(prop);
         }

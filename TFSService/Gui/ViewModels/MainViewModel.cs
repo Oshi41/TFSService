@@ -172,7 +172,7 @@ namespace Gui.ViewModels
 
         private void ShowMonthly()
         {
-            WindowManager.ShowDialog(new MonthCheckinsViewModel(_apiObserve), "Месячное списание часов", 700, 500);
+            WindowManager.ShowDialog(new MonthCheckinsViewModel(_apiObserve), Properties.Resources.AS_MonthlySchedule, 700, 500);
         }
 
         private async Task Update()
@@ -190,7 +190,7 @@ namespace Gui.ViewModels
         {
             var vm = new SettingsViewModel(FirstConnectionViewModel.Text, _apiObserve);
 
-            WindowManager.ShowDialog(vm, "Настройки", 400, 600);
+            WindowManager.ShowDialog(vm, Properties.Resources.AS_Settings, 400, 600);
         }
 
         #endregion
@@ -225,22 +225,21 @@ namespace Gui.ViewModels
                 var requests = e.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)).ToList();
                 var rest = e.Except(bugs).Except(works).Except(rare).Except(responses).Except(requests).ToList();
 
-                if (bugs.Any()) WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(bugs, "Новые баги"));
+                if (bugs.Any()) WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(bugs, Properties.Resources.AS_NewBugs));
 
-                if (works.Any()) WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(works, "Новая работа"));
+                if (works.Any()) WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(works, Properties.Resources.AS_NewWork));
 
                 if (rare.Any())
-                    WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(rare, "Важная вещь, посмотри"));
+                    WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(rare, Properties.Resources.AS_ImportantNotice));
 
                 if (responses.Any())
                 {
-                    var vms = new NewResponsesBaloonViewModel(responses, requests, _apiObserve,
-                        "Запросили проверку кода");
+                    var vms = new NewResponsesBaloonViewModel(responses, requests, _apiObserve, Properties.Resources.AS_CodeReviewRequested);
                 }
 
                 if (rest.Any())
                     WindowManager.ShowBaloon(
-                        new ItemsAssignedBaloonViewModel(rest, "Новые рабочие элементы были назначены"));
+                        new ItemsAssignedBaloonViewModel(rest, Properties.Resources.AS_NewItemsAssigned));
 
                 RefreshStats();
             }
@@ -283,7 +282,7 @@ namespace Gui.ViewModels
                 return FirstConnectionViewModel.IsConnected;
             }
 
-            return WindowManager.ShowDialog(FirstConnectionViewModel, "Первое подключение", 400, 200);
+            return WindowManager.ShowDialog(FirstConnectionViewModel, Properties.Resources.AS_FirstConnection, 400, 200);
         }
 
         /// <summary>
@@ -330,7 +329,7 @@ namespace Gui.ViewModels
 
                 case WroteOffStrategy.Watch:
 
-                    if (WindowManager.ShowDialog(vm, "Выберите элемент для списания времени", 400, 200) == true)
+                    if (WindowManager.ShowDialog(vm, Properties.Resources.AS_ChooseWriteoffTask, 400, 200) == true)
                         return vm.Searcher.Selected;
 
                     // Выбрать нужно обязательно

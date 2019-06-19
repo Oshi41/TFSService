@@ -32,7 +32,7 @@ namespace TfsAPI.Rules
 
         public WiqlBuilder AssignedTo(string operand = "and", string name = "@me")
         {
-            name = CheckMacros(name);
+            name = WrapValue(name);
 
             AddCondition(operand, $"{Sql.Fields.AssignedTo} = {name}");
             return this;
@@ -40,7 +40,7 @@ namespace TfsAPI.Rules
 
         public WiqlBuilder EverChangedBy(string operand, string name = "@me")
         {
-            name = CheckMacros(name);
+            name = WrapValue(name);
 
             AddCondition(operand, $"[Changed By] ever {name}");
             return this;
@@ -160,7 +160,7 @@ namespace TfsAPI.Rules
             _queries.Add(result);
         }
 
-        private string CheckMacros(string value)
+        private string WrapValue(string value)
         {
             if (_macros.Contains(value.ToLower()))
             {

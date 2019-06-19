@@ -50,16 +50,16 @@ namespace Gui.ViewModels.DialogViewModels
 
         protected override string ValidateProperty(string prop)
         {
-            if (prop == nameof(Title) && string.IsNullOrWhiteSpace(Title)) return "Название не может быть пустым";
+            if (prop == nameof(Title) && string.IsNullOrWhiteSpace(Title)) return Properties.Resources.AS_EmptyName_Error;
 
-            if (prop == nameof(Hours) && Hours < 1) return "Необходимо указать кол-во запланированных часов на работу";
+            if (prop == nameof(Hours) && Hours < 1) return Properties.Resources.AS_PlannedTime_Error;
 
             return base.ValidateProperty(prop);
         }
 
         protected override string ValidateOptionalProperty(string prop)
         {
-            if (prop == nameof(Hours) && Hours > 40) return "Уверен, что задачу нельзя разбить на меньшие части?";
+            if (prop == nameof(Hours) && Hours > 40) return Properties.Resources.AS_TooBigTask_Asking;
 
             return base.ValidateOptionalProperty(prop);
         }

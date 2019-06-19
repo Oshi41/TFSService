@@ -13,33 +13,37 @@ using TfsAPI.Interfaces;
 
 namespace Gui.ViewModels.Notifications
 {
+    /// <summary>
+    /// Т.к. команды выполняются один раз, для нового выполнения требуется пересоздать этот объект
+    /// </summary>
     public class NewResponsesBaloonViewModel : ItemsAssignedBaloonViewModel
     {
         private readonly ITfsApi _api;
         private readonly List<WorkItem> _reviews;
-        private bool _isExecuted;
+        private bool isBusy;
 
         public NewResponsesBaloonViewModel(List<WorkItem> responses,
             List<WorkItem> reviews,
             ITfsApi api,
-            string title = "У тебя запросили проверку кода")
-            : base(responses, title)
+            string title = null)
+            : base(responses, title ?? Properties.Resources.AS_CodeReviewRequested)
         {
             _reviews = reviews;
             _api = api;
 
-            CloseReviewes = ObservableCommand.FromAsyncHandler(OnCloseGoodLooking, OnCanCloseGoodLooking);
-
-            CloseOldReviewes = ObservableCommand.FromAsyncHandler(OnCloseOld, OnCanCloseOld);
+            CloseReviewes = ObservableCommand.FromAsyncHandler(OnCloseGoodLooking, OnCanCloseGoodLooking).ExecuteOnce();
+            CloseOldReviewes = ObservableCommand.FromAsyncHandler(OnCloseOld, OnCanCloseOld).ExecuteOnce();
         }
 
         public ICommand CloseReviewes { get; }
         public ICommand CloseOldReviewes { get; }
 
+        public bool IsBusy { get => isBusy; set => Set(ref isBusy, value); }
+
 
         private bool OnCanCloseGoodLooking()
         {
-            return !_isExecuted && _reviews.Any(x => x.IsNotClosed());
+            return _reviews.Any(x => x.IsNotClosed());
         }
 
         private bool OnCanCloseOld()
@@ -52,6 +56,8 @@ namespace Gui.ViewModels.Notifications
 
         private async Task OnCloseOld()
         {
+            IsBusy = true;
+
             await Task.Run(() => _api.CloseCompletedReviews((request, responses) =>
             {
                 if (responses.IsNullOrEmpty()
@@ -68,11 +74,13 @@ namespace Gui.ViewModels.Notifications
                 return IsOld(request.CreatedDate);
             }));
 
-            _isExecuted = true;
+            IsBusy = true;
         }
 
         private async Task OnCloseGoodLooking()
         {
+            IsBusy = false;
+
             await Task.Run(() => _api.CloseCompletedReviews((request, responses) =>
             {
                 if (responses.IsNullOrEmpty()
@@ -82,7 +90,7 @@ namespace Gui.ViewModels.Notifications
                 return responses.All(x => x.HasClosedReason(WorkItems.ClosedStatus.LooksGood));
             }));
 
-            _isExecuted = true;
+            IsBusy = false;
         }
 
 

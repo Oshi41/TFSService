@@ -9,8 +9,8 @@ namespace Gui.ViewModels.Notifications
         private WorkItemVm _selected;
 
         public ItemsAssignedBaloonViewModel(List<WorkItem> e,
-            string title = "Назначены новые рабочие элементы")
-            : base(title)
+            string title = null)
+            : base(title ?? Properties.Resources.AS_NewItemsAssigned)
         {
             Items = e.Select(x => new WorkItemVm(x)).ToList();
 

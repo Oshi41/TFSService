@@ -18,7 +18,7 @@ namespace Gui.ViewModels.DialogViewModels
 
             Searcher = new WorkItemSearcher(_tfs, WorkItemTypes.Task)
             {
-                Help = "Выберите рабочий элемент:"
+                Help = Properties.Resources.AS_ChooseTask
             };
         }
 
@@ -32,7 +32,7 @@ namespace Gui.ViewModels.DialogViewModels
         {
             var vm = new CreateTaskViewModel(_tfs);
 
-            if (WindowManager.ShowDialog(vm, "Создание рабочего элемента", 500) == true)
+            if (WindowManager.ShowDialog(vm, Properties.Resources.AS_TaskCreation, 500) == true)
             {
                 var copy = Searcher.Items.ToList();
                 copy.Add(vm.CreatedItem);
@@ -48,7 +48,7 @@ namespace Gui.ViewModels.DialogViewModels
         {
             if (prop == nameof(Searcher.Selected)
                 && !Searcher.Selected.Item.IsTypeOf(WorkItemTypes.Task))
-                return "Рабочий элемент не является таском";
+                return Properties.Resources.AS_NotATask_Error;
 
             return base.ValidateProperty(prop);
         }

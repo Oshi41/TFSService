@@ -1,10 +1,9 @@
-﻿using Microsoft.TeamFoundation.SourceControl.WebApi;
-using Microsoft.TeamFoundation.WorkItemTracking.Client;
+﻿using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using TfsAPI.Attributes;
 using TfsAPI.Comarers;
 using TfsAPI.Constants;
 using TfsAPI.Interfaces;
@@ -17,13 +16,13 @@ namespace TfsAPI.RulesNew
         /// <summary>
         /// Все мои таски на эту итерацию
         /// </summary>
-        [Description("Текущая итерация")]
+        [LocalizedDescription(nameof(Properties.Resource.AS_CurrentIteration))]
         AllTasksIsCurrentIteration,
 
         /// <summary>
         /// Проверяет мои таски на правильную область
         /// </summary>
-        [Description("Указанная облать")] 
+        [LocalizedDescription(nameof(Properties.Resource.AS_SpecifiedArea))]
         CheckTasksAreapath,
     }
 
@@ -57,7 +56,7 @@ namespace TfsAPI.RulesNew
 
 
                 default:
-                    throw new Exception("Unknown type");
+                    throw new Exception($"{nameof(RuleBuilder)}.{nameof(BuildPresets)}: Unknown type");
             }
         }
 
@@ -70,7 +69,7 @@ namespace TfsAPI.RulesNew
 
             var result = new Rule
             {
-                Title = "Действующая итерация",
+                Title = Properties.Resource.AS_Rule_CurrentIteration_Title,
                 Operation = RuleOperation.SameCount,
                 Source = builder.ToString(),
                 Condition = builder.CurrentIteration().ToString()
@@ -88,7 +87,7 @@ namespace TfsAPI.RulesNew
 
             var result = new Rule
             {
-                Title="Облать моих рабочих элементов",
+                Title= Properties.Resource.AS_Rule_AreaCondition_Title,
                 Operation = RuleOperation.SameCount,
                 Source = builder.ToString(),
                 Condition = builder.WithAreaPath("and", name).ToString()
@@ -96,6 +95,7 @@ namespace TfsAPI.RulesNew
 
             return result;
         }
+
         #endregion
 
         public RuleBuilder(ITfsApi api)
