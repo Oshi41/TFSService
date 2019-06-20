@@ -127,31 +127,12 @@
         <materialDesign:Card Grid.Row="4">
             <StackPanel Orientation="Vertical">
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Text="Правила рабочих элементов:"
+                <TextBlock Text="Правила рабочих элементов:"
                                HorizontalAlignment="Left"
                                FontWeight="Bold" />
-                    
-                    <Button Content="Добавить"
-                            HorizontalAlignment="Right"
-                            Command="{Binding Path=AddRuleCommand}"
-                            Margin="5"
-                            Grid.Column="1"/>
-                </Grid>                
 
-                <ListBox Margin="10"
-                         ItemsSource="{Binding Path=Rules}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate >
-                            <TextBlock Text="{Binding Title}"/>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                <ContentControl Content="{Binding Path=RuleEditor}"/>
+
             </StackPanel>
         </materialDesign:Card>
     </Grid>

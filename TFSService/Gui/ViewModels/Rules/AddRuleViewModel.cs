@@ -28,6 +28,7 @@ namespace Gui.ViewModels.Rules
         public AddRuleViewModel()
         {
             SubmitCommand = new Helper.ObservableCommand(OnSaveRule);
+            Preset = default(StaticRules);
         }
 
         private void OnSaveRule()
@@ -50,11 +51,9 @@ namespace Gui.ViewModels.Rules
             get => preset;
             set
             {
-                if (SetProperty(ref preset, value))
-                {
-                    // Обновляем описание
-                    PresetDescription = _descr[value];
-                }
+                SetProperty(ref preset, value);
+                // Обновляем описание
+                PresetDescription = _descr[value];
             }
         }
 

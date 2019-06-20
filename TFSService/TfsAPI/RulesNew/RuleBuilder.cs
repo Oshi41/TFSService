@@ -41,8 +41,6 @@ namespace TfsAPI.RulesNew
 
     public class RuleBuilder : IRuleBuilder
     {
-        private readonly ITfsApi _api;
-
         #region Presets
         public IRule BuildPresets(StaticRules rule, params object[] parameters)
         {
@@ -98,9 +96,8 @@ namespace TfsAPI.RulesNew
 
         #endregion
 
-        public RuleBuilder(ITfsApi api)
+        public RuleBuilder()
         {
-            this._api = api;
         }
 
         /// <summary>
@@ -108,13 +105,13 @@ namespace TfsAPI.RulesNew
         /// </summary>
         /// <param name="rules"></param>
         /// <returns></returns>
-        public Dictionary<IRule, IList<WorkItem>> CheckInconsistant(IEnumerable<IRule> rules)
+        public Dictionary<IRule, IList<WorkItem>> CheckInconsistant(IEnumerable<IRule> rules, ITfsApi api)
         {
             var toReturn = new Dictionary<IRule, IList<WorkItem>>();
 
             foreach (var rule in rules)
             {
-                var result = ExecuteRule(rule);
+                var result = ExecuteRule(rule, api);
                 if (result.Any())
                 {
                     toReturn[rule] = result;
@@ -124,14 +121,14 @@ namespace TfsAPI.RulesNew
             return toReturn;
         }
 
-        private IList<WorkItem> ExecuteRule(IRule rule)
+        private IList<WorkItem> ExecuteRule(IRule rule, ITfsApi api)
         {
             var result = new List<WorkItem>();
 
             try
             {
-                var source = _api.QueryItems(rule.Source);
-                var conditional = _api.QueryItems(rule.Condition);
+                var source = api.QueryItems(rule.Source);
+                var conditional = api.QueryItems(rule.Condition);
 
                 switch (rule.Operation)
                 {

@@ -13,14 +13,5 @@ namespace Gui.View.Rule_Wizard
         {
             InitializeComponent();
         }
-
-        private void TryClose(object sender, ExecutedRoutedEventArgs e)
-        {
-            if (DoneBtn.IsEnabled)
-            {
-                this.DialogResult = true;
-                this.Close();
-            }
-        }
     }
 }

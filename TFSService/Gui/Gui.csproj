@@ -316,6 +316,7 @@
     <Compile Include="ViewModels\Notifications\ItemsAssignedBaloonViewModel.cs" />
     <Compile Include="ViewModels\Notifications\NewResponsesBaloonViewModel.cs" />
     <Compile Include="ViewModels\Notifications\WriteOffBaloonViewModel.cs" />
+    <Compile Include="ViewModels\RuleEditorViewModel.cs" />
     <Compile Include="ViewModels\Rules\AddRuleViewModel.cs" />
     <Compile Include="ViewModels\StatsViewModel.cs" />
     <Compile Include="ViewModels\WorkItemVm.cs" />
@@ -345,6 +346,12 @@
     </Compile>
     <Compile Include="View\Rule Wizard\RuleWizardView.xaml.cs">
       <DependentUpon>RuleWizardView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Rule Wizard\WizardCommands.xaml.cs">
+      <DependentUpon>WizardCommands.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\RuleEditor.xaml.cs">
+      <DependentUpon>RuleEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ScheduleView.xaml.cs">
       <DependentUpon>ScheduleView.xaml</DependentUpon>
@@ -413,6 +420,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Rule Wizard\RuleWizardView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Rule Wizard\WizardCommands.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\RuleEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

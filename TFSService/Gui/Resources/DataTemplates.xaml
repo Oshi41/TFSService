@@ -40,6 +40,10 @@
     <DataTemplate DataType="{x:Type dialogViewModels:SettingsViewModel}">
         <view:SettingsView />
     </DataTemplate>
+    
+     <DataTemplate DataType="{x:Type viewModels:RuleEditorViewModel}">
+        <view:RuleEditor />
+    </DataTemplate>
 
 
     <DataTemplate DataType="{x:Type notifications:NewResponsesBaloonViewModel}">

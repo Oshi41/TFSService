@@ -21,7 +21,6 @@ namespace Gui.ViewModels.DialogViewModels
         private string connection;
         private TimeSpan dayDuration;
         private WroteOffStrategy strategy;
-        private List<IRule> rules;
         private readonly ITfsApi api;
 
         public SettingsViewModel(string currentConnection, ITfsApi api)
@@ -30,12 +29,9 @@ namespace Gui.ViewModels.DialogViewModels
 
             ConnectCommand = new ObservableCommand(OnConnect);
             SubmitCommand = new ObservableCommand(OnSave, () => _changed);
-            AddRuleCommand = new ObservableCommand(OnAdd);
             this.api = api;
         }
-
-        
-
+               
         /// <summary>
         ///     Обновляем по настройкам
         /// </summary>
@@ -48,7 +44,7 @@ namespace Gui.ViewModels.DialogViewModels
                 capacity = settings.Capacity;
                 connection = currentConnection;
                 strategy = settings.Strategy;
-                rules = settings.Rules.ToList();
+                RuleEditor = new RuleEditorViewModel(settings.Rules);
             }
         }
 
@@ -74,39 +70,6 @@ namespace Gui.ViewModels.DialogViewModels
             if (WindowManager.ShowDialog(vm, Properties.Resources.AS_TfsConnection_Title, 400, 200) == true) Connection = vm.Text;
         }
 
-        private void OnAdd()
-        {
-            var vm = new AddRuleViewModel();
-
-            if (WindowManager.ShowDialog(vm, Properties.Resources.AS_AddRule_Master_Title, 400, 300) == true)
-            {
-                var builder = new RuleBuilder(api);
-
-                if (vm.UsePresets)
-                {
-                    var rule = builder.BuildPresets(vm.Preset);
-
-                    using (var settings = Settings.Settings.Read())
-                    {
-                        if (settings.Rules.Contains(rule))
-                        {
-                            // todo ask user
-                            if (WindowManager.ShowConfirm(Properties.Resources.AS_ReplaceRule_Asking, Properties.Resources.AS_Replacing) == true)
-                            {
-                                settings.Rules.Remove(rule);
-                            }
-                            else
-                            {
-                                return;
-                            }
-                        }
-
-                        settings.Rules.Add(rule);
-                    }
-                }
-            }
-        }
-
         protected override bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
             var result = base.SetProperty(ref storage, value, propertyName);
@@ -122,8 +85,6 @@ namespace Gui.ViewModels.DialogViewModels
         ///     Подключение к другому TFS
         /// </summary>
         public ICommand ConnectCommand { get; }
-        public ICommand AddRuleCommand { get; }
-        
 
         public int Capacity
         {
@@ -149,7 +110,7 @@ namespace Gui.ViewModels.DialogViewModels
             set => SetProperty(ref strategy, value);
         }
 
-        public List<IRule> Rules { get => rules; set => SetProperty(ref rules, value); }
+        public RuleEditorViewModel RuleEditor { get; set; }
 
         #endregion
     }

@@ -190,7 +190,7 @@ namespace Gui.ViewModels
         {
             var vm = new SettingsViewModel(FirstConnectionViewModel.Text, _apiObserve);
 
-            WindowManager.ShowDialog(vm, Properties.Resources.AS_Settings, 400, 600);
+            WindowManager.ShowDialog(vm, Properties.Resources.AS_Settings, 500);
         }
 
         #endregion
