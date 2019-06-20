@@ -1,4 +1,9 @@
-﻿namespace Gui.Tests
+﻿using System;
+using System.Threading.Tasks;
+using Gui.Helper;
+using Gui.ViewModels.DialogViewModels;
+
+namespace Gui.Tests
 {
 #if TESTS
     class TestDialogViewModel : BindableExtended

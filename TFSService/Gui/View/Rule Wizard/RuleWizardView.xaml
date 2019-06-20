@@ -11,6 +11,7 @@
              xmlns:vm="clr-namespace:Gui.ViewModels.Rules"
              xmlns:converters="clr-namespace:Gui.Converters"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:p="clr-namespace:Gui.Properties"
              d:DataContext="{d:DesignInstance Type={x:Type vm:AddRuleViewModel}}">
 
     <Window.Resources>
@@ -38,7 +39,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Мастер создания правила"
+        <TextBlock Text="{x:Static p:Resources.AS_AddRuleMaster}"
                    HorizontalAlignment="Center"/>
 
         <materialDesign:Transitioner Grid.Row="1"
@@ -47,16 +48,17 @@
             
             
             <!-- Первый шаг - тип правила -->
-            <materialDesign:TransitionerSlide  OpeningEffect="{materialDesign:TransitionEffect Kind=SlideInFromRight}">
+            <materialDesign:TransitionerSlide 
+                OpeningEffect="{materialDesign:TransitionEffect Kind=SlideInFromRight}">
                 <StackPanel Orientation="Vertical"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center">
-                    <RadioButton Content="Использовать пресеты"
+                    <RadioButton Content="{x:Static p:Resources.AS_UseDefaults}"
                                  GroupName="G1"
                                  IsChecked="{Binding Path=UsePresets, Mode=TwoWay}"
                                  Margin="5"/>
 
-                    <RadioButton Content="Создать свой"
+                    <RadioButton Content="{x:Static p:Resources.AS_CreateOwn}"
                                  Margin="5"
                                  IsEnabled="False"
                                  GroupName="G1"/>
@@ -110,7 +112,7 @@
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
 
-                            <TextBox materialDesign:HintAssist.Hint="Вставьте необходимое имя области"
+                            <TextBox materialDesign:HintAssist.Hint="{x:Static p:Resources.AS_EnterAreaPath}"
                                      materialDesign:HintAssist.IsFloating="True"
                                      Margin="5"
                                      Width="200"

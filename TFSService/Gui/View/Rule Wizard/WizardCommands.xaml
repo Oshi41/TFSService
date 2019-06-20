@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Gui.View.Rule_Wizard"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:p="clr-namespace:Gui.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="80" d:DesignWidth="400"
              x:Name="This">
@@ -34,33 +35,33 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Button Content="Отмена"
+            <Button Content="{x:Static p:Resources.AS_Cancel}"
                     Margin="5"
                     Style="{StaticResource ButStyle}"
                     Click="OnCancel"/>
 
-            <Button Content="Назад"
+            <Button Content="{x:Static p:Resources.AS_MovePreviouse}"
                     x:Name="Prev"
                     Grid.Column="2"
                     Margin="5"
                     Style="{StaticResource ButStyle}"
                     Command="{Binding ElementName=This, Path=PrevCommand}"/>
 
-            <Button Content="Вперед"
+            <Button Content="{x:Static p:Resources.AS_MoveNext}"
                     x:Name="Next"
                     Grid.Column="3"
                     Margin="5"
                     Style="{StaticResource ButStyle}"
                     Command="{Binding ElementName=This, Path=NextCommand}"/>
 
-            <Button Content="Продолжить"
+            <Button Content="{x:Static p:Resources.AS_Continue}"
                     x:Name="First"
                     Grid.Column="3"
                     Margin="5"
                     Style="{StaticResource ButStyle}"
                     Command="{Binding ElementName=This, Path=NextCommand}"/>
 
-            <Button Content="Завершить"
+            <Button Content="{x:Static p:Resources.AS_Finish}"
                     x:Name="Last"
                     Grid.Column="3"
                     Margin="5"

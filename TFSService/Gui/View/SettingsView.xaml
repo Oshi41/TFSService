@@ -9,6 +9,7 @@
              xmlns:c="clr-namespace:Gui.Converters"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:p="clr-namespace:Gui.Properties"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type={x:Type vm:SettingsViewModel}}">
@@ -19,7 +20,7 @@
             <Style TargetType="{x:Type materialDesign:Card}"
                    BasedOn="{StaticResource {x:Type materialDesign:Card}}">
                 <Setter Property="Padding" Value="5" />
-                <Setter Property="HorizontalAlignment" Value="Left" />
+                <!--<Setter Property="HorizontalAlignment" Value="Left" />-->
                 <Setter Property="Grid.Column" Value="0" />
                 <Setter Property="Margin" Value="5" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -40,101 +41,104 @@
     </UserControl.Resources>
 
 
-    <Grid IsSharedSizeScope="true">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition SharedSizeGroup="G1"
-                              Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Hidden">
+        <Grid IsSharedSizeScope="true">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="G1"
+                                  Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <materialDesign:Card>
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="Текущее подключение:"
+            <materialDesign:Card>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="{x:Static p:Resources.AS_CurrentConnection}"
                            FontWeight="Bold" />
 
-                <TextBlock Text="{Binding Path=Connection, Mode=OneWay}"
+                    <TextBlock Text="{Binding Path=Connection, Mode=OneWay}"
                            TextTrimming="WordEllipsis"
                            ToolTip="{Binding Path=Connection, Mode=OneWay, FallbackValue=-}" />
 
-                <Button HorizontalAlignment="Left"
+                    <Button HorizontalAlignment="Left"
                         Margin="0,14"
-                        Content="Изменить..."
+                        Content="{x:Static p:Resources.AS_TryChange}"
                         Command="{Binding Path=ConnectCommand}" />
-            </StackPanel>
-        </materialDesign:Card>
+                </StackPanel>
+            </materialDesign:Card>
 
-        <materialDesign:Card Grid.Row="1"
+            <materialDesign:Card Grid.Row="1"
                              Padding="5,5,5,10">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="Дневная норма часов:"
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="{x:Static p:Resources.AS_DailyWorkHours}"
                            FontWeight="Bold" />
 
-                <TextBox
+                    <TextBox
                     Text="{Binding Path=Capacity, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
                     Margin="0,14,0,10" />
-            </StackPanel>
-        </materialDesign:Card>
+                </StackPanel>
+            </materialDesign:Card>
 
-        <materialDesign:Card Grid.Row="2"
+            <materialDesign:Card Grid.Row="2"
                              Padding="5,5,5,10">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="Длина рабочего дня:"
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="{x:Static p:Resources.AS_WorkDayTime}"
                            FontWeight="Bold" />
 
-                <TextBox
+                    <TextBox
                     Text="{Binding Path=DayDuration, 
                                 Mode=TwoWay,
                                 ValidatesOnDataErrors=True, 
                                 UpdateSourceTrigger=PropertyChanged,
                                 StringFormat={}{0:hh}:{0:mm}}"
                     Margin="0,14,0,10" />
-            </StackPanel>
-        </materialDesign:Card>
+                </StackPanel>
+            </materialDesign:Card>
 
-        <materialDesign:Card Grid.Row="3">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="Стратегия списывания времени:"
+            <materialDesign:Card Grid.Row="3">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="{x:Static p:Resources.AS_WroteOffStrategy}"
                            FontWeight="Bold" />
 
-                <TextBlock Text="Как выбираем рабочий элемент для запланированного списания часов?"
+                    <TextBlock Text="{x:Static p:Resources.AS_WroteOffStrategy_Asking}"
                            TextWrapping="Wrap" />
 
-                <ComboBox Margin="0,10"
+                    <ComboBox Margin="0,10"
                           ItemsSource="{Binding Source={StaticResource wroteOffEnums}}"
                           SelectedValue="{Binding Path=Strategy}"
                           IsSynchronizedWithCurrentItem="True">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type ComboBoxItem}">
-                            <TextBlock Text="{Binding Converter={StaticResource DescriptionConverter}}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type ComboBoxItem}">
+                                <TextBlock Text="{Binding Converter={StaticResource DescriptionConverter}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
 
-            </StackPanel>
-        </materialDesign:Card>
+                </StackPanel>
+            </materialDesign:Card>
 
-        <materialDesign:Card Grid.Row="4">
-            <StackPanel Orientation="Vertical">
+            <materialDesign:Card Grid.Row="4">
+                <StackPanel Orientation="Vertical">
 
-                <TextBlock Text="Правила рабочих элементов:"
+                    <TextBlock Text="{x:Static p:Resources.AS_WorkItemRules}"
                                HorizontalAlignment="Left"
                                FontWeight="Bold" />
 
-                <ContentControl Content="{Binding Path=RuleEditor}"/>
+                    <ContentControl Content="{Binding Path=RuleEditor}"/>
 
-            </StackPanel>
-        </materialDesign:Card>
-    </Grid>
+                </StackPanel>
+            </materialDesign:Card>
+        </Grid>
+    </ScrollViewer>
 
 </UserControl>

@@ -117,17 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AS_Actions" xml:space="preserve">
+    <value>Действия</value>
+  </data>
+  <data name="AS_Add" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="AS_AddRuleMaster" xml:space="preserve">
+    <value>Мастер создания правила</value>
+  </data>
   <data name="AS_AddRule_Master_Title" xml:space="preserve">
     <value>Мастер добавления правила</value>
   </data>
   <data name="AS_AllTasksInCurrentIteration_Descr" xml:space="preserve">
     <value>Правило запрашивает мои активные таски и проверяет, указана ли в них текущая итерация.</value>
   </data>
+  <data name="AS_Cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
   <data name="AS_CheckArea_Descr" xml:space="preserve">
     <value>Правило проверяет мои рабочие элементы на наличие указанной области.</value>
   </data>
   <data name="AS_ChooseByMyOwn" xml:space="preserve">
     <value>Выбираем сами</value>
+  </data>
+  <data name="AS_ChooseParentItem" xml:space="preserve">
+    <value>Выберите к чему привязать задачу</value>
   </data>
   <data name="AS_ChooseRandomly" xml:space="preserve">
     <value>Выбираем случайно</value>
@@ -138,17 +153,50 @@
   <data name="AS_ChooseWriteoffTask" xml:space="preserve">
     <value>Выберите элемент для списания времени</value>
   </data>
+  <data name="AS_CloseCompletedReviewes" xml:space="preserve">
+    <value>Закрыть оконченные Code Reviews</value>
+  </data>
+  <data name="AS_CloseOldReviews" xml:space="preserve">
+    <value>Закрыть старые Code Reviews</value>
+  </data>
   <data name="AS_CodeReviewRequested" xml:space="preserve">
     <value>Запросили проверку кода</value>
   </data>
   <data name="AS_ConnectError" xml:space="preserve">
     <value>Не удалось подключиться</value>
   </data>
+  <data name="AS_Continue" xml:space="preserve">
+    <value>Продолжить</value>
+  </data>
+  <data name="AS_CreateOwn" xml:space="preserve">
+    <value>Создать свой</value>
+  </data>
+  <data name="AS_CurrentConnection" xml:space="preserve">
+    <value>Текущее подключение:</value>
+  </data>
+  <data name="AS_DailyWorkHours" xml:space="preserve">
+    <value>Дневная норма часов:</value>
+  </data>
   <data name="AS_EmptyName_Error" xml:space="preserve">
     <value>Название не может быть пустым</value>
   </data>
+  <data name="AS_EnterAreaPath" xml:space="preserve">
+    <value>Вставьте необходимое имя области</value>
+  </data>
+  <data name="AS_EnterTaskName" xml:space="preserve">
+    <value>Введите название задачи</value>
+  </data>
+  <data name="AS_EnterTfsUri" xml:space="preserve">
+    <value>Введите строку подключения к Team Foundation Server</value>
+  </data>
+  <data name="AS_Finish" xml:space="preserve">
+    <value>Завершить</value>
+  </data>
   <data name="AS_FirstConnection" xml:space="preserve">
     <value>Первое подключение</value>
+  </data>
+  <data name="AS_History" xml:space="preserve">
+    <value>История</value>
   </data>
   <data name="AS_ImportantNotice" xml:space="preserve">
     <value>Важная вещь, посмотри</value>
@@ -158,6 +206,15 @@
   </data>
   <data name="AS_MonthlySchedule" xml:space="preserve">
     <value>Месячное списание часов</value>
+  </data>
+  <data name="AS_MoveNext" xml:space="preserve">
+    <value>Вперёд</value>
+  </data>
+  <data name="AS_MovePreviouse" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="AS_MyWorkItems" xml:space="preserve">
+    <value>Мои рабочие элементы:</value>
   </data>
   <data name="AS_NewBugs" xml:space="preserve">
     <value>Новые баги</value>
@@ -180,8 +237,17 @@
   <data name="AS_PlannedTime_Error" xml:space="preserve">
     <value>Необходимо указать кол-во запланированных часов на работу</value>
   </data>
+  <data name="AS_PlannedWorkTime" xml:space="preserve">
+    <value>Запланированное время работы</value>
+  </data>
   <data name="AS_PlannedWriteoffTime" xml:space="preserve">
     <value>Запланированое списание времени</value>
+  </data>
+  <data name="AS_Program" xml:space="preserve">
+    <value>Программа</value>
+  </data>
+  <data name="AS_Remove" xml:space="preserve">
+    <value>Удалить</value>
   </data>
   <data name="AS_ReplaceRule_Asking" xml:space="preserve">
     <value>Заменить правило?</value>
@@ -195,17 +261,65 @@
   <data name="AS_ShutdownProgram" xml:space="preserve">
     <value>Выйти из программы</value>
   </data>
+  <data name="AS_StrFormat_CompletedHours" xml:space="preserve">
+    <value>Затрачено {0} часов</value>
+  </data>
+  <data name="AS_StrFormat_DailyMax" xml:space="preserve">
+    <value>Дневной предел: {0} ч</value>
+  </data>
+  <data name="AS_StrFormat_DailyWorkTime" xml:space="preserve">
+    <value>Дневная занятость: {0} ч</value>
+  </data>
+  <data name="AS_StrFormat_Hours" xml:space="preserve">
+    <value>{0} ч</value>
+  </data>
+  <data name="AS_StrFormat_RemainingHours" xml:space="preserve">
+    <value>Осталось {0} ч</value>
+  </data>
+  <data name="AS_StrFormat_TotalHours" xml:space="preserve">
+    <value>Всего {0} ч</value>
+  </data>
+  <data name="AS_StrFormat_WrittenOff" xml:space="preserve">
+    <value>Списано: {0} ч</value>
+  </data>
   <data name="AS_TaskCreation" xml:space="preserve">
     <value>Создание рабочего элемента</value>
   </data>
   <data name="AS_TfsConnection_Title" xml:space="preserve">
     <value>TFS соединение</value>
   </data>
+  <data name="AS_TfsInfo" xml:space="preserve">
+    <value>Данные из TFS</value>
+  </data>
   <data name="AS_TooBigTask_Asking" xml:space="preserve">
     <value>Уверен, что задачу нельзя разбить на меньшие части?</value>
   </data>
+  <data name="AS_TryChange" xml:space="preserve">
+    <value>Изменить...</value>
+  </data>
+  <data name="AS_TryCreate" xml:space="preserve">
+    <value>Создать...</value>
+  </data>
   <data name="AS_Update" xml:space="preserve">
     <value>Обновить</value>
+  </data>
+  <data name="AS_UseDefaults" xml:space="preserve">
+    <value>Использовать пресеты</value>
+  </data>
+  <data name="AS_WorkDayTime" xml:space="preserve">
+    <value>Длина рабочего дня:</value>
+  </data>
+  <data name="AS_WorkHoursTracking" xml:space="preserve">
+    <value>Трудосгорание</value>
+  </data>
+  <data name="AS_WorkItemRules" xml:space="preserve">
+    <value>Правила рабочих элементов:</value>
+  </data>
+  <data name="AS_WroteOffStrategy" xml:space="preserve">
+    <value>Стратегия списывания времени:</value>
+  </data>
+  <data name="AS_WroteOffStrategy_Asking" xml:space="preserve">
+    <value>Как выбираем рабочий элемент для запланированного списания часов?</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="logo" type="System.Resources.ResXFileRef, System.Windows.Forms">

@@ -7,6 +7,7 @@
              xmlns:client="clr-namespace:Microsoft.TeamFoundation.WorkItemTracking.Client;assembly=Microsoft.TeamFoundation.WorkItemTracking.Client"
              xmlns:converters="clr-namespace:Gui.Converters"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:p="clr-namespace:Gui.Properties"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type={x:Type client:WorkItem}}">
@@ -29,10 +30,12 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="{Binding Path=[Remaining Work], StringFormat={}Осталось {0} часов}" />
+                        <TextBlock Text="{Binding Path=[Remaining Work], 
+                            StringFormat={x:Static p:Resources.AS_StrFormat_RemainingHours}}" />
 
                         <TextBlock Grid.Row="1"
-                                   Text="{Binding Path=[Completed Work], StringFormat={}Затрачено {0} часов}">
+                                   Text="{Binding Path=[Completed Work], 
+                            StringFormat={x:Static p:Resources.AS_StrFormat_CompletedHours}}">
                             <TextBlock.Style>
                                 <Style TargetType="{x:Type TextBlock}"
                                        BasedOn="{StaticResource {x:Type TextBlock}}">

@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:notifications="clr-namespace:Gui.ViewModels.Notifications"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:p="clr-namespace:Gui.Properties"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type={x:Type notifications:WriteOffBaloonViewModel}}">
@@ -20,7 +21,8 @@
 
         <TextBlock Grid.Row="1"
                    Margin="7"
-                   Text="{Binding Path=Hours, StringFormat={}Списано {0} часа(ов)}" />
+                   Text="{Binding Path=Hours, 
+                        StringFormat={x:Static p:Resources.AS_StrFormat_WrittenOff}}" />
     </Grid>
 
 

@@ -27,8 +27,8 @@ namespace Gui.Helper
             double? width = null,
             double? height = null,
             string ok = "OK",
-            string cancel = "Отмена",
-            string specialText = "Создать...")
+            string cancel = null,
+            string specialText = null)
         {
             var window = new DialogWindow
             {
@@ -40,11 +40,11 @@ namespace Gui.Helper
                 },
                 ExitBtn =
                 {
-                    Content = cancel
+                    Content = cancel ?? Properties.Resources.AS_Cancel
                 },
                 SpecialBtn =
                 {
-                    Content = specialText
+                    Content = specialText ?? Properties.Resources.AS_TryCreate
                 }
             };
 

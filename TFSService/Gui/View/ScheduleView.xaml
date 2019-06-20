@@ -77,7 +77,7 @@
 
             <TextBlock Grid.Row="2"
                        Margin="10,10,0,0"
-                       Text="{Binding Path=Sum, StringFormat={}Всего {0} ч}" />
+                       Text="{Binding Path=Sum, StringFormat={x:Static p:Resources.AS_StrFormat_TotalHours}}" />
 
 
             <ListBox Grid.Column="1"
@@ -87,7 +87,8 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Path=Value, StringFormat={}{0} ч}"
+                            <TextBlock Text="{Binding Path=Value, 
+                                              StringFormat={x:Static p:Resources.AS_StrFormat_Hours}}"
                                        FontWeight="Bold"
                                        Margin="5,0,10,0" />
                             <ContentControl Content="{Binding Path=Key.WorkItem}" />

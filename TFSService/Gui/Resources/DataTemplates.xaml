@@ -7,7 +7,9 @@
                     xmlns:notifications="clr-namespace:Gui.ViewModels.Notifications"
                     xmlns:baloonVms="clr-namespace:Gui.View.Notifications"
                     xmlns:conv="clr-namespace:Gui.Converters"
-                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                    xmlns:commerce="clr-namespace:Microsoft.VisualStudio.Services.Commerce;assembly=Microsoft.VisualStudio.Services.WebApi"
+                    xmlns:properties="clr-namespace:Gui.Properties">
 
     <DataTemplate DataType="{x:Type viewModels:WorkItemVm}">
         <view:WorkItemView DataContext="{Binding Item}" />
@@ -50,10 +52,10 @@
         <baloonVms:NewItemsBaloonView>
             <baloonVms:NewItemsBaloonView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Закрыть оконченные Code Reviews"
+                    <MenuItem Header="{x:Static properties:Resources.AS_CloseCompletedReviewes}"
                               Command="{Binding Path=CloseReviewes}" />
 
-                    <MenuItem Header="Закрыть старые Code Reviews"
+                    <MenuItem Header="{x:Static properties:Resources.AS_CloseOldReviews}"
                               Command="{Binding Path=CloseOldReviewes}" />
                 </ContextMenu>
             </baloonVms:NewItemsBaloonView.ContextMenu>

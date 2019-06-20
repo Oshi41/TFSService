@@ -19,7 +19,7 @@ namespace Gui.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -61,6 +61,24 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Действия.
+        /// </summary>
+        public static string AS_Actions {
+            get {
+                return ResourceManager.GetString("AS_Actions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Добавить.
+        /// </summary>
+        public static string AS_Add {
+            get {
+                return ResourceManager.GetString("AS_Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Мастер добавления правила.
         /// </summary>
         public static string AS_AddRule_Master_Title {
@@ -70,11 +88,29 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Мастер создания правила.
+        /// </summary>
+        public static string AS_AddRuleMaster {
+            get {
+                return ResourceManager.GetString("AS_AddRuleMaster", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Правило запрашивает мои активные таски и проверяет, указана ли в них текущая итерация..
         /// </summary>
         public static string AS_AllTasksInCurrentIteration_Descr {
             get {
                 return ResourceManager.GetString("AS_AllTasksInCurrentIteration_Descr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Отмена.
+        /// </summary>
+        public static string AS_Cancel {
+            get {
+                return ResourceManager.GetString("AS_Cancel", resourceCulture);
             }
         }
         
@@ -93,6 +129,15 @@ namespace Gui.Properties {
         public static string AS_ChooseByMyOwn {
             get {
                 return ResourceManager.GetString("AS_ChooseByMyOwn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выберите к чему привязать задачу.
+        /// </summary>
+        public static string AS_ChooseParentItem {
+            get {
+                return ResourceManager.GetString("AS_ChooseParentItem", resourceCulture);
             }
         }
         
@@ -124,6 +169,24 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Закрыть оконченные Code Reviews.
+        /// </summary>
+        public static string AS_CloseCompletedReviewes {
+            get {
+                return ResourceManager.GetString("AS_CloseCompletedReviewes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Закрыть старые Code Reviews.
+        /// </summary>
+        public static string AS_CloseOldReviews {
+            get {
+                return ResourceManager.GetString("AS_CloseOldReviews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Запросили проверку кода.
         /// </summary>
         public static string AS_CodeReviewRequested {
@@ -142,6 +205,42 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Продолжить.
+        /// </summary>
+        public static string AS_Continue {
+            get {
+                return ResourceManager.GetString("AS_Continue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Создать свой.
+        /// </summary>
+        public static string AS_CreateOwn {
+            get {
+                return ResourceManager.GetString("AS_CreateOwn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Текущее подключение:.
+        /// </summary>
+        public static string AS_CurrentConnection {
+            get {
+                return ResourceManager.GetString("AS_CurrentConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Дневная норма часов:.
+        /// </summary>
+        public static string AS_DailyWorkHours {
+            get {
+                return ResourceManager.GetString("AS_DailyWorkHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Название не может быть пустым.
         /// </summary>
         public static string AS_EmptyName_Error {
@@ -151,11 +250,56 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Вставьте необходимое имя области.
+        /// </summary>
+        public static string AS_EnterAreaPath {
+            get {
+                return ResourceManager.GetString("AS_EnterAreaPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите название задачи.
+        /// </summary>
+        public static string AS_EnterTaskName {
+            get {
+                return ResourceManager.GetString("AS_EnterTaskName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Введите строку подключения к Team Foundation Server.
+        /// </summary>
+        public static string AS_EnterTfsUri {
+            get {
+                return ResourceManager.GetString("AS_EnterTfsUri", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Завершить.
+        /// </summary>
+        public static string AS_Finish {
+            get {
+                return ResourceManager.GetString("AS_Finish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Первое подключение.
         /// </summary>
         public static string AS_FirstConnection {
             get {
                 return ResourceManager.GetString("AS_FirstConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to История.
+        /// </summary>
+        public static string AS_History {
+            get {
+                return ResourceManager.GetString("AS_History", resourceCulture);
             }
         }
         
@@ -183,6 +327,33 @@ namespace Gui.Properties {
         public static string AS_MonthlySchedule {
             get {
                 return ResourceManager.GetString("AS_MonthlySchedule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вперёд.
+        /// </summary>
+        public static string AS_MoveNext {
+            get {
+                return ResourceManager.GetString("AS_MoveNext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Назад.
+        /// </summary>
+        public static string AS_MovePreviouse {
+            get {
+                return ResourceManager.GetString("AS_MovePreviouse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Мои рабочие элементы:.
+        /// </summary>
+        public static string AS_MyWorkItems {
+            get {
+                return ResourceManager.GetString("AS_MyWorkItems", resourceCulture);
             }
         }
         
@@ -250,11 +421,38 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Запланированное время работы.
+        /// </summary>
+        public static string AS_PlannedWorkTime {
+            get {
+                return ResourceManager.GetString("AS_PlannedWorkTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Запланированое списание времени.
         /// </summary>
         public static string AS_PlannedWriteoffTime {
             get {
                 return ResourceManager.GetString("AS_PlannedWriteoffTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Программа.
+        /// </summary>
+        public static string AS_Program {
+            get {
+                return ResourceManager.GetString("AS_Program", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Удалить.
+        /// </summary>
+        public static string AS_Remove {
+            get {
+                return ResourceManager.GetString("AS_Remove", resourceCulture);
             }
         }
         
@@ -295,6 +493,69 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Затрачено {0} часов.
+        /// </summary>
+        public static string AS_StrFormat_CompletedHours {
+            get {
+                return ResourceManager.GetString("AS_StrFormat_CompletedHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Дневной предел: {0} ч.
+        /// </summary>
+        public static string AS_StrFormat_DailyMax {
+            get {
+                return ResourceManager.GetString("AS_StrFormat_DailyMax", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Дневная занятость: {0} ч.
+        /// </summary>
+        public static string AS_StrFormat_DailyWorkTime {
+            get {
+                return ResourceManager.GetString("AS_StrFormat_DailyWorkTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} ч.
+        /// </summary>
+        public static string AS_StrFormat_Hours {
+            get {
+                return ResourceManager.GetString("AS_StrFormat_Hours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Осталось {0} ч.
+        /// </summary>
+        public static string AS_StrFormat_RemainingHours {
+            get {
+                return ResourceManager.GetString("AS_StrFormat_RemainingHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Всего {0} ч.
+        /// </summary>
+        public static string AS_StrFormat_TotalHours {
+            get {
+                return ResourceManager.GetString("AS_StrFormat_TotalHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Списано: {0} ч.
+        /// </summary>
+        public static string AS_StrFormat_WrittenOff {
+            get {
+                return ResourceManager.GetString("AS_StrFormat_WrittenOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Создание рабочего элемента.
         /// </summary>
         public static string AS_TaskCreation {
@@ -313,6 +574,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Данные из TFS.
+        /// </summary>
+        public static string AS_TfsInfo {
+            get {
+                return ResourceManager.GetString("AS_TfsInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Уверен, что задачу нельзя разбить на меньшие части?.
         /// </summary>
         public static string AS_TooBigTask_Asking {
@@ -322,11 +592,83 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Изменить....
+        /// </summary>
+        public static string AS_TryChange {
+            get {
+                return ResourceManager.GetString("AS_TryChange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Создать....
+        /// </summary>
+        public static string AS_TryCreate {
+            get {
+                return ResourceManager.GetString("AS_TryCreate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Обновить.
         /// </summary>
         public static string AS_Update {
             get {
                 return ResourceManager.GetString("AS_Update", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Использовать пресеты.
+        /// </summary>
+        public static string AS_UseDefaults {
+            get {
+                return ResourceManager.GetString("AS_UseDefaults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Длина рабочего дня:.
+        /// </summary>
+        public static string AS_WorkDayTime {
+            get {
+                return ResourceManager.GetString("AS_WorkDayTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Трудосгорание.
+        /// </summary>
+        public static string AS_WorkHoursTracking {
+            get {
+                return ResourceManager.GetString("AS_WorkHoursTracking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Правила рабочих элементов:.
+        /// </summary>
+        public static string AS_WorkItemRules {
+            get {
+                return ResourceManager.GetString("AS_WorkItemRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Стратегия списывания времени:.
+        /// </summary>
+        public static string AS_WroteOffStrategy {
+            get {
+                return ResourceManager.GetString("AS_WroteOffStrategy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Как выбираем рабочий элемент для запланированного списания часов?.
+        /// </summary>
+        public static string AS_WroteOffStrategy_Asking {
+            get {
+                return ResourceManager.GetString("AS_WroteOffStrategy_Asking", resourceCulture);
             }
         }
         

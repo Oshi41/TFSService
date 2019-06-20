@@ -7,6 +7,7 @@
              mc:Ignorable="d" 
              xmlns:vm="clr-namespace:Gui.ViewModels"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:p="clr-namespace:Gui.Properties"
              d:DesignHeight="200" d:DesignWidth="400"
              d:DataContext="{d:DesignInstance Type={x:Type vm:RuleEditorViewModel}}">
 
@@ -16,7 +17,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Button Content="Добавить"
+        <Button Content="{x:Static p:Resources.AS_Add}"
                 Margin="5"
                 HorizontalAlignment="Right"
                 Command="{Binding Path=AddRule}"/>
@@ -40,7 +41,7 @@
                                 Width="20"
                                 Height="20"
                                 Margin="5"
-                                ToolTip="Удалить"
+                                ToolTip="{x:Static p:Resources.AS_Remove}"
                                 Style="{StaticResource MaterialDesignFloatingActionButton}"
                                 Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DeleteRule}">
                             <Viewbox>

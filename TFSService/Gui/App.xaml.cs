@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Windows;
 using Gui.Helper;
+using Gui.ViewModels.DialogViewModels;
 using Gui.ViewModels.Notifications;
 
 namespace Gui
@@ -23,6 +24,9 @@ namespace Gui
         [Conditional("TESTS")]
         private void RunTests()
         {
+            var vm = new SettingsViewModel("", null);
+            WindowManager.ShowDialog(vm, "Настройки", 450, 500);
+
             WindowManager.ShowBaloon(new WriteOffBaloonViewModel("Таймер списания времени"));
 
             //WindowManager.ShowDialog(new TestDialogViewModel(true, true), "Wait for error", width: 300, height: 200);
