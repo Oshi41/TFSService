@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Gui.Helper;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using TfsAPI.Comarers;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
@@ -18,6 +19,8 @@ namespace Gui.ViewModels.Notifications
     /// </summary>
     public class NewResponsesBaloonViewModel : ItemsAssignedBaloonViewModel
     {
+        private readonly IEqualityComparer<WorkItem> _comparer = new WorkItemComparer();
+
         private readonly ITfsApi _api;
         private readonly List<WorkItem> _reviews;
         private bool isBusy;
@@ -56,9 +59,7 @@ namespace Gui.ViewModels.Notifications
 
         private async Task OnCloseOld()
         {
-            IsBusy = true;
-
-            await Task.Run(() => _api.CloseCompletedReviews((request, responses) =>
+            await CloseReviewesInner((request, responses) =>
             {
                 if (responses.IsNullOrEmpty()
                     || request.HasState(WorkItemStates.Closed))
@@ -72,23 +73,34 @@ namespace Gui.ViewModels.Notifications
                 }
 
                 return IsOld(request.CreatedDate);
-            }));
-
-            IsBusy = true;
+            }, _reviews);
         }
 
         private async Task OnCloseGoodLooking()
         {
-            IsBusy = false;
-
-            await Task.Run(() => _api.CloseCompletedReviews((request, responses) =>
+            await CloseReviewesInner((request, responses) =>
             {
                 if (responses.IsNullOrEmpty()
                     || request.HasState(WorkItemStates.Closed))
                     return false;
 
                 return responses.All(x => x.HasClosedReason(WorkItems.ClosedStatus.LooksGood));
-            }));
+            }, _reviews);
+        }
+
+        private async Task CloseReviewesInner(CanCloseReview canClose, IList<WorkItem> source)
+        {
+            IsBusy = false;
+
+            // Получил закрытые проверки кода
+            var result = await Task.Run(() => _api.CloseCompletedReviews(canClose));
+
+            // Ищу закрытые среди всех
+            var toRemove = source.Intersect(result, _comparer).ToList();
+
+            // удаляю такие вхождения
+            toRemove.ForEach(x => source.Remove(x));
+                        
 
             IsBusy = false;
         }

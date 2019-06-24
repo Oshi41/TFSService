@@ -3,7 +3,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace TfsAPI.Comarers
 {
-    internal class WorkItemComparer : IEqualityComparer<WorkItem>
+    public class WorkItemComparer : IEqualityComparer<WorkItem>
     {
         public bool Equals(WorkItem x, WorkItem y)
         {
