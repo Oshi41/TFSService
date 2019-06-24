@@ -32,7 +32,7 @@ namespace Gui.ViewModels.DialogViewModels
         {
             var vm = new CreateTaskViewModel(_tfs);
 
-            if (WindowManager.ShowDialog(vm, Properties.Resources.AS_TaskCreation, 500) == true)
+            if (WindowManager.ShowDialog(vm, Properties.Resources.AS_TaskCreation, 500, 500/1.5) == true)
             {
                 var copy = Searcher.Items.ToList();
                 copy.Add(vm.CreatedItem);

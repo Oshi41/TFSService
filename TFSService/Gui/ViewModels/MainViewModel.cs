@@ -24,6 +24,8 @@ namespace Gui.ViewModels
     {
         public MainViewModel()
         {
+            _safeExecutor = new SafeExecutor();
+
             ShowMonthlyCommand = new ObservableCommand(ShowMonthly);
             UpdateCommand = ObservableCommand.FromAsyncHandler(Update);
             SettingsCommand = new ObservableCommand(ShowSettings);
@@ -61,6 +63,8 @@ namespace Gui.ViewModels
         }
 
         #region Fields
+
+        private readonly SafeExecutor _safeExecutor;
 
         private ITFsObservable _apiObserve;
 
@@ -291,14 +295,14 @@ namespace Gui.ViewModels
         /// <returns></returns>
         private WorkItem GetTask()
         {
-            // Обновляем наблюдаемый рабочий элемент
             _currentTask?.Item?.SyncToLatest();
 
             if (_currentTask == null || !IsTaskAvailable(_currentTask))
             {
                 var strategy = Settings.Settings.Read().Strategy;
 
-                _currentTask = FindAvailableTask(strategy);
+                // Вызов по событию происходит из другого потока
+                _currentTask = _safeExecutor.ExecuteInGuiThread(() => FindAvailableTask(strategy)).Result;
             }
 
             return _currentTask;

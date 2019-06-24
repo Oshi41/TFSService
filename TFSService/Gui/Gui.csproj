@@ -318,11 +318,9 @@
     <Compile Include="ViewModels\Notifications\WriteOffBaloonViewModel.cs" />
     <Compile Include="ViewModels\RuleEditorViewModel.cs" />
     <Compile Include="ViewModels\Rules\AddRuleViewModel.cs" />
+    <Compile Include="ViewModels\SafeExecutor.cs" />
     <Compile Include="ViewModels\StatsViewModel.cs" />
     <Compile Include="ViewModels\WorkItemVm.cs" />
-    <Compile Include="View\ChooseTaskView.xaml.cs">
-      <DependentUpon>ChooseTaskView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\CreateTaksView.xaml.cs">
       <DependentUpon>CreateTaksView.xaml</DependentUpon>
     </Compile>
@@ -370,10 +368,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\DataTemplates.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\ChooseTaskView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -465,6 +459,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config">
       <SubType>Designer</SubType>

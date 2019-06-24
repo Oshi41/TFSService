@@ -24,7 +24,8 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type dialogViewModels:ChooseTaskViewModel}">
-        <view:ChooseTaskView />
+        <view:WorkItemSearcherView
+            DataContext="{Binding Path=Searcher}" />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type dialogViewModels:CreateTaskViewModel}">

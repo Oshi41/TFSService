@@ -16,7 +16,7 @@ namespace Gui.View
 
         private void AllowOnlyNumbers(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = e.Text.All(char.IsNumber);
+            e.Handled = e.Text.Any(c => !char.IsNumber(c));
         }
     }
 }

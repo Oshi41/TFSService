@@ -15,7 +15,13 @@ namespace Gui.ViewModels.DialogViewModels
         {
             _tfs = tfs;
             Searcher = new WorkItemSearcher(tfs,
-                WorkItemTypes.Pbi, WorkItemTypes.Bug, WorkItemTypes.Improvement, WorkItemTypes.Incident);
+                WorkItemTypes.Pbi,
+                WorkItemTypes.Bug, 
+                WorkItemTypes.Improvement, 
+                WorkItemTypes.Incident)
+            {
+                Help = Properties.Resources.AS_ChooseParentItem,
+            };
 
             SubmitCommand = new ObservableCommand(CreateTask, OnCanCreateTask);
         }
