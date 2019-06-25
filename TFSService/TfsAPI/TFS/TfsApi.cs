@@ -43,6 +43,8 @@ namespace TfsAPI.TFS
 
         private void SaveElement(WorkItem item)
         {
+            if (item == null)
+                return;
 #if DEBUG
             Trace.WriteLine($"Imagine that we have saved {item.Id} item");
 
@@ -53,7 +55,8 @@ namespace TfsAPI.TFS
             }
             else
             {
-                item?.Save();
+                item.Save();
+                item.SyncToLatest();
             }
 #endif
         }
@@ -101,13 +104,16 @@ namespace TfsAPI.TFS
 
             // TODO продебажить корректную ревизию
 
-            return item
-                .Revisions
-                .OfType<Revision>()
-                .Where(x => Equals(Name, x.Fields[CoreField.ChangedBy].Value)
-                            && x.Fields[WorkItems.Fields.Complited].Value != null)
-                .OrderByDescending(x => x.Fields[CoreField.ChangedDate])
-                .FirstOrDefault();
+            var revisions = item.Revisions.OfType<Revision>();
+            var finded = revisions
+                .Where(x => x.Fields.TryGetById((int)CoreField.ChangedBy) != null
+                       && x.Fields.Contains(WorkItems.Fields.Complited)
+                       && Equals(Name, x.Fields[CoreField.ChangedBy].Value)
+                       && x.Fields[WorkItems.Fields.Complited].Value != null)
+                .OrderByDescending(x => (DateTime)x.Fields[CoreField.ChangedDate].Value)
+                .ToList();
+
+            return finded.FirstOrDefault();
         }
 
         public IList<WorkItem> GetAssociateItems(int changeset)
@@ -166,10 +172,10 @@ namespace TfsAPI.TFS
         public IList<WorkItem> Search(string text, params string[] allowedTypes)
         {
             var quarry = new WiqlBuilder()
-                .ContainsInFields("where", 
-                text, 
-                Sql.Fields.History, 
-                Sql.Fields.Title, 
+                .ContainsInFields("where",
+                text,
+                Sql.Fields.History,
+                Sql.Fields.Title,
                 Sql.Fields.Description);
 
             // Ищу только указанные типы
@@ -278,7 +284,7 @@ namespace TfsAPI.TFS
 
         public List<KeyValuePair<Revision, int>> GetWriteoffs(DateTime from, DateTime to)
         {
-            var result = new List<KeyValuePair<Revision, int>>();            
+            var result = new List<KeyValuePair<Revision, int>>();
 
             // Рабочие элементы в TFS находятся по дате
             // Т.к. TFS некорректно отрабатывает с ">=",
@@ -287,7 +293,7 @@ namespace TfsAPI.TFS
             to = to.AddDays(1).Date;
 
             if (from >= to)
-                throw new Exception($"{nameof(from)} should be earlier than {nameof(to)}");            
+                throw new Exception($"{nameof(from)} should be earlier than {nameof(to)}");
 
             var query = new WiqlBuilder()
                 .AssignedTo()

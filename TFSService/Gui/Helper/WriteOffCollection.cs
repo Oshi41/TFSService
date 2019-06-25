@@ -210,58 +210,55 @@ namespace Gui.Helper
         /// <param name="maxHoursPerDay"></param>
         private void CutOffByCapacity(int maxHoursPerDay)
         {
-            // Часы, которая программа поставила на ожидание
-            var manual = GetManual(this);
-
             // Сколько пользователь начекинил
             var alreadyRecorded = CheckinedTime();
             // сколько программа поставила в очередь
             var scheduled = ScheduledTime();
 
-            // Поставили в очередь больше, чем планировали, вырезаем
-            while (scheduled > maxHoursPerDay && manual.Any())
-            {
-                var item = manual.First();
-
-                Remove(item);
-                manual.Remove(item);
-
-                scheduled -= item.Hours;
-            }
-
-            // Ничего не чекинил, выходим
-            if (alreadyRecorded < 1)
-            {
-                Trace.WriteLine(
-                    $"{nameof(WorkItemCollection)}.{nameof(CutOffByCapacity)}: User is not write off work hours today");
-                return;
-            }
-
             Trace.WriteLine(
-                $"{nameof(WorkItemCollection)}.{nameof(CutOffByCapacity)}: User wrote off {alreadyRecorded} " +
-                $"hour(s), capacity is {maxHoursPerDay}");
+                    $"{nameof(WorkItemCollection)}.{nameof(CutOffByCapacity)}: User wrote off {alreadyRecorded} " +
+                    $"hour(s), capacity is {maxHoursPerDay}");
 
-            // Пользователь уже начекинил на рабочее время, 
-            // вырезаем всё.
+            // Пользователь сам начекинил на дневной предел
             if (alreadyRecorded >= maxHoursPerDay)
             {
-                RemoveRange(manual);
+                Trace.WriteLine("User already riched the day limit");
+                Clear();
                 return;
             }
 
-            // Вырезаем часы, поставленные в очередь
-            // программой, начиная с самых новых
-            while (alreadyRecorded > 0 && manual.Any())
-            {
-                Remove(manual[0]);
-                manual.RemoveAt(0);
+            // Сколько времени 
+            var delta = maxHoursPerDay - alreadyRecorded - scheduled;
 
-                alreadyRecorded--;
+            // Уложились в предел
+            if (delta >= 0)
+            {
+                Trace.WriteLine("Scheduled work don't overflow the day limit");
+                return;
+            }
+
+            // Часы, которая программа поставила на ожидание
+            // Сортирую по кол-ву часов, потом по убыванию времени
+            var manual = GetManual(this)
+                .OrderBy(x => x.Hours)
+                .ThenByDescending(x => x.Time)
+                .ToList();
+
+            // Убираем запланнированные списания начиная с самых мелких по часам и поставленных в очередь позже всего
+            while (delta < 0 && manual.Any())
+            {
+                var first = manual[0];
+
+                manual.Remove(first);
+                Remove(first);
+                delta -= first.Hours;
+
+                Trace.WriteLine($"{nameof(WorkItemCollection)}.{nameof(CutOffByCapacity)}: Deleted scheduled {first.Hours} hour(s)," +
+                    $"workitem {first.Id}");
             }
 
 
-            Trace.WriteLine(
-                $"{nameof(WorkItemCollection)}.{nameof(CutOffByCapacity)}: Scheduled {manual.Count} records:");
+            return;
         }
 
         private void RemoveAll(Func<WriteOff, bool> condition)

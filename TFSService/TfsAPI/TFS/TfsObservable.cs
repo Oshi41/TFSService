@@ -56,7 +56,7 @@ namespace TfsAPI.TFS
             }
         }
 
-        private void RequestUpdate(bool timerEllapsed)
+        private async void RequestUpdate(bool timerEllapsed)
         {
             // Находимся в режиме ожилания
             if (_paused) return;
@@ -78,7 +78,13 @@ namespace TfsAPI.TFS
 
             // Обновляю оставшиеся, они сыпят миллионы событий,
             // я их собираю и потом выбрасываю одним ивентом
-            MyItems.Except(removed, _comparer).ForEach(x => x.SyncToLatest());
+            await System.Threading.Tasks.Task.Run(() =>
+            {
+                MyItems
+                .Except(removed, _comparer)
+                .AsParallel()
+                .ForEach(x => x.SyncToLatest());
+            });
 
             // Записываю новые значения
             MyItems = current.ToList();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
@@ -92,8 +93,17 @@ namespace TfsAPI.Extentions
             var total = int.Parse(item[WorkItems.Fields.Complited].ToString()) + hours;
             var remain = Math.Max(0, int.Parse(item[WorkItems.Fields.Remaining].ToString()) - hours);
 
-            item[WorkItems.Fields.Complited] = total;
-            item[WorkItems.Fields.Remaining] = remain;
+            if (!item.IsOpen)
+            {
+                // Открываем элемент для редактирования
+                item.Open();
+                Trace.WriteLine("Opened work item");
+            }
+
+            item.Fields[WorkItems.Fields.Complited].Value = total;
+            item.Fields[WorkItems.Fields.Remaining].Value = remain;
+
+            Trace.WriteLine($"Successfully added {hours} to iten {item.Id}");
         }
 
         /// <summary>
