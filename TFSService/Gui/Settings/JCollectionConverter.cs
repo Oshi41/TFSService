@@ -15,6 +15,7 @@ namespace Gui.Settings
     class JCollectionConverter<TSource, TConcrete> : JsonConverter
         where TConcrete : TSource
     {
+
         public override bool CanConvert(Type objectType)
         {
             return typeof(ICollection).IsAssignableFrom(objectType);
@@ -22,6 +23,15 @@ namespace Gui.Settings
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
+            //var gen = typeof(List<>);
+            //var instanceType = gen.MakeGenericType(objectType);
+
+            //var instance = instanceType.GetConstructor(null).Invoke(null);
+
+            //var methoInfo = instanceType.GetMethod("Add");
+
+            //methoInfo.Invoke(instance, new object [] { 1 });
+            //gen.GetConstructor(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.CreateInstance, );
             var readed = serializer.Deserialize<IEnumerable<TConcrete>>(reader);
             var result = new ObservableCollection<TSource>(readed.OfType<TSource>());
 

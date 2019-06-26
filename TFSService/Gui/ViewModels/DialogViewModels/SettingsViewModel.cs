@@ -25,11 +25,11 @@ namespace Gui.ViewModels.DialogViewModels
 
         public SettingsViewModel(string currentConnection, ITfsApi api)
         {
-            Init(currentConnection);
-
             ConnectCommand = new ObservableCommand(OnConnect);
-            SubmitCommand = new ObservableCommand(OnSave, () => _changed);
+            SubmitCommand = new ObservableCommand(OnSave, OnCanSave);
             this.api = api;
+
+            Init(currentConnection);            
         }
                
         /// <summary>
@@ -45,6 +45,7 @@ namespace Gui.ViewModels.DialogViewModels
                 connection = currentConnection;
                 strategy = settings.Strategy;
                 RuleEditor = new RuleEditorViewModel(settings.Rules);
+                Name = api.Name;
             }
         }
 
@@ -60,7 +61,14 @@ namespace Gui.ViewModels.DialogViewModels
                     settings.Connections.Add(Connection);
 
                 settings.Strategy = Strategy;
+
+                settings.Rules = RuleEditor.Rules;
             }
+        }
+
+        private bool OnCanSave()
+        {
+            return _changed || RuleEditor.IsChanged;
         }
 
         private void OnConnect()
@@ -111,6 +119,8 @@ namespace Gui.ViewModels.DialogViewModels
         }
 
         public RuleEditorViewModel RuleEditor { get; set; }
+
+        public string Name { get; private set; }
 
         #endregion
     }

@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using Mvvm.Commands;
 
 namespace Gui.ViewModels.Notifications
 {
@@ -14,13 +17,14 @@ namespace Gui.ViewModels.Notifications
             : base(title ?? Properties.Resources.AS_NewItemsAssigned)
         {
             Items = e.Select(x => new WorkItemVm(x)).ToList();
-
-            Options.DoubleClickAction = sender => OpenLink();
-        }
+            OpenLinkCommand = new DelegateCommand(OpenLink, CanOpenLink);
+        }        
 
         public List<WorkItemVm> Items { get; }
 
         public WorkItemVm Selected { get => _selected; set => Set(ref _selected, value); }
+
+        public ICommand OpenLinkCommand { get;  }
 
         private void OpenLink()
         {
@@ -28,8 +32,13 @@ namespace Gui.ViewModels.Notifications
 
             if (link != null)
             {
-                System.Diagnostics.Process.Start(link);
+                // System.Diagnostics.Process.Start(link);
             }
+        }
+
+        private bool CanOpenLink()
+        {
+            return Selected != null;
         }
     }
 }

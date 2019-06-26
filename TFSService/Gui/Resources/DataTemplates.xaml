@@ -54,6 +54,14 @@
 
 
     <DataTemplate DataType="{x:Type notifications:NewResponsesBaloonViewModel}">
+        <DataTemplate.Resources>
+            <ResourceDictionary>
+                <DataTemplate DataType="{x:Type viewModels:WorkItemVm}">
+                    <TextBlock Text="{Binding Path=Item.Id}"/>
+                </DataTemplate>
+            </ResourceDictionary>
+        </DataTemplate.Resources>
+        
         <baloonVms:NewItemsBaloonView>
             <baloonVms:NewItemsBaloonView.ContextMenu>
                 <ContextMenu>

@@ -35,7 +35,7 @@ namespace Gui.ViewModels
             this.rules = new ObservableCollection<IRule>(rules);
 
             AddRule = new DelegateCommand(OnAddRule);
-            DeleteRule = new DelegateCommand(OnDeleteRule, OnCanDeleteRule);
+            DeleteRule = new DelegateCommand<IRule>(OnDeleteRule, OnCanDeleteRule);
         }
 
         #region Command handlers
@@ -71,15 +71,15 @@ namespace Gui.ViewModels
             }
         }
 
-        private void OnDeleteRule()
+        private void OnDeleteRule(IRule rule)
         {
-            Rules.Remove(Selected);
+            Rules.Remove(rule);
             IsChanged = true;
         }
 
-        private bool OnCanDeleteRule()
+        private bool OnCanDeleteRule(IRule rule)
         {
-            return Selected != null && Rules.Contains(Selected);
+            return rule != null && Rules.Contains(rule);
         }
 
         #endregion

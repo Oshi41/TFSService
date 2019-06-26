@@ -25,7 +25,8 @@ namespace Gui.View.Notifications
 
             this.MouseDoubleClick += DetectDoubleClick;
 
-            PreviewMouseDown += (s, args) => DetectClosingSlide(args);
+            AddHandler(Mouse.MouseDownEvent, new MouseButtonEventHandler( (s, args) => DetectClosingSlide(args)));
+            // PreviewMouseDown += (s, args) => DetectClosingSlide(args);
             MouseUp += (s, args) =>
             {
                 DetectClosingSlide(args);

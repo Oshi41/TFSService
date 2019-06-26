@@ -6,24 +6,29 @@
              xmlns:notifications="clr-namespace:Gui.ViewModels.Notifications"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:p="clr-namespace:Gui.Properties"
+             xmlns:view="clr-namespace:Gui.View"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type={x:Type notifications:WriteOffBaloonViewModel}}">
 
-    <Grid>
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ContentControl Content="{Binding Path=Item}"
-                        Margin="7" />
+        <Grid.InputBindings>
+            <MouseBinding MouseAction="LeftDoubleClick"
+                          Command="{Binding Path=OpenLinkCommand}"/>
+        </Grid.InputBindings>
+
+        <view:WorkItemView DataContext="{Binding Path=Item}"
+                           Margin="7" />
 
         <TextBlock Grid.Row="1"
                    Margin="7"
                    Text="{Binding Path=Hours, 
                         StringFormat={x:Static p:Resources.AS_StrFormat_WrittenOff}}" />
+
     </Grid>
-
-
 </UserControl>

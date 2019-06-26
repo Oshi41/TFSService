@@ -1,9 +1,12 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using Gui.Helper;
 using Gui.View;
 using Gui.ViewModels.Notifications;
-
+using TfsAPI.Constants;
+using TfsAPI.Extentions;
+using TfsAPI.Interfaces;
 
 namespace Gui
 {
@@ -38,9 +41,20 @@ namespace Gui
             var api = new TfsAPI.TFS.TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
 
             var item = api.FindById(id);
-            var baloon = new ItemsAssignedBaloonViewModel(new [] { item}, "Новый элемент был назначен");
+            var assigned = new ItemsAssignedBaloonViewModel(new [] { item}, "Новый элемент был назначен");
 
-            WindowManager.ShowBaloon(baloon);
+            WindowManager.ShowBaloon(assigned);
+
+
+            var write = new WriteOffBaloonViewModel(new ScheduleWorkArgs(item, 4));
+            WindowManager.ShowBaloon(write);
+
+            var items = api.GetMyWorkItems();
+
+            //var response = new NewResponsesBaloonViewModel(items.Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse)),
+            //    items.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)), api, "Мои проверки кода");
+
+            //WindowManager.ShowBaloon(response);
 
 
             //var vm = new SettingsViewModel("", null);

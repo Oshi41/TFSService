@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -25,13 +26,13 @@ namespace Gui.ViewModels.Notifications
         private readonly List<WorkItem> _reviews;
         private bool isBusy;
 
-        public NewResponsesBaloonViewModel(List<WorkItem> responses,
-            List<WorkItem> reviews,
+        public NewResponsesBaloonViewModel(IEnumerable<WorkItem> responses,
+            IEnumerable<WorkItem> reviews,
             ITfsApi api,
             string title = null)
             : base(responses, title ?? Properties.Resources.AS_CodeReviewRequested)
         {
-            _reviews = reviews;
+            _reviews = reviews.ToList();
             _api = api;
 
             CloseReviewes = ObservableCommand.FromAsyncHandler(OnCloseGoodLooking, OnCanCloseGoodLooking).ExecuteOnce();
