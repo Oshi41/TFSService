@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Windows;
 using Gui.Helper;
-using Gui.ViewModels.DialogViewModels;
+using Gui.View;
 using Gui.ViewModels.Notifications;
+
 
 namespace Gui
 {
@@ -18,12 +19,30 @@ namespace Gui
             Trace.Listeners.Add(new TextWriterTraceListener(Settings.Settings.Read().LogPath));
             Trace.WriteLine("\n\n\n*******************************************\nStarting application");
 
+#if TESTS
             RunTests();
+#else
+            StartProgram();
+#endif
         }
 
-        [Conditional("TESTS")]
+        private void StartProgram()
+        {
+            var window = new MainView();
+            window.ShowDialog();
+        }
+
         private void RunTests()
         {
+            var id = 80439;
+            var api = new TfsAPI.TFS.TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+
+            var item = api.FindById(id);
+            var baloon = new ItemsAssignedBaloonViewModel(new [] { item}, "Новый элемент был назначен");
+
+            WindowManager.ShowBaloon(baloon);
+
+
             //var vm = new SettingsViewModel("", null);
             //WindowManager.ShowDialog(vm, "Настройки", 450, 500);
 

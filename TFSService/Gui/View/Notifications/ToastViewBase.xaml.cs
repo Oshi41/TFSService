@@ -23,12 +23,9 @@ namespace Gui.View.Notifications
         {
             Loaded -= SubscribeOnce;
 
-            this.MouseEnter += (s, args) => OnFreeze(true);
-            this.MouseLeave += (s, args) => OnFreeze(false);
-
             this.MouseDoubleClick += DetectDoubleClick;
 
-            MouseDown += (s, args) => DetectClosingSlide(args);
+            PreviewMouseDown += (s, args) => DetectClosingSlide(args);
             MouseUp += (s, args) =>
             {
                 DetectClosingSlide(args);
@@ -73,7 +70,7 @@ namespace Gui.View.Notifications
         {
             if (_isDragging
                 && DetectClosingSlide(pos, System.Windows.Forms.FlowDirection.TopDown,
-                                           System.Windows.Forms.FlowDirection.TopDown))
+                                           System.Windows.Forms.FlowDirection.LeftToRight))
             {
                 _isDragging = false;
                 _isClosed = true;
@@ -90,23 +87,29 @@ namespace Gui.View.Notifications
             var delta = _lastPos - endPoint;
 
             foreach (var o in directions)
+            {
                 switch (o)
                 {
                     case System.Windows.Forms.FlowDirection.LeftToRight:
-                        return ActualWidth / 2 < Math.Abs(delta.X);
+                        if (ActualWidth / 2 < -delta.X) return true;
+                        break;
 
                     case System.Windows.Forms.FlowDirection.TopDown:
-                        return ActualHeight / 2 < Math.Abs(delta.Y);
+                        if (ActualHeight / 2 < -delta.Y) return true;
+                        break;
 
                     case System.Windows.Forms.FlowDirection.RightToLeft:
-                        return ActualWidth / 2 < delta.X;
+                        if (ActualWidth / 2 < delta.X) return true;
+                        break;
 
                     case System.Windows.Forms.FlowDirection.BottomUp:
-                        return ActualHeight / 2 < delta.Y;
+                        if (ActualHeight / 2 < delta.Y) return true;
+                        break;
 
                     default:
                         throw new Exception("Wrong parameter");
                 }
+            }
 
             return false;
         }
@@ -119,14 +122,6 @@ namespace Gui.View.Notifications
                 && options.DoubleClickAction != null)
             {
                 options.DoubleClickAction(this.Notification as BindableNotificationBase);
-            }
-        }
-
-        private void OnFreeze(bool shouldFreeze)
-        {
-            if (this.Notification?.Options?.FreezeOnMouseEnter == true)
-            {
-                Notification.CanClose = shouldFreeze;
             }
         }
     }

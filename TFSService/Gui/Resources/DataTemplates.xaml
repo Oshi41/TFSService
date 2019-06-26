@@ -47,6 +47,10 @@
      <DataTemplate DataType="{x:Type viewModels:RuleEditorViewModel}">
         <view:RuleEditor />
     </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type notifications:ItemsAssignedBaloonViewModel}">
+        <baloonVms:NewItemsBaloonView/>
+    </DataTemplate>
 
 
     <DataTemplate DataType="{x:Type notifications:NewResponsesBaloonViewModel}">

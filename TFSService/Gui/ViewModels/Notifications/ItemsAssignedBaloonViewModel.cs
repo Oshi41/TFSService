@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
@@ -8,7 +9,7 @@ namespace Gui.ViewModels.Notifications
     {
         private WorkItemVm _selected;
 
-        public ItemsAssignedBaloonViewModel(List<WorkItem> e,
+        public ItemsAssignedBaloonViewModel(IEnumerable<WorkItem> e,
             string title = null)
             : base(title ?? Properties.Resources.AS_NewItemsAssigned)
         {

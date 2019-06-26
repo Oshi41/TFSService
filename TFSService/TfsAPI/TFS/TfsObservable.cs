@@ -131,6 +131,7 @@ namespace TfsAPI.TFS
                 return;
 
             _paused = false;
+            RequestUpdate();
 
             _versionControl.CommitCheckin += OnCheckIn;
             _hourTimer.Start();
@@ -194,7 +195,7 @@ namespace TfsAPI.TFS
             if (_changes.ContainsKey(e.Field.WorkItem))
                 _changes[e.Field.WorkItem].Add(e);
             else
-                _changes[e.Field.WorkItem] = new List<WorkItemEventArgs> {e};
+                _changes[e.Field.WorkItem] = new List<WorkItemEventArgs> { e };
         }
 
         #endregion

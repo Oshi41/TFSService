@@ -44,7 +44,10 @@ namespace TfsAPI.TFS
         private void SaveElement(WorkItem item)
         {
             if (item == null)
+            {
+                Trace.WriteLine($"item is null");
                 return;
+            }
 #if DEBUG
             Trace.WriteLine($"Imagine that we have saved {item.Id} item");
 
@@ -101,8 +104,6 @@ namespace TfsAPI.TFS
             item.AddHours(hours, setActive);
             SaveElement(item);
             Trace.WriteLine($"From task {item.Id} was writed off {hours} hour(s)");
-
-            // TODO продебажить корректную ревизию
 
             var revisions = item.Revisions.OfType<Revision>();
             var finded = revisions

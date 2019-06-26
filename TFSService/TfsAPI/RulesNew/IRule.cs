@@ -17,6 +17,7 @@ namespace TfsAPI.RulesNew
 
         string Condition { get;}
 
+        [JsonConverter(typeof(StringEnumConverter))]
         RuleOperation Operation { get;}
     }
 

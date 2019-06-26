@@ -18,7 +18,7 @@ namespace Gui.Helper
         {
             cfg.PositionProvider = new PrimaryScreenPositionProvider(Corner.BottomRight, 10, 10);
 
-            cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(TimeSpan.FromSeconds(5),
+            cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(TimeSpan.FromMinutes(1),
                 MaximumNotificationCount.FromCount(10));
         });
 
