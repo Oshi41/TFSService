@@ -201,8 +201,14 @@
   <data name="AS_ImportantNotice" xml:space="preserve">
     <value>Важная вещь, посмотри</value>
   </data>
+  <data name="AS_ItemUpdatePeriod" xml:space="preserve">
+    <value>Время между обновлениями рабочих элементов (в минутах)</value>
+  </data>
   <data name="AS_Load" xml:space="preserve">
     <value>Загрузка...</value>
+  </data>
+  <data name="AS_LogPath" xml:space="preserve">
+    <value>Путь к файлу логов</value>
   </data>
   <data name="AS_MonthlySchedule" xml:space="preserve">
     <value>Месячное списание часов</value>
@@ -230,6 +236,9 @@
   </data>
   <data name="AS_NotAWebAddress_Error" xml:space="preserve">
     <value>Строка не является веб-адресом</value>
+  </data>
+  <data name="AS_OldReviewDays" xml:space="preserve">
+    <value>Количество дней, после которого запрос на проверку кода считается устаревшим</value>
   </data>
   <data name="AS_Open" xml:space="preserve">
     <value>Открыть</value>

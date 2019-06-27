@@ -23,6 +23,7 @@ namespace Gui.ViewModels.Notifications
         private readonly IEqualityComparer<WorkItem> _comparer = new WorkItemComparer();
 
         private readonly ITfsApi _api;
+        private readonly TimeSpan _time;
         private readonly List<WorkItem> _reviews;
         private bool isBusy;
 
@@ -34,6 +35,8 @@ namespace Gui.ViewModels.Notifications
         {
             _reviews = reviews.ToList();
             _api = api;
+
+            _time = TimeSpan.FromDays(Settings.Settings.Read().OldReviewDay);
 
             CloseReviewes = ObservableCommand.FromAsyncHandler(OnCloseGoodLooking, OnCanCloseGoodLooking).ExecuteOnce();
             CloseOldReviewes = ObservableCommand.FromAsyncHandler(OnCloseOld, OnCanCloseOld).ExecuteOnce();
@@ -116,8 +119,7 @@ namespace Gui.ViewModels.Notifications
         {
             var now = DateTime.Now;
 
-            // Считаю старым 100-дневные запросы кода
-            return (now - createdDate).Duration() > TimeSpan.FromDays(100);
+            return (now - createdDate).Duration() > _time;
         }
     }
 }

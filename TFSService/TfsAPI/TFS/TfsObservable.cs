@@ -18,7 +18,8 @@ namespace TfsAPI.TFS
     {
         public TfsObservable(string url,
             IList<int> myItems,
-            Func<WorkItem> currentItem)
+            Func<WorkItem> currentItem,
+            int itemCheck)
             : base(url)
         {
             _currentItem = currentItem;
@@ -26,8 +27,7 @@ namespace TfsAPI.TFS
             _hourTimer = new Timer(1000 * 60 * 60);
             _hourTimer.Elapsed += (sender, args) => RequestUpdate(true);
 
-            // Каждые 5 минут запрашиваем рабочие элементы
-            _itemsTimer = new Timer(1000 * 60 * 5);
+            _itemsTimer = new Timer(1000 * 60 * itemCheck);
             _hourTimer.Elapsed += (sender, args) => RequestUpdate();
 
             SystemEvents.SessionSwitch += OnSessionSwitched;

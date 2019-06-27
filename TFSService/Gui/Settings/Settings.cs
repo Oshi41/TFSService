@@ -51,6 +51,8 @@ namespace Gui.Settings
         private WroteOffStrategy strategy;
         private string logPath = Path.Combine(Path.GetDirectoryName(_savePath), "logs.log");
         private ObservableCollection<IRule> rules;
+        private int itemMinutesCheck = 5;
+        private int oldReviewDay = 100;
 
         #endregion
 
@@ -129,6 +131,16 @@ namespace Gui.Settings
         /// Путь к файлу логов
         /// </summary>
         public string LogPath { get => logPath; set => Set(ref logPath, value); }
+
+        /// <summary>
+        /// Время между обновлениями моих рабочих элементов в минутах
+        /// </summary>
+        public int ItemMinutesCheck { get => itemMinutesCheck; set => Set(ref itemMinutesCheck, value); }
+
+        /// <summary>
+        /// Период дней, после которого проверка кодя является устаревшей
+        /// </summary>
+        public int OldReviewDay { get => oldReviewDay; set => Set(ref oldReviewDay, value); }
 
         #endregion
 

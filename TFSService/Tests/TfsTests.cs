@@ -1,10 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Microsoft.TeamFoundation.Client;
+using Microsoft.TeamFoundation.Common;
+using Microsoft.TeamFoundation.Core.WebApi;
+using Microsoft.TeamFoundation.Core.WebApi.Types;
+using Microsoft.TeamFoundation.Framework.Client;
+using Microsoft.TeamFoundation.Framework.Common;
+using Microsoft.TeamFoundation.ProcessConfiguration.Client;
+using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.TestManagement.Client;
+using Microsoft.TeamFoundation.VersionControl.Common.Internal;
+using Microsoft.TeamFoundation.Work.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TfsAPI.Constants;
 using TfsAPI.TFS;
@@ -117,7 +129,7 @@ namespace Tests
                 {
                     var name = task.Title;
 
-                    foreach (Link link in task.Links)
+                    foreach (Microsoft.TeamFoundation.WorkItemTracking.Client.Link link in task.Links)
                     {
                     }
                 }
@@ -165,6 +177,75 @@ namespace Tests
             var checkins = tfs.GetWriteoffs(date, date);
 
             Assert.AreEqual(checkins.Select(x => x.Value).Sum(), hours);
+        }
+
+        [TestMethod]
+        public void CegCapacity()
+        {
+            var tfs =
+                new TfsTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
+
+            
+            // var map = GetProjectsWithSettings(tfs.GetService<ProjectHttpClient>(), tfs.GetService<TeamSettingsConfigurationService>());
+
+            IIdentityManagementService ims = tfs.GetService<IIdentityManagementService>();
+
+            var identity = ims.ReadIdentity(IdentitySearchFactor.DisplayName, tfs.AuthorizedIdentity.DisplayName, MembershipQuery.Direct, ReadIdentityOptions.None);
+
+            //WorkItemTrackingHttpClient workItemTrackingClient = tfs.GetClient<WorkItemTrackingHttpClient>();
+
+            //WorkItemClassificationNode result = workItemTrackingClient.GetClassificationNodeAsync(
+            //    "SNES",
+            //    TreeStructureGroup.Iterations,
+            //    null,
+            //    4).Result;
+
+
+
+            //
+            //var teamSettings = tfs.GetService<>();
+
+            //var projects = css.ListAllProjects();
+
+            //TeamContext context = null;
+            //string iterID = null;
+
+            //var client = tfs.GetClient<WorkHttpClient>();
+
+            //var iters = client.GetTeamIterationsAsync(context, "current").Result;
+
+
+
+            //var iteration = client.Пуе(context).Result;
+
+        }
+
+        private Dictionary<TeamProjectReference, List<TeamConfiguration>> GetProjectsWithSettings(ProjectHttpClient css, TeamSettingsConfigurationService team)
+        {
+            var result = new Dictionary<TeamProjectReference, List<TeamConfiguration>>();
+
+            var projects = css.GetProjects(null).Result;
+
+            foreach (var project in projects)
+            {
+                try
+                {
+                    var settings = team
+                        .GetTeamConfigurationsForUser(new[] { project.Url })
+                        .ToList();
+
+                    if (!settings.IsNullOrEmpty())
+                    {
+                        result[project] = settings;
+                    }
+                }
+                catch 
+                {
+                    continue; 
+                }
+            }
+
+            return result;
         }
     }
 }

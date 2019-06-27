@@ -24,6 +24,8 @@
                 <Setter Property="Margin" Value="5" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="VerticalAlignment" Value="Stretch"/>
+                <Setter Property="MinWidth" Value="150"/>
             </Style>
 
             <ObjectDataProvider x:Key="wroteOffEnums" MethodName="GetValues"
@@ -40,7 +42,7 @@
 
 
     <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                  VerticalScrollBarVisibility="Hidden"
+                  VerticalScrollBarVisibility="Auto"
                   Padding="7"
                   Background="White">
 
@@ -76,10 +78,34 @@
                         Command="{Binding Path=ConnectCommand}"/>
             </Grid>
 
-            <UniformGrid Columns="2"
-                         Margin="0,20,0,0">
+            <DockPanel Margin="0,20,0,10">
+                <Button DockPanel.Dock="Right"
+                        Content="..."
+                        VerticalAlignment="Center"
+                        Height="{Binding ElementName=LogText, Path=ActualHeight}"
+                        Command="{Binding Path=ChooseLogFileCommand}"/>
 
-                <materialDesign:Card Style="{StaticResource CardStyle}">
+                <TextBox x:Name="LogText"
+                         IsReadOnly="True"
+                         Text="{Binding Path=LogsPath, UpdateSourceTrigger=PropertyChanged}"
+                         materialDesign:HintAssist.Hint="{x:Static p:Resources.AS_LogPath}"
+                         materialDesign:HintAssist.IsFloating="True"/>
+            </DockPanel>
+            
+
+            <Grid Grid.IsSharedSizeScope="True">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition SharedSizeGroup="G1"/>
+                </Grid.RowDefinitions>
+
+                <materialDesign:Card Style="{StaticResource CardStyle}"
+                                     Grid.Row="0" Grid.Column="0">
                     <StackPanel Orientation="Vertical"
                             Margin="0,0,5,20">
                         <TextBlock Text="{x:Static p:Resources.AS_DailyWorkHours}"
@@ -90,8 +116,8 @@
                     </StackPanel>
                 </materialDesign:Card>
 
-
-                <materialDesign:Card Style="{StaticResource CardStyle}">
+                <materialDesign:Card Style="{StaticResource CardStyle}"
+                                     Grid.Row="0" Grid.Column="1">
 
                     <StackPanel Orientation="Vertical"
                             Margin="0,0,5,20">
@@ -106,8 +132,37 @@
                               Width="50"/>
                     </StackPanel>
                 </materialDesign:Card>
+                
+                <materialDesign:Card Style="{StaticResource CardStyle}"
+                                     Grid.Row="1" Grid.Column="0">
 
-            </UniformGrid>
+                    <StackPanel Orientation="Vertical"
+                            Margin="0,0,5,20">
+                        <TextBlock Text="{x:Static p:Resources.AS_ItemUpdatePeriod}"
+                                   TextWrapping="Wrap"
+                               Margin="0,5"/>
+                        <TextBox Text="{Binding Path=ItemMinutesCheck, UpdateSourceTrigger=PropertyChanged}"
+                              HorizontalAlignment="Left"
+                              Width="50"/>
+                    </StackPanel>
+                </materialDesign:Card>
+                
+                <materialDesign:Card Style="{StaticResource CardStyle}"
+                                     Grid.Row="1" Grid.Column="1">
+
+                    <StackPanel Orientation="Vertical"
+                            Margin="0,0,5,20">
+                        <TextBlock Text="{x:Static p:Resources.AS_OldReviewDays}"
+                                   TextWrapping="Wrap"
+                               Margin="0,5"/>
+                        <TextBox Text="{Binding Path=ItemMinutesCheck, UpdateSourceTrigger=PropertyChanged}"
+                              HorizontalAlignment="Left"
+                              Width="50"/>
+                    </StackPanel>
+                </materialDesign:Card>
+
+
+            </Grid>
 
             <materialDesign:Card Style="{StaticResource CardStyle}">
                 <StackPanel Orientation="Vertical">

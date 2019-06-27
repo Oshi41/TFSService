@@ -19,7 +19,7 @@ namespace Gui.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -313,11 +313,29 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Время между обновлениями рабочих элементов (в минутах).
+        /// </summary>
+        public static string AS_ItemUpdatePeriod {
+            get {
+                return ResourceManager.GetString("AS_ItemUpdatePeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Загрузка....
         /// </summary>
         public static string AS_Load {
             get {
                 return ResourceManager.GetString("AS_Load", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Путь к файлу логов.
+        /// </summary>
+        public static string AS_LogPath {
+            get {
+                return ResourceManager.GetString("AS_LogPath", resourceCulture);
             }
         }
         
@@ -399,6 +417,15 @@ namespace Gui.Properties {
         public static string AS_NotAWebAddress_Error {
             get {
                 return ResourceManager.GetString("AS_NotAWebAddress_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Количество дней, после которого запрос на проверку кода считается устаревшим.
+        /// </summary>
+        public static string AS_OldReviewDays {
+            get {
+                return ResourceManager.GetString("AS_OldReviewDays", resourceCulture);
             }
         }
         

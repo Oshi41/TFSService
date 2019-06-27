@@ -8,6 +8,8 @@ using System.Windows.Input;
 using Gui.Helper;
 using Gui.Settings;
 using Gui.ViewModels.Rules;
+using Microsoft.TeamFoundation.VersionControl.Common.Internal;
+using Microsoft.Win32;
 using TfsAPI.Interfaces;
 using TfsAPI.RulesNew;
 
@@ -21,17 +23,33 @@ namespace Gui.ViewModels.DialogViewModels
         private string connection;
         private TimeSpan dayDuration;
         private WroteOffStrategy strategy;
+        private string logsPath;
+        private int itemMinutesCheck;
+        private int oldReviewDay;
         private readonly ITfsApi api;
 
         public SettingsViewModel(string currentConnection, ITfsApi api)
         {
-            ConnectCommand = new ObservableCommand(OnConnect);
-            SubmitCommand = new ObservableCommand(OnSave, OnCanSave);
             this.api = api;
 
-            Init(currentConnection);            
+            ConnectCommand = new ObservableCommand(OnConnect);
+            SubmitCommand = new ObservableCommand(OnSave, OnCanSave);
+            ChooseLogFileCommand = new ObservableCommand(OnChooseFile);
+
+
+            Init(currentConnection);
         }
-               
+
+        private void OnChooseFile()
+        {
+            var dlg = new OpenFileDialog();
+
+            if (dlg.ShowDialog() == true)
+            {
+                LogsPath = dlg.FileName;
+            }
+        }
+
         /// <summary>
         ///     Обновляем по настройкам
         /// </summary>
@@ -46,6 +64,9 @@ namespace Gui.ViewModels.DialogViewModels
                 strategy = settings.Strategy;
                 RuleEditor = new RuleEditorViewModel(settings.Rules);
                 Name = api.Name;
+                logsPath = settings.LogPath;
+                itemMinutesCheck = settings.ItemMinutesCheck;
+                oldReviewDay = settings.OldReviewDay;
             }
         }
 
@@ -63,6 +84,9 @@ namespace Gui.ViewModels.DialogViewModels
                 settings.Strategy = Strategy;
 
                 settings.Rules = RuleEditor.Rules;
+                settings.LogPath = LogsPath;
+                settings.ItemMinutesCheck = ItemMinutesCheck;
+                settings.OldReviewDay = OldReviewDay;
             }
         }
 
@@ -93,6 +117,7 @@ namespace Gui.ViewModels.DialogViewModels
         ///     Подключение к другому TFS
         /// </summary>
         public ICommand ConnectCommand { get; }
+        public ICommand ChooseLogFileCommand { get; }
 
         public int Capacity
         {
@@ -121,6 +146,12 @@ namespace Gui.ViewModels.DialogViewModels
         public RuleEditorViewModel RuleEditor { get; set; }
 
         public string Name { get; private set; }
+
+        public string LogsPath { get => logsPath; set => SetProperty(ref logsPath, value); }
+
+        public int ItemMinutesCheck { get => itemMinutesCheck; set => SetProperty(ref itemMinutesCheck, value); }
+
+        public int OldReviewDay { get => oldReviewDay; set => SetProperty(ref oldReviewDay, value); }
 
         #endregion
     }
