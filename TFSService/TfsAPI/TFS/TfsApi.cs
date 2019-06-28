@@ -4,9 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation;
-using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Common;
+using Microsoft.TeamFoundation.Framework.Client;
+using Microsoft.TeamFoundation.Framework.Common;
+using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.VisualStudio.Services.Common;
@@ -30,6 +32,9 @@ namespace TfsAPI.TFS
             _itemStore = _project.GetService<WorkItemStore>();
             _linking = _project.GetService<ILinking>();
             _versionControl = _project.GetService<VersionControlServer>();
+            _managementService = _project.GetService<IIdentityManagementService2>();
+            _teamService = _project.GetService<TfsTeamService>();
+
 
             Name = owner ?? _itemStore.UserDisplayName;
 
@@ -89,6 +94,8 @@ namespace TfsAPI.TFS
         private readonly WorkItemStore _itemStore;
         private readonly ILinking _linking;
         private readonly VersionControlServer _versionControl;
+        private readonly IIdentityManagementService2 _managementService;
+        private readonly TfsTeamService _teamService;
 
         /// <summary>
         ///     Запрос на получение всех элементов на мне
@@ -481,6 +488,30 @@ namespace TfsAPI.TFS
         }
 
         public string Name { get; }
+
+        #endregion
+
+        #region Private
+
+        /// <summary>
+        /// Глубокий поиск по TFS. Возможно, займет кучу ресурсов. Оптимизовать
+        /// </summary>
+        /// <returns></returns>
+        private IList<TeamFoundationTeam> GetAllMyTeams()
+        {
+            return _itemStore
+                // Проъожу по всем проектам
+                .Projects
+                .OfType<Project>()
+                // Вытаскиваю у каждого список команд
+                .SelectMany(x => _managementService.ListApplicationGroups(x.Uri.ToString(), ReadIdentityOptions.ExtendedProperties))
+                // Проверяю вхождение в эту группу
+                .Where(x => _managementService.IsMember(x.Descriptor, _project.AuthorizedIdentity.Descriptor))
+                // прочел команду из GUID
+                .Select(x => _teamService.ReadTeam(x.TeamFoundationId, null))
+                .Where(x => x != null)
+                .ToList();                
+        }
 
         #endregion
     }

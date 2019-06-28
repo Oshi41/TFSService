@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization.Json;
+using System.Windows.Documents;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.Core.WebApi;
@@ -17,8 +20,10 @@ using Microsoft.TeamFoundation.Work.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+using Microsoft.VisualStudio.Services.WebApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TfsAPI.Constants;
+using TfsAPI.Extentions;
 using TfsAPI.TFS;
 
 namespace Tests
@@ -180,17 +185,127 @@ namespace Tests
         }
 
         [TestMethod]
-        public void CegCapacity()
+        public void TestCollectionGuid()
         {
             var tfs =
                 new TfsTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
 
-            
+            var workItemStore = tfs.GetService<WorkItemStore>();
+            var project = workItemStore.Projects["SNES"];
+
+            var etalon = Guid.Parse("4274f126-955e-4fc8-97a3-cf301f69679c");
+            Assert.AreEqual(etalon, project.Guid);
+        }
+
+        [TestMethod]
+        public void TestTeamGuid()
+        {
+            var etalon = Guid.Parse("750f400e-c39b-4317-a660-9f62f528ef5d");
+
+            var tfs =
+                new TfsTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
+
+            var workItemStore = tfs.GetService<WorkItemStore>();
+            var teamService = tfs.GetService<TfsTeamService>();
+
+            var project = workItemStore.Projects["SNES"];
+            var teams = teamService.QueryTeams(project.Uri.ToString()).ToList();
+
+            foreach (var team in teams)
+            {
+                if (team.Identity.TeamFoundationId == etalon)
+                {
+                    return;
+                }
+            }
+
+            Assert.Fail("Cannot find team");
+        }
+
+        [TestMethod]
+        public void GetIterationCapacity()
+        {
+            var tfs =
+                new TfsTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
+
+            var workItemStore = tfs.GetService<WorkItemStore>();
+            var teamService = tfs.GetService<TfsTeamService>();
+            var css = tfs.GetService<ICommonStructureService>();
+            var ims = tfs.GetService<IIdentityManagementService2>();
+
+
+            var allMineGroups = workItemStore
+                .Projects
+                .OfType<Project>()
+                .SelectMany(x => ims.ListApplicationGroups(x.Uri.ToString(), ReadIdentityOptions.ExtendedProperties))
+                .Where(x => ims.IsMember(x.Descriptor, tfs.AuthorizedIdentity.Descriptor))
+                .ToList();
+
+
+
+            //var project = workItemStore.Projects["SNES"];
+
+            ////var mineGroups = teamService
+            ////    .QueryTeams(project.Uri.ToString())
+            ////    .Where(x => ims.IsMember(x.Identity.Descriptor, tfs.AuthorizedIdentity.Descriptor))
+            ////    .ToList();
+
+            //var team = teamService.QueryTeams(project.Uri.ToString()).FirstOrDefault();
+
+            //var node = css
+            //           .ListStructures(project.Uri.ToString())
+            //           .Single(item => item.StructureType == "ProjectLifecycle");
+
+            //var iter = project
+            //    .IterationRootNodes
+            //    .OfType<Node>()
+            //    .Select(x => css.GetNodeFromPath($"{node.Path}\\{x.Name}"))
+            //    .Where(x => x.IsCurrent())
+            //    .FirstOrDefault();
+
+
+            //var request = $"{tfs.Uri}/{project.Store.TeamProjectCollection.SessionId}/{project.Id}/{team.Identity.Descriptor.Identifier}/_apis/work/teamsettings/iterations/{iter.Name}";
+
+
+            //var allProjects = workItemStore.Projects.OfType<Project>().ToList();
+
+            //foreach (var proj in allProjects)
+            //{
+            //    try
+            //    {
+            //        var teams = GetMyTeams(teamService, proj);
+
+
+
+            //        
+            //        {
+            //            Console.WriteLine(sprint.Name);
+            //            
+            //            Console.WriteLine(iteration.StartDate);
+            //            Console.WriteLine(iteration.FinishDate);
+
+            //            if (iteration.IsCurrent())
+            //            {
+
+
+
+
+            //            }
+            //        }
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        continue;
+            //    }
+
+            //}
+
+
             // var map = GetProjectsWithSettings(tfs.GetService<ProjectHttpClient>(), tfs.GetService<TeamSettingsConfigurationService>());
 
-            IIdentityManagementService ims = tfs.GetService<IIdentityManagementService>();
+            //IIdentityManagementService ims = tfs.GetService<IIdentityManagementService>();
 
-            var identity = ims.ReadIdentity(IdentitySearchFactor.DisplayName, tfs.AuthorizedIdentity.DisplayName, MembershipQuery.Direct, ReadIdentityOptions.None);
+            //var identity = ims.ReadIdentity(IdentitySearchFactor.DisplayName, tfs.AuthorizedIdentity.DisplayName, MembershipQuery.Direct, ReadIdentityOptions.None);
 
             //WorkItemTrackingHttpClient workItemTrackingClient = tfs.GetClient<WorkItemTrackingHttpClient>();
 
@@ -220,6 +335,45 @@ namespace Tests
 
         }
 
+        [TestMethod]
+        public void TestJson()
+        {
+            var file = @"C:\Users\a.sheglov\Desktop\example.txt";
+            var json = File.ReadAllText(file);
+
+            var result = CapacitySearcher.Parse(json);
+        }
+
+
+
+        private TeamSettingsIteration GetCurrentIteration(Project project, TeamFoundationIdentity teamId, WorkHttpClient client)
+        {
+            var iterations = client.GetTeamIterationsAsync(new TeamContext(project.Name)).Result;
+            return iterations.FirstOrDefault(x => x.IsCurrent());
+        }
+
+        private List<TeamFoundationTeam> GetMyTeams(TfsTeamService teamService, Project project)
+        {
+            try
+            {
+                var properties = new List<string>();
+
+                var teamGroups = teamService.QueryTeams(project.Uri.ToString());
+
+                var allTeams = teamGroups
+                               .Select(x => teamService.ReadTeam(x.Identity.Descriptor, properties))
+                               .AsParallel()
+                               .ToList();
+
+                return allTeams;
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine(e);
+                return new List<TeamFoundationTeam>();
+            }
+        }
+
         private Dictionary<TeamProjectReference, List<TeamConfiguration>> GetProjectsWithSettings(ProjectHttpClient css, TeamSettingsConfigurationService team)
         {
             var result = new Dictionary<TeamProjectReference, List<TeamConfiguration>>();
@@ -239,9 +393,9 @@ namespace Tests
                         result[project] = settings;
                     }
                 }
-                catch 
+                catch
                 {
-                    continue; 
+                    continue;
                 }
             }
 

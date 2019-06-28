@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.Work.WebApi;
 
 namespace TfsAPI.Extentions
@@ -12,14 +13,30 @@ namespace TfsAPI.Extentions
         /// <returns></returns>
         public static bool IsCurrent(this TeamSettingsIteration iteration)
         {
-            if (iteration?.Attributes?.StartDate == null
-                || iteration.Attributes?.FinishDate == null)
-                return false;
+            return IsCurrent(iteration?.Attributes?.StartDate, iteration?.Attributes?.FinishDate);
+        }
 
-            var now = DateTime.Now;
+        /// <summary>
+        /// Является ли это данной итерацией
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        public static bool IsCurrent(this NodeInfo info)
+        {
+            return IsCurrent(info?.StartDate, info?.FinishDate);
+        }
 
-            return iteration.Attributes.StartDate <= now
-                   && now <= iteration.Attributes.FinishDate;
+        private static bool IsCurrent(DateTime? start, DateTime? finish)
+        {
+            if (start.HasValue && finish.HasValue)
+            {
+                var now = DateTime.Now.Date;
+
+                return start.Value.Date <= now
+                       && now <= finish.Value.Date;
+            }
+
+            return false;
         }
     }
 }
