@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.TeamFoundation.VersionControl.Client;
+using Microsoft.TeamFoundation.Work.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Constants;
+using TfsAPI.TFS;
 
 namespace TfsAPI.Interfaces
 {
@@ -61,9 +63,18 @@ namespace TfsAPI.Interfaces
 
         /// <summary>
         ///     Возвращает кол-во часов, которое необходимо списать за день
+        ///     TODO переменовать в GetCurrentCapacity либо перегрузить метод с передачей дат
         /// </summary>
         /// <returns></returns>
         int GetCapacity();
+
+        /// <summary>
+        /// Возвращает список 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="start"></param>
+        /// <returns></returns>
+        List<TeamCapacity> GetCapacity(DateTime start, DateTime end);
 
         /// <summary>
         ///     Получает список моих рабочих элементов.

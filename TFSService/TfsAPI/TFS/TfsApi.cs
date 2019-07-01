@@ -10,6 +10,7 @@ using Microsoft.TeamFoundation.Framework.Client;
 using Microsoft.TeamFoundation.Framework.Common;
 using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.VersionControl.Client;
+using Microsoft.TeamFoundation.Work.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.VisualStudio.Services.Common;
 using TfsAPI.Constants;
@@ -199,11 +200,19 @@ namespace TfsAPI.TFS
             return items.OfType<WorkItem>().ToList();
         }
 
-        public int GetCapacity()
+        public virtual int GetCapacity()
         {
-            // TODO scan inet for answer!!!
+            var today = DateTime.Today;
+            var answer = GetCapacity(today, today);
+            var result = answer.Sum(x => x.GetCapacity(Name));
 
-            return 7;
+            return (int)result;
+        }
+
+        public List<TeamCapacity> GetCapacity(DateTime start, DateTime end)
+        {
+            var searcher = new CapacitySearcher(_project, _itemStore, _managementService, _teamService, _project.GetClient<WorkHttpClient>());
+            return searcher.SearchCapacities(Name, start, end);
         }
 
         public virtual IList<WorkItem> GetMyWorkItems()
@@ -485,7 +494,7 @@ namespace TfsAPI.TFS
             var items = QueryItems(builder.ToString());
 
             return items.ToDictionary(x => x.Id);
-        }
+        }        
 
         public string Name { get; }
 
@@ -493,25 +502,7 @@ namespace TfsAPI.TFS
 
         #region Private
 
-        /// <summary>
-        /// Глубокий поиск по TFS. Возможно, займет кучу ресурсов. Оптимизовать
-        /// </summary>
-        /// <returns></returns>
-        private IList<TeamFoundationTeam> GetAllMyTeams()
-        {
-            return _itemStore
-                // Проъожу по всем проектам
-                .Projects
-                .OfType<Project>()
-                // Вытаскиваю у каждого список команд
-                .SelectMany(x => _managementService.ListApplicationGroups(x.Uri.ToString(), ReadIdentityOptions.ExtendedProperties))
-                // Проверяю вхождение в эту группу
-                .Where(x => _managementService.IsMember(x.Descriptor, _project.AuthorizedIdentity.Descriptor))
-                // прочел команду из GUID
-                .Select(x => _teamService.ReadTeam(x.TeamFoundationId, null))
-                .Where(x => x != null)
-                .ToList();                
-        }
+        
 
         #endregion
     }

@@ -226,6 +226,34 @@ namespace TfsAPI.TFS
             return result;
         }
 
+        // TODO enable cache
+
+        //public override int GetCapacity()
+        //{
+            ////
+            //// Сделаю хэширование запроса
+            //// 
+
+            //// ключ учитывает имя пользователя
+            //var key = $"CurrentCapacityof_{Name}_key";
+
+            //if (!_cache.TryGetValue<int>(key, out var result))
+            //{
+            //    result = base.GetCapacity();
+
+            //    // Запрос раз в день
+            //    var options = new MemoryCacheEntryOptions()
+            //        .SetAbsoluteExpiration(TimeSpan.FromDays(1));
+
+            //    lock (_myWorkItemsKey)
+            //    {
+            //        _cache.Set(key, result, options);
+            //    }
+            //}
+
+            //return result;
+        //}
+
         #endregion
     }
 }

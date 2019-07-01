@@ -228,19 +228,30 @@ namespace Tests
             var tfs =
                 new TfsTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
 
-            var workItemStore = tfs.GetService<WorkItemStore>();
-            var teamService = tfs.GetService<TfsTeamService>();
-            var css = tfs.GetService<ICommonStructureService>();
-            var ims = tfs.GetService<IIdentityManagementService2>();
+            var searcher = new CapacitySearcher(tfs);
+
+            var cap = searcher.SearchActualCapacity(tfs.AuthorizedIdentity.DisplayName);
+
+            //var workItemStore = tfs.GetService<WorkItemStore>();
+            //var teamService = tfs.GetService<TfsTeamService>();
+            //var css = tfs.GetService<ICommonStructureService>();
+            //var ims = tfs.GetService<IIdentityManagementService2>();
+            //var client = tfs.GetClient<WorkHttpClient>();
 
 
-            var allMineGroups = workItemStore
-                .Projects
-                .OfType<Project>()
-                .SelectMany(x => ims.ListApplicationGroups(x.Uri.ToString(), ReadIdentityOptions.ExtendedProperties))
-                .Where(x => ims.IsMember(x.Descriptor, tfs.AuthorizedIdentity.Descriptor))
-                .ToList();
+            ////var allMineGroups = workItemStore
+            ////    .Projects
+            ////    .OfType<Project>()
+            ////    .SelectMany(x => ims.ListApplicationGroups(x.Uri.ToString(), ReadIdentityOptions.ExtendedProperties))
+            ////    .Where(x => ims.IsMember(x.Descriptor, tfs.AuthorizedIdentity.Descriptor))
+            ////    .ToList();
 
+
+            //var project = workItemStore.Projects["SNES"];
+
+            //var iter = client.GetTeamIterationsAsync(new TeamContext(project.Guid), "current").Result;
+
+            //var guid = iter[0].Id;
 
 
             //var project = workItemStore.Projects["SNES"];
