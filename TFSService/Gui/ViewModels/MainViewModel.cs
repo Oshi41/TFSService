@@ -344,6 +344,12 @@ namespace Gui.ViewModels
                 return false;
             }
 
+            if (!(item.Fields[WorkItems.Fields.Remaining]?.Value is int remaining) || remaining == 0)
+            {
+                Trace.WriteLine($"{nameof(MainViewModel)}: Task {item?.Id} is not exist or remaining time is over");
+                return false;
+            }
+
             if (!_apiObserve.IsAssignedToMe(item))
                 Trace.WriteLine($"{nameof(MainViewModel)}: Task is not assigned to me");
 

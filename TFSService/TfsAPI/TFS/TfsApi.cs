@@ -290,7 +290,7 @@ namespace TfsAPI.TFS
                             $"Parent links count: {task.Links.Count}");
 
             // После сохранения привязываем
-            parent.Links.Add(new RelatedLink(link.ReverseEnd, task.Id));
+            task.Links.Add(new RelatedLink(link.ReverseEnd, parent.Id));
             SaveElement(task);
 
             Trace.WriteLine("--------- AFTER LINKING --------\n" +

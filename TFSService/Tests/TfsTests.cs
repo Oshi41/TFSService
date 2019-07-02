@@ -398,6 +398,23 @@ namespace Tests
             //        .ToList();
         }
 
+        [TestMethod]
+        public void LinkItems()
+        {
+            var tfs =
+                new TfsTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
+
+            var store = tfs.GetService<WorkItemStore>();
+
+            var task = store.GetWorkItem(81046);
+            var pbi = store.GetWorkItem(78218);
+
+            var link = store.WorkItemLinkTypes[WorkItems.LinkTypes.ParentLink];
+
+            task.Links.Add(new RelatedLink(link.ReverseEnd, pbi.Id));
+            task.Save();
+        }
+
 
         private TeamSettingsIteration GetCurrentIteration(Project project, TeamFoundationIdentity teamId, WorkHttpClient client)
         {

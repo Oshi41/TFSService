@@ -35,7 +35,7 @@
             /// <summary>
             ///     Тип связи Parent -> Child
             /// </summary>
-            public const string ParentLink = "Syste.LinkTypes.Hierarhy";
+            public const string ParentLink = "System.LinkTypes.Hierarchy";
         }
 
         public static class ClosedStatus
