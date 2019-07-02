@@ -26,7 +26,7 @@ namespace TfsAPI.TFS
         {
             _currentItem = currentItem;
             _versionControl = _project.GetService<VersionControlServer>();
-            _hourTimer = new Timer(1000);
+            _hourTimer = new Timer(1000 * 60 * 60);
             _hourTimer.Elapsed += (sender, args) => RequestUpdate(true);
 
             _itemsTimer = new Timer(1000 * 60 * itemCheck);
@@ -61,8 +61,6 @@ namespace TfsAPI.TFS
 
         private async void RequestUpdate(bool timerEllapsed)
         {
-            _hourTimer.Stop();
-
             // Находимся в режиме ожилания
             if (_paused) return;
 

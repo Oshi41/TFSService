@@ -26,7 +26,7 @@ using TfsAPI.TFS.Capacity;
 
 namespace TfsAPI.TFS
 {
-    public class CapacitySearcher
+    public class CapacitySearcher : ICapacitySearcher
     {
         #region Fields
 
@@ -123,7 +123,7 @@ namespace TfsAPI.TFS
         /// Глубокий поиск по TFS. Возможно, займет кучу ресурсов. TODO Оптимизовать
         /// </summary>
         /// <returns></returns>
-        private IList<TeamFoundationTeam> GetAllMyTeams()
+        public IList<TeamFoundationTeam> GetAllMyTeams()
         {
             return ItemStore
                 // Проъожу по всем проектам

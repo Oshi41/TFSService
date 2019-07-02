@@ -6,6 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Json;
 using System.Windows.Documents;
+using Microsoft.TeamFoundation.Build.Client;
+using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.Core.WebApi;
@@ -25,6 +27,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.TFS;
+using TfsAPI.TFS.Build_Defenitions;
 
 namespace Tests
 {
@@ -414,6 +417,25 @@ namespace Tests
             task.Links.Add(new RelatedLink(link.ReverseEnd, pbi.Id));
             task.Save();
         }
+
+        [TestMethod]
+        public void TestBuild()
+        {
+            var tfs =
+                new TfsTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
+
+            var client = tfs.GetClient<BuildHttpClient>();
+            var buildServer = tfs.GetService<IBuildServer>();
+            var store = tfs.GetService<WorkItemStore>();
+
+            var project = store.Projects["SNES"];
+
+            var observer = new BuildQueueObserver(tfs.AuthorizedIdentity.DisplayName, client, buildServer, project.Guid);
+
+            observer.FindBuilds(finish: DateTime.Now);
+
+        }
+
 
 
         private TeamSettingsIteration GetCurrentIteration(Project project, TeamFoundationIdentity teamId, WorkHttpClient client)
