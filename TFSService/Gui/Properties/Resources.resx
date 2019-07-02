@@ -195,6 +195,9 @@
   <data name="AS_FirstConnection" xml:space="preserve">
     <value>Первое подключение</value>
   </data>
+  <data name="AS_GetCapacityFromTfs" xml:space="preserve">
+    <value>Брать из TFS</value>
+  </data>
   <data name="AS_History" xml:space="preserve">
     <value>История</value>
   </data>

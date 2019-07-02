@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.Core.WebApi;
@@ -21,6 +22,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using TfsAPI.Extentions;
+using TfsAPI.TFS.Capacity;
 
 namespace TfsAPI.TFS
 {
@@ -33,12 +35,13 @@ namespace TfsAPI.TFS
         private IIdentityManagementService2 _managementService;
         private TfsTeamService _teamService;
         private WorkHttpClient _workClient;
+        private ICommonStructureService4 _structureService;
 
         #endregion
 
         #region Properties
 
-        private WorkItemStore ItemStore => _itemStore ?? (_itemStore = _connection?.GetService<WorkItemStore>());
+        protected WorkItemStore ItemStore => _itemStore ?? (_itemStore = _connection?.GetService<WorkItemStore>());
 
         private IIdentityManagementService2 ManagementService => _managementService ?? (_managementService = _connection?.GetService<IIdentityManagementService2>());
 
@@ -46,19 +49,22 @@ namespace TfsAPI.TFS
 
         private WorkHttpClient WorkClient => _workClient ?? (_workClient = _connection.GetClient<WorkHttpClient>());
 
+        private ICommonStructureService4 StructureService => _structureService ?? (_structureService = _connection.GetService<ICommonStructureService4>());
         #endregion
 
         public CapacitySearcher(TfsTeamProjectCollection connection,
             WorkItemStore itemStore = null,
             IIdentityManagementService2 managementService = null,
             TfsTeamService teamService = null,
-            WorkHttpClient workClient = null)
+            WorkHttpClient workClient = null,
+            ICommonStructureService4 structureService = null)
         {
             _connection = connection;
             _itemStore = itemStore;
             _managementService = managementService;
             _teamService = teamService;
             _workClient = workClient;
+            _structureService = structureService;
         }
 
 
@@ -69,32 +75,25 @@ namespace TfsAPI.TFS
         /// <returns></returns>
         public int SearchActualCapacity(string name)
         {
-            var teamCapacities = DeepCapacitySearch()
-                .SelectMany(x => x)
-                .AsParallel();
+            var now = DateTime.Now;
+            var caps = SearchCapacities(name, now, now);
 
-            var searched = teamCapacities.ToList();
-
-            var mine = searched
-                .Where(x => x.TeamMember.DisplayName.Contains(name)
-                    && x.Activities.Sum(y => y.CapacityPerDay) > 0).ToList();
-
-            return (int)mine.Sum(x => x.Activities.Sum(j => j.CapacityPerDay));
+            return caps.Sum(x => x.GetCapacity(name));
         }
 
-        public List<TeamCapacity> SearchCapacities(string name, DateTime start, DateTime end)
+        public virtual List<TeamCapacity> SearchCapacities(string name, DateTime start, DateTime end)
         {
             // Получил все команды, где я принимаю участие
             var myTeams = GetAllMyTeams();
 
             return ItemStore
                 .Projects
-                .OfType<Project>()
+                .OfType<Microsoft.TeamFoundation.WorkItemTracking.Client.Project>()
                 .Select(project =>
                 {
                     // Ищу итерацию
-                    var iterations = FindIterations(project, start, end).Result;
-                    
+                    var iterations = FindIterations(project, start, end);
+
                     // Не смог найти ни одной итерации, смысла в этом проекте нет возвращаю null
                     if (iterations.IsNullOrEmpty())
                         return null;
@@ -109,7 +108,9 @@ namespace TfsAPI.TFS
                         // Прохожу по всем итерациям
                         .Iterations
                         // Запрашиваю трудозатраты всей команды
-                        .Select(iter => QuerryCapacity(tuple.Project, team, iter).Result)))
+                        .Select(iter => QuerryCapacity(tuple.Project, team, iter))))
+                // Ищу там, где есть доступ
+                .Where(x => x != null)
                 .AsParallel()
                 // Я там должен участвовать
                 .Where(x => x.Contains(name))
@@ -117,29 +118,6 @@ namespace TfsAPI.TFS
         }
 
         #region Private
-
-        private IEnumerable<List<TeamMemberCapacity>> DeepCapacitySearch()
-        {
-            // Получил все команды, где я принимаю участие
-            var myTeams = GetAllMyTeams();
-
-            foreach (Project project in ItemStore.Projects)
-            {
-                var currentIteration = GetCurrentIteration(project).Result;
-                if (currentIteration == null)
-                    continue;
-
-
-                foreach (var team in myTeams)
-                {
-                    var projId = project?.Guid;
-                    var teamid = team?.Identity?.TeamFoundationId;
-                    var iterId = currentIteration?.Id;
-
-                    yield return QuerryCapacity(projId, teamid, iterId).Result;
-                }
-            }
-        }
 
         /// <summary>
         /// Глубокий поиск по TFS. Возможно, займет кучу ресурсов. TODO Оптимизовать
@@ -150,7 +128,7 @@ namespace TfsAPI.TFS
             return ItemStore
                 // Проъожу по всем проектам
                 .Projects
-                .OfType<Project>()
+                .OfType<Microsoft.TeamFoundation.WorkItemTracking.Client.Project>()
                 // Вытаскиваю у каждого список команд
                 .SelectMany(x => ManagementService.ListApplicationGroups(x.Uri.ToString(), ReadIdentityOptions.ExtendedProperties))
                 // Проверяю вхождение в эту группу
@@ -161,60 +139,59 @@ namespace TfsAPI.TFS
                 .ToList();
         }
 
+        private TeamCapacity QuerryCapacity(Microsoft.TeamFoundation.WorkItemTracking.Client.Project project, TeamFoundationTeam team, Iteration iter)
+        {
+            if (project == null || team == null || iter == null)
+                return null;
+
+            var members = QuerryCapacity(project.Guid, team.Identity.TeamFoundationId, iter.Id);
+            if (members == null)
+            {
+                return null;
+            }
+
+            return new TeamCapacity(project, team, iter, members);
+
+        }
+
         /// <summary>
-        /// Получаю список итерация проекта.
-        /// <para>Если доступа нет, возвращаю null</para>
+        /// Ищем среди всех итераций проекта подходящие по дате
         /// </summary>
         /// <param name="project"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
         /// <returns></returns>
-        private async Task<TeamSettingsIteration> GetCurrentIteration(Project project)
+        protected List<Iteration> FindIterations(Microsoft.TeamFoundation.WorkItemTracking.Client.Project project, DateTime start, DateTime end)
         {
             try
             {
-                var context = new Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext(project.Guid);
-                var iterations = await WorkClient.GetTeamIterationsAsync(context, "current");
-                return iterations.FirstOrDefault();
-            }
-            catch (Exception e)
-            {
-                // possibly do not have access
-                Trace.WriteLine(e);
-                return null;
-            }
-        }
+                var iters = project
+                            .IterationRootNodes
+                            .OfType<Node>()
+                            .Select(x => StructureService.GetNode(x.Uri.AbsoluteUri))
+                            .AsParallel()
+                            .ToList();
 
-        private async Task<List<TeamSettingsIteration>> FindIterations(Project project, DateTime start, DateTime end)
-        {
-            try
-            {
-                var context = new Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext(project.Guid);
-                var iterations = await WorkClient.GetTeamIterationsAsync(context);
-
-                return iterations.Where(x => x.InRange(start, end)).ToList();
+                return iters
+                       .Where(x => x.InRange(start, end))
+                       .Select(x => new Iteration(x))
+                       .ToList();
             }
             catch (Exception e)
             {
                 Trace.WriteLine(e);
                 return null;
             }
-        }
-
-        private async Task<TeamCapacity> QuerryCapacity(Project project, TeamFoundationTeam team, TeamSettingsIteration currentIteration)
-        {
-            if (project == null || team == null || currentIteration == null)
-                return null;
-
-            return new TeamCapacity(project, team, currentIteration, await QuerryCapacity(project.Guid, team.Identity.TeamFoundationId, currentIteration.Id));
         }
 
         /// <summary>
-        /// Возвращаю список участников проекта с их хар-ками
+        /// Возвращаю список участников проекта с их хар-ками. В случае ошибки возвращаю null
         /// </summary>
         /// <param name="project">GUID Проект</param>
         /// <param name="teamId">GUID команды</param>
         /// <param name="iteration">GUID итерации</param>
         /// <returns></returns>
-        private async Task<List<TeamMemberCapacity>> QuerryCapacity(Guid? project, Guid? teamId, Guid? iteration)
+        private List<TeamMemberCapacity> QuerryCapacity(Guid? project, Guid? teamId, Guid? iteration)
         {
             if (!project.HasValue || !teamId.HasValue || !iteration.HasValue)
             {
@@ -233,10 +210,10 @@ namespace TfsAPI.TFS
 
             try
             {
-                var resp = await webReq.GetResponseAsync() as HttpWebResponse;
+                var resp = webReq.GetResponse() as HttpWebResponse;
                 using (var reader = new StreamReader(resp.GetResponseStream()))
                 {
-                    var result = await reader.ReadToEndAsync();
+                    var result = reader.ReadToEnd();
 
                     var parsed = Parse(result);
 
@@ -246,9 +223,13 @@ namespace TfsAPI.TFS
             catch (Exception e)
             {
                 Trace.WriteLine(e);
-                return new List<TeamMemberCapacity>();
+                return null;
             }
         }
+
+        #endregion
+
+        #region public static
 
         public static List<TeamMemberCapacity> Parse(string jsonRaw)
         {
@@ -260,6 +241,72 @@ namespace TfsAPI.TFS
             return result;
         }
 
-        #endregion
+        #endregion       
     }
+
+    class CachedCapacitySearcher : CapacitySearcher
+    {
+        private readonly MemoryCache _cache;
+
+        public CachedCapacitySearcher(
+            MemoryCache cache,
+            TfsTeamProjectCollection connection,
+            WorkItemStore itemStore = null,
+            IIdentityManagementService2 managementService = null,
+            TfsTeamService teamService = null,
+            WorkHttpClient workClient = null,
+            ICommonStructureService4 structureService = null)
+            : base(connection, itemStore, managementService, teamService, workClient, structureService)
+        {
+            _cache = cache;
+        }
+
+        private const string capacityKey = "capacityKey";
+        public override List<TeamCapacity> SearchCapacities(string name, DateTime start, DateTime end)
+        {
+            var changed = false;
+
+            // Смог вытащить кэшированные записи
+            if (_cache.TryGetValue<List<TeamCapacity>>(capacityKey, out var result))
+            {
+                // скопировал в локальную переменную
+                var i = start;
+
+                // Прохожу по всем дням, должен найти каждую итерацию
+                while (i <= end)
+                {
+                    // Не нашли итерацию, делаем запрос
+                    if (!result.Any(x => x.Iteration.InRange(i, i)))
+                    {
+                        var items = base.SearchCapacities(name, i, i);
+                        if (items.Any())
+                        {
+                            result.AddRange(items);
+                            changed = true;
+                        }                        
+                    }
+
+                    i = i.AddDays(1);
+                }
+            }
+            else
+            {
+                // ищу впервые
+                result = base.SearchCapacities(name, start, end);
+                changed = true;
+            }
+
+            // Были изменения
+            if (changed)
+            {
+                var options = new MemoryCacheEntryOptions()
+                        .SetSlidingExpiration(TimeSpan.FromDays(1));                
+
+                _cache.Set(capacityKey, result);
+            }            
+            
+            // На выход идут только те, которые попали в указанный предел
+            return result.Where(x => x.Iteration.InRange(start, end)).ToList();
+        }
+    }    
 }

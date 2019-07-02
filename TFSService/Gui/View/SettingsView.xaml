@@ -37,6 +37,8 @@
 
             <c:DescriptionConverter x:Key="DescriptionConverter" />
 
+            <c:InvertBoolConverter x:Key="InvertBoolConverter"/>
+
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -108,11 +110,17 @@
                                      Grid.Row="0" Grid.Column="0">
                     <StackPanel Orientation="Vertical"
                             Margin="0,0,5,20">
+                        <CheckBox x:Name="TfsCapacityCheck"
+                                  Content="{x:Static p:Resources.AS_GetCapacityFromTfs}"
+                                  IsChecked="{Binding Path=CapacityByUser, Converter={StaticResource InvertBoolConverter}}"/>
+                        
                         <TextBlock Text="{x:Static p:Resources.AS_DailyWorkHours}"
-                               Margin="0,5"/>
+                               Margin="0,5"/>                        
                         <TextBox Text="{Binding Path=Capacity, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
-                              HorizontalAlignment="Left"
-                              Width="50"/>
+                                 IsReadOnly="{Binding ElementName=TfsCapacityCheck, Path=IsChecked}"
+                                 HorizontalAlignment="Left"
+                                 Width="50"/>
+                        
                     </StackPanel>
                 </materialDesign:Card>
 

@@ -355,6 +355,48 @@ namespace Tests
             var result = CapacitySearcher.Parse(json);
         }
 
+        [TestMethod]
+        public void TestIterations()
+        {
+            var tfs =
+                new TfsTeamProjectCollection(new Uri("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
+
+            var store = tfs.GetService<WorkItemStore>();
+            var structure = tfs.GetService<ICommonStructureService4>();
+            var client = tfs.GetClient<WorkHttpClient>();
+
+            var project = store.Projects["SNES"];
+
+            var iterations = client.GetTeamIterationsAsync(new TeamContext(project.Name)).Result;
+
+            var iterations2 = project
+                              .IterationRootNodes
+                              .OfType<Node>()
+                              .Select(x => structure.GetNode(x.Uri.AbsoluteUri))
+                              .AsParallel()
+                              .ToList();
+
+            var same = iterations.Count == iterations2.Count;
+
+
+
+            //var iters = 
+            //        .Where(x => x.InRange(start, end))
+            //        .Select(x => new TeamSettingsIteration()
+            //        {
+            //            Attributes = new TeamIterationAttributes
+            //            {
+            //                FinishDate = x.FinishDate,
+            //                StartDate = x.StartDate,
+            //            },
+            //            Path = x.Path,
+            //            Name = x.Name,
+            //            Url = x.Uri,
+
+            //        })
+            //        .AsParallel()
+            //        .ToList();
+        }
 
 
         private TeamSettingsIteration GetCurrentIteration(Project project, TeamFoundationIdentity teamId, WorkHttpClient client)

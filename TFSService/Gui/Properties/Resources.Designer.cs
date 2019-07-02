@@ -295,6 +295,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Брать из TFS.
+        /// </summary>
+        public static string AS_GetCapacityFromTfs {
+            get {
+                return ResourceManager.GetString("AS_GetCapacityFromTfs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to История.
         /// </summary>
         public static string AS_History {

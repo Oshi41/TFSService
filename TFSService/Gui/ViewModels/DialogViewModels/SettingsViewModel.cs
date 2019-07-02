@@ -26,6 +26,7 @@ namespace Gui.ViewModels.DialogViewModels
         private string logsPath;
         private int itemMinutesCheck;
         private int oldReviewDay;
+        private bool _capacityByUser;
         private readonly ITfsApi api;
 
         public SettingsViewModel(string currentConnection, ITfsApi api)
@@ -59,7 +60,7 @@ namespace Gui.ViewModels.DialogViewModels
             using (var settings = Settings.Settings.Read())
             {
                 dayDuration = settings.Duration;
-                capacity = settings.Capacity;
+                capacity = settings.Capacity.Hours;
                 connection = currentConnection;
                 strategy = settings.Strategy;
                 RuleEditor = new RuleEditorViewModel(settings.Rules);
@@ -75,7 +76,8 @@ namespace Gui.ViewModels.DialogViewModels
             using (var settings = Settings.Settings.Read())
             {
                 settings.Duration = DayDuration;
-                settings.Capacity = Capacity;
+                settings.Capacity.Hours = Capacity;
+                settings.Capacity.ByUser = CapacityByUser;
 
                 if (string.IsNullOrEmpty(Connection)
                     && !settings.Connections.Contains(Connection))
@@ -124,6 +126,8 @@ namespace Gui.ViewModels.DialogViewModels
             get => capacity;
             set => SetProperty(ref capacity, value);
         }
+
+        public bool CapacityByUser { get => _capacityByUser; set => SetProperty(ref _capacityByUser, value); }
 
         public TimeSpan DayDuration
         {

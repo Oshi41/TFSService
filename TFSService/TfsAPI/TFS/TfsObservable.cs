@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,6 +11,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.Win32;
 using TfsAPI.Comarers;
+using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
 
 namespace TfsAPI.TFS
@@ -36,6 +38,7 @@ namespace TfsAPI.TFS
             MyItems = new List<WorkItem>(FindById(myItems).Values);
 
             _cache = new MemoryCache(new MemoryCacheOptions());
+            _searcher = new CachedCapacitySearcher(_cache, _project);
         }
 
         private IEnumerable<WorkItem> MyItems
@@ -112,6 +115,7 @@ namespace TfsAPI.TFS
         private List<WorkItem> _myItems = new List<WorkItem>();
 
         private readonly MemoryCache _cache;
+        private readonly CachedCapacitySearcher _searcher;
 
         #endregion
 
@@ -226,33 +230,10 @@ namespace TfsAPI.TFS
             return result;
         }
 
-        // TODO enable cache
-
-        //public override int GetCapacity()
-        //{
-            ////
-            //// Сделаю хэширование запроса
-            //// 
-
-            //// ключ учитывает имя пользователя
-            //var key = $"CurrentCapacityof_{Name}_key";
-
-            //if (!_cache.TryGetValue<int>(key, out var result))
-            //{
-            //    result = base.GetCapacity();
-
-            //    // Запрос раз в день
-            //    var options = new MemoryCacheEntryOptions()
-            //        .SetAbsoluteExpiration(TimeSpan.FromDays(1));
-
-            //    lock (_myWorkItemsKey)
-            //    {
-            //        _cache.Set(key, result, options);
-            //    }
-            //}
-
-            //return result;
-        //}
+        public override List<TeamCapacity> GetCapacity(DateTime start, DateTime end)
+        {
+            return _searcher.SearchCapacities(Name, start, end);
+        }
 
         #endregion
     }

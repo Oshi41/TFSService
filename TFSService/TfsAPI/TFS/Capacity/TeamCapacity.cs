@@ -9,24 +9,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TfsAPI.TFS.Capacity;
 
 namespace TfsAPI.TFS
 {
     public class TeamCapacity
     {
-        public Project Project { get;  }
-        public TeamSettingsIteration Iteration { get;  }
+        public Capacity.Project Project { get;  }
+        public Iteration Iteration { get;  }
 
-        public TeamFoundationTeam Team { get;  }
+        public Team Team { get;  }
 
         public List<TeamMemberCapacity> TeamMembers { get;  }
 
-        public TeamCapacity(Project p, TeamFoundationTeam t, TeamSettingsIteration i, IEnumerable<TeamMemberCapacity> m)
+        public TeamCapacity(Microsoft.TeamFoundation.WorkItemTracking.Client.Project p, TeamFoundationTeam t, TeamSettingsIteration i, IEnumerable<TeamMemberCapacity> m)
+            : this(new Capacity.Project(p), new Team(t), new Iteration(i), m)
         {
-            TeamMembers = m.ToList();
+        }
+
+        public TeamCapacity(Microsoft.TeamFoundation.WorkItemTracking.Client.Project p, TeamFoundationTeam t, Iteration i, IEnumerable<TeamMemberCapacity> m)
+            : this(new Capacity.Project(p), new Team(t), i, m)
+        {
+
+        }
+
+        public TeamCapacity(Capacity.Project p, Team t, Iteration i, IEnumerable<TeamMemberCapacity> members)
+        {
+            Project = p;
             Team = t;
             Iteration = i;
-            Project = p;
+            TeamMembers = members.ToList();
         }
 
         /// <summary>
@@ -66,8 +78,8 @@ namespace TfsAPI.TFS
             if (!(obj is TeamCapacity c))
                 return false;
 
-            return Equals(Project?.Guid, c.Project?.Guid)
-                && Equals(Team?.Identity?.TeamFoundationId, c.Team?.Identity?.TeamFoundationId)
+            return Equals(Project?.Id, c.Project?.Id)
+                && Equals(Team?.Id, c.Team?.Id)
                 && Equals(Iteration?.Id, c.Iteration?.Id);
         }
 

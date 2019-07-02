@@ -53,8 +53,9 @@ namespace Gui.ViewModels
                 throw new Exception(nameof(api));
 
             var now = DateTime.Now;
-            Capacity = Settings.Settings.Read().Capacity;
+            Capacity = Settings.Settings.Read().Capacity.Hours;
 
+            // TODO think about perfomance
             // TFS API requests
             TfsCapacity = await Task.Run(() => api.GetCapacity());
             WroteOff = await Task.Run(() => api.GetWriteoffs(now, now).Sum(x => x.Value));

@@ -274,8 +274,11 @@
     <Compile Include="RulesNew\IRule.cs" />
     <Compile Include="RulesNew\IRuleBuilder.cs" />
     <Compile Include="RulesNew\RuleBuilder.cs" />
-    <Compile Include="TFS\TeamCapacity.cs" />
-    <Compile Include="TFS\CapacitySearcher.cs" />
+    <Compile Include="TFS\Capacity\Iteration.cs" />
+    <Compile Include="TFS\Capacity\Project.cs" />
+    <Compile Include="TFS\Capacity\Team.cs" />
+    <Compile Include="TFS\Capacity\TeamCapacity.cs" />
+    <Compile Include="TFS\Capacity\CapacitySearcher.cs" />
     <Compile Include="WiqlBuilder\WiqlBuilder.cs" />
     <Compile Include="TFS\TfsApi.cs" />
     <Compile Include="TFS\TfsObservable.cs" />

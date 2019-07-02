@@ -96,7 +96,8 @@ namespace TfsAPI.TFS
         private readonly ILinking _linking;
         private readonly VersionControlServer _versionControl;
         private readonly IIdentityManagementService2 _managementService;
-        private readonly TfsTeamService _teamService;
+        private readonly TfsTeamService _teamService;        
+
 
         /// <summary>
         ///     Запрос на получение всех элементов на мне
@@ -200,7 +201,7 @@ namespace TfsAPI.TFS
             return items.OfType<WorkItem>().ToList();
         }
 
-        public virtual int GetCapacity()
+        public  int GetCapacity()
         {
             var today = DateTime.Today;
             var answer = GetCapacity(today, today);
@@ -209,7 +210,7 @@ namespace TfsAPI.TFS
             return (int)result;
         }
 
-        public List<TeamCapacity> GetCapacity(DateTime start, DateTime end)
+        public virtual List<TeamCapacity> GetCapacity(DateTime start, DateTime end)
         {
             var searcher = new CapacitySearcher(_project, _itemStore, _managementService, _teamService, _project.GetClient<WorkHttpClient>());
             return searcher.SearchCapacities(Name, start, end);

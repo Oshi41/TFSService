@@ -25,6 +25,7 @@ namespace Gui.Settings
             Connections = new ObservableCollection<string>();
             MyWorkItems = new ObservableCollection<int>();
             Rules = new ObservableCollection<IRule>();
+            Capacity = new Capacity();
         }
 
         #region Fields
@@ -40,7 +41,7 @@ namespace Gui.Settings
             Formatting = Formatting.Indented,
         };
 
-        private int _capacity;
+        private Capacity _capacity;
         private TimeSpan _duration;
         private DateTime _begin;
 
@@ -79,7 +80,7 @@ namespace Gui.Settings
         /// <summary>
         ///     Сколько часов надо списать
         /// </summary>
-        public int Capacity
+        public Capacity Capacity
         {
             get => _capacity;
             set => SetProperty(ref _capacity, value);
@@ -186,9 +187,9 @@ namespace Gui.Settings
         {
             if (!Equals(storage, value))
             {
-                if (storage is INotifyCollectionChanged old) old.CollectionChanged -= OnCollectionChanged;
+                if (storage is INotifyCollectionChanged old) old.CollectionChanged -= NotifyChildrenChanged;
 
-                if (value is INotifyCollectionChanged added) added.CollectionChanged += OnCollectionChanged;
+                if (value is INotifyCollectionChanged added) added.CollectionChanged += NotifyChildrenChanged;
 
                 // Проверка на совпадение списков
                 if (storage is IEnumerable x
@@ -197,9 +198,17 @@ namespace Gui.Settings
                 {
                     return false;
                 }
+
+                if (storage is INotifyPropertyChanged prev) prev.PropertyChanged -= NotifyChildrenChanged;
+                if (value is INotifyPropertyChanged newVal) newVal.PropertyChanged += NotifyChildrenChanged;
             }
 
             return SetProperty(ref storage, value, propertyName);
+        }
+
+        private void NotifyChildrenChanged(object sender, EventArgs e)
+        {
+            _changed = true;
         }
 
         protected override bool SetProperty<T>(ref T storage, T value, string propertyName = null)
@@ -209,11 +218,6 @@ namespace Gui.Settings
             if (result) _changed = true;
 
             return result;
-        }
-
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            _changed = true;
         }
 
         #endregion

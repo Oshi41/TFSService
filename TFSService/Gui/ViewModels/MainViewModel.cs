@@ -379,17 +379,18 @@ namespace Gui.ViewModels
             using (var settings = Settings.Settings.Read())
             {
                 var work = settings.CompletedWork;
-                work.SyncCheckins(_apiObserve);
-
-                RefreshStats();
+                work.SyncCheckins(_apiObserve);                
 
                 if (!settings.Begin.IsToday())
                 {
                     // Что-то не зачекинили с утра
-                    if (work.ScheduledTime() != 0) work.CheckinScheduledWork(_apiObserve, settings.Capacity);
+                    if (work.ScheduledTime() != 0) work.CheckinScheduledWork(_apiObserve, settings.Capacity.Hours);
 
-                    // Выставлили сколько надо списать часов сегодня
-                    settings.Capacity = _apiObserve.GetCapacity();
+                    if (!settings.Capacity.ByUser)
+                    {
+                        // Выставлили сколько надо списать часов сегодня
+                        settings.Capacity.Hours = _apiObserve.GetCapacity();
+                    }
 
                     settings.Begin = DateTime.Now;
 
@@ -401,6 +402,8 @@ namespace Gui.ViewModels
                 work.ClearPrevRecords();
             }
 
+            RefreshStats();
+
             return result;
         }
 
@@ -411,7 +414,7 @@ namespace Gui.ViewModels
                 settigs.CompletedWork.ScheduleWork(id, hours);
 
                 // Сразу же списываем час работы
-                settigs.CompletedWork.CheckinScheduledWork(_apiObserve, settigs.Capacity);
+                settigs.CompletedWork.CheckinScheduledWork(_apiObserve, settigs.Capacity.Hours);
 
                 RefreshStats();
             }
@@ -427,17 +430,17 @@ namespace Gui.ViewModels
                 var work = settings.CompletedWork;
 
                 // 1) С начала наблюдения уже прошло нужное кол-во часов
-                if (now - settings.Begin > TimeSpan.FromHours(settings.Capacity))
+                if (now - settings.Begin > TimeSpan.FromHours(settings.Capacity.Hours))
                 {
-                    work.SyncDailyPlan(_apiObserve, settings.Capacity, GetTask);
+                    work.SyncDailyPlan(_apiObserve, settings.Capacity.Hours, GetTask);
                     result = true;
                 }
                 else
                 {
                     // 2) Пользователь уже распланировал достаточно времени
-                    if (settings.Capacity <= work.ScheduledTime() + work.CheckinedTime())
+                    if (settings.Capacity.Hours <= work.ScheduledTime() + work.CheckinedTime())
                     {
-                        work.CheckinScheduledWork(_apiObserve, settings.Capacity);
+                        work.CheckinScheduledWork(_apiObserve, settings.Capacity.Hours);
                         result = true;
                     }
                 }

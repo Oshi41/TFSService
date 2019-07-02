@@ -82,7 +82,10 @@ namespace Gui.ViewModels.DialogViewModels
             {
                 // чекины за месяц (один запрос к TFS)
                 var checkins = await Task.Run(() => _api.GetWriteoffs(start, end));
-                var capacity = await Task.Run(() => _api.GetCapacity());
+                var capacities = await Task.Run(() => _api.GetCapacity(start, end));
+
+                // Получаю среднее значение
+                int capacity = (int)capacities.Average(x => x.GetCapacity(_api.Name));
 
                 var collection = new List<DayViewModel>();
 
