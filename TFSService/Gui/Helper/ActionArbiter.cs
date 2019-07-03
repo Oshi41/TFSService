@@ -11,6 +11,7 @@ namespace Gui.Helper
     /// </summary>
     public class ActionArbiter
     {
+        private int _skip;
         private bool _block;
         private bool _isExecuting;
 
@@ -40,6 +41,16 @@ namespace Gui.Helper
         }
 
         /// <summary>
+        /// Пропускаю кол-во вызовов
+        /// </summary>
+        /// <param name="i"></param>
+        public void Skip(int i)
+        {
+            _skip += i;
+            _skip = Math.Max(0, _skip);
+        }
+
+        /// <summary>
         ///     Выставляем блокирование для операции
         /// </summary>
         /// <param name="isBlock"></param>
@@ -54,7 +65,19 @@ namespace Gui.Helper
         /// <returns></returns>
         public bool IsFree()
         {
-            return !_isExecuting && !_block;
+            if(_isExecuting || _block)
+            {
+                return false;
+            }
+
+            // Пропускаю первые вхождения
+            if (_skip > 0)
+            {
+                _skip--;
+                return false;
+            }
+
+            return true;
         }
 
 

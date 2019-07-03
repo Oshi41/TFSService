@@ -87,7 +87,13 @@ namespace Gui.ViewModels.DialogViewModels
                     OnPropertyChanged(nameof(Error));
                 });
 
-                return optional ?? _errors[columnName];
+                if (optional != null)
+                    return optional;
+
+                if (_errors.ContainsKey(columnName))
+                    return _errors[columnName];
+
+                return null;
             }
         }
 

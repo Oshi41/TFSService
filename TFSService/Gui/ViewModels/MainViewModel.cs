@@ -36,42 +36,42 @@ namespace Gui.ViewModels
 
         private async void Init()
         {
-            // Создаём функцию, чтобы пустить её в другом потоке,
-            // Чтобы GUI не зависал
-            Action action = async () =>
+            IsBusy = true;
+
+            // Пропускаю первое вхождение (инициализация)
+            _itemsChangedArbiter.Skip(1);
+
+            var connect = await TryConnect() == true;
+
+            if (!connect)
             {
-                IsBusy = true;
+                Trace.WriteLine($"{nameof(MainViewModel)}.{nameof(Init)}: User denied to connect, exit the program");
+                Application.Current.Shutdown(0);
+                return;
+            }
 
-                var connect = await TryConnect() == true;
+            using (var settings = Settings.Settings.Read())
+            {
+                ApiObservable = await Task.Run(() => new TfsObservable(FirstConnectionViewModel.Text, settings.MyWorkItems, GetTask, settings.ItemMinutesCheck));
 
-                if (!connect)
-                {
-                    Trace.WriteLine($"{nameof(MainViewModel)}.{nameof(Init)}: User denied to connect, exit the program");
-                    Application.Current.Shutdown(0);
-                    return;
-                }
+                if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
+                    settings.Connections.Add(FirstConnectionViewModel.Text);
+            }
 
-                using (var settings = Settings.Settings.Read())
-                {
-                    ApiObservable = new TfsObservable(FirstConnectionViewModel.Text, settings.MyWorkItems, GetTask, settings.ItemMinutesCheck);
-
-                    if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
-                        settings.Connections.Add(FirstConnectionViewModel.Text);
-                }
-
+            await Task.Run(() =>
+            {
                 TryStartWorkDay();
 
                 // Начинаем наблюдение
                 _apiObserve.Start();
+            });
 
-                IsBusy = false;
-            };
-
-            await Task.Run(action);
+            IsBusy = false;
         }
 
         #region Fields
 
+        private readonly ActionArbiter _itemsChangedArbiter = new ActionArbiter();
         private readonly SafeExecutor _safeExecutor;
 
         private ITFsObservable _apiObserve;
@@ -257,21 +257,29 @@ namespace Gui.ViewModels
             }
         }
 
+        /// <summary>
+        /// Обновлениями рабочих элементов управляются специальным арбитром
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnItemsChanged(object sender, Dictionary<WorkItem, List<WorkItemEventArgs>> e)
         {
-            if (!e.IsNullOrEmpty())
+            _itemsChangedArbiter.Do(() =>
             {
-                RefreshStats();
-
-                // Доступные элементы
-                var active = e.Where(x => !x.Key.HasState(WorkItemStates.Closed)).Select(x => x.Key).ToList();
-
-                if (active.Any())
+                if (!e.IsNullOrEmpty())
                 {
-                    var baloon = new ItemsAssignedBaloonViewModel(active, Properties.Resources.AS_ItemsChanged);
-                    WindowManager.ShowBaloon(baloon);
+                    RefreshStats();
+
+                    // Доступные элементы
+                    var active = e.Where(x => !x.Key.HasState(WorkItemStates.Closed)).Select(x => x.Key).ToList();
+
+                    if (active.Any())
+                    {
+                        var baloon = new ItemsAssignedBaloonViewModel(active, Properties.Resources.AS_ItemsChanged);
+                        WindowManager.ShowBaloon(baloon);
+                    }
                 }
-            }
+            });
         }
 
         #endregion

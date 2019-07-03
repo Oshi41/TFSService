@@ -19,7 +19,12 @@ namespace Gui
         {
             base.OnStartup(e);
 
-            Trace.Listeners.Add(new TextWriterTraceListener(Settings.Settings.Read().LogPath));
+            var listener = new TextWriterTraceListener(Settings.Settings.Read().LogPath)
+            {
+                TraceOutputOptions = TraceOptions.Timestamp | TraceOptions.ThreadId | TraceOptions.DateTime | TraceOptions.ProcessId
+            };
+
+            Trace.Listeners.Add(listener);
             Trace.WriteLine("\n\n\n*******************************************\nStarting application");
 
 #if TESTS

@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security;
 using TfsAPI.Extentions;
 using TfsAPI.TFS.Capacity;
 
@@ -173,9 +174,13 @@ namespace TfsAPI.TFS
                        .Select(x => new Iteration(x))
                        .ToList();
             }
+            catch(SecurityException e)
+            {
+                Trace.WriteLine($"{nameof(CapacitySearcher)}.{nameof(FindIterations)}: Not enough privileges");
+                return null;
+            }
             catch (Exception e)
             {
-                // скорее всего нет прав
                 Trace.WriteLine($"{nameof(CapacitySearcher)}.{nameof(FindIterations)}: " + e);
                 return null;
             }
@@ -216,6 +221,11 @@ namespace TfsAPI.TFS
 
                     return parsed;
                 }
+            }
+            catch (SecurityException e)
+            {
+                Trace.WriteLine($"{nameof(CapacitySearcher)}.{nameof(QuerryCapacity)}: Not enough privileges");
+                return null;
             }
             catch (Exception e)
             {
