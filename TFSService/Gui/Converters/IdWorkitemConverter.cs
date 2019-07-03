@@ -6,7 +6,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 namespace Gui.Converters
 {
     /// <summary>
-    /// Получаем ID (int) из рабочего элемента
+    ///     Получаем ID (int) из рабочего элемента
     /// </summary>
     internal class IdWorkitemConverter : IValueConverter
     {

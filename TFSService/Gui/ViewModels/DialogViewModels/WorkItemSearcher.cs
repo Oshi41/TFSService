@@ -10,7 +10,7 @@ using TfsAPI.Interfaces;
 namespace Gui.ViewModels.DialogViewModels
 {
     /// <summary>
-    /// Выполняем поиск по рабочим элементам
+    ///     Выполняем поиск по рабочим элементам
     /// </summary>
     public class WorkItemSearcher : BindableExtended
     {

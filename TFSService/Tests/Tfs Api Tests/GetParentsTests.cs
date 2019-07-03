@@ -15,7 +15,7 @@ namespace Tests.Tfs_Api_Tests
         {
             var conn = GetConn();
             var item = conn.FindById(id);
-            var parents = conn.GetParents(new[] {item});
+            var parents = conn.GetParents(item);
 
             Assert.AreEqual(count, parents.Count);
         }

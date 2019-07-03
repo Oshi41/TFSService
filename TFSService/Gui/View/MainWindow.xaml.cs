@@ -1,7 +1,4 @@
 ﻿using System.Windows;
-using Gui.Helper;
-using Gui.ViewModels.DialogViewModels;
-using TfsAPI.TFS;
 
 namespace Gui.View
 {

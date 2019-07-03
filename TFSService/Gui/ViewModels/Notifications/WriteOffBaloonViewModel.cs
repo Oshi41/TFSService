@@ -1,22 +1,22 @@
-﻿using System.Diagnostics;
-using System.Windows.Input;
+﻿using System.Windows.Input;
+using Gui.Properties;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Mvvm.Commands;
+using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
-using ToastNotifications.Core;
 
 namespace Gui.ViewModels.Notifications
 {
     /// <summary>
-    /// Уведомление о списании времени
+    ///     Уведомление о списании времени
     /// </summary>
     internal class WriteOffBaloonViewModel : BindableNotificationBase
     {
         public WriteOffBaloonViewModel(string caption = null)
-            : base(caption ?? Properties.Resources.AS_PlannedWriteoffTime)
+            : base(caption ?? Resources.AS_PlannedWriteoffTime)
         {
             OpenLinkCommand = new DelegateCommand(OnClick);
-        }      
+        }
 
         public WriteOffBaloonViewModel(ScheduleWorkArgs e)
             : this()
@@ -39,7 +39,7 @@ namespace Gui.ViewModels.Notifications
         {
             if (Item?.Uri != null)
             {
-
+                Item.OpenLink();
             }
         }
     }

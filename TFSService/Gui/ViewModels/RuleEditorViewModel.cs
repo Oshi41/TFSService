@@ -1,31 +1,42 @@
-﻿using Gui.Helper;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
+using Gui.Helper;
+using Gui.Properties;
 using Gui.ViewModels.Rules;
 using Mvvm;
 using Mvvm.Commands;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using TfsAPI.Interfaces;
 using TfsAPI.RulesNew;
 
 namespace Gui.ViewModels
 {
     /// <summary>
-    /// Отображение списка моих правил рабочих элементов
+    ///     Отображение списка моих правил рабочих элементов
     /// </summary>
     public class RuleEditorViewModel : BindableBase
     {
-        private ObservableCollection<IRule> rules;
-        private IRule selected;
+        private ObservableCollection<IRule> _rules;
+        private IRule _selected;
 
-        public ObservableCollection<IRule> Rules { get => rules; set => SetProperty(ref rules, value); }
+        public RuleEditorViewModel(IEnumerable<IRule> rules)
+        {
+            _rules = new ObservableCollection<IRule>(rules);
 
-        public IRule Selected { get => selected; set => SetProperty(ref selected, value); }
+            AddRule = new DelegateCommand(OnAddRule);
+            DeleteRule = new DelegateCommand<IRule>(OnDeleteRule, OnCanDeleteRule);
+        }
+
+        public ObservableCollection<IRule> Rules
+        {
+            get => _rules;
+            set => SetProperty(ref _rules, value);
+        }
+
+        public IRule Selected
+        {
+            get => _selected;
+            set => SetProperty(ref _selected, value);
+        }
 
         public ICommand AddRule { get; }
         public ICommand DeleteRule { get; }
@@ -33,21 +44,13 @@ namespace Gui.ViewModels
 
         public bool IsChanged { get; private set; }
 
-        public RuleEditorViewModel(IEnumerable<IRule> rules)
-        {
-            this.rules = new ObservableCollection<IRule>(rules);
-
-            AddRule = new DelegateCommand(OnAddRule);
-            DeleteRule = new DelegateCommand<IRule>(OnDeleteRule, OnCanDeleteRule);
-        }
-
         #region Command handlers
 
         private void OnAddRule()
         {
             var vm = new AddRuleViewModel();
 
-            if (WindowManager.ShowDialog(vm, Properties.Resources.AS_AddRule_Master_Title, 400, 300) == true)
+            if (WindowManager.ShowDialog(vm, Resources.AS_AddRule_Master_Title, 400, 300) == true)
             {
                 var builder = new RuleBuilder();
 
@@ -58,14 +61,10 @@ namespace Gui.ViewModels
 
                     if (Rules.Contains(rule))
                     {
-                        if (WindowManager.ShowConfirm(Properties.Resources.AS_ReplaceRule_Asking, Properties.Resources.AS_Replacing) == true)
-                        {
+                        if (WindowManager.ShowConfirm(Resources.AS_ReplaceRule_Asking, Resources.AS_Replacing) == true)
                             Rules.Remove(rule);
-                        }
                         else
-                        {
                             return;
-                        }
                     }
 
                     Rules.Add(rule);

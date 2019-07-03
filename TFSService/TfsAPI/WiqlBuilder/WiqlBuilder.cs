@@ -1,28 +1,21 @@
-﻿using Microsoft.TeamFoundation.Common;
-using Microsoft.TeamFoundation.WorkItemTracking.Common;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.TeamFoundation.Common;
+using Microsoft.TeamFoundation.WorkItemTracking.Common;
 using TfsAPI.Constants;
 
 namespace TfsAPI.Rules
 {
     /// <summary>
-    /// Строитель WIQL запросов
+    ///     Строитель WIQL запросов
     /// </summary>
     public class WiqlBuilder
     {
-        // Список условий
-        private readonly List<string> _queries = new List<string>();
         private readonly bool _isEmpty;
 
-        /// <summary>
-        /// Пустой Builder для создания сложных условий <see cref="WithConditions"/>
-        /// </summary>
-        public static WiqlBuilder Empty => new WiqlBuilder(true);
+        // Список условий
+        private readonly List<string> _queries = new List<string>();
 
         private WiqlBuilder(bool isEmpty)
         {
@@ -36,10 +29,24 @@ namespace TfsAPI.Rules
             _queries.Add($"select * from {tableName} ");
         }
 
+        /// <summary>
+        ///     Пустой Builder для создания сложных условий <see cref="WithConditions" />
+        /// </summary>
+        public static WiqlBuilder Empty => new WiqlBuilder(true);
+
+        #region Overrides of Object
+
+        public override string ToString()
+        {
+            return string.Join(" ", _queries);
+        }
+
+        #endregion
+
         #region Methods
 
         /// <summary>
-        /// Назначен на
+        ///     Назначен на
         /// </summary>
         /// <param name="operand">Операнд условия операции</param>
         /// <param name="name">Имя пользователя. Если не указать, считается, что запрашивает залогиненый Windows пользователь</param>
@@ -53,7 +60,7 @@ namespace TfsAPI.Rules
         }
 
         /// <summary>
-        /// Кем когда либо был изменен
+        ///     Кем когда либо был изменен
         /// </summary>
         /// <param name="operand">Операнд условия операции</param>
         /// <param name="name">Имя пользователя. Если не указать, считается, что запрашивает залогиненый Windows пользователь</param>
@@ -67,7 +74,7 @@ namespace TfsAPI.Rules
         }
 
         /// <summary>
-        /// Элементы в текущей итерации
+        ///     Элементы в текущей итерации
         /// </summary>
         /// <param name="operand">Операнд условия операции</param>
         /// <returns></returns>
@@ -78,12 +85,14 @@ namespace TfsAPI.Rules
         }
 
         /// <summary>
-        /// Проверка типов рабочих элементов 
+        ///     Проверка типов рабочих элементов
         /// </summary>
         /// <param name="operand">Операнд условия операции</param>
-        /// <param name="op">Операнд между типами рабочих элементов. 
-        /// <para>К примеру, если задать "or", то Task or Bug or PBI</para></param>
-        /// <param name="types">Типы рабочих элементов <see cref="WorkItemTypes"/></param>
+        /// <param name="op">
+        ///     Операнд между типами рабочих элементов.
+        ///     <para>К примеру, если задать "or", то Task or Bug or PBI</para>
+        /// </param>
+        /// <param name="types">Типы рабочих элементов <see cref="WorkItemTypes" /></param>
         /// <returns></returns>
         public WiqlBuilder WithItemTypes(string operand, string op, params string[] types)
         {
@@ -91,10 +100,7 @@ namespace TfsAPI.Rules
             {
                 var result = string.Join(" or ", types.Select(x => $"{Sql.Fields.WorkItemType} {op} '{x}'"));
 
-                if (types.Count() > 1)
-                {
-                    result = $"( {result} )";
-                }
+                if (types.Count() > 1) result = $"( {result} )";
 
                 AddCondition(operand, result);
             }
@@ -103,7 +109,7 @@ namespace TfsAPI.Rules
         }
 
         /// <summary>
-        /// Делаем сложное условие (со скобочками)
+        ///     Делаем сложное условие (со скобочками)
         /// </summary>
         /// <param name="operand">Операнд условия операции</param>
         /// <param name="cond">Builder с условием</param>
@@ -111,24 +117,24 @@ namespace TfsAPI.Rules
         public WiqlBuilder WithConditions(string operand, WiqlBuilder cond)
         {
             var result = cond.ToString();
-            if (cond._queries.Count > 1)
-            {
-                result = $"( {result} )";
-            }
+            if (cond._queries.Count > 1) result = $"( {result} )";
 
             AddCondition(operand, result);
             return this;
         }
 
         /// <summary>
-        /// Условие состояния рабочего элемента
+        ///     Условие состояния рабочего элемента
         /// </summary>
         /// <param name="clause">Основное условие</param>
-        /// <param name="operand">Операнд в условии типа элемента
-        /// <para>К примеру, если задать "or", то Active or Closed or New</para>
+        /// <param name="operand">
+        ///     Операнд в условии типа элемента
+        ///     <para>К примеру, если задать "or", то Active or Closed or New</para>
         /// </param>
-        /// <param name="stateClause">Как каждое условие типа элемента соединяется с другим
-        /// <para>Если задать "=", то Task.State = Active</para></param>
+        /// <param name="stateClause">
+        ///     Как каждое условие типа элемента соединяется с другим
+        ///     <para>Если задать "=", то Task.State = Active</para>
+        /// </param>
         /// <param name="states">Список состояний</param>
         /// <returns></returns>
         public WiqlBuilder WithStates(string clause, string operand, string stateClause, params string[] states)
@@ -137,10 +143,7 @@ namespace TfsAPI.Rules
             {
                 var result = string.Join($" {stateClause} ", states.Select(x => $"{Sql.Fields.State} {operand} '{x}'"));
 
-                if (states.Count() > 1)
-                {
-                    result = $"( {result} )";
-                }
+                if (states.Count() > 1) result = $"( {result} )";
 
                 AddCondition(clause, result);
             }
@@ -149,11 +152,11 @@ namespace TfsAPI.Rules
         }
 
         /// <summary>
-        /// поиск по вхождению строки в текстовых полях рабочего элемнета
+        ///     поиск по вхождению строки в текстовых полях рабочего элемнета
         /// </summary>
         /// <param name="operand">Операнд условия операции</param>
         /// <param name="text">Что ищшем</param>
-        /// <param name="fields">В каких полях <see cref="WorkItems.Fields"/></param>
+        /// <param name="fields">В каких полях <see cref="WorkItems.Fields" /></param>
         /// <returns></returns>
         public WiqlBuilder ContainsInFields(string operand, string text, params string[] fields)
         {
@@ -161,10 +164,7 @@ namespace TfsAPI.Rules
             {
                 var result = string.Join(" or ", fields.Select(x => $"{x} {Sql.ContainsStrOperand} '{text}'"));
 
-                if (fields.Count() > 1)
-                {
-                    result = $"({result})";
-                }
+                if (fields.Count() > 1) result = $"({result})";
 
                 AddCondition(operand, result);
             }
@@ -173,11 +173,13 @@ namespace TfsAPI.Rules
         }
 
         /// <summary>
-        /// Условие по дате изменения
+        ///     Условие по дате изменения
         /// </summary>
         /// <param name="operand">Операнд условия операции</param>
         /// <param name="date">Время</param>
-        /// <param name="op">Операнд сравнения. "=", "<>" и т.д</param>
+        /// <param name="op">
+        ///     Операнд сравнения. "=", "<>" и т.д
+        /// </param>
         /// <returns></returns>
         public WiqlBuilder ChangedDate(string operand, DateTime date, string op)
         {
@@ -186,7 +188,7 @@ namespace TfsAPI.Rules
         }
 
         /// <summary>
-        /// Учловие области рабочего элемента
+        ///     Учловие области рабочего элемента
         /// </summary>
         /// <param name="operand">Операнд условия операции</param>
         /// <param name="area">Имя области</param>
@@ -198,20 +200,21 @@ namespace TfsAPI.Rules
         }
 
         /// <summary>
-        /// Поиск по ID
+        ///     Поиск по ID
         /// </summary>
         /// <param name="operand">Операнд условия операции</param>
         /// <param name="number">ID элемента</param>
         /// <returns></returns>
         public WiqlBuilder WithNumber(string operand, int number)
         {
-            AddCondition(operand, $"{Sql.Fields.ID} = {number}");
+            AddCondition(operand, $"{Sql.Fields.Id} = {number}");
             return this;
         }
 
         #endregion
 
         #region Private
+
         private void AddCondition(string clause, string cond)
         {
             var result = string.Empty;
@@ -235,34 +238,23 @@ namespace TfsAPI.Rules
         }
 
         /// <summary>
-        /// Оборачиваю значение кавычками, если это не макрос
+        ///     Оборачиваю значение кавычками, если это не макрос
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
         private string WrapValue(string value)
         {
-            if (_macros.Contains(value.ToLower()))
-            {
-                return value;
-            }
+            if (Macros.Contains(value.ToLower())) return value;
 
             return $"'{value}'";
         }
 
-        private static readonly List<string> _macros = new List<string>
+        private static readonly List<string> Macros = new List<string>
         {
             WiqlOperators.cMacroCurrentIteration,
             WiqlOperators.cMacroMe,
-            WiqlOperators.cMacroToday,
+            WiqlOperators.cMacroToday
         };
-        #endregion
-
-        #region Overrides of Object
-
-        public override string ToString()
-        {
-            return string.Join(" ", _queries);
-        }
 
         #endregion
     }

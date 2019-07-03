@@ -3,7 +3,7 @@
 namespace Gui.ViewModels
 {
     /// <summary>
-    /// Обёртка для работы с TFS данными
+    ///     Обёртка для работы с TFS данными
     /// </summary>
     public class WorkItemVm
     {

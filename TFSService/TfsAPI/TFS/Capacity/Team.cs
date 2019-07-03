@@ -1,19 +1,13 @@
-﻿using Microsoft.TeamFoundation.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using Microsoft.TeamFoundation.Client;
 
 namespace TfsAPI.TFS.Capacity
 {
     /// <summary>
-    /// Представление команды в TFS
+    ///     Представление команды в TFS
     /// </summary>
     public class Team
     {
-        public Guid Id { get; }
-
         public Team(Guid id)
         {
             Id = id;
@@ -22,7 +16,8 @@ namespace TfsAPI.TFS.Capacity
         public Team(TeamFoundationTeam team)
             : this(team.Identity.TeamFoundationId)
         {
-
         }
+
+        public Guid Id { get; }
     }
 }

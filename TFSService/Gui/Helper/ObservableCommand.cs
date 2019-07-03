@@ -8,19 +8,19 @@ using Mvvm.Commands;
 namespace Gui.Helper
 {
     /// <summary>
-    /// Команда наблюдает за выполнением своей функции. Если функция выполняется, команда недоступна
+    ///     Команда наблюдает за выполнением своей функции. Если функция выполняется, команда недоступна
     /// </summary>
     public class ObservableCommand : DelegateCommandBase, ICommand, INotifyPropertyChanged
     {
-        /// <summary>
-        /// Макс. кол-во выполнения функции. Бесконечность при отриц значениях
-        /// </summary>
-        private int _maxExecutionCount = -1;
-
         private bool _isExecuting;
 
         /// <summary>
-        /// Выполняется ли команда в данный момент
+        ///     Макс. кол-во выполнения функции. Бесконечность при отриц значениях
+        /// </summary>
+        private int _maxExecutionCount = -1;
+
+        /// <summary>
+        ///     Выполняется ли команда в данный момент
         /// </summary>
         public bool IsExecuting
         {
@@ -92,7 +92,7 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Команда выполнится единократно
+        ///     Команда выполнится единократно
         /// </summary>
         /// <returns></returns>
         public ObservableCommand ExecuteOnce()
@@ -148,10 +148,7 @@ namespace Gui.Helper
             finally
             {
                 // Вычтем кол-во разрешённых кликов
-                if (_maxExecutionCount > 0)
-                {
-                    _maxExecutionCount--;
-                }
+                if (_maxExecutionCount > 0) _maxExecutionCount--;
 
                 IsExecuting = false;
                 Executed?.Invoke(this, EventArgs.Empty);
@@ -161,8 +158,8 @@ namespace Gui.Helper
         bool ICommand.CanExecute(object parameter)
         {
             return !IsExecuting
-                && _maxExecutionCount != 0
-                && CanExecute(parameter);
+                   && _maxExecutionCount != 0
+                   && CanExecute(parameter);
         }
 
         #endregion

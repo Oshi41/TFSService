@@ -1,12 +1,7 @@
-﻿using Microsoft.TeamFoundation.Build.Client;
-using Microsoft.TeamFoundation.Build.WebApi;
-using Microsoft.TeamFoundation.Client;
-using Microsoft.TeamFoundation.Common;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using Microsoft.TeamFoundation.Build.WebApi;
 
 namespace TfsAPI.TFS.Build_Defenitions
 {
@@ -25,38 +20,28 @@ namespace TfsAPI.TFS.Build_Defenitions
             DateTime? finish = null,
             BuildResult? result = null)
         {
-            if (finish == null)
-            {
-                finish = DateTime.Now;
-            }
+            if (finish == null) finish = DateTime.Now;
 
-            if (start == null)
-            {
-                start = finish.Value.AddDays(-10);
-            }
+            if (start == null) start = finish.Value.AddDays(-10);
 
             var builds = new List<Build>();
 
             foreach (var x in _myProjects)
-            {
                 try
                 {
                     builds.AddRange(_client
-                                   .GetBuildsAsync2(x,
-                                                    minFinishTime: start,
-                                                    maxFinishTime: finish,
-                                                    resultFilter: result)
-                                   .Result);
+                        .GetBuildsAsync2(x,
+                            minFinishTime: start,
+                            maxFinishTime: finish,
+                            resultFilter: result)
+                        .Result);
                 }
                 catch (Exception e)
                 {
                     Trace.WriteLine($"{nameof(BuildSearcher)}.{nameof(FindCompletedBuilds)}: " + e);
                 }
-            }
 
             return builds;
-
         }
-
     }
 }

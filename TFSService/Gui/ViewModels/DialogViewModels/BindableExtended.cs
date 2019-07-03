@@ -9,7 +9,7 @@ using Mvvm.Commands;
 namespace Gui.ViewModels.DialogViewModels
 {
     /// <summary>
-    /// Базовый класс для показа диалоговых окон
+    ///     Базовый класс для показа диалоговых окон
     /// </summary>
     public class BindableExtended : BindableBase, IDataErrorInfo
     {

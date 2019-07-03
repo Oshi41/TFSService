@@ -19,7 +19,7 @@
 
         <Grid.InputBindings>
             <MouseBinding MouseAction="LeftDoubleClick"
-                          Command="{Binding Path=OpenLinkCommand}"/>
+                          Command="{Binding Path=OpenLinkCommand}" />
         </Grid.InputBindings>
 
         <view:WorkItemView DataContext="{Binding Path=Item}"

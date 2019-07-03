@@ -7,7 +7,7 @@ using Gui.ViewModels.DialogViewModels;
 namespace Gui.Converters
 {
     /// <summary>
-    /// Конвертер для цвета числа в календаре.
+    ///     Конвертер для цвета числа в календаре.
     /// </summary>
     internal class HoursColorConverter : IValueConverter
     {
@@ -17,7 +17,7 @@ namespace Gui.Converters
         private Brush _zeroColor;
 
         /// <summary>
-        /// Переполнили трудозатраты
+        ///     Переполнили трудозатраты
         /// </summary>
         public Brush OverflowColor
         {
@@ -30,7 +30,7 @@ namespace Gui.Converters
         }
 
         /// <summary>
-        /// Уложились в трудозатраты
+        ///     Уложились в трудозатраты
         /// </summary>
         public Brush NormalColor
         {
@@ -43,7 +43,7 @@ namespace Gui.Converters
         }
 
         /// <summary>
-        /// Списали меньше, чем надо
+        ///     Списали меньше, чем надо
         /// </summary>
         public Brush LessColor
         {
@@ -56,7 +56,7 @@ namespace Gui.Converters
         }
 
         /// <summary>
-        /// Вообще ничего не списали
+        ///     Вообще ничего не списали
         /// </summary>
         public Brush ZeroColor
         {

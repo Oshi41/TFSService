@@ -5,10 +5,10 @@ using System.Windows.Data;
 
 namespace Gui.Converters
 {
-    class InvertBoolToVisConverter : IValueConverter
+    internal class InvertBoolToVisConverter : IValueConverter
     {
-        private IValueConverter _boolToVis = new BooleanToVisibilityConverter();
-        private IValueConverter _invertBoolConverter = new InvertBoolConverter();
+        private readonly IValueConverter _boolToVis = new BooleanToVisibilityConverter();
+        private readonly IValueConverter _invertBoolConverter = new InvertBoolConverter();
 
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

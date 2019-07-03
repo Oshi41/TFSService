@@ -19,7 +19,7 @@ namespace Gui.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -534,6 +534,24 @@ namespace Gui.Properties {
         public static string AS_ShutdownProgram {
             get {
                 return ResourceManager.GetString("AS_ShutdownProgram", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Сборка {0} собрана успешно.
+        /// </summary>
+        public static string AS_StrFormat_BuildedSuccecfully {
+            get {
+                return ResourceManager.GetString("AS_StrFormat_BuildedSuccecfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Сборка {0} завершена со статусом {1}.
+        /// </summary>
+        public static string AS_StrFormat_BuildedWithError {
+            get {
+                return ResourceManager.GetString("AS_StrFormat_BuildedWithError", resourceCulture);
             }
         }
         

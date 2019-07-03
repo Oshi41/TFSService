@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace Gui.ViewModels
 {
     /// <summary>
-    /// Выполняет действие в GUi потоке
+    ///     Выполняет действие в GUi потоке
     /// </summary>
     public class SafeExecutor
     {
@@ -16,11 +14,11 @@ namespace Gui.ViewModels
 
         public SafeExecutor()
         {
-            _uiDispather = App.Current.MainWindow.Dispatcher;
+            _uiDispather = Application.Current.MainWindow.Dispatcher;
         }
 
         /// <summary>
-        /// Безопасно выполняею действие и возвразаю результат
+        ///     Безопасно выполняею действие и возвразаю результат
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="func"></param>
@@ -29,9 +27,7 @@ namespace Gui.ViewModels
         {
             if (_uiDispather == null
                 || func == null)
-            {
                 return default;
-            }
 
             T result = default;
 

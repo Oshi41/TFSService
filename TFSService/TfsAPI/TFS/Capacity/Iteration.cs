@@ -1,23 +1,14 @@
-﻿using Microsoft.TeamFoundation.Server;
+﻿using System;
+using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.Work.WebApi;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TfsAPI.TFS.Capacity
 {
     /// <summary>
-    /// представление итерации TFS
+    ///     представление итерации TFS
     /// </summary>
     public class Iteration
     {
-        public Guid Id { get; }
-
-        public DateTime Start { get; set; }
-        public DateTime Finish { get; set; }
-
         public Iteration(Guid id, DateTime start, DateTime finish)
         {
             Id = id;
@@ -28,7 +19,6 @@ namespace TfsAPI.TFS.Capacity
         public Iteration(TeamSettingsIteration iter)
             : this(iter.Id, iter.Attributes.StartDate.Value, iter.Attributes.FinishDate.Value)
         {
-
         }
 
         public Iteration(NodeInfo info)
@@ -47,5 +37,10 @@ namespace TfsAPI.TFS.Capacity
                 }
             }
         }
+
+        public Guid Id { get; }
+
+        public DateTime Start { get; set; }
+        public DateTime Finish { get; set; }
     }
 }

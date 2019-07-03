@@ -98,9 +98,10 @@
                         <StackPanel Orientation="Vertical"
                                     Margin="5">
 
-                            <TextBlock Text="{Binding Path=StatsViewModel.WroteOff, 
+                            <TextBlock
+                                Text="{Binding Path=StatsViewModel.WroteOff, 
                                               StringFormat={x:Static p:Resources.AS_StrFormat_WrittenOff}}"
-                                       Margin="5" />
+                                Margin="5" />
                             <TextBlock
                                 Text="{Binding Path=StatsViewModel.Capacity,
                                        StringFormat={x:Static  p:Resources.AS_StrFormat_DailyMax}}"

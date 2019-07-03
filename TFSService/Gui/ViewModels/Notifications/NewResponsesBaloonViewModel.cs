@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Gui.Helper;
+using Gui.Properties;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Comarers;
@@ -16,22 +16,21 @@ using TfsAPI.Interfaces;
 namespace Gui.ViewModels.Notifications
 {
     /// <summary>
-    /// Т.к. команды выполняются один раз, для нового выполнения требуется пересоздать этот объект
+    ///     Т.к. команды выполняются один раз, для нового выполнения требуется пересоздать этот объект
     /// </summary>
     public class NewResponsesBaloonViewModel : ItemsAssignedBaloonViewModel
     {
-        private readonly IEqualityComparer<WorkItem> _comparer = new WorkItemComparer();
-
         private readonly ITfsApi _api;
-        private readonly TimeSpan _time;
+        private readonly IEqualityComparer<WorkItem> _comparer = new WorkItemComparer();
         private readonly List<WorkItem> _reviews;
-        private bool isBusy;
+        private readonly TimeSpan _time;
+        private bool _isBusy;
 
         public NewResponsesBaloonViewModel(IEnumerable<WorkItem> responses,
             IEnumerable<WorkItem> reviews,
             ITfsApi api,
             string title = null)
-            : base(responses, title ?? Properties.Resources.AS_CodeReviewRequested)
+            : base(responses, title ?? Resources.AS_CodeReviewRequested)
         {
             _reviews = reviews.ToList();
             _api = api;
@@ -45,7 +44,11 @@ namespace Gui.ViewModels.Notifications
         public ICommand CloseReviewes { get; }
         public ICommand CloseOldReviewes { get; }
 
-        public bool IsBusy { get => isBusy; set => Set(ref isBusy, value); }
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set => Set(ref _isBusy, value);
+        }
 
 
         private bool OnCanCloseGoodLooking()
@@ -72,7 +75,8 @@ namespace Gui.ViewModels.Notifications
                 // Что-то нуждается в доработке
                 if (responses.Any(x => x.HasClosedReason(WorkItems.ClosedStatus.NeedsWork)))
                 {
-                    Trace.WriteLine($"{nameof(NewResponsesBaloonViewModel)}.{nameof(OnCanCloseOld)}: Can't close {request.Id}, responses need work");
+                    Trace.WriteLine(
+                        $"{nameof(NewResponsesBaloonViewModel)}.{nameof(OnCanCloseOld)}: Can't close {request.Id}, responses need work");
                     return false;
                 }
 
@@ -104,7 +108,7 @@ namespace Gui.ViewModels.Notifications
 
             // удаляю такие вхождения
             toRemove.ForEach(x => source.Remove(x));
-                        
+
 
             IsBusy = false;
         }

@@ -8,7 +8,8 @@ using System.Windows.Markup;
 namespace Gui.Converters
 {
     /// <summary>
-    /// Конвертер с коллекцией ключ-значние. Проверяет строковое представление. Должен сработать и с null (не протестировано)
+    ///     Конвертер с коллекцией ключ-значние. Проверяет строковое представление. Должен сработать и с null (не
+    ///     протестировано)
     /// </summary>
     [ContentProperty(nameof(Cases))]
     internal class SwitchConverter : FrameworkElement, IValueConverter, IAddChild

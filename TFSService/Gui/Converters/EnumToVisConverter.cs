@@ -6,7 +6,8 @@ using System.Windows.Data;
 namespace Gui.Converters
 {
     /// <summary>
-    /// Видимость в зависимости от enum и передаваемого параметра. Можно настроить желаемые значения, в том чиле и инвертировать
+    ///     Видимость в зависимости от enum и передаваемого параметра. Можно настроить желаемые значения, в том чиле и
+    ///     инвертировать
     /// </summary>
     public class EnumToVisConverter : IValueConverter
     {

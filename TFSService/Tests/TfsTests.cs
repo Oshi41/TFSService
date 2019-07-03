@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization.Json;
-using System.Windows.Documents;
 using Microsoft.TeamFoundation.Build.Client;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Client;
@@ -13,16 +10,11 @@ using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.Core.WebApi.Types;
 using Microsoft.TeamFoundation.Framework.Client;
-using Microsoft.TeamFoundation.Framework.Common;
 using Microsoft.TeamFoundation.ProcessConfiguration.Client;
 using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.TestManagement.Client;
-using Microsoft.TeamFoundation.VersionControl.Common.Internal;
 using Microsoft.TeamFoundation.Work.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-using Microsoft.VisualStudio.Services.WebApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
@@ -137,7 +129,7 @@ namespace Tests
                 {
                     var name = task.Title;
 
-                    foreach (Microsoft.TeamFoundation.WorkItemTracking.Client.Link link in task.Links)
+                    foreach (Link link in task.Links)
                     {
                     }
                 }
@@ -215,12 +207,8 @@ namespace Tests
             var teams = teamService.QueryTeams(project.Uri.ToString()).ToList();
 
             foreach (var team in teams)
-            {
                 if (team.Identity.TeamFoundationId == etalon)
-                {
                     return;
-                }
-            }
 
             Assert.Fail("Cannot find team");
         }
@@ -290,7 +278,6 @@ namespace Tests
             //        var teams = GetMyTeams(teamService, proj);
 
 
-
             //        
             //        {
             //            Console.WriteLine(sprint.Name);
@@ -300,8 +287,6 @@ namespace Tests
 
             //            if (iteration.IsCurrent())
             //            {
-
-
 
 
             //            }
@@ -330,7 +315,6 @@ namespace Tests
             //    4).Result;
 
 
-
             //
             //var teamSettings = tfs.GetService<>();
 
@@ -344,9 +328,7 @@ namespace Tests
             //var iters = client.GetTeamIterationsAsync(context, "current").Result;
 
 
-
             //var iteration = client.Пуе(context).Result;
-
         }
 
         [TestMethod]
@@ -373,14 +355,13 @@ namespace Tests
             var iterations = client.GetTeamIterationsAsync(new TeamContext(project.Name)).Result;
 
             var iterations2 = project
-                              .IterationRootNodes
-                              .OfType<Node>()
-                              .Select(x => structure.GetNode(x.Uri.AbsoluteUri))
-                              .AsParallel()
-                              .ToList();
+                .IterationRootNodes
+                .OfType<Node>()
+                .Select(x => structure.GetNode(x.Uri.AbsoluteUri))
+                .AsParallel()
+                .ToList();
 
             var same = iterations.Count == iterations2.Count;
-
 
 
             //var iters = 
@@ -442,15 +423,14 @@ namespace Tests
             //{
             //    var result = observer.FindQueuedBuilds(i.Name);
             //}
-            
+
 
             // observer.FindBuilds(finish: DateTime.Now);
-            
         }
 
 
-
-        private TeamSettingsIteration GetCurrentIteration(Project project, TeamFoundationIdentity teamId, WorkHttpClient client)
+        private TeamSettingsIteration GetCurrentIteration(Project project, TeamFoundationIdentity teamId,
+            WorkHttpClient client)
         {
             var iterations = client.GetTeamIterationsAsync(new TeamContext(project.Name)).Result;
             return iterations.FirstOrDefault(x => x.IsCurrent());
@@ -465,9 +445,9 @@ namespace Tests
                 var teamGroups = teamService.QueryTeams(project.Uri.ToString());
 
                 var allTeams = teamGroups
-                               .Select(x => teamService.ReadTeam(x.Identity.Descriptor, properties))
-                               .AsParallel()
-                               .ToList();
+                    .Select(x => teamService.ReadTeam(x.Identity.Descriptor, properties))
+                    .AsParallel()
+                    .ToList();
 
                 return allTeams;
             }
@@ -478,30 +458,25 @@ namespace Tests
             }
         }
 
-        private Dictionary<TeamProjectReference, List<TeamConfiguration>> GetProjectsWithSettings(ProjectHttpClient css, TeamSettingsConfigurationService team)
+        private Dictionary<TeamProjectReference, List<TeamConfiguration>> GetProjectsWithSettings(ProjectHttpClient css,
+            TeamSettingsConfigurationService team)
         {
             var result = new Dictionary<TeamProjectReference, List<TeamConfiguration>>();
 
             var projects = css.GetProjects(null).Result;
 
             foreach (var project in projects)
-            {
                 try
                 {
                     var settings = team
-                        .GetTeamConfigurationsForUser(new[] { project.Url })
+                        .GetTeamConfigurationsForUser(new[] {project.Url})
                         .ToList();
 
-                    if (!settings.IsNullOrEmpty())
-                    {
-                        result[project] = settings;
-                    }
+                    if (!settings.IsNullOrEmpty()) result[project] = settings;
                 }
                 catch
                 {
-                    continue;
                 }
-            }
 
             return result;
         }

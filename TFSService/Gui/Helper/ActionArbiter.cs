@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 namespace Gui.Helper
 {
     /// <summary>
-    /// Выполняет только одну операцию в определенный промежуток времени,
-    /// что позволяет избежать циклических вызовов. Имеет возможность блокировки выполнения пользователем
+    ///     Выполняет только одну операцию в определенный промежуток времени,
+    ///     что позволяет избежать циклических вызовов. Имеет возможность блокировки выполнения пользователем
     /// </summary>
     public class ActionArbiter
     {
-        private int _skip;
         private bool _block;
         private bool _isExecuting;
+        private int _skip;
 
         /// <summary>
         ///     Выполняем операцию
@@ -41,7 +41,7 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Пропускаю кол-во вызовов
+        ///     Пропускаю кол-во вызовов
         /// </summary>
         /// <param name="i"></param>
         public void Skip(int i)
@@ -65,10 +65,7 @@ namespace Gui.Helper
         /// <returns></returns>
         public bool IsFree()
         {
-            if(_isExecuting || _block)
-            {
-                return false;
-            }
+            if (_isExecuting || _block) return false;
 
             // Пропускаю первые вхождения
             if (_skip > 0)
@@ -93,8 +90,8 @@ namespace Gui.Helper
     }
 
     /// <summary>
-    /// То же, что и супер класс, но с поддержкой async/await
-    /// </summary>    
+    ///     То же, что и супер класс, но с поддержкой async/await
+    /// </summary>
     public class ActionArbiterAsync : ActionArbiter
     {
         private CancellationToken _token;

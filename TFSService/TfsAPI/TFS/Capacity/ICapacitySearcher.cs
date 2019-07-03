@@ -7,13 +7,13 @@ namespace TfsAPI.TFS
     public interface ICapacitySearcher
     {
         /// <summary>
-        /// Возвращает список команд, к которым я имею доступ
+        ///     Возвращает список команд, к которым я имею доступ
         /// </summary>
         /// <returns></returns>
         IList<TeamFoundationTeam> GetAllMyTeams();
 
         /// <summary>
-        /// Поиск списка трудозатрат моих команд за указанный промежуток времени
+        ///     Поиск списка трудозатрат моих команд за указанный промежуток времени
         /// </summary>
         /// <param name="name"></param>
         /// <param name="start"></param>

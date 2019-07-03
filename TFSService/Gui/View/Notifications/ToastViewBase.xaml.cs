@@ -1,7 +1,7 @@
-﻿using Gui.ViewModels.Notifications;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Input;
+using Gui.ViewModels.Notifications;
 using ToastNotifications.Core;
 using FlowDirection = System.Windows.Forms.FlowDirection;
 
@@ -23,9 +23,9 @@ namespace Gui.View.Notifications
         {
             Loaded -= SubscribeOnce;
 
-            this.MouseDoubleClick += DetectDoubleClick;
+            MouseDoubleClick += DetectDoubleClick;
 
-            AddHandler(Mouse.MouseDownEvent, new MouseButtonEventHandler( (s, args) => DetectClosingSlide(args)));
+            AddHandler(Mouse.MouseDownEvent, new MouseButtonEventHandler((s, args) => DetectClosingSlide(args)));
             // PreviewMouseDown += (s, args) => DetectClosingSlide(args);
             MouseUp += (s, args) =>
             {
@@ -34,6 +34,13 @@ namespace Gui.View.Notifications
                 if (!_isClosed && Notification.CanClose)
                     Notification.Options?.NotificationClickAction?.Invoke(Notification as NotificationBase);
             };
+        }
+
+        private void DetectDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (Notification.Options is EnhancedOptions options
+                && options.DoubleClickAction != null)
+                options.DoubleClickAction(Notification as BindableNotificationBase);
         }
 
         #region Slide closing
@@ -71,7 +78,7 @@ namespace Gui.View.Notifications
         {
             if (_isDragging
                 && DetectClosingSlide(pos, System.Windows.Forms.FlowDirection.TopDown,
-                                           System.Windows.Forms.FlowDirection.LeftToRight))
+                    System.Windows.Forms.FlowDirection.LeftToRight))
             {
                 _isDragging = false;
                 _isClosed = true;
@@ -88,7 +95,6 @@ namespace Gui.View.Notifications
             var delta = _lastPos - endPoint;
 
             foreach (var o in directions)
-            {
                 switch (o)
                 {
                     case System.Windows.Forms.FlowDirection.LeftToRight:
@@ -110,20 +116,10 @@ namespace Gui.View.Notifications
                     default:
                         throw new Exception("Wrong parameter");
                 }
-            }
 
             return false;
         }
 
         #endregion
-
-        private void DetectDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (this.Notification.Options is EnhancedOptions options
-                && options.DoubleClickAction != null)
-            {
-                options.DoubleClickAction(this.Notification as BindableNotificationBase);
-            }
-        }
     }
 }

@@ -87,10 +87,11 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Path=Value, 
+                            <TextBlock
+                                Text="{Binding Path=Value, 
                                               StringFormat={x:Static p:Resources.AS_StrFormat_Hours}}"
-                                       FontWeight="Bold"
-                                       Margin="5,0,10,0" />
+                                FontWeight="Bold"
+                                Margin="5,0,10,0" />
                             <ContentControl Content="{Binding Path=Key.WorkItem}" />
                         </StackPanel>
                     </DataTemplate>

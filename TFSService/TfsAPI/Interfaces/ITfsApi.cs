@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using Microsoft.TeamFoundation.VersionControl.Client;
-using Microsoft.TeamFoundation.Work.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Constants;
 using TfsAPI.TFS;
@@ -47,7 +45,7 @@ namespace TfsAPI.Interfaces
         WorkItem FindById(int id);
 
         /// <summary>
-        /// Делаем один запрос на множество элементов
+        ///     Делаем один запрос на множество элементов
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>
@@ -69,7 +67,7 @@ namespace TfsAPI.Interfaces
         int GetCapacity();
 
         /// <summary>
-        /// Возвращает список 
+        ///     Возвращает список
         /// </summary>
         /// <param name="start"></param>
         /// <param name="start"></param>
@@ -84,7 +82,7 @@ namespace TfsAPI.Interfaces
         IList<WorkItem> GetMyWorkItems();
 
         /// <summary>
-        /// Запрашиваем рабочие элементы по строке
+        ///     Запрашиваем рабочие элементы по строке
         /// </summary>
         /// <param name="additionalQuery"></param>
         /// <returns></returns>
@@ -108,11 +106,11 @@ namespace TfsAPI.Interfaces
         List<KeyValuePair<Revision, int>> GetWriteoffs(DateTime from, DateTime to);
 
         /// <summary>
-        /// Получаю список чекинов
+        ///     Получаю список чекинов
         /// </summary>
         /// <param name="from">Дата от включительно</param>
         /// <param name="to">Дата до включительно</param>
-        /// <param name="user">Имя пользователя. По умолчанию <see langword="null"/>, то есть все</param>
+        /// <param name="user">Имя пользователя. По умолчанию <see langword="null" />, то есть все</param>
         /// <returns></returns>
         List<Changeset> GetCheckins(DateTime from, DateTime to, string user = null);
 

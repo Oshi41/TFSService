@@ -13,8 +13,8 @@ using TfsAPI.Extentions;
 namespace Gui.Behaviors
 {
     /// <summary>
-    /// Поведение для календаря с расписанием. 
-    /// Прокидывает DataContext типа ITimable для каждого дня.
+    ///     Поведение для календаря с расписанием.
+    ///     Прокидывает DataContext типа ITimable для каждого дня.
     /// </summary>
     internal class CalendarItemSourceBehavior : Behavior<Calendar>
     {
@@ -66,7 +66,7 @@ namespace Gui.Behaviors
         }
 
         /// <summary>
-        /// Прокидываю байндинг для каждого дня в месяце
+        ///     Прокидываю байндинг для каждого дня в месяце
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

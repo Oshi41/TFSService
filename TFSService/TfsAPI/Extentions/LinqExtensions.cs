@@ -7,7 +7,7 @@ namespace TfsAPI.Extentions
     public static class LinqExtensions
     {
         /// <summary>
-        /// Сравнивает 2 списка поэлементно, порядок не важен
+        ///     Сравнивает 2 списка поэлементно, порядок не важен
         /// </summary>
         /// <param name="source"></param>
         /// <param name="sequence"></param>

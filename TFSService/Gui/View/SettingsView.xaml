@@ -24,8 +24,8 @@
                 <Setter Property="Margin" Value="5" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                <Setter Property="VerticalAlignment" Value="Stretch"/>
-                <Setter Property="MinWidth" Value="150"/>
+                <Setter Property="VerticalAlignment" Value="Stretch" />
+                <Setter Property="MinWidth" Value="150" />
             </Style>
 
             <ObjectDataProvider x:Key="wroteOffEnums" MethodName="GetValues"
@@ -37,7 +37,7 @@
 
             <c:DescriptionConverter x:Key="DescriptionConverter" />
 
-            <c:InvertBoolConverter x:Key="InvertBoolConverter"/>
+            <c:InvertBoolConverter x:Key="InvertBoolConverter" />
 
         </ResourceDictionary>
     </UserControl.Resources>
@@ -55,29 +55,29 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="{Binding Path=Name}"
                            FontWeight="Bold"
-                           Margin="0,0,10,0"/>
+                           Margin="0,0,10,0" />
 
                 <TextBlock Grid.Row="1"
                            Text="{Binding Path=Connection}"
                            TextTrimming="WordEllipsis"
                            TextDecorations="Underline"
-                           ToolTip="{Binding Path=Connection}"/>
+                           ToolTip="{Binding Path=Connection}" />
 
                 <Button Grid.Column="1"
                         Grid.RowSpan="2"
                         Content="{x:Static p:Resources.AS_Add}"
                         Margin="10,0,0,0"
-                        Command="{Binding Path=ConnectCommand}"/>
+                        Command="{Binding Path=ConnectCommand}" />
             </Grid>
 
             <DockPanel Margin="0,20,0,10">
@@ -85,42 +85,43 @@
                         Content="..."
                         VerticalAlignment="Center"
                         Height="{Binding ElementName=LogText, Path=ActualHeight}"
-                        Command="{Binding Path=ChooseLogFileCommand}"/>
+                        Command="{Binding Path=ChooseLogFileCommand}" />
 
                 <TextBox x:Name="LogText"
                          IsReadOnly="True"
                          Text="{Binding Path=LogsPath, UpdateSourceTrigger=PropertyChanged}"
                          materialDesign:HintAssist.Hint="{x:Static p:Resources.AS_LogPath}"
-                         materialDesign:HintAssist.IsFloating="True"/>
+                         materialDesign:HintAssist.IsFloating="True" />
             </DockPanel>
-            
+
 
             <Grid Grid.IsSharedSizeScope="True">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                
+
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition SharedSizeGroup="G1"/>
+                    <RowDefinition />
+                    <RowDefinition SharedSizeGroup="G1" />
                 </Grid.RowDefinitions>
 
                 <materialDesign:Card Style="{StaticResource CardStyle}"
                                      Grid.Row="0" Grid.Column="0">
                     <StackPanel Orientation="Vertical"
-                            Margin="0,0,5,20">
+                                Margin="0,0,5,20">
                         <CheckBox x:Name="TfsCapacityCheck"
                                   Content="{x:Static p:Resources.AS_GetCapacityFromTfs}"
-                                  IsChecked="{Binding Path=CapacityByUser, Converter={StaticResource InvertBoolConverter}}"/>
-                        
+                                  IsChecked="{Binding Path=CapacityByUser, Converter={StaticResource InvertBoolConverter}}" />
+
                         <TextBlock Text="{x:Static p:Resources.AS_DailyWorkHours}"
-                               Margin="0,5"/>                        
-                        <TextBox Text="{Binding Path=Capacity, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
-                                 IsReadOnly="{Binding ElementName=TfsCapacityCheck, Path=IsChecked}"
-                                 HorizontalAlignment="Left"
-                                 Width="50"/>
-                        
+                                   Margin="0,5" />
+                        <TextBox
+                            Text="{Binding Path=Capacity, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                            IsReadOnly="{Binding ElementName=TfsCapacityCheck, Path=IsChecked}"
+                            HorizontalAlignment="Left"
+                            Width="50" />
+
                     </StackPanel>
                 </materialDesign:Card>
 
@@ -128,44 +129,45 @@
                                      Grid.Row="0" Grid.Column="1">
 
                     <StackPanel Orientation="Vertical"
-                            Margin="0,0,5,20">
+                                Margin="0,0,5,20">
                         <TextBlock Text="{x:Static p:Resources.AS_WorkDayTime}"
-                               Margin="0,5"/>
-                        <TextBox Text="{Binding Path=DayDuration, 
+                                   Margin="0,5" />
+                        <TextBox
+                            Text="{Binding Path=DayDuration, 
                                      Mode=TwoWay,
                                      ValidatesOnDataErrors=True, 
                                      UpdateSourceTrigger=PropertyChanged,
                                      StringFormat={}{0:hh}:{0:mm}}"
-                              HorizontalAlignment="Left"
-                              Width="50"/>
+                            HorizontalAlignment="Left"
+                            Width="50" />
                     </StackPanel>
                 </materialDesign:Card>
-                
+
                 <materialDesign:Card Style="{StaticResource CardStyle}"
                                      Grid.Row="1" Grid.Column="0">
 
                     <StackPanel Orientation="Vertical"
-                            Margin="0,0,5,20">
+                                Margin="0,0,5,20">
                         <TextBlock Text="{x:Static p:Resources.AS_ItemUpdatePeriod}"
                                    TextWrapping="Wrap"
-                               Margin="0,5"/>
+                                   Margin="0,5" />
                         <TextBox Text="{Binding Path=ItemMinutesCheck, UpdateSourceTrigger=PropertyChanged}"
-                              HorizontalAlignment="Left"
-                              Width="50"/>
+                                 HorizontalAlignment="Left"
+                                 Width="50" />
                     </StackPanel>
                 </materialDesign:Card>
-                
+
                 <materialDesign:Card Style="{StaticResource CardStyle}"
                                      Grid.Row="1" Grid.Column="1">
 
                     <StackPanel Orientation="Vertical"
-                            Margin="0,0,5,20">
+                                Margin="0,0,5,20">
                         <TextBlock Text="{x:Static p:Resources.AS_OldReviewDays}"
                                    TextWrapping="Wrap"
-                               Margin="0,5"/>
+                                   Margin="0,5" />
                         <TextBox Text="{Binding Path=ItemMinutesCheck, UpdateSourceTrigger=PropertyChanged}"
-                              HorizontalAlignment="Left"
-                              Width="50"/>
+                                 HorizontalAlignment="Left"
+                                 Width="50" />
                     </StackPanel>
                 </materialDesign:Card>
 
@@ -175,15 +177,15 @@
             <materialDesign:Card Style="{StaticResource CardStyle}">
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="{x:Static p:Resources.AS_WroteOffStrategy}"
-                           FontWeight="Bold" />
+                               FontWeight="Bold" />
 
                     <TextBlock Text="{x:Static p:Resources.AS_WroteOffStrategy_Asking}"
-                           TextWrapping="Wrap" />
+                               TextWrapping="Wrap" />
 
                     <ComboBox Margin="0,10"
-                          ItemsSource="{Binding Source={StaticResource wroteOffEnums}}"
-                          SelectedValue="{Binding Path=Strategy}"
-                          IsSynchronizedWithCurrentItem="True">
+                              ItemsSource="{Binding Source={StaticResource wroteOffEnums}}"
+                              SelectedValue="{Binding Path=Strategy}"
+                              IsSynchronizedWithCurrentItem="True">
                         <ComboBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type ComboBoxItem}">
                                 <TextBlock Text="{Binding Converter={StaticResource DescriptionConverter}}" />
@@ -202,7 +204,7 @@
                                HorizontalAlignment="Left"
                                FontWeight="Bold" />
 
-                    <ContentControl Content="{Binding Path=RuleEditor}"/>
+                    <ContentControl Content="{Binding Path=RuleEditor}" />
 
                 </StackPanel>
             </materialDesign:Card>

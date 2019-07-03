@@ -7,7 +7,7 @@ using ToastNotifications.Core;
 namespace Gui.ViewModels.Notifications
 {
     /// <summary>
-    /// Базовый класс для уведомлений
+    ///     Базовый класс для уведомлений
     /// </summary>
     public class BindableNotificationBase : NotificationBase, INotifyPropertyChanged, INotification
     {
@@ -21,8 +21,10 @@ namespace Gui.ViewModels.Notifications
             Options.FreezeOnMouseEnter = true;
         }
 
+        public new EnhancedOptions Options => (EnhancedOptions) base.Options;
+
         /// <summary>
-        /// Визуальное представление уведомления.
+        ///     Визуальное представление уведомления.
         /// </summary>
         public override NotificationDisplayPart DisplayPart
         {
@@ -40,8 +42,6 @@ namespace Gui.ViewModels.Notifications
             }
         }
 
-        public new EnhancedOptions Options => (EnhancedOptions)base.Options;
-
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -52,7 +52,7 @@ namespace Gui.ViewModels.Notifications
         }
 
         /// <summary>
-        /// Изменяю свойство и вызываю метод обновления, если был передан
+        ///     Изменяю свойство и вызываю метод обновления, если был передан
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source">Источник</param>
@@ -76,7 +76,7 @@ namespace Gui.ViewModels.Notifications
     }
 
     /// <summary>
-    /// Расширенные возможности для уведомлений
+    ///     Расширенные возможности для уведомлений
     /// </summary>
     public class EnhancedOptions : MessageOptions
     {

@@ -1,50 +1,44 @@
-﻿using Microsoft.TeamFoundation.WorkItemTracking.Client;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TfsAPI.RulesNew
 {
     /// <summary>
-    /// Представление правила
+    ///     Представление правила
     /// </summary>
     public interface IRule
     {
         /// <summary>
-        /// Название правила
+        ///     Название правила
         /// </summary>
-        string Title {  get;}
+        string Title { get; }
 
         /// <summary>
-        /// Исходный WIQL запрос
+        ///     Исходный WIQL запрос
         /// </summary>
-        string Source { get;}
+        string Source { get; }
 
         /// <summary>
-        /// Второй WIQL запрос
+        ///     Второй WIQL запрос
         /// </summary>
-        string Condition { get;}
+        string Condition { get; }
 
         /// <summary>
-        /// Тип операции между двумя получившимися списками
+        ///     Тип операции между двумя получившимися списками
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
-        RuleOperation Operation { get;}
+        RuleOperation Operation { get; }
     }
 
     public class Rule : IRule
     {
-        public string Title { get; set;}
+        public string Title { get; set; }
         public string Source { get; set; }
         public string Condition { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public RuleOperation Operation { get; set;}
+        public RuleOperation Operation { get; set; }
 
         public override bool Equals(object obj)
         {

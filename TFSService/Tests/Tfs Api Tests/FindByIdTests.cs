@@ -14,7 +14,7 @@ namespace Tests.Tfs_Api_Tests
         {
             var item = GetConn().FindById(id);
 
-            Assert.AreEqual(item.Type.Name,type);
+            Assert.AreEqual(item.Type.Name, type);
         }
 
         [DataTestMethod]

@@ -10,7 +10,7 @@ using TfsAPI.Interfaces;
 namespace Gui.Helper
 {
     /// <summary>
-    /// Коллекция для работы с запланированным списанием. Управляет записью в TFS
+    ///     Коллекция для работы с запланированным списанием. Управляет записью в TFS
     /// </summary>
     public class WriteOffCollection : ObservableCollection<WriteOff>
     {
@@ -43,7 +43,7 @@ namespace Gui.Helper
             foreach (var checkin in checkins)
             {
                 var id = checkin.Key.WorkItem.Id;
-                var date = (DateTime)checkin.Key.Fields[CoreField.ChangedDate].Value;
+                var date = (DateTime) checkin.Key.Fields[CoreField.ChangedDate].Value;
 
                 if (!this.Any(x => x.Time == date && x.Id == id))
                 {
@@ -165,7 +165,8 @@ namespace Gui.Helper
                 // какая-то ошибка, такого номера нет
                 if (!items.ContainsKey(toWrite.Id))
                 {
-                    Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(CheckinWork)}: Cannot find item {toWrite.Id}");
+                    Trace.WriteLine(
+                        $"{nameof(WriteOffCollection)}.{nameof(CheckinWork)}: Cannot find item {toWrite.Id}");
                     continue;
                 }
 
@@ -175,18 +176,19 @@ namespace Gui.Helper
                 try
                 {
                     // Записали время
-                    var revision = tfs.WriteHours(workItem, (byte)toWrite.Hours, true);
+                    var revision = tfs.WriteHours(workItem, (byte) toWrite.Hours, true);
                     // Удалили этот рабочий элемента
                     RemoveAll(x => x.Id == toWrite.Id);
-                    
+
                     // Не получилось запписать, ошибка
                     if (revision == null)
                     {
-                        Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(CheckinWork)}: Cannot write off hours of task {workItem.Id}");
+                        Trace.WriteLine(
+                            $"{nameof(WriteOffCollection)}.{nameof(CheckinWork)}: Cannot write off hours of task {workItem.Id}");
                         continue;
                     }
 
-                    var time = (DateTime)revision.Fields[CoreField.ChangedDate].Value;
+                    var time = (DateTime) revision.Fields[CoreField.ChangedDate].Value;
 
                     Add(new WriteOff(revision.WorkItem.Id,
                         toWrite.Hours,
@@ -195,7 +197,6 @@ namespace Gui.Helper
                         // чекином юзера
                         toWrite.Time.IsToday(),
                         true));
-
                 }
                 catch (Exception e)
                 {
@@ -219,13 +220,14 @@ namespace Gui.Helper
             var scheduled = ScheduledTime();
 
             Trace.WriteLine(
-                    $"{nameof(WorkItemCollection)}.{nameof(CutOffByCapacity)}: User wrote off {alreadyRecorded} " +
-                    $"hour(s), capacity is {maxHoursPerDay}");
+                $"{nameof(WorkItemCollection)}.{nameof(CutOffByCapacity)}: User wrote off {alreadyRecorded} " +
+                $"hour(s), capacity is {maxHoursPerDay}");
 
             // Пользователь сам начекинил на дневной предел
             if (alreadyRecorded >= maxHoursPerDay)
             {
-                Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(CutOffByCapacity)}: User already riched the day limit");
+                Trace.WriteLine(
+                    $"{nameof(WriteOffCollection)}.{nameof(CutOffByCapacity)}: User already riched the day limit");
                 Clear();
                 return;
             }
@@ -236,7 +238,8 @@ namespace Gui.Helper
             // Уложились в предел
             if (delta >= 0)
             {
-                Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(CutOffByCapacity)}: Scheduled work don't overflow the day limit");
+                Trace.WriteLine(
+                    $"{nameof(WriteOffCollection)}.{nameof(CutOffByCapacity)}: Scheduled work don't overflow the day limit");
                 return;
             }
 
@@ -256,16 +259,14 @@ namespace Gui.Helper
                 Remove(first);
                 delta -= first.Hours;
 
-                Trace.WriteLine($"{nameof(WorkItemCollection)}.{nameof(CutOffByCapacity)}: Deleted scheduled {first.Hours} hour(s)," +
+                Trace.WriteLine(
+                    $"{nameof(WorkItemCollection)}.{nameof(CutOffByCapacity)}: Deleted scheduled {first.Hours} hour(s)," +
                     $"workitem {first.Id}");
             }
-
-
-            return;
         }
 
         /// <summary>
-        /// Удаляем все элементы по условию
+        ///     Удаляем все элементы по условию
         /// </summary>
         /// <param name="condition"></param>
         private void RemoveAll(Func<WriteOff, bool> condition)

@@ -12,7 +12,7 @@ namespace Gui.View
     /// </summary>
     public partial class MainView : Window
     {
-        private NotifyIcon _trayIcon;
+        private readonly NotifyIcon _trayIcon;
 
         public MainView()
         {
@@ -27,7 +27,7 @@ namespace Gui.View
                     new MenuItem("-"),
                     new MenuItem(Properties.Resources.AS_Update, OnUpdate),
                     new MenuItem("-"),
-                    new MenuItem(Properties.Resources.AS_ShutdownProgram, (sender, args) => Close()),
+                    new MenuItem(Properties.Resources.AS_ShutdownProgram, (sender, args) => Close())
                 })
             };
 
@@ -58,18 +58,12 @@ namespace Gui.View
 
         private void OnOpenWindow(object sender, EventArgs e)
         {
-            if (WindowState == WindowState.Minimized)
-            {
-                WindowState = WindowState.Normal;
-            }
+            if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
         }
 
         private void OnUpdate(object sender, EventArgs e)
         {
-            if (DataContext is MainViewModel vm)
-            {
-                vm.UpdateCommand.Execute(sender);
-            }
+            if (DataContext is MainViewModel vm) vm.UpdateCommand.Execute(sender);
         }
 
         #endregion

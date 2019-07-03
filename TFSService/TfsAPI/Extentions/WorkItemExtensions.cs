@@ -103,7 +103,8 @@ namespace TfsAPI.Extentions
             item.Fields[WorkItems.Fields.Complited].Value = total;
             item.Fields[WorkItems.Fields.Remaining].Value = remain;
 
-            Trace.WriteLine($"{nameof(WorkItemExtensions)}.{nameof(AddHours)}: Successfully added {hours} to iten {item.Id}");
+            Trace.WriteLine(
+                $"{nameof(WorkItemExtensions)}.{nameof(AddHours)}: Successfully added {hours} to iten {item.Id}");
         }
 
         /// <summary>
@@ -145,6 +146,15 @@ namespace TfsAPI.Extentions
         public static bool IsBug(this WorkItem item)
         {
             return item.IsTypeOf(WorkItemTypes.Bug);
+        }
+
+        /// <summary>
+        /// Открывает элементв на web интерфейсе
+        /// </summary>
+        /// <param name="item"></param>
+        public static void OpenLink(this WorkItem item)
+        {
+            // TODO поискать ответ
         }
     }
 }

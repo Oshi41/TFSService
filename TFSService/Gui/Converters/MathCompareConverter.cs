@@ -14,8 +14,8 @@ namespace Gui.Converters
     }
 
     /// <summary>
-    /// Булевские сравнения между двумя переменными.
-    /// Пока что флаги не поддерживает
+    ///     Булевские сравнения между двумя переменными.
+    ///     Пока что флаги не поддерживает
     /// </summary>
     public class MathCompareConverter : IMultiValueConverter
     {

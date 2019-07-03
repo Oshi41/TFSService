@@ -1,4 +1,5 @@
 ﻿using Gui.Helper;
+using Gui.Properties;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Constants;
 using TfsAPI.Interfaces;
@@ -6,7 +7,7 @@ using TfsAPI.Interfaces;
 namespace Gui.ViewModels.DialogViewModels
 {
     /// <summary>
-    /// Окошко создания нового таска
+    ///     Окошко создания нового таска
     /// </summary>
     public class CreateTaskViewModel : BindableExtended
     {
@@ -20,11 +21,11 @@ namespace Gui.ViewModels.DialogViewModels
             // Ищем для привязки только указанные типы
             Searcher = new WorkItemSearcher(tfs,
                 WorkItemTypes.Pbi,
-                WorkItemTypes.Bug, 
-                WorkItemTypes.Improvement, 
+                WorkItemTypes.Bug,
+                WorkItemTypes.Improvement,
                 WorkItemTypes.Incident)
             {
-                Help = Properties.Resources.AS_ChooseParentItem,
+                Help = Resources.AS_ChooseParentItem
             };
 
             SubmitCommand = new ObservableCommand(CreateTask, OnCanCreateTask);
@@ -60,16 +61,16 @@ namespace Gui.ViewModels.DialogViewModels
 
         protected override string ValidateProperty(string prop)
         {
-            if (prop == nameof(Title) && string.IsNullOrWhiteSpace(Title)) return Properties.Resources.AS_EmptyName_Error;
+            if (prop == nameof(Title) && string.IsNullOrWhiteSpace(Title)) return Resources.AS_EmptyName_Error;
 
-            if (prop == nameof(Hours) && Hours < 1) return Properties.Resources.AS_PlannedTime_Error;
+            if (prop == nameof(Hours) && Hours < 1) return Resources.AS_PlannedTime_Error;
 
             return base.ValidateProperty(prop);
         }
 
         protected override string ValidateOptionalProperty(string prop)
         {
-            if (prop == nameof(Hours) && Hours > 40) return Properties.Resources.AS_TooBigTask_Asking;
+            if (prop == nameof(Hours) && Hours > 40) return Resources.AS_TooBigTask_Asking;
 
             return base.ValidateOptionalProperty(prop);
         }

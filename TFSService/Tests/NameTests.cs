@@ -1,31 +1,33 @@
 ﻿using System.Linq;
 using System.Reflection;
+using Gui;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Setup;
 
 namespace Tests
 {
     [TestClass]
     public class NameTests
     {
-        private const string _name = "TFS Service";
+        private const string Name = "TFS Service";
 
         [TestMethod]
         public void TestGuiName()
         {
-            var name = typeof(Gui.App)
+            var name = typeof(App)
                 .GetTypeInfo()
                 .Assembly
                 .GetCustomAttributes(typeof(AssemblyTitleAttribute))
                 .OfType<AssemblyTitleAttribute>()
                 .First();
 
-            Assert.AreEqual(_name, name.Title);
+            Assert.AreEqual(Name, name.Title);
         }
 
         [TestMethod]
         public void TestSetup()
         {
-            Assert.AreEqual(_name, Setup.Register.AppName);
+            Assert.AreEqual(Name, Register.AppName);
         }
 
         [TestMethod]
@@ -33,7 +35,7 @@ namespace Tests
         {
             var name = nameof(Gui) + ".exe";
 
-            Assert.AreEqual(Setup.Register.ExeName, name);
+            Assert.AreEqual(Register.ExeName, name);
         }
     }
 }

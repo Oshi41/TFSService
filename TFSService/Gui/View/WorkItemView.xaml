@@ -30,7 +30,8 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="{Binding Path=[Remaining Work], 
+                        <TextBlock
+                            Text="{Binding Path=[Remaining Work], 
                             StringFormat={x:Static p:Resources.AS_StrFormat_RemainingHours}}" />
 
                         <TextBlock Grid.Row="1"

@@ -43,13 +43,13 @@
     <DataTemplate DataType="{x:Type dialogViewModels:SettingsViewModel}">
         <view:SettingsView />
     </DataTemplate>
-    
-     <DataTemplate DataType="{x:Type viewModels:RuleEditorViewModel}">
+
+    <DataTemplate DataType="{x:Type viewModels:RuleEditorViewModel}">
         <view:RuleEditor />
     </DataTemplate>
-    
+
     <DataTemplate DataType="{x:Type notifications:ItemsAssignedBaloonViewModel}">
-        <baloonVms:NewItemsBaloonView/>
+        <baloonVms:NewItemsBaloonView />
     </DataTemplate>
 
 
@@ -57,11 +57,11 @@
         <DataTemplate.Resources>
             <ResourceDictionary>
                 <DataTemplate DataType="{x:Type viewModels:WorkItemVm}">
-                    <TextBlock Text="{Binding Path=Item.Id}"/>
+                    <TextBlock Text="{Binding Path=Item.Id}" />
                 </DataTemplate>
             </ResourceDictionary>
         </DataTemplate.Resources>
-        
+
         <baloonVms:NewItemsBaloonView>
             <baloonVms:NewItemsBaloonView.ContextMenu>
                 <ContextMenu>

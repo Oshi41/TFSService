@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
+using Gui.Properties;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Mvvm.Commands;
+using TfsAPI.Extentions;
 
 namespace Gui.ViewModels.Notifications
 {
     /// <summary>
-    /// Уведомление о новых рабочих элементах
+    ///     Уведомление о новых рабочих элементах
     /// </summary>
     public class ItemsAssignedBaloonViewModel : BindableNotificationBase
     {
@@ -17,23 +17,27 @@ namespace Gui.ViewModels.Notifications
 
         public ItemsAssignedBaloonViewModel(IEnumerable<WorkItem> e,
             string title = null)
-            : base(title ?? Properties.Resources.AS_NewItemsAssigned)
+            : base(title ?? Resources.AS_NewItemsAssigned)
         {
             Items = e.Select(x => new WorkItemVm(x)).ToList();
             OpenLinkCommand = new DelegateCommand(OpenLink, CanOpenLink);
-        }        
+        }
 
         /// <summary>
-        /// Список новых элементов
+        ///     Список новых элементов
         /// </summary>
         public List<WorkItemVm> Items { get; }
 
         /// <summary>
-        /// Активный (выбранный) элемент
+        ///     Активный (выбранный) элемент
         /// </summary>
-        public WorkItemVm Selected { get => _selected; set => Set(ref _selected, value); }
+        public WorkItemVm Selected
+        {
+            get => _selected;
+            set => Set(ref _selected, value);
+        }
 
-        public ICommand OpenLinkCommand { get;  }
+        public ICommand OpenLinkCommand { get; }
 
         private void OpenLink()
         {
@@ -41,7 +45,7 @@ namespace Gui.ViewModels.Notifications
 
             if (link != null)
             {
-                // System.Diagnostics.Process.Start(link);
+                Selected.Item.OpenLink();
             }
         }
 

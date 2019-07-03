@@ -7,17 +7,18 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Gui.Helper;
+using Gui.Properties;
 using Gui.Settings;
 using Gui.ViewModels.DialogViewModels;
 using Gui.ViewModels.Notifications;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Common;
-using Microsoft.TeamFoundation.VersionControl.Common.Internal;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Mvvm;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
+using TfsAPI.RulesNew;
 using TfsAPI.TFS;
 
 namespace Gui.ViewModels
@@ -53,7 +54,12 @@ namespace Gui.ViewModels
 
             using (var settings = Settings.Settings.Read())
             {
-                ApiObservable = await Task.Run(() => new TfsObservable(FirstConnectionViewModel.Text, settings.MyWorkItems, settings.MyBuilds, GetTask, settings.ItemMinutesCheck));
+                ApiObservable = await Task.Run(() => new TfsObservable(FirstConnectionViewModel.Text,
+                    settings.MyWorkItems,
+                    settings.MyBuilds,
+                    settings.ItemMinutesCheck,
+                    GetTask,
+                    () => Settings.Settings.Read().Rules));
 
                 if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
                     settings.Connections.Add(FirstConnectionViewModel.Text);
@@ -78,9 +84,9 @@ namespace Gui.ViewModels
         private ITFsObservable _apiObserve;
 
         private WorkItemVm _currentTask;
-        private StatsViewModel statsViewModel = new StatsViewModel();
-        private bool isBusy = true;
-        private NewResponsesBaloonViewModel codeResponsesViewModel;
+        private StatsViewModel _statsViewModel = new StatsViewModel();
+        private bool _isBusy = true;
+        private NewResponsesBaloonViewModel _codeResponsesViewModel;
 
         #endregion
 
@@ -102,6 +108,7 @@ namespace Gui.ViewModels
                     ApiObservable.NewItems -= OnNewItems;
                     ApiObservable.ItemsChanged -= OnItemsChanged;
                     ApiObservable.Builded -= OnBuilded;
+                    ApiObservable.RuleMismatch -= OnRuleMismatch;
                 }
 
                 _apiObserve = value;
@@ -114,9 +121,11 @@ namespace Gui.ViewModels
                     ApiObservable.NewItems += OnNewItems;
                     ApiObservable.ItemsChanged += OnItemsChanged;
                     ApiObservable.Builded += OnBuilded;
+                    ApiObservable.RuleMismatch += OnRuleMismatch;
                 }
             }
-        }        
+        }
+        
 
         /// <summary>
         ///     Диалог запроса рабочего элемента, над которым работаем
@@ -138,23 +147,23 @@ namespace Gui.ViewModels
         /// </summary>
         public StatsViewModel StatsViewModel
         {
-            get => statsViewModel;
-            set => SetProperty(ref statsViewModel, value);
+            get => _statsViewModel;
+            set => SetProperty(ref _statsViewModel, value);
         }
 
         public NewResponsesBaloonViewModel CodeResponsesViewModel
         {
-            get => codeResponsesViewModel;
-            set => SetProperty(ref codeResponsesViewModel, value);
+            get => _codeResponsesViewModel;
+            set => SetProperty(ref _codeResponsesViewModel, value);
         }
 
         /// <summary>
-        /// Закрыть ли окошко шторкой
+        ///     Закрыть ли окошко шторкой
         /// </summary>
         public bool IsBusy
         {
-            get => isBusy;
-            set => SetProperty(ref isBusy, value);
+            get => _isBusy;
+            set => SetProperty(ref _isBusy, value);
         }
 
         #endregion
@@ -172,12 +181,12 @@ namespace Gui.ViewModels
         public ICommand ShowMonthlyCommand { get; }
 
         /// <summary>
-        /// Принудительное обновление
+        ///     Принудительное обновление
         /// </summary>
         public ICommand UpdateCommand { get; }
 
         /// <summary>
-        /// Открыть настройки
+        ///     Открыть настройки
         /// </summary>
         public ICommand SettingsCommand { get; }
 
@@ -187,7 +196,7 @@ namespace Gui.ViewModels
 
         private void ShowMonthly()
         {
-            WindowManager.ShowDialog(new MonthCheckinsViewModel(_apiObserve), Properties.Resources.AS_MonthlySchedule, 700, 500);
+            WindowManager.ShowDialog(new MonthCheckinsViewModel(_apiObserve), Resources.AS_MonthlySchedule, 700, 500);
         }
 
         private async Task Update()
@@ -205,7 +214,7 @@ namespace Gui.ViewModels
         {
             var vm = new SettingsViewModel(FirstConnectionViewModel.Text, _apiObserve);
 
-            WindowManager.ShowDialog(vm, Properties.Resources.AS_Settings, 500);
+            WindowManager.ShowDialog(vm, Resources.AS_Settings, 500);
         }
 
         #endregion
@@ -240,28 +249,30 @@ namespace Gui.ViewModels
                 var requests = e.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)).ToList();
                 var rest = e.Except(bugs).Except(works).Except(rare).Except(responses).Except(requests).ToList();
 
-                if (bugs.Any()) WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(bugs, Properties.Resources.AS_NewBugs));
+                if (bugs.Any()) WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(bugs, Resources.AS_NewBugs));
 
-                if (works.Any()) WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(works, Properties.Resources.AS_NewWork));
+                if (works.Any())
+                    WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(works, Resources.AS_NewWork));
 
                 if (rare.Any())
-                    WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(rare, Properties.Resources.AS_ImportantNotice));
+                    WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(rare, Resources.AS_ImportantNotice));
 
                 if (responses.Any())
                 {
-                    var vms = new NewResponsesBaloonViewModel(responses, requests, _apiObserve, Properties.Resources.AS_CodeReviewRequested);
+                    var vms = new NewResponsesBaloonViewModel(responses, requests, _apiObserve,
+                        Resources.AS_CodeReviewRequested);
                 }
 
                 if (rest.Any())
                     WindowManager.ShowBaloon(
-                        new ItemsAssignedBaloonViewModel(rest, Properties.Resources.AS_NewItemsAssigned));
+                        new ItemsAssignedBaloonViewModel(rest, Resources.AS_NewItemsAssigned));
 
                 RefreshStats();
             }
         }
 
         /// <summary>
-        /// Обновлениями рабочих элементов управляются специальным арбитром
+        ///     Обновлениями рабочих элементов управляются специальным арбитром
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -278,7 +289,7 @@ namespace Gui.ViewModels
 
                     if (active.Any())
                     {
-                        var baloon = new ItemsAssignedBaloonViewModel(active, Properties.Resources.AS_ItemsChanged);
+                        var baloon = new ItemsAssignedBaloonViewModel(active, Resources.AS_ItemsChanged);
                         WindowManager.ShowBaloon(baloon);
                     }
                 }
@@ -291,7 +302,7 @@ namespace Gui.ViewModels
             {
                 var savedIds = settings.MyBuilds;
                 var newIds = e.Select(x => x.BuildNumber).ToList();
-                
+
                 var brandNewIds = newIds.Except(savedIds).ToList();
 
                 if (!brandNewIds.Any())
@@ -299,13 +310,35 @@ namespace Gui.ViewModels
 
                 var brandNewBuild = e
                     .Where(x => savedIds
-                            .Contains(x.BuildNumber))
+                        .Contains(x.BuildNumber))
                     .ToList();
 
                 // Сохранили в настройки
                 settings.MyBuilds = new ObservableCollection<string>(brandNewIds.Concat(savedIds));
 
-                //TODO показать новые билды
+                foreach (var build in brandNewBuild)
+                    if (build.Result == BuildResult.Succeeded)
+                        WindowManager.ShowBalloonSuccess(string.Format(Resources.AS_StrFormat_BuildedSuccecfully,
+                            build.BuildNumber));
+                    else
+                        WindowManager
+                            .ShowBalloonError(
+                                string.Format(Resources.AS_StrFormat_BuildedWithError,
+                                    build.BuildNumber,
+                                    build.Result));
+            }
+        }
+
+        private void OnRuleMismatch(object sender, Dictionary<IRule, IList<WorkItem>> e)
+        {
+            if (e.IsNullOrEmpty())
+                return;
+
+            // Прохожу по всем правилам, где есть ненулевой список неподходящих рабочих элементов
+            foreach (var rule in e.Keys.Where(x => !e[x].IsNullOrEmpty()))
+            {
+                var vm = new ItemsAssignedBaloonViewModel(e[rule], rule.Title + "\nНесовпадения:");
+                WindowManager.ShowBaloon(vm);
             }
         }
 
@@ -329,7 +362,7 @@ namespace Gui.ViewModels
                 return FirstConnectionViewModel.IsConnected;
             }
 
-            return WindowManager.ShowDialog(FirstConnectionViewModel, Properties.Resources.AS_FirstConnection, 400, 200);
+            return WindowManager.ShowDialog(FirstConnectionViewModel, Resources.AS_FirstConnection, 400, 200);
         }
 
         /// <summary>
@@ -352,7 +385,7 @@ namespace Gui.ViewModels
         }
 
         /// <summary>
-        /// В зависимости от стратегии выбираем рабочий элемент
+        ///     В зависимости от стратегии выбираем рабочий элемент
         /// </summary>
         /// <param name="strategy"></param>
         /// <returns></returns>
@@ -382,7 +415,7 @@ namespace Gui.ViewModels
 
                 case WroteOffStrategy.Watch:
 
-                    if (WindowManager.ShowDialog(vm, Properties.Resources.AS_ChooseWriteoffTask, 400, 200) == true)
+                    if (WindowManager.ShowDialog(vm, Resources.AS_ChooseWriteoffTask, 400, 200) == true)
                         return vm.Searcher.Selected;
 
                     // Выбрать нужно обязательно
@@ -395,7 +428,7 @@ namespace Gui.ViewModels
         }
 
         /// <summary>
-        /// Доступен ли таск для списания часов
+        ///     Доступен ли таск для списания часов
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -404,14 +437,16 @@ namespace Gui.ViewModels
             // Рабочий элемент должен быть не закрытым таском 
             if (!item.IsTaskAvailable())
             {
-                Trace.WriteLine($"{nameof(MainViewModel)}.{nameof(IsTaskAvailable)}: Task {item?.Id} is not exist or has been closed");
+                Trace.WriteLine(
+                    $"{nameof(MainViewModel)}.{nameof(IsTaskAvailable)}: Task {item?.Id} is not exist or has been closed");
                 return false;
             }
 
             // У него должно быть запланированные часы работы
             if (!(item.Fields[WorkItems.Fields.Remaining]?.Value is int remaining) || remaining == 0)
             {
-                Trace.WriteLine($"{nameof(MainViewModel)}.{nameof(IsTaskAvailable)}: Task {item?.Id} is not exist or remaining time is over");
+                Trace.WriteLine(
+                    $"{nameof(MainViewModel)}.{nameof(IsTaskAvailable)}: Task {item?.Id} is not exist or remaining time is over");
                 return false;
             }
 
@@ -423,7 +458,7 @@ namespace Gui.ViewModels
         }
 
         /// <summary>
-        /// Обновляю отображение по данным из TFS
+        ///     Обновляю отображение по данным из TFS
         /// </summary>
         private void RefreshStats()
         {
@@ -446,8 +481,9 @@ namespace Gui.ViewModels
         #endregion
 
         #region Actions
+
         /// <summary>
-        /// Пытаюсь начать рабочий день. True, если получилось
+        ///     Пытаюсь начать рабочий день. True, если получилось
         /// </summary>
         /// <returns></returns>
         private bool TryStartWorkDay()
@@ -468,15 +504,12 @@ namespace Gui.ViewModels
                     if (work.ScheduledTime() != 0) work.CheckinScheduledWork(_apiObserve, settings.Capacity.Hours);
 
                     // Если выставили трудозатраты не сами, то получаем из TFS
-                    if (!settings.Capacity.ByUser)
-                    {
-                        // Выставлили сколько надо списать часов сегодня
-                        settings.Capacity.Hours = _apiObserve.GetCapacity();
-                    }
+                    if (!settings.Capacity.ByUser) settings.Capacity.Hours = _apiObserve.GetCapacity();
 
                     settings.Begin = DateTime.Now;
 
-                    Trace.WriteLine($"{nameof(Settings)}.{nameof(TryStartWorkDay)}: {settings.Begin.ToShortTimeString()}: Welcome to a new day!");
+                    Trace.WriteLine(
+                        $"{nameof(Settings)}.{nameof(TryStartWorkDay)}: {settings.Begin.ToShortTimeString()}: Welcome to a new day!");
 
                     result = true;
                 }
@@ -493,7 +526,7 @@ namespace Gui.ViewModels
         }
 
         /// <summary>
-        /// Прошел час, списываю его и помещаю в конфиг
+        ///     Прошел час, списываю его и помещаю в конфиг
         /// </summary>
         /// <param name="id"></param>
         /// <param name="hours"></param>
@@ -511,7 +544,7 @@ namespace Gui.ViewModels
         }
 
         /// <summary>
-        /// Пытаюсь завершить рабочий день
+        ///     Пытаюсь завершить рабочий день
         /// </summary>
         /// <returns></returns>
         private bool TryEndWorkDay()

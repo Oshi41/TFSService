@@ -45,7 +45,7 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Увеличиваем на заданное кол-во часов
+        ///     Увеличиваем на заданное кол-во часов
         /// </summary>
         /// <param name="hours"></param>
         public void Increase(int hours)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.Work.WebApi;
 using TfsAPI.TFS.Capacity;
@@ -9,12 +8,13 @@ namespace TfsAPI.Extentions
     public static class IterationExtentions
     {
         /// <summary>
-        /// Ищет итерации, входящие в указанный промежуток времени
+        ///     Ищет итерации, входящие в указанный промежуток времени
         /// </summary>
         /// <param name="iteration">Итерация</param>
         /// <param name="start">С какой даты ищем</param>
-        /// <param name="end">Какой датой заканчиваем/param>
-        /// <returns></returns>
+        /// <param name="end">
+        ///     Какой датой заканчиваем/param>
+        ///     <returns></returns>
         public static bool InRange(this TeamSettingsIteration iteration, DateTime start, DateTime end)
         {
             if (iteration?.Attributes?.StartDate == null || iteration?.Attributes?.FinishDate == null)
@@ -24,12 +24,13 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
-        /// Ищет итерации, входящие в указанный промежуток времени
+        ///     Ищет итерации, входящие в указанный промежуток времени
         /// </summary>
         /// <param name="iteration">Итерация</param>
         /// <param name="start">С какой даты ищем</param>
-        /// <param name="end">Какой датой заканчиваем/param>
-        /// <returns></returns>
+        /// <param name="end">
+        ///     Какой датой заканчиваем/param>
+        ///     <returns></returns>
         public static bool InRange(this NodeInfo iteration, DateTime start, DateTime end)
         {
             if (iteration?.StartDate == null || iteration?.FinishDate == null)
@@ -45,11 +46,10 @@ namespace TfsAPI.Extentions
 
             return InRange(iteration.Start, iteration.Finish, start, end);
         }
-        
 
 
         /// <summary>
-        /// Является ли это данной итерацией
+        ///     Является ли это данной итерацией
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
@@ -57,6 +57,7 @@ namespace TfsAPI.Extentions
         {
             return IsCurrent(info?.StartDate, info?.FinishDate);
         }
+
         /// <summary>
         ///     является ли это данной итерацией
         /// </summary>
@@ -66,7 +67,6 @@ namespace TfsAPI.Extentions
         {
             return IsCurrent(iteration?.Attributes?.StartDate, iteration?.Attributes?.FinishDate);
         }
-
 
 
         private static bool IsCurrent(DateTime? start, DateTime? finish)
@@ -85,15 +85,9 @@ namespace TfsAPI.Extentions
         private static bool InRange(DateTime start1, DateTime end1, DateTime start2, DateTime end2)
         {
             // Проверяем переменные
-            if (end1 < start1)
-            {
-                Swap(ref start1, ref end1);
-            }
+            if (end1 < start1) Swap(ref start1, ref end1);
 
-            if (end2 < start2)
-            {
-                Swap(ref start2, ref end2);
-            }
+            if (end2 < start2) Swap(ref start2, ref end2);
 
 
             // Начало или конец из одного промежутка обязательно должны попасть во второй временной отрезок
@@ -107,18 +101,18 @@ namespace TfsAPI.Extentions
             // ----------|---S2---E2--|-------- Полностью попал в промежуток 
             // ----------|-----S2-----|-----E2- Попал в промежуток (конец вышел за пределы
 
-            var intersect = (start1 <= start2 && start2 <= end1)
+            var intersect = start1 <= start2 && start2 <= end1
                             ||
-                            (start1 <= end2 && end2 <= end1);
+                            start1 <= end2 && end2 <= end1;
 
             if (intersect)
                 return true;
 
             // то же самое справедливо и наоборот
 
-            return (start2 <= start1 && start1 <= end2)
-                   ||    
-                   (start2 <= end1 && end1 <= end2);
+            return start2 <= start1 && start1 <= end2
+                   ||
+                   start2 <= end1 && end1 <= end2;
         }
 
         private static void Swap(ref DateTime x, ref DateTime y)

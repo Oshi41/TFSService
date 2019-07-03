@@ -4,7 +4,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 namespace TfsAPI.Comarers
 {
     /// <summary>
-    /// Сравнивает WorkITem по ID
+    ///     Сравнивает WorkITem по ID
     /// </summary>
     public class WorkItemComparer : IEqualityComparer<WorkItem>
     {

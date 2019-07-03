@@ -1,17 +1,39 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Configuration.Install;
-using System.ComponentModel;
-using System.IO;
+﻿using System;
 using System.Collections;
+using System.ComponentModel;
+using System.Configuration.Install;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace Setup
 {
     [RunInstaller(true)]
     public class Register : Installer
     {
+        [Conditional("DEBUG")]
+        private void ShowDebug()
+        {
+            var message = $"Please attach the debugger to process [{Process.GetCurrentProcess().Id}].";
+            MessageBox.Show(message, "Wait for debug attaching");
+        }
+
+        private void Undo()
+        {
+            ShowDebug();
+
+            try
+            {
+                UnregisterAsStartup();
+                Context.LogMessage("Successfully unregistered app as start-up");
+            }
+            catch (Exception e)
+            {
+                Context.LogMessage($"{nameof(Undo)}: {e}");
+            }
+        }
+
         #region Fields
 
         public const string ExeName = "Gui.exe";
@@ -32,11 +54,11 @@ namespace Setup
             try
             {
                 RegisterAsStartup();
-                this.Context.LogMessage("Successfully register app as start-up");
+                Context.LogMessage("Successfully register app as start-up");
             }
             catch (Exception e)
             {
-                this.Context.LogMessage($"{nameof(Install)}: {e}");
+                Context.LogMessage($"{nameof(Install)}: {e}");
             }
         }
 
@@ -56,40 +78,19 @@ namespace Setup
 
         #endregion
 
-        [Conditional("DEBUG")]
-        private void ShowDebug()
-        {
-            string message = $"Please attach the debugger to process [{Process.GetCurrentProcess().Id}].";
-            MessageBox.Show(message, "Wait for debug attaching");
-        }
-
-        private void Undo()
-        {
-            ShowDebug();
-
-            try
-            {
-                UnregisterAsStartup();
-                this.Context.LogMessage("Successfully unregistered app as start-up");
-            }
-            catch (Exception e)
-            {
-                this.Context.LogMessage($"{nameof(Undo)}: {e}");
-            }
-        }
-
         #region logic
 
         /// <summary>
-        /// Возвращает ключ с автозапуском
+        ///     Возвращает ключ с автозапуском
         /// </summary>
         /// <returns></returns>
-        private RegistryKey GetKey => Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+        private RegistryKey GetKey =>
+            Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
         private void RegisterAsStartup()
         {
             // Получили путь к dll, откуда вызывается метод
-            var executingDll = this.Context.Parameters[AssemblyKey];
+            var executingDll = Context.Parameters[AssemblyKey];
             var parent = Path.GetDirectoryName(executingDll);
             var exe = Path.Combine(parent, ExeName);
 
@@ -110,10 +111,7 @@ namespace Setup
             if (key == null)
                 key = GetKey;
 
-            if (key.GetValue(AppName) != null)
-            {
-                key.DeleteValue(AppName);
-            }
+            if (key.GetValue(AppName) != null) key.DeleteValue(AppName);
         }
 
         #endregion

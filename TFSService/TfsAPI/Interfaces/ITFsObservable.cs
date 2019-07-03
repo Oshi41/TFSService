@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using TfsAPI.RulesNew;
 
 namespace TfsAPI.Interfaces
 {
@@ -40,9 +40,14 @@ namespace TfsAPI.Interfaces
         event EventHandler Logon;
 
         /// <summary>
-        /// Мои билды завершены
+        ///     Мои билды завершены
         /// </summary>
         event EventHandler<IList<Build>> Builded;
+
+        /// <summary>
+        /// Список рабочих элементов не подходящих под установленные правила
+        /// </summary>
+        event EventHandler<Dictionary<IRule, IList<WorkItem>>> RuleMismatch;
 
         /// <summary>
         ///     Запрашиваем обновление

@@ -13,9 +13,9 @@ namespace Gui.ViewModels
     {
         private string _name;
         private int _tfsCapacity;
-        private int capacity;
-        private ObservableCollection<WorkItemVm> myItems;
-        private int wroteOff;
+        private int _capacity;
+        private ObservableCollection<WorkItemVm> _myItems;
+        private int _wroteOff;
 
         public string Name
         {
@@ -25,8 +25,8 @@ namespace Gui.ViewModels
 
         public int Capacity
         {
-            get => capacity;
-            set => SetProperty(ref capacity, value);
+            get => _capacity;
+            set => SetProperty(ref _capacity, value);
         }
 
         public int TfsCapacity
@@ -37,14 +37,14 @@ namespace Gui.ViewModels
 
         public int WroteOff
         {
-            get => wroteOff;
-            set => SetProperty(ref wroteOff, value);
+            get => _wroteOff;
+            set => SetProperty(ref _wroteOff, value);
         }
 
         public ObservableCollection<WorkItemVm> MyItems
         {
-            get => myItems;
-            set => SetProperty(ref myItems, value);
+            get => _myItems;
+            set => SetProperty(ref _myItems, value);
         }
 
         public async void Refresh(ITfsApi api)
@@ -55,7 +55,6 @@ namespace Gui.ViewModels
             var now = DateTime.Now;
             Capacity = Settings.Settings.Read().Capacity.Hours;
 
-            // TODO think about perfomance
             // TFS API requests
             TfsCapacity = await Task.Run(() => api.GetCapacity());
             WroteOff = await Task.Run(() => api.GetWriteoffs(now, now).Sum(x => x.Value));

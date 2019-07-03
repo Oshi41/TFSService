@@ -4,11 +4,10 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using Gui.Helper;
+using Gui.Properties;
 using Mvvm;
 using Newtonsoft.Json;
 using TfsAPI.Attributes;
@@ -18,7 +17,7 @@ using TfsAPI.RulesNew;
 namespace Gui.Settings
 {
     /// <summary>
-    /// Класс хранения настроек приложения. При Dispose пытается сохраниться в файл, если были произведены изменения
+    ///     Класс хранения настроек приложения. При Dispose пытается сохраниться в файл, если были произведены изменения
     /// </summary>
     public class Settings : BindableBase, IDisposable
     {
@@ -34,15 +33,15 @@ namespace Gui.Settings
 
         #region Fields
 
-        private static readonly string _savePath = Path.Combine(
+        private static readonly string SavePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "TfsService",
             "config.json");
 
-        private static JsonSerializerSettings _settings = new JsonSerializerSettings
+        private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto,
-            Formatting = Formatting.Indented,
+            Formatting = Formatting.Indented
         };
 
         private Capacity _capacity;
@@ -53,12 +52,12 @@ namespace Gui.Settings
         private ObservableCollection<string> _connections;
         private WriteOffCollection _completedWork;
         private ObservableCollection<int> _myWorkItems;
-        private WroteOffStrategy strategy;
-        private string logPath = Path.Combine(Path.GetDirectoryName(_savePath), "logs.log");
-        private ObservableCollection<IRule> rules;
-        private int itemMinutesCheck = 5;
-        private int oldReviewDay = 100;
-        private ObservableCollection<string> myBuilds;
+        private WroteOffStrategy _strategy;
+        private string _logPath = Path.Combine(Path.GetDirectoryName(SavePath), "logs.log");
+        private ObservableCollection<IRule> _rules;
+        private int _itemMinutesCheck = 5;
+        private int _oldReviewDay = 100;
+        private ObservableCollection<string> _myBuilds;
 
         #endregion
 
@@ -119,43 +118,63 @@ namespace Gui.Settings
         }
 
         /// <summary>
-        /// Список правил валидации
+        ///     Список правил валидации
         /// </summary>
         [JsonConverter(typeof(JCollectionConverter<IRule, Rule>))]
-        public ObservableCollection<IRule> Rules { get => rules; set => Set(ref rules, value); }
+        public ObservableCollection<IRule> Rules
+        {
+            get => _rules;
+            set => Set(ref _rules, value);
+        }
 
         /// <summary>
         ///     Стратегия как выбираем таск для списывания времени
         /// </summary>
         public WroteOffStrategy Strategy
         {
-            get => strategy;
-            set => SetProperty(ref strategy, value);
+            get => _strategy;
+            set => SetProperty(ref _strategy, value);
         }
 
         /// <summary>
-        /// Путь к файлу логов
+        ///     Путь к файлу логов
         /// </summary>
-        public string LogPath { get => logPath; set => Set(ref logPath, value); }
+        public string LogPath
+        {
+            get => _logPath;
+            set => Set(ref _logPath, value);
+        }
 
         /// <summary>
-        /// Время между обновлениями моих рабочих элементов в минутах
+        ///     Время между обновлениями моих рабочих элементов в минутах
         /// </summary>
-        public int ItemMinutesCheck { get => itemMinutesCheck; set => Set(ref itemMinutesCheck, value); }
+        public int ItemMinutesCheck
+        {
+            get => _itemMinutesCheck;
+            set => Set(ref _itemMinutesCheck, value);
+        }
 
         /// <summary>
-        /// Период дней, после которого проверка кодя является устаревшей
+        ///     Период дней, после которого проверка кодя является устаревшей
         /// </summary>
-        public int OldReviewDay { get => oldReviewDay; set => Set(ref oldReviewDay, value); }
+        public int OldReviewDay
+        {
+            get => _oldReviewDay;
+            set => Set(ref _oldReviewDay, value);
+        }
 
-        public ObservableCollection<string> MyBuilds { get => myBuilds; set => Set(ref myBuilds, value); }
+        public ObservableCollection<string> MyBuilds
+        {
+            get => _myBuilds;
+            set => Set(ref _myBuilds, value);
+        }
 
         #endregion
 
         #region Methods
 
         /// <summary>
-        /// Пытаемся сохраниться, если были изменения
+        ///     Пытаемся сохраниться, если были изменения
         /// </summary>
         public void Dispose()
         {
@@ -164,20 +183,20 @@ namespace Gui.Settings
         }
 
         /// <summary>
-        /// Читаем настройки из файла, либо берем дефолтные
+        ///     Читаем настройки из файла, либо берем дефолтные
         /// </summary>
         /// <returns></returns>
         public static Settings Read()
         {
             Settings settings;
 
-            if (File.Exists(_savePath))
+            if (File.Exists(SavePath))
             {
-                settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(_savePath), _settings);
+                settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(SavePath), JsonSettings);
             }
             else
             {
-                Trace.WriteLine($"{nameof(Settings)}.{nameof(Read)}:Creating new settings");
+                Trace.WriteLine($"{nameof(Gui.Settings.Settings)}.{nameof(Read)}:Creating new settings");
 
                 settings = new Settings();
             }
@@ -188,22 +207,24 @@ namespace Gui.Settings
         }
 
         /// <summary>
-        /// Записываем настройки в json формат в файл
+        ///     Записываем настройки в json формат в файл
         /// </summary>
         private void Write()
         {
-            if (!Directory.Exists(Path.GetDirectoryName(_savePath)))
-                Directory.CreateDirectory(Path.GetDirectoryName(_savePath));
+            if (!Directory.Exists(Path.GetDirectoryName(SavePath)))
+                Directory.CreateDirectory(Path.GetDirectoryName(SavePath));
 
-            File.WriteAllText(_savePath, JsonConvert.SerializeObject(this, _settings));
+            File.WriteAllText(SavePath, JsonConvert.SerializeObject(this, JsonSettings));
 
-            Trace.WriteLine($"{nameof(Settings)}.{nameof(Write)}: Settings saved");
+            Trace.WriteLine($"{nameof(Gui.Settings.Settings)}.{nameof(Write)}: JsonSettings saved");
         }
 
         /// <summary>
-        /// Изменяем свойство новым значением. 
-        /// <para>Если свойство <see cref="INotifyCollectionChanged"/> либо <see cref="INotifyPropertyChanged"/>, 
-        /// наблюдаем за его изменениями, подписываясь на события</para>
+        ///     Изменяем свойство новым значением.
+        ///     <para>
+        ///         Если свойство <see cref="INotifyCollectionChanged" /> либо <see cref="INotifyPropertyChanged" />,
+        ///         наблюдаем за его изменениями, подписываясь на события
+        ///     </para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="storage"></param>
@@ -222,9 +243,7 @@ namespace Gui.Settings
                 if (storage is IEnumerable x
                     && value is IEnumerable y
                     && x.IsTermwiseEquals(y))
-                {
                     return false;
-                }
 
                 if (storage is INotifyPropertyChanged prev) prev.PropertyChanged -= NotifyChanges;
                 if (value is INotifyPropertyChanged newVal) newVal.PropertyChanged += NotifyChanges;
@@ -239,7 +258,7 @@ namespace Gui.Settings
         }
 
         /// <summary>
-        /// Ппри каждом значащем изменении, взводим флажок наличия изменений
+        ///     Ппри каждом значащем изменении, взводим флажок наличия изменений
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="storage"></param>
@@ -259,12 +278,14 @@ namespace Gui.Settings
     }
 
     /// <summary>
-    /// Стратегия выбора рабочего элемента для списания времени
+    ///     Стратегия выбора рабочего элемента для списания времени
     /// </summary>
     public enum WroteOffStrategy
     {
-        [LocalizedDescription(nameof(Properties.Resources.AS_ChooseRandomly), typeof(Properties.Resources))] Random,
+        [LocalizedDescription(nameof(Resources.AS_ChooseRandomly), typeof(Resources))]
+        Random,
 
-        [LocalizedDescription(nameof(Properties.Resources.AS_ChooseByMyOwn), typeof(Properties.Resources))] Watch
+        [LocalizedDescription(nameof(Resources.AS_ChooseByMyOwn), typeof(Resources))]
+        Watch
     }
 }

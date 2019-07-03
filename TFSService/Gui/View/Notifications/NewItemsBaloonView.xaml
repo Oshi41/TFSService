@@ -20,17 +20,17 @@
         <Binding Path="Items" Converter="{StaticResource ColorConverter}" />
     </UserControl.Background>
 
-    <ListView ItemsSource="{Binding Path=Items}" >
+    <ListView ItemsSource="{Binding Path=Items}">
         <ListView.InputBindings>
             <MouseBinding MouseAction="LeftDoubleClick"
-                          Command="{Binding Path=OpenLinkCommand}"/>
+                          Command="{Binding Path=OpenLinkCommand}" />
         </ListView.InputBindings>
-        
+
         <ListView.ItemContainerStyle>
             <Style TargetType="{x:Type ListBoxItem}"
-                   BasedOn="{StaticResource {x:Type ListBoxItem}}">                
-                <Setter Property="MaxWidth" 
-                        Value="{Binding RelativeSource={RelativeSource AncestorType=ListView}, Path=ActualWidth}"/>
+                   BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                <Setter Property="MaxWidth"
+                        Value="{Binding RelativeSource={RelativeSource AncestorType=ListView}, Path=ActualWidth}" />
             </Style>
         </ListView.ItemContainerStyle>
     </ListView>

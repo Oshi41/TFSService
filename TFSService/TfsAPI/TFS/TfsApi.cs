@@ -7,8 +7,6 @@ using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.Framework.Client;
-using Microsoft.TeamFoundation.Framework.Common;
-using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.Work.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
@@ -26,15 +24,15 @@ namespace TfsAPI.TFS
         /// <param name="owner">От какого имени действуем</param>
         public TfsApi(string url, string owner = null)
         {
-            _project = new TfsTeamProjectCollection(new Uri(url));
+            Project = new TfsTeamProjectCollection(new Uri(url));
 
-            Trace.WriteLine($"{nameof(TfsApi)}.ctor: Connected to " + _project.Name);
+            Trace.WriteLine($"{nameof(TfsApi)}.ctor: Connected to " + Project.Name);
 
-            _itemStore = _project.GetService<WorkItemStore>();
-            _linking = _project.GetService<ILinking>();
-            _versionControl = _project.GetService<VersionControlServer>();
-            _managementService = _project.GetService<IIdentityManagementService2>();
-            _teamService = _project.GetService<TfsTeamService>();
+            _itemStore = Project.GetService<WorkItemStore>();
+            _linking = Project.GetService<ILinking>();
+            _versionControl = Project.GetService<VersionControlServer>();
+            _managementService = Project.GetService<IIdentityManagementService2>();
+            _teamService = Project.GetService<TfsTeamService>();
 
 
             Name = owner ?? _itemStore.UserDisplayName;
@@ -86,17 +84,17 @@ namespace TfsAPI.TFS
                 }
             }
 
-            return await Task.Run((Func<bool>)CheckConnectSync);
+            return await Task.Run((Func<bool>) CheckConnectSync);
         }
 
         #region Fields
 
-        protected readonly TfsTeamProjectCollection _project;
+        protected readonly TfsTeamProjectCollection Project;
         private readonly WorkItemStore _itemStore;
         private readonly ILinking _linking;
         private readonly VersionControlServer _versionControl;
         private readonly IIdentityManagementService2 _managementService;
-        private readonly TfsTeamService _teamService;        
+        private readonly TfsTeamService _teamService;
 
 
         /// <summary>
@@ -112,15 +110,16 @@ namespace TfsAPI.TFS
         {
             item.AddHours(hours, setActive);
             SaveElement(item);
-            Trace.WriteLine($"{nameof(TfsApi)}.{nameof(WriteHours)}: From task {item.Id} was writed off {hours} hour(s)");
+            Trace.WriteLine(
+                $"{nameof(TfsApi)}.{nameof(WriteHours)}: From task {item.Id} was writed off {hours} hour(s)");
 
             var revisions = item.Revisions.OfType<Revision>();
             var finded = revisions
-                .Where(x => x.Fields.TryGetById((int)CoreField.ChangedBy) != null
-                       && x.Fields.Contains(WorkItems.Fields.Complited)
-                       && Equals(Name, x.Fields[CoreField.ChangedBy].Value)
-                       && x.Fields[WorkItems.Fields.Complited].Value != null)
-                .OrderByDescending(x => (DateTime)x.Fields[CoreField.ChangedDate].Value)
+                .Where(x => x.Fields.TryGetById((int) CoreField.ChangedBy) != null
+                            && x.Fields.Contains(WorkItems.Fields.Complited)
+                            && Equals(Name, x.Fields[CoreField.ChangedBy].Value)
+                            && x.Fields[WorkItems.Fields.Complited].Value != null)
+                .OrderByDescending(x => (DateTime) x.Fields[CoreField.ChangedDate].Value)
                 .ToList();
 
             return finded.FirstOrDefault();
@@ -142,7 +141,7 @@ namespace TfsAPI.TFS
             var uri = LinkingUtilities.EncodeUri(setId);
 
             // Нашел связи
-            var linked = _linking.GetReferencingArtifacts(new[] { uri });
+            var linked = _linking.GetReferencingArtifacts(new[] {uri});
 
             Trace.WriteLine($"{nameof(TfsApi)}.{nameof(GetAssociateItems)}: Founded {linked.Length} links");
 
@@ -183,16 +182,13 @@ namespace TfsAPI.TFS
         {
             var quarry = new WiqlBuilder()
                 .ContainsInFields("where",
-                text,
-                Sql.Fields.History,
-                Sql.Fields.Title,
-                Sql.Fields.Description);
+                    text,
+                    Sql.Fields.History,
+                    Sql.Fields.Title,
+                    Sql.Fields.Description);
 
             // Ищу только указанные типы
-            if (!allowedTypes.IsNullOrEmpty())
-            {
-                quarry.WithItemTypes("and", "=", allowedTypes);
-            }
+            if (!allowedTypes.IsNullOrEmpty()) quarry.WithItemTypes("and", "=", allowedTypes);
 
             var items = _itemStore.Query(quarry.ToString());
 
@@ -201,18 +197,19 @@ namespace TfsAPI.TFS
             return items.OfType<WorkItem>().ToList();
         }
 
-        public  int GetCapacity()
+        public int GetCapacity()
         {
             var today = DateTime.Today;
             var answer = GetCapacity(today, today);
             var result = answer.Sum(x => x.GetCapacity(Name));
 
-            return (int)result;
+            return result;
         }
 
         public virtual List<TeamCapacity> GetCapacity(DateTime start, DateTime end)
         {
-            var searcher = new CapacitySearcher(_project, _itemStore, _managementService, _teamService, _project.GetClient<WorkHttpClient>());
+            var searcher = new CapacitySearcher(Project, _itemStore, _managementService, _teamService,
+                Project.GetClient<WorkHttpClient>());
             return searcher.SearchCapacities(Name, start, end);
         }
 
@@ -258,7 +255,7 @@ namespace TfsAPI.TFS
                 IterationPath = parent.IterationPath
             };
 
-            task.Fields[CoreField.AssignedTo].Value = _project.AuthorizedIdentity.DisplayName;
+            task.Fields[CoreField.AssignedTo].Value = Project.AuthorizedIdentity.DisplayName;
             task.Fields[WorkItems.Fields.Remaining].Value = hours;
             task.Fields[WorkItems.Fields.Planning].Value = hours;
 
@@ -348,10 +345,10 @@ namespace TfsAPI.TFS
                                       && from < time.Date
                                       && time.Date < to;
 
-                    var completed = (double)revision.Fields[WorkItems.Fields.Complited].Value;
+                    var completed = (double) revision.Fields[WorkItems.Fields.Complited].Value;
 
                     // Списанное время
-                    var delta = (int)(completed - previouse);
+                    var delta = (int) (completed - previouse);
 
                     previouse = completed;
 
@@ -369,7 +366,8 @@ namespace TfsAPI.TFS
 
                     if (!assignedToMe)
                     {
-                        Trace.WriteLine($"{nameof(TfsApi)}.{nameof(GetWriteoffs)}: {revision.Fields[CoreField.AssignedTo]?.Value} took your task");
+                        Trace.WriteLine(
+                            $"{nameof(TfsApi)}.{nameof(GetWriteoffs)}: {revision.Fields[CoreField.AssignedTo]?.Value} took your task");
                         continue;
                     }
 
@@ -400,14 +398,15 @@ namespace TfsAPI.TFS
 
             var requests = _itemStore.Query(quarry).OfType<WorkItem>().ToList();
 
-            Trace.WriteLineIf(requests.Any(), $"{nameof(TfsApi)}.{nameof(CloseCompletedReviews)}: Founded {requests.Count} requests");
+            Trace.WriteLineIf(requests.Any(),
+                $"{nameof(TfsApi)}.{nameof(CloseCompletedReviews)}: Founded {requests.Count} requests");
 
             var result = new List<WorkItem>();
 
             var all = FindById(requests.SelectMany(x => x
-                      .WorkItemLinks
-                      .OfType<WorkItemLink>()
-                      .Select(y => y.TargetId)));
+                .WorkItemLinks
+                .OfType<WorkItemLink>()
+                .Select(y => y.TargetId)));
 
             foreach (var request in requests)
             {
@@ -418,16 +417,14 @@ namespace TfsAPI.TFS
                     .ToList();
 
                 var responses = all.Where(x => parents.Contains(x.Key)
-                    && x.Value.IsTypeOf(WorkItemTypes.ReviewResponse))
+                                               && x.Value.IsTypeOf(WorkItemTypes.ReviewResponse))
                     .Select(x => x.Value)
                     .ToList();
 
-                Trace.WriteLine($"{nameof(TfsApi)}.{nameof(CloseCompletedReviews)}: Request {request.Id} has {responses.Count} responses");
+                Trace.WriteLine(
+                    $"{nameof(TfsApi)}.{nameof(CloseCompletedReviews)}: Request {request.Id} has {responses.Count} responses");
 
-                if (canClose(request, responses))
-                {
-                    result.Add(request);
-                }
+                if (canClose(request, responses)) result.Add(request);
             }
 
             foreach (var item in result)
@@ -436,7 +433,8 @@ namespace TfsAPI.TFS
                 SaveElement(item);
             }
 
-            Trace.WriteLineIf(result.Any(), $"{nameof(TfsApi)}.{nameof(CloseCompletedReviews)}: Closed {result.Count} requests");
+            Trace.WriteLineIf(result.Any(),
+                $"{nameof(TfsApi)}.{nameof(CloseCompletedReviews)}: Closed {result.Count} requests");
 
             return result;
         }
@@ -487,23 +485,18 @@ namespace TfsAPI.TFS
 
             var builder = new WiqlBuilder();
 
-            foreach (var id in ids.Distinct())
-            {
-                builder = builder.WithNumber("or", id);
-            }
+            foreach (var id in ids.Distinct()) builder = builder.WithNumber("or", id);
 
             var items = QueryItems(builder.ToString());
 
             return items.ToDictionary(x => x.Id);
-        }        
+        }
 
         public string Name { get; }
 
         #endregion
 
         #region Private
-
-        
 
         #endregion
     }

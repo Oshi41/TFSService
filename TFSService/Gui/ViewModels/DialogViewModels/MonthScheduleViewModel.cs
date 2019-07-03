@@ -10,7 +10,7 @@ using TfsAPI.Interfaces;
 namespace Gui.ViewModels.DialogViewModels
 {
     /// <summary>
-    /// Окошко для месячного списания трудозатрат
+    ///     Окошко для месячного списания трудозатрат
     /// </summary>
     public class MonthCheckinsViewModel : BindableExtended
     {
@@ -22,9 +22,9 @@ namespace Gui.ViewModels.DialogViewModels
 
         private bool _isBusy;
         private List<DayViewModel> _month;
-        private DateTime date;
-        private DayViewModel selectedDay;
-        private int sum;
+        private DateTime _date;
+        private DayViewModel _selectedDay;
+        private int _sum;
 
         public MonthCheckinsViewModel(ITfsApi api)
         {
@@ -35,17 +35,17 @@ namespace Gui.ViewModels.DialogViewModels
 
         public DateTime Date
         {
-            get => date;
+            get => _date;
             set
             {
-                if (SetProperty(ref date, value)) OnDateChanged();
+                if (SetProperty(ref _date, value)) OnDateChanged();
             }
         }
 
         public DayViewModel SelectedDay
         {
-            get => selectedDay;
-            set => SetProperty(ref selectedDay, value);
+            get => _selectedDay;
+            set => SetProperty(ref _selectedDay, value);
         }
 
         public bool IsBusy
@@ -62,8 +62,8 @@ namespace Gui.ViewModels.DialogViewModels
 
         public int Sum
         {
-            get => sum;
-            set => SetProperty(ref sum, value);
+            get => _sum;
+            set => SetProperty(ref _sum, value);
         }
 
         private async void OnDateChanged()
@@ -88,7 +88,7 @@ namespace Gui.ViewModels.DialogViewModels
                 var capacities = await Task.Run(() => _api.GetCapacity(start, end));
 
                 // Получаю среднее значение
-                int capacity = (int)capacities.Average(x => x.GetCapacity(_api.Name));
+                var capacity = (int) capacities.Average(x => x.GetCapacity(_api.Name));
 
                 var collection = new List<DayViewModel>();
 
@@ -121,7 +121,7 @@ namespace Gui.ViewModels.DialogViewModels
     }
 
     /// <summary>
-    /// Представление одного дня в календаре
+    ///     Представление одного дня в календаре
     /// </summary>
     public class DayViewModel : BindableBase, ITimable
     {

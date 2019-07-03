@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Gui.Helper;
+using Gui.Properties;
 using Microsoft.TeamFoundation.Common;
 using TfsAPI.TFS;
 
 namespace Gui.ViewModels.DialogViewModels
 {
     /// <summary>
-    /// Окошко с выбором подключения к TFS
+    ///     Окошко с выбором подключения к TFS
     /// </summary>
     public class FirstConnectionViewModel : BindableExtended
     {
@@ -30,7 +31,7 @@ namespace Gui.ViewModels.DialogViewModels
         {
             if (prop == nameof(Text))
                 if (!Uri.TryCreate(Text, UriKind.Absolute, out var result))
-                    return Properties.Resources.AS_NotAWebAddress_Error;
+                    return Resources.AS_NotAWebAddress_Error;
 
             return base.ValidateProperty(prop);
         }
@@ -39,7 +40,7 @@ namespace Gui.ViewModels.DialogViewModels
         {
             if (prop == nameof(Text))
                 if (IsConnected == false)
-                    return Properties.Resources.AS_ConnectError;
+                    return Resources.AS_ConnectError;
 
             return base.ValidateOptionalProperty(prop);
         }

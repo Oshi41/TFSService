@@ -1,22 +1,21 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Resources;
+using TfsAPI.Properties;
 
 namespace TfsAPI.Attributes
 {
     /// <summary>
-    /// Локализуемое описание
+    ///     Локализуемое описание
     /// </summary>
     public class LocalizedDescriptionAttribute : DescriptionAttribute
     {
-        ResourceManager _resourceManager;
-        string _resourceKey;
+        private readonly string _resourceKey;
+        private readonly ResourceManager _resourceManager;
+
         public LocalizedDescriptionAttribute(string resourceKey, Type resourceType = null)
         {
-            if (resourceType == null)
-            {
-                resourceType = typeof(Properties.Resource);
-            }
+            if (resourceType == null) resourceType = typeof(Resource);
 
             _resourceManager = new ResourceManager(resourceType);
             _resourceKey = resourceKey;
@@ -26,7 +25,7 @@ namespace TfsAPI.Attributes
         {
             get
             {
-                string description = _resourceManager.GetString(_resourceKey);
+                var description = _resourceManager.GetString(_resourceKey);
                 return string.IsNullOrWhiteSpace(description) ? string.Format("[[{0}]]", _resourceKey) : description;
             }
         }

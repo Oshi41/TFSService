@@ -1,12 +1,10 @@
 ﻿using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using Gui.Helper;
 using Gui.View;
 using Gui.ViewModels.Notifications;
-using TfsAPI.Constants;
-using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
+using TfsAPI.TFS;
 
 namespace Gui
 {
@@ -21,7 +19,8 @@ namespace Gui
 
             var listener = new TextWriterTraceListener(Settings.Settings.Read().LogPath)
             {
-                TraceOutputOptions = TraceOptions.Timestamp | TraceOptions.ThreadId | TraceOptions.DateTime | TraceOptions.ProcessId
+                TraceOutputOptions = TraceOptions.Timestamp | TraceOptions.ThreadId | TraceOptions.DateTime |
+                                     TraceOptions.ProcessId
             };
 
             Trace.Listeners.Add(listener);
@@ -39,16 +38,16 @@ namespace Gui
             var window = new MainView();
             window.ShowDialog();
 
-            App.Current.Shutdown(0);
+            Current.Shutdown(0);
         }
 
         private void RunTests()
         {
             var id = 80439;
-            var api = new TfsAPI.TFS.TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+            var api = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
 
             var item = api.FindById(id);
-            var assigned = new ItemsAssignedBaloonViewModel(new [] { item}, "Новый элемент был назначен");
+            var assigned = new ItemsAssignedBaloonViewModel(new[] {item}, "Новый элемент был назначен");
 
             WindowManager.ShowBaloon(assigned);
 

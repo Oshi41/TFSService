@@ -1,40 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 using Gui.Helper;
+using Gui.Properties;
 using Gui.Settings;
-using Gui.ViewModels.Rules;
-using Microsoft.TeamFoundation.VersionControl.Common.Internal;
 using Microsoft.Win32;
 using TfsAPI.Interfaces;
-using TfsAPI.RulesNew;
 
 namespace Gui.ViewModels.DialogViewModels
 {
     /// <summary>
-    /// Настройки приложения. Сохраняет настройки только на кнопку ОК
+    ///     Настройки приложения. Сохраняет настройки только на кнопку ОК
     /// </summary>
     public class SettingsViewModel : BindableExtended
     {
+        private readonly ITfsApi _api;
+        private bool _capacityByUser;
         private bool _changed;
 
-        private int capacity;
-        private string connection;
-        private TimeSpan dayDuration;
-        private WroteOffStrategy strategy;
-        private string logsPath;
-        private int itemMinutesCheck;
-        private int oldReviewDay;
-        private bool _capacityByUser;
-        private readonly ITfsApi api;
+        private int _capacity;
+        private string _connection;
+        private TimeSpan _dayDuration;
+        private int _itemMinutesCheck;
+        private string _logsPath;
+        private int _oldReviewDay;
+        private WroteOffStrategy _strategy;
 
         public SettingsViewModel(string currentConnection, ITfsApi api)
         {
-            this.api = api;
+            _api = api;
 
             ConnectCommand = new ObservableCommand(OnConnect);
             SubmitCommand = new ObservableCommand(OnSave, OnCanSave);
@@ -48,10 +42,7 @@ namespace Gui.ViewModels.DialogViewModels
         {
             var dlg = new OpenFileDialog();
 
-            if (dlg.ShowDialog() == true)
-            {
-                LogsPath = dlg.FileName;
-            }
+            if (dlg.ShowDialog() == true) LogsPath = dlg.FileName;
         }
 
         /// <summary>
@@ -62,15 +53,15 @@ namespace Gui.ViewModels.DialogViewModels
         {
             using (var settings = Settings.Settings.Read())
             {
-                dayDuration = settings.Duration;
-                capacity = settings.Capacity.Hours;
-                connection = currentConnection;
-                strategy = settings.Strategy;
+                _dayDuration = settings.Duration;
+                _capacity = settings.Capacity.Hours;
+                _connection = currentConnection;
+                _strategy = settings.Strategy;
                 RuleEditor = new RuleEditorViewModel(settings.Rules);
-                Name = api.Name;
-                logsPath = settings.LogPath;
-                itemMinutesCheck = settings.ItemMinutesCheck;
-                oldReviewDay = settings.OldReviewDay;
+                Name = _api.Name;
+                _logsPath = settings.LogPath;
+                _itemMinutesCheck = settings.ItemMinutesCheck;
+                _oldReviewDay = settings.OldReviewDay;
             }
         }
 
@@ -104,7 +95,7 @@ namespace Gui.ViewModels.DialogViewModels
         {
             var vm = new FirstConnectionViewModel();
 
-            if (WindowManager.ShowDialog(vm, Properties.Resources.AS_TfsConnection_Title, 400, 200) == true) Connection = vm.Text;
+            if (WindowManager.ShowDialog(vm, Resources.AS_TfsConnection_Title, 400, 200) == true) Connection = vm.Text;
         }
 
         protected override bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
@@ -122,43 +113,60 @@ namespace Gui.ViewModels.DialogViewModels
         ///     Подключение к другому TFS
         /// </summary>
         public ICommand ConnectCommand { get; }
+
         public ICommand ChooseLogFileCommand { get; }
 
         public int Capacity
         {
-            get => capacity;
-            set => SetProperty(ref capacity, value);
+            get => _capacity;
+            set => SetProperty(ref _capacity, value);
         }
 
-        public bool CapacityByUser { get => _capacityByUser; set => SetProperty(ref _capacityByUser, value); }
+        public bool CapacityByUser
+        {
+            get => _capacityByUser;
+            set => SetProperty(ref _capacityByUser, value);
+        }
 
         public TimeSpan DayDuration
         {
-            get => dayDuration;
-            set => SetProperty(ref dayDuration, value);
+            get => _dayDuration;
+            set => SetProperty(ref _dayDuration, value);
         }
 
         public string Connection
         {
-            get => connection;
-            set => SetProperty(ref connection, value);
+            get => _connection;
+            set => SetProperty(ref _connection, value);
         }
 
         public WroteOffStrategy Strategy
         {
-            get => strategy;
-            set => SetProperty(ref strategy, value);
+            get => _strategy;
+            set => SetProperty(ref _strategy, value);
         }
 
         public RuleEditorViewModel RuleEditor { get; set; }
 
         public string Name { get; private set; }
 
-        public string LogsPath { get => logsPath; set => SetProperty(ref logsPath, value); }
+        public string LogsPath
+        {
+            get => _logsPath;
+            set => SetProperty(ref _logsPath, value);
+        }
 
-        public int ItemMinutesCheck { get => itemMinutesCheck; set => SetProperty(ref itemMinutesCheck, value); }
+        public int ItemMinutesCheck
+        {
+            get => _itemMinutesCheck;
+            set => SetProperty(ref _itemMinutesCheck, value);
+        }
 
-        public int OldReviewDay { get => oldReviewDay; set => SetProperty(ref oldReviewDay, value); }
+        public int OldReviewDay
+        {
+            get => _oldReviewDay;
+            set => SetProperty(ref _oldReviewDay, value);
+        }
 
         #endregion
     }

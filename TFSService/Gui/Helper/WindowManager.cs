@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Windows;
+using Gui.Properties;
 using Gui.View;
 using Gui.View.Rule_Wizard;
 using Gui.ViewModels.DialogViewModels;
 using Gui.ViewModels.Notifications;
 using Gui.ViewModels.Rules;
-using Microsoft.TeamFoundation.Build.WebApi;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
+using ToastNotifications.Messages;
 using ToastNotifications.Position;
 
 namespace Gui.Helper
 {
     /// <summary>
-    /// Статический класс для показа диалогов
+    ///     Статический класс для показа диалогов
     /// </summary>
     public class WindowManager
     {
         /// <summary>
-        /// Класс для показа всплывающих уведомлений
+        ///     Класс для показа всплывающих уведомлений
         /// </summary>
-        private static readonly Notifier _notifier = new Notifier(cfg =>
+        private static readonly Notifier Notifier = new Notifier(cfg =>
         {
             cfg.PositionProvider = new PrimaryScreenPositionProvider(Corner.BottomRight, 10, 10);
 
@@ -29,7 +30,7 @@ namespace Gui.Helper
         });
 
         /// <summary>
-        /// Показываю диалоговое окно с 2-3 кнопками
+        ///     Показываю диалоговое окно с 2-3 кнопками
         /// </summary>
         /// <param name="vm">Контент</param>
         /// <param name="title">Заголовок окошка</param>
@@ -37,8 +38,10 @@ namespace Gui.Helper
         /// <param name="height">Высота. Если указать только её, ширина будет высчитана автоматически как height / 1.25</param>
         /// <param name="ok">Текст кнопки подтверждения</param>
         /// <param name="cancel">Текст кнопки отмены</param>
-        /// <param name="specialText">Текст вспомогательной кнопки. Если <see cref="BindableExtended.SpecialCommand"/> == <see langword="null"/>,
-        /// кнопка не отобразится</param>
+        /// <param name="specialText">
+        ///     Текст вспомогательной кнопки. Если <see cref="BindableExtended.SpecialCommand" /> == <see langword="null" />,
+        ///     кнопка не отобразится
+        /// </param>
         /// <returns></returns>
         public static bool? ShowDialog(BindableExtended vm,
             string title,
@@ -58,11 +61,11 @@ namespace Gui.Helper
                 },
                 ExitBtn =
                 {
-                    Content = cancel ?? Properties.Resources.AS_Cancel
+                    Content = cancel ?? Resources.AS_Cancel
                 },
                 SpecialBtn =
                 {
-                    Content = specialText ?? Properties.Resources.AS_TryCreate
+                    Content = specialText ?? Resources.AS_TryCreate
                 }
             };
 
@@ -85,7 +88,7 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Показываю диалог создания правила
+        ///     Показываю диалог создания правила
         /// </summary>
         /// <param name="vm">Контент</param>
         /// <param name="title">Заголовок</param>
@@ -102,23 +105,41 @@ namespace Gui.Helper
                 MinWidth = width,
 
                 Width = width,
-                Height = height,
+                Height = height
             };
 
             return window.ShowDialog();
         }
 
         /// <summary>
-        /// Показываю вспл. уведомление
+        ///     Показываю вспл. уведомление
         /// </summary>
         /// <param name="vm">Контент</param>
         public static void ShowBaloon(BindableNotificationBase vm)
         {
-            _notifier.Notify(() => vm);
+            Notifier.Notify(() => vm);
         }
 
         /// <summary>
-        /// Показываю MessageBox с да/нет/отмена решением
+        ///     Показываю текст в случае успеха
+        /// </summary>
+        /// <param name="text"></param>
+        public static void ShowBalloonSuccess(string text)
+        {
+            Notifier.ShowSuccess(text);
+        }
+
+        /// <summary>
+        ///     Уведомление в случае неудачи
+        /// </summary>
+        /// <param name="text"></param>
+        public static void ShowBalloonError(string text)
+        {
+            Notifier.ShowError(text);
+        }
+
+        /// <summary>
+        ///     Показываю MessageBox с да/нет/отмена решением
         /// </summary>
         /// <param name="text"></param>
         /// <param name="title"></param>

@@ -22,7 +22,7 @@ namespace Gui.Helper
         }
 
         /// <summary>
-        /// Ищем родителя по типу. Null, если ничего не нашли
+        ///     Ищем родителя по типу. Null, если ничего не нашли
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="control"></param>
@@ -33,7 +33,7 @@ namespace Gui.Helper
             if (control is T find)
                 return find;
 
-            find = default(T);
+            find = default;
 
             var visual = VisualTreeHelper.GetParent(control);
             var logical = LogicalTreeHelper.GetParent(control);

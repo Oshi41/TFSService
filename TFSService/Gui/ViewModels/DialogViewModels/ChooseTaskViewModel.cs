@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Gui.Helper;
+using Gui.Properties;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
@@ -7,7 +8,7 @@ using TfsAPI.Interfaces;
 namespace Gui.ViewModels.DialogViewModels
 {
     /// <summary>
-    /// Окошко выбора рабочего элемента
+    ///     Окошко выбора рабочего элемента
     /// </summary>
     public class ChooseTaskViewModel : BindableExtended
     {
@@ -21,7 +22,7 @@ namespace Gui.ViewModels.DialogViewModels
 
             Searcher = new WorkItemSearcher(_tfs, WorkItemTypes.Task)
             {
-                Help = Properties.Resources.AS_ChooseTask
+                Help = Resources.AS_ChooseTask
             };
         }
 
@@ -35,7 +36,7 @@ namespace Gui.ViewModels.DialogViewModels
         {
             var vm = new CreateTaskViewModel(_tfs);
 
-            if (WindowManager.ShowDialog(vm, Properties.Resources.AS_TaskCreation, 500, 500/1.5) == true)
+            if (WindowManager.ShowDialog(vm, Resources.AS_TaskCreation, 500, 500 / 1.5) == true)
             {
                 var copy = Searcher.Items.ToList();
                 copy.Add(vm.CreatedItem);
@@ -51,7 +52,7 @@ namespace Gui.ViewModels.DialogViewModels
         {
             if (prop == nameof(Searcher.Selected)
                 && !Searcher.Selected.Item.IsTypeOf(WorkItemTypes.Task))
-                return Properties.Resources.AS_NotATask_Error;
+                return Resources.AS_NotATask_Error;
 
             return base.ValidateProperty(prop);
         }
