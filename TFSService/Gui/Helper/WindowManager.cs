@@ -12,8 +12,14 @@ using ToastNotifications.Position;
 
 namespace Gui.Helper
 {
+    /// <summary>
+    /// Статический класс для показа диалогов
+    /// </summary>
     public class WindowManager
     {
+        /// <summary>
+        /// Класс для показа всплывающих уведомлений
+        /// </summary>
         private static readonly Notifier _notifier = new Notifier(cfg =>
         {
             cfg.PositionProvider = new PrimaryScreenPositionProvider(Corner.BottomRight, 10, 10);
@@ -22,6 +28,18 @@ namespace Gui.Helper
                 MaximumNotificationCount.FromCount(10));
         });
 
+        /// <summary>
+        /// Показываю диалоговое окно с 2-3 кнопками
+        /// </summary>
+        /// <param name="vm">Контент</param>
+        /// <param name="title">Заголовок окошка</param>
+        /// <param name="width">Ширина. Если указать только её, длина будет высчитана автоматически как width * 1.25</param>
+        /// <param name="height">Высота. Если указать только её, ширина будет высчитана автоматически как height / 1.25</param>
+        /// <param name="ok">Текст кнопки подтверждения</param>
+        /// <param name="cancel">Текст кнопки отмены</param>
+        /// <param name="specialText">Текст вспомогательной кнопки. Если <see cref="BindableExtended.SpecialCommand"/> == <see langword="null"/>,
+        /// кнопка не отобразится</param>
+        /// <returns></returns>
         public static bool? ShowDialog(BindableExtended vm,
             string title,
             double? width = null,
@@ -66,6 +84,14 @@ namespace Gui.Helper
             return window.ShowDialog();
         }
 
+        /// <summary>
+        /// Показываю диалог создания правила
+        /// </summary>
+        /// <param name="vm">Контент</param>
+        /// <param name="title">Заголовок</param>
+        /// <param name="width">Ширина</param>
+        /// <param name="height">Высота</param>
+        /// <returns></returns>
         public static bool? ShowDialog(AddRuleViewModel vm, string title, double width, double height)
         {
             var window = new RuleWizardView
@@ -82,11 +108,21 @@ namespace Gui.Helper
             return window.ShowDialog();
         }
 
+        /// <summary>
+        /// Показываю вспл. уведомление
+        /// </summary>
+        /// <param name="vm">Контент</param>
         public static void ShowBaloon(BindableNotificationBase vm)
         {
             _notifier.Notify(() => vm);
         }
 
+        /// <summary>
+        /// Показываю MessageBox с да/нет/отмена решением
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="title"></param>
+        /// <returns></returns>
         public static bool? ShowConfirm(string text, string title)
         {
             switch (MessageBox.Show(text, title, MessageBoxButton.YesNoCancel, MessageBoxImage.Question))

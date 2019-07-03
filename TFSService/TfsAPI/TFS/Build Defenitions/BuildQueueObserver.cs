@@ -1,5 +1,6 @@
 ﻿using Microsoft.TeamFoundation.Build.Client;
 using Microsoft.TeamFoundation.Build.WebApi;
+using Microsoft.TeamFoundation.Common;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace TfsAPI.TFS.Build_Defenitions
 
         public IList<Build> FindBuilds(DateTime? start = null,
             DateTime? finish = null,
-            BuildResult result = BuildResult.Succeeded,
+            BuildResult? result = null,
             Func<Build, bool> specialPredicat = null)
         {
             if (finish == null)
@@ -52,11 +53,21 @@ namespace TfsAPI.TFS.Build_Defenitions
                                     resultFilter: result)
                              .Result)
                 .AsParallel()
-                .Where(x => x.RequestedBy.DisplayName == _name && specialPredicat(x))
+                .Where(x => specialPredicat(x))
                 .ToList();
 
             return builds;
-
         }
+
+        public void FindQueuedBuilds()
+        {
+            var agents = _buildServer.QueryBuildAgents(_buildServer.CreateBuildAgentSpec());
+            
+            if (agents?.Agents.IsNullOrEmpty() != false)
+            {
+                return;
+            }
+        }
+
     }
 }

@@ -7,6 +7,9 @@ using ToastNotifications.Core;
 
 namespace Gui.ViewModels.Notifications
 {
+    /// <summary>
+    /// Уведомление о списании времени
+    /// </summary>
     internal class WriteOffBaloonViewModel : BindableNotificationBase
     {
         public WriteOffBaloonViewModel(string caption = null)

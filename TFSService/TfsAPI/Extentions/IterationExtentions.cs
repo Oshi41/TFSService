@@ -45,11 +45,6 @@ namespace TfsAPI.Extentions
 
             return InRange(iteration.Start, iteration.Finish, start, end);
         }
-
-        public static bool InRange(this Tuple<DateTime, DateTime> iteration, DateTime start, DateTime end)
-        {
-            return InRange(iteration.Item1, iteration.Item2, start, end);
-        }
         
 
 

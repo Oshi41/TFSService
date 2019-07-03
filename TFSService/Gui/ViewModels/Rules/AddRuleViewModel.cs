@@ -11,6 +11,9 @@ using TfsAPI.RulesNew;
 
 namespace Gui.ViewModels.Rules
 {
+    /// <summary>
+    /// Мастер добвления правил. НА данный момент только пресеты
+    /// </summary>
     public class AddRuleViewModel : BindableExtended
     {
         private bool usePresets = true;

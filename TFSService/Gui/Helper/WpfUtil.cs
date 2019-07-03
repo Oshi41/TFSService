@@ -21,16 +21,22 @@ namespace Gui.Helper
             return FindChildByName<T>(childName, maxDepth, parent);
         }
 
-        public static T TryFindParent<T>(DependencyObject parent)
+        /// <summary>
+        /// Ищем родителя по типу. Null, если ничего не нашли
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="control"></param>
+        /// <returns></returns>
+        public static T TryFindParent<T>(DependencyObject control)
             where T : DependencyObject
         {
-            if (parent is T find)
+            if (control is T find)
                 return find;
 
             find = default(T);
 
-            var visual = VisualTreeHelper.GetParent(parent);
-            var logical = LogicalTreeHelper.GetParent(parent);
+            var visual = VisualTreeHelper.GetParent(control);
+            var logical = LogicalTreeHelper.GetParent(control);
 
             if (visual != null) find = TryFindParent<T>(visual);
 

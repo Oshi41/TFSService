@@ -33,6 +33,8 @@ namespace Gui
         {
             var window = new MainView();
             window.ShowDialog();
+
+            App.Current.Shutdown(0);
         }
 
         private void RunTests()

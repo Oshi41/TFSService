@@ -8,6 +8,9 @@ using TfsAPI.TFS;
 
 namespace Gui.ViewModels.DialogViewModels
 {
+    /// <summary>
+    /// Окошко с выбором подключения к TFS
+    /// </summary>
     public class FirstConnectionViewModel : BindableExtended
     {
         public FirstConnectionViewModel()

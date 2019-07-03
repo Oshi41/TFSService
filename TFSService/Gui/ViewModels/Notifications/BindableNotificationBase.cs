@@ -6,6 +6,9 @@ using ToastNotifications.Core;
 
 namespace Gui.ViewModels.Notifications
 {
+    /// <summary>
+    /// Базовый класс для уведомлений
+    /// </summary>
     public class BindableNotificationBase : NotificationBase, INotifyPropertyChanged, INotification
     {
         private NotificationDisplayPart _displayPart;
@@ -18,6 +21,9 @@ namespace Gui.ViewModels.Notifications
             Options.FreezeOnMouseEnter = true;
         }
 
+        /// <summary>
+        /// Визуальное представление уведомления.
+        /// </summary>
         public override NotificationDisplayPart DisplayPart
         {
             get
@@ -45,6 +51,15 @@ namespace Gui.ViewModels.Notifications
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        /// <summary>
+        /// Изменяю свойство и вызываю метод обновления, если был передан
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source">Источник</param>
+        /// <param name="value">Новое значение</param>
+        /// <param name="onChange">Метод, вызывающийся при изменениии</param>
+        /// <param name="propertyName">Имя свойства</param>
+        /// <returns></returns>
         protected bool Set<T>(ref T source, T value, Action<T, T> onChange = null,
             [CallerMemberName] string propertyName = null)
         {
@@ -60,6 +75,9 @@ namespace Gui.ViewModels.Notifications
         #endregion
     }
 
+    /// <summary>
+    /// Расширенные возможности для уведомлений
+    /// </summary>
     public class EnhancedOptions : MessageOptions
     {
         public Action<BindableNotificationBase> DoubleClickAction { get; set; }

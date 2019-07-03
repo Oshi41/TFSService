@@ -9,6 +9,9 @@ using TfsAPI.Interfaces;
 
 namespace Gui.Helper
 {
+    /// <summary>
+    /// Коллекция для работы с запланированным списанием. Управляет записью в TFS
+    /// </summary>
     public class WriteOffCollection : ObservableCollection<WriteOff>
     {
         #region Public methods
@@ -261,15 +264,14 @@ namespace Gui.Helper
             return;
         }
 
+        /// <summary>
+        /// Удаляем все элементы по условию
+        /// </summary>
+        /// <param name="condition"></param>
         private void RemoveAll(Func<WriteOff, bool> condition)
         {
             var toRemove = this.Where(condition).ToList();
             foreach (var item in toRemove) Remove(item);
-        }
-
-        private void RemoveRange(IList<WriteOff> source)
-        {
-            foreach (var item in source) Remove(item);
         }
 
         #endregion

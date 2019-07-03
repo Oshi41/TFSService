@@ -4,6 +4,9 @@ using System.Resources;
 
 namespace TfsAPI.Attributes
 {
+    /// <summary>
+    /// Локализуемое описание
+    /// </summary>
     public class LocalizedDescriptionAttribute : DescriptionAttribute
     {
         ResourceManager _resourceManager;

@@ -5,6 +5,9 @@ using TfsAPI.Interfaces;
 
 namespace Gui.ViewModels.DialogViewModels
 {
+    /// <summary>
+    /// Окошко создания нового таска
+    /// </summary>
     public class CreateTaskViewModel : BindableExtended
     {
         private readonly ITfsApi _tfs;
@@ -14,6 +17,7 @@ namespace Gui.ViewModels.DialogViewModels
         public CreateTaskViewModel(ITfsApi tfs)
         {
             _tfs = tfs;
+            // Ищем для привязки только указанные типы
             Searcher = new WorkItemSearcher(tfs,
                 WorkItemTypes.Pbi,
                 WorkItemTypes.Bug, 

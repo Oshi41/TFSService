@@ -9,6 +9,9 @@ using TfsAPI.Interfaces;
 
 namespace Gui.ViewModels.DialogViewModels
 {
+    /// <summary>
+    /// Окошко для месячного списания трудозатрат
+    /// </summary>
     public class MonthCheckinsViewModel : BindableExtended
     {
         private readonly ITfsApi _api;
@@ -117,6 +120,9 @@ namespace Gui.ViewModels.DialogViewModels
         DateTime Time { get; }
     }
 
+    /// <summary>
+    /// Представление одного дня в календаре
+    /// </summary>
     public class DayViewModel : BindableBase, ITimable
     {
         public DayViewModel(DateTime time, List<KeyValuePair<Revision, int>> checkins, int capacity)

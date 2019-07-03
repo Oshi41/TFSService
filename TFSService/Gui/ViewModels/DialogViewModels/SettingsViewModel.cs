@@ -15,6 +15,9 @@ using TfsAPI.RulesNew;
 
 namespace Gui.ViewModels.DialogViewModels
 {
+    /// <summary>
+    /// Настройки приложения. Сохраняет настройки только на кнопку ОК
+    /// </summary>
     public class SettingsViewModel : BindableExtended
     {
         private bool _changed;

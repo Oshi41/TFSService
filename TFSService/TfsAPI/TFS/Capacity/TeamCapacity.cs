@@ -13,13 +13,29 @@ using TfsAPI.TFS.Capacity;
 
 namespace TfsAPI.TFS
 {
+    /// <summary>
+    /// Трудозатраты команды. Нельзя использовать в HashSet
+    /// </summary>
     public class TeamCapacity
     {
+        /// <summary>
+        /// Проект
+        /// </summary>
         public Capacity.Project Project { get;  }
+
+        /// <summary>
+        /// Итерация
+        /// </summary>
         public Iteration Iteration { get;  }
 
+        /// <summary>
+        /// Команды
+        /// </summary>
         public Team Team { get;  }
 
+        /// <summary>
+        /// Члены команды
+        /// </summary>
         public List<TeamMemberCapacity> TeamMembers { get;  }
 
         public TeamCapacity(Microsoft.TeamFoundation.WorkItemTracking.Client.Project p, TeamFoundationTeam t, TeamSettingsIteration i, IEnumerable<TeamMemberCapacity> m)

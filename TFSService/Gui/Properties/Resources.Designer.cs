@@ -322,6 +322,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Изменились следующие элементы:.
+        /// </summary>
+        public static string AS_ItemsChanged {
+            get {
+                return ResourceManager.GetString("AS_ItemsChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Время между обновлениями рабочих элементов (в минутах).
         /// </summary>
         public static string AS_ItemUpdatePeriod {

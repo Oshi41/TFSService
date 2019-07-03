@@ -10,13 +10,29 @@ using System.Threading.Tasks;
 
 namespace TfsAPI.RulesNew
 {
+    /// <summary>
+    /// Представление правила
+    /// </summary>
     public interface IRule
     {
+        /// <summary>
+        /// Название правила
+        /// </summary>
         string Title {  get;}
+
+        /// <summary>
+        /// Исходный WIQL запрос
+        /// </summary>
         string Source { get;}
 
+        /// <summary>
+        /// Второй WIQL запрос
+        /// </summary>
         string Condition { get;}
 
+        /// <summary>
+        /// Тип операции между двумя получившимися списками
+        /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
         RuleOperation Operation { get;}
     }

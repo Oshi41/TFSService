@@ -6,6 +6,13 @@ namespace TfsAPI.Extentions
 {
     public static class LinqExtensions
     {
+        /// <summary>
+        /// Сравнивает 2 списка поэлементно, порядок не важен
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="sequence"></param>
+        /// <param name="comparer"></param>
+        /// <returns></returns>
         public static bool IsTermwiseEquals(this IEnumerable source, IEnumerable sequence,
             IEqualityComparer<object> comparer = null)
         {

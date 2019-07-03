@@ -7,12 +7,21 @@ using Mvvm.Commands;
 
 namespace Gui.Helper
 {
+    /// <summary>
+    /// Команда наблюдает за выполнением своей функции. Если функция выполняется, команда недоступна
+    /// </summary>
     public class ObservableCommand : DelegateCommandBase, ICommand, INotifyPropertyChanged
     {
+        /// <summary>
+        /// Макс. кол-во выполнения функции. Бесконечность при отриц значениях
+        /// </summary>
         private int _maxExecutionCount = -1;
 
         private bool _isExecuting;
 
+        /// <summary>
+        /// Выполняется ли команда в данный момент
+        /// </summary>
         public bool IsExecuting
         {
             get => _isExecuting;
@@ -82,6 +91,10 @@ namespace Gui.Helper
                 throw new ArgumentNullException(nameof(executeMethod));
         }
 
+        /// <summary>
+        /// Команда выполнится единократно
+        /// </summary>
+        /// <returns></returns>
         public ObservableCommand ExecuteOnce()
         {
             _maxExecutionCount = 1;

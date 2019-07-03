@@ -15,6 +15,9 @@ using TfsAPI.RulesNew;
 
 namespace Gui.ViewModels
 {
+    /// <summary>
+    /// Отображение списка моих правил рабочих элементов
+    /// </summary>
     public class RuleEditorViewModel : BindableBase
     {
         private ObservableCollection<IRule> rules;

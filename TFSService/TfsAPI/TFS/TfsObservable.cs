@@ -206,13 +206,12 @@ namespace TfsAPI.TFS
         #region Override
 
         private const string _myWorkItemsKey = "myItemsCachePolicyName";
-
+        /// <summary>
+        /// Добавил хэширование, чтобы не делать запросы чаще, чем раз в минуту
+        /// </summary>
+        /// <returns></returns>
         public override IList<WorkItem> GetMyWorkItems()
         {
-            // 
-            // Сделано хэширование, чтобы не делать запросы чаще, чем раз в минуту
-            //
-
             if (!_cache.TryGetValue<IList<WorkItem>>(_myWorkItemsKey, out var result))
             {
                 result = base.GetMyWorkItems();

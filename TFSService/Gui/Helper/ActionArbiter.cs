@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 
 namespace Gui.Helper
 {
+    /// <summary>
+    /// Выполняет только одну операцию в определенный промежуток времени,
+    /// что позволяет избежать циклических вызовов. Имеет возможность блокировки выполнения пользователем
+    /// </summary>
     public class ActionArbiter
     {
         private bool _block;
@@ -65,6 +69,9 @@ namespace Gui.Helper
         }
     }
 
+    /// <summary>
+    /// То же, что и супер класс, но с поддержкой async/await
+    /// </summary>    
     public class ActionArbiterAsync : ActionArbiter
     {
         private CancellationToken _token;

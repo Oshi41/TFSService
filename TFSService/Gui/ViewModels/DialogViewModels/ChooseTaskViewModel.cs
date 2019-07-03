@@ -6,6 +6,9 @@ using TfsAPI.Interfaces;
 
 namespace Gui.ViewModels.DialogViewModels
 {
+    /// <summary>
+    /// Окошко выбора рабочего элемента
+    /// </summary>
     public class ChooseTaskViewModel : BindableExtended
     {
         private readonly ITfsApi _tfs;

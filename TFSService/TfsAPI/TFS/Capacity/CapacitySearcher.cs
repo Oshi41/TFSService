@@ -1,31 +1,27 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Common;
-using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.Framework.Client;
 using Microsoft.TeamFoundation.Framework.Common;
 using Microsoft.TeamFoundation.Server;
-using Microsoft.TeamFoundation.TestManagement.Client;
-using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.Work.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using TfsAPI.Extentions;
 using TfsAPI.TFS.Capacity;
 
 namespace TfsAPI.TFS
 {
+    /// <summary>
+    /// Поиск тредосгораний команд в TFS
+    /// </summary>
     public class CapacitySearcher : ICapacitySearcher
     {
         #region Fields
@@ -179,6 +175,7 @@ namespace TfsAPI.TFS
             }
             catch (Exception e)
             {
+                // скорее всего нет прав
                 Trace.WriteLine(e);
                 return null;
             }
@@ -244,6 +241,9 @@ namespace TfsAPI.TFS
         #endregion       
     }
 
+    /// <summary>
+    /// То же, что и супер класс, но кэширует запросы, не нагружая TFS
+    /// </summary>
     class CachedCapacitySearcher : CapacitySearcher
     {
         private readonly MemoryCache _cache;

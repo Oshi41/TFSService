@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace TfsAPI.TFS.Capacity
 {
+    /// <summary>
+    /// Представление команды в TFS
+    /// </summary>
     public class Team
     {
         public Guid Id { get; }

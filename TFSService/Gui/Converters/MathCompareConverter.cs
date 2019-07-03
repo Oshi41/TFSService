@@ -13,6 +13,10 @@ namespace Gui.Converters
         Equals
     }
 
+    /// <summary>
+    /// Булевские сравнения между двумя переменными.
+    /// Пока что флаги не поддерживает
+    /// </summary>
     public class MathCompareConverter : IMultiValueConverter
     {
         public OperationTypes Operation { get; set; }

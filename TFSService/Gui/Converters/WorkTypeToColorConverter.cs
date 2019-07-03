@@ -9,6 +9,9 @@ using TfsAPI.Extentions;
 
 namespace Gui.Converters
 {
+    /// <summary>
+    /// Цвет рабочего элемента в зависимости от типа
+    /// </summary>
     internal class WorkTypeToColorConverter : IValueConverter
     {
         /// <summary>

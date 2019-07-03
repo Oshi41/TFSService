@@ -17,6 +17,9 @@ using TfsAPI.RulesNew;
 
 namespace Gui.Settings
 {
+    /// <summary>
+    /// Класс хранения настроек приложения. При Dispose пытается сохраниться в файл, если были произведены изменения
+    /// </summary>
     public class Settings : BindableBase, IDisposable
     {
         public Settings()
@@ -147,12 +150,19 @@ namespace Gui.Settings
 
         #region Methods
 
+        /// <summary>
+        /// Пытаемся сохраниться, если были изменения
+        /// </summary>
         public void Dispose()
         {
             if (_changed)
                 Write();
         }
 
+        /// <summary>
+        /// Читаем настройки из файла, либо берем дефолтные
+        /// </summary>
+        /// <returns></returns>
         public static Settings Read()
         {
             Settings settings;
@@ -173,6 +183,9 @@ namespace Gui.Settings
             return settings;
         }
 
+        /// <summary>
+        /// Записываем настройки в json формат в файл
+        /// </summary>
         private void Write()
         {
             if (!Directory.Exists(Path.GetDirectoryName(_savePath)))
@@ -183,13 +196,23 @@ namespace Gui.Settings
             Trace.WriteLine("Settings saved");
         }
 
+        /// <summary>
+        /// Изменяем свойство новым значением. 
+        /// <para>Если свойство <see cref="INotifyCollectionChanged"/> либо <see cref="INotifyPropertyChanged"/>, 
+        /// наблюдаем за его изменениями, подписываясь на события</para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="storage"></param>
+        /// <param name="value"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
         private bool Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
             if (!Equals(storage, value))
             {
-                if (storage is INotifyCollectionChanged old) old.CollectionChanged -= NotifyChildrenChanged;
+                if (storage is INotifyCollectionChanged old) old.CollectionChanged -= NotifyChanges;
 
-                if (value is INotifyCollectionChanged added) added.CollectionChanged += NotifyChildrenChanged;
+                if (value is INotifyCollectionChanged added) added.CollectionChanged += NotifyChanges;
 
                 // Проверка на совпадение списков
                 if (storage is IEnumerable x
@@ -199,18 +222,26 @@ namespace Gui.Settings
                     return false;
                 }
 
-                if (storage is INotifyPropertyChanged prev) prev.PropertyChanged -= NotifyChildrenChanged;
-                if (value is INotifyPropertyChanged newVal) newVal.PropertyChanged += NotifyChildrenChanged;
+                if (storage is INotifyPropertyChanged prev) prev.PropertyChanged -= NotifyChanges;
+                if (value is INotifyPropertyChanged newVal) newVal.PropertyChanged += NotifyChanges;
             }
 
             return SetProperty(ref storage, value, propertyName);
         }
 
-        private void NotifyChildrenChanged(object sender, EventArgs e)
+        private void NotifyChanges(object sender, EventArgs e)
         {
             _changed = true;
         }
 
+        /// <summary>
+        /// Ппри каждом значащем изменении, взводим флажок наличия изменений
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="storage"></param>
+        /// <param name="value"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
         protected override bool SetProperty<T>(ref T storage, T value, string propertyName = null)
         {
             var result = base.SetProperty(ref storage, value, propertyName);
@@ -223,6 +254,9 @@ namespace Gui.Settings
         #endregion
     }
 
+    /// <summary>
+    /// Стратегия выбора рабочего элемента для списания времени
+    /// </summary>
     public enum WroteOffStrategy
     {
         [LocalizedDescription(nameof(Properties.Resources.AS_ChooseRandomly), typeof(Properties.Resources))] Random,

@@ -12,6 +12,10 @@ using TfsAPI.Extentions;
 
 namespace Gui.Behaviors
 {
+    /// <summary>
+    /// Поведение для календаря с расписанием. 
+    /// Прокидывает DataContext типа ITimable для каждого дня.
+    /// </summary>
     internal class CalendarItemSourceBehavior : Behavior<Calendar>
     {
         // Using a DependencyProperty as the backing store for Items.  This enables animation, styling, binding, etc...
@@ -61,6 +65,11 @@ namespace Gui.Behaviors
             obj.SetValue(DaylyDataContextProperty, value);
         }
 
+        /// <summary>
+        /// Прокидываю байндинг для каждого дня в месяце
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ThrowBinding(object sender, EventArgs e)
         {
             var month = MonthView;

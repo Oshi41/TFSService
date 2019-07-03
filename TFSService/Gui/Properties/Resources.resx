@@ -204,6 +204,9 @@
   <data name="AS_ImportantNotice" xml:space="preserve">
     <value>Важная вещь, посмотри</value>
   </data>
+  <data name="AS_ItemsChanged" xml:space="preserve">
+    <value>Изменились следующие элементы:</value>
+  </data>
   <data name="AS_ItemUpdatePeriod" xml:space="preserve">
     <value>Время между обновлениями рабочих элементов (в минутах)</value>
   </data>

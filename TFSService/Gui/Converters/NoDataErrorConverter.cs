@@ -5,7 +5,8 @@ using System.Windows.Data;
 namespace Gui.Converters
 {
     /// <summary>
-    ///     Конвертер для индикации наличия ошибки Data Error
+    ///     Конвертер для индикации наличия ошибки Data Error.
+    ///     Проверяет на нуль или на пустую сроку
     /// </summary>
     internal class NoDataErrorConverter : IValueConverter
     {

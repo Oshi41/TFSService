@@ -19,6 +19,12 @@ namespace Gui.ViewModels
             _uiDispather = App.Current.MainWindow.Dispatcher;
         }
 
+        /// <summary>
+        /// Безопасно выполняею действие и возвразаю результат
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="func"></param>
+        /// <returns></returns>
         public async Task<T> ExecuteInGuiThread<T>(Func<T> func)
         {
             if (_uiDispather == null
@@ -30,8 +36,17 @@ namespace Gui.ViewModels
             T result = default;
 
             await _uiDispather.BeginInvoke(new Action(() => result = func()), DispatcherPriority.Loaded);
-            
+
             return result;
+        }
+
+        public async Task ExecuteInGuiThread(Action a)
+        {
+            await ExecuteInGuiThread(() =>
+            {
+                a();
+                return true;
+            });
         }
     }
 }

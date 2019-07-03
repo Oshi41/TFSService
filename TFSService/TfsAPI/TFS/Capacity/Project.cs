@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace TfsAPI.TFS.Capacity
 {
+    /// <summary>
+    /// Представление проекта в TFS
+    /// </summary>
     public class Project
     {
         public Guid Id { get; }

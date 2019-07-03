@@ -5,6 +5,9 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace Gui.Converters
 {
+    /// <summary>
+    /// Получаем ID (int) из рабочего элемента
+    /// </summary>
     internal class IdWorkitemConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

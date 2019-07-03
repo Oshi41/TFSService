@@ -432,8 +432,8 @@ namespace Tests
 
             var observer = new BuildQueueObserver(tfs.AuthorizedIdentity.DisplayName, client, buildServer, project.Guid);
 
-            observer.FindBuilds(finish: DateTime.Now);
-
+            // observer.FindBuilds(finish: DateTime.Now);
+            observer.FindQueuedBuilds();
         }
 
 

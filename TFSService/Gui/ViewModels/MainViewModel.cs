@@ -36,31 +36,38 @@ namespace Gui.ViewModels
 
         private async void Init()
         {
-            IsBusy = true;
-
-            var connect = await TryConnect() == true;
-
-            if (!connect)
+            // Создаём функцию, чтобы пустить её в другом потоке,
+            // Чтобы GUI не зависал
+            Action action = async () =>
             {
-                Trace.WriteLine("User denied to connect, exit the program");
-                Application.Current.Shutdown(0);
-                return;
-            }
+                IsBusy = true;
 
-            using (var settings = Settings.Settings.Read())
-            {
-                ApiObservable = new TfsObservable(FirstConnectionViewModel.Text, settings.MyWorkItems, GetTask, settings.ItemMinutesCheck);
+                var connect = await TryConnect() == true;
 
-                if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
-                    settings.Connections.Add(FirstConnectionViewModel.Text);
-            }
+                if (!connect)
+                {
+                    Trace.WriteLine("User denied to connect, exit the program");
+                    Application.Current.Shutdown(0);
+                    return;
+                }
 
-            TryStartWorkDay();
+                using (var settings = Settings.Settings.Read())
+                {
+                    ApiObservable = new TfsObservable(FirstConnectionViewModel.Text, settings.MyWorkItems, GetTask, settings.ItemMinutesCheck);
 
-            // Начинаем наблюдение
-            _apiObserve.Start();
+                    if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
+                        settings.Connections.Add(FirstConnectionViewModel.Text);
+                }
 
-            IsBusy = false;
+                TryStartWorkDay();
+
+                // Начинаем наблюдение
+                _apiObserve.Start();
+
+                IsBusy = false;
+            };
+
+            await Task.Run(action);
         }
 
         #region Fields
@@ -71,7 +78,7 @@ namespace Gui.ViewModels
 
         private WorkItemVm _currentTask;
         private StatsViewModel statsViewModel = new StatsViewModel();
-        private bool isBusy;
+        private bool isBusy = true;
         private NewResponsesBaloonViewModel codeResponsesViewModel;
 
         #endregion
@@ -138,6 +145,9 @@ namespace Gui.ViewModels
             set => SetProperty(ref codeResponsesViewModel, value);
         }
 
+        /// <summary>
+        /// Закрыть ли окошко шторкой
+        /// </summary>
         public bool IsBusy
         {
             get => isBusy;
@@ -158,7 +168,14 @@ namespace Gui.ViewModels
         /// </summary>
         public ICommand ShowMonthlyCommand { get; }
 
+        /// <summary>
+        /// Принудительное обновление
+        /// </summary>
         public ICommand UpdateCommand { get; }
+
+        /// <summary>
+        /// Открыть настройки
+        /// </summary>
         public ICommand SettingsCommand { get; }
 
         #endregion
@@ -246,14 +263,13 @@ namespace Gui.ViewModels
             {
                 RefreshStats();
 
-                // Закрытые элемента
-                var closed = e.Where(x => x.Key.HasState(WorkItemStates.Closed));
+                // Доступные элементы
+                var active = e.Where(x => !x.Key.HasState(WorkItemStates.Closed)).Select(x => x.Key).ToList();
 
-                // запросы кода
-                // var requests = e.Where(x => x.Key.IsTypeOf(WorkItemTypes.ReviewResponse) && x.Key.IsNotClosed());
-
-                foreach (var item in e)
+                if (active.Any())
                 {
+                    var baloon = new ItemsAssignedBaloonViewModel(active, Properties.Resources.AS_ItemsChanged);
+                    WindowManager.ShowBaloon(baloon);
                 }
             }
         }
@@ -270,6 +286,7 @@ namespace Gui.ViewModels
         {
             FirstConnectionViewModel = new FirstConnectionViewModel();
 
+            // Однозначно значем куда подключаться
             if (FirstConnectionViewModel.RememberedConnections.Count == 1
                 && FirstConnectionViewModel.CanConnect())
             {
@@ -299,9 +316,14 @@ namespace Gui.ViewModels
             return _currentTask;
         }
 
+        /// <summary>
+        /// В зависимости от стратегии выбираем рабочий элемент
+        /// </summary>
+        /// <param name="strategy"></param>
+        /// <returns></returns>
         private WorkItemVm FindAvailableTask(WroteOffStrategy strategy)
         {
-            // Тут уже запрашиваем все таски
+            // Тут уже запрашиваем все таски на мне
             var vm = new ChooseTaskViewModel(_apiObserve);
 
             switch (strategy)
@@ -315,6 +337,7 @@ namespace Gui.ViewModels
 
                     if (tasks.Any())
                     {
+                        // Выбираю случайный элемент
                         var random = new Random().Next(tasks.Count);
                         return tasks[random];
                     }
@@ -336,26 +359,37 @@ namespace Gui.ViewModels
             }
         }
 
+        /// <summary>
+        /// Доступен ли таск для списания часов
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         private bool IsTaskAvailable(WorkItem item)
         {
+            // Рабочий элемент должен быть не закрытым таском 
             if (!item.IsTaskAvailable())
             {
                 Trace.WriteLine($"{nameof(MainViewModel)}: Task {item?.Id} is not exist or has been closed");
                 return false;
             }
 
+            // У него должно быть запланированные часы работы
             if (!(item.Fields[WorkItems.Fields.Remaining]?.Value is int remaining) || remaining == 0)
             {
                 Trace.WriteLine($"{nameof(MainViewModel)}: Task {item?.Id} is not exist or remaining time is over");
                 return false;
             }
 
+            // Таск должен быть на мне
             if (!_apiObserve.IsAssignedToMe(item))
                 Trace.WriteLine($"{nameof(MainViewModel)}: Task is not assigned to me");
 
             return true;
         }
 
+        /// <summary>
+        /// Обновляю отображение по данным из TFS
+        /// </summary>
         private void RefreshStats()
         {
             StatsViewModel.Refresh(ApiObservable);
@@ -377,21 +411,28 @@ namespace Gui.ViewModels
         #endregion
 
         #region Actions
-
+        /// <summary>
+        /// Пытаюсь начать рабочий день. True, если получилось
+        /// </summary>
+        /// <returns></returns>
         private bool TryStartWorkDay()
         {
             var result = false;
 
             using (var settings = Settings.Settings.Read())
             {
+                // Получил запланированную вчера работу и пытаюсь зачекинть.
                 var work = settings.CompletedWork;
-                work.SyncCheckins(_apiObserve);                
+                work.SyncCheckins(_apiObserve);
 
                 if (!settings.Begin.IsToday())
                 {
+                    //Начинаю рабочий день!
+
                     // Что-то не зачекинили с утра
                     if (work.ScheduledTime() != 0) work.CheckinScheduledWork(_apiObserve, settings.Capacity.Hours);
 
+                    // Если выставили трудозатраты не сами, то получаем из TFS
                     if (!settings.Capacity.ByUser)
                     {
                         // Выставлили сколько надо списать часов сегодня
@@ -405,6 +446,7 @@ namespace Gui.ViewModels
                     result = true;
                 }
 
+                // Очищаю вчерашние рабочие элементы
                 work.ClearPrevRecords();
             }
 
@@ -413,6 +455,11 @@ namespace Gui.ViewModels
             return result;
         }
 
+        /// <summary>
+        /// Прошел час, списываю его и помещаю в конфиг
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="hours"></param>
         private void ScheduleHour(int id, byte hours)
         {
             using (var settigs = Settings.Settings.Read())
@@ -426,6 +473,10 @@ namespace Gui.ViewModels
             }
         }
 
+        /// <summary>
+        /// Пытаюсь завершить рабочий день
+        /// </summary>
+        /// <returns></returns>
         private bool TryEndWorkDay()
         {
             var result = false;

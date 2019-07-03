@@ -8,6 +8,9 @@ using Mvvm.Commands;
 
 namespace Gui.ViewModels.Notifications
 {
+    /// <summary>
+    /// Уведомление о новых рабочих элементах
+    /// </summary>
     public class ItemsAssignedBaloonViewModel : BindableNotificationBase
     {
         private WorkItemVm _selected;
@@ -20,8 +23,14 @@ namespace Gui.ViewModels.Notifications
             OpenLinkCommand = new DelegateCommand(OpenLink, CanOpenLink);
         }        
 
+        /// <summary>
+        /// Список новых элементов
+        /// </summary>
         public List<WorkItemVm> Items { get; }
 
+        /// <summary>
+        /// Активный (выбранный) элемент
+        /// </summary>
         public WorkItemVm Selected { get => _selected; set => Set(ref _selected, value); }
 
         public ICommand OpenLinkCommand { get;  }

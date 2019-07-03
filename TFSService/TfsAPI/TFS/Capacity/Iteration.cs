@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace TfsAPI.TFS.Capacity
 {
+    /// <summary>
+    /// представление итерации TFS
+    /// </summary>
     public class Iteration
     {
         public Guid Id { get; }

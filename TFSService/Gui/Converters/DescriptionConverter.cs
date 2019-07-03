@@ -6,6 +6,9 @@ using System.Windows.Data;
 
 namespace Gui.Converters
 {
+    /// <summary>
+    /// Получаю описание Enum из DescriptionAttribute
+    /// </summary>
     public class DescriptionConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
