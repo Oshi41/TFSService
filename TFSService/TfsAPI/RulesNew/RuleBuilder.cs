@@ -150,7 +150,7 @@ namespace TfsAPI.RulesNew
             }
             catch (Exception e)
             {
-                Trace.WriteLine(e);
+                Trace.WriteLine($"{nameof(RuleBuilder)}.{nameof(ExecuteRule)}: " + e);
             }
 
             return result;

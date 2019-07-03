@@ -173,7 +173,7 @@ namespace Gui.Settings
             }
             else
             {
-                Trace.WriteLine("Creating new settings");
+                Trace.WriteLine($"{nameof(Settings)}.{nameof(Read)}:Creating new settings");
 
                 settings = new Settings();
             }
@@ -193,7 +193,7 @@ namespace Gui.Settings
 
             File.WriteAllText(_savePath, JsonConvert.SerializeObject(this, _settings));
 
-            Trace.WriteLine("Settings saved");
+            Trace.WriteLine($"{nameof(Settings)}.{nameof(Write)}: Settings saved");
         }
 
         /// <summary>

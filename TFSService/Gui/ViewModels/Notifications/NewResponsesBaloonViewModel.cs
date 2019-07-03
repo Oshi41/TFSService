@@ -72,7 +72,7 @@ namespace Gui.ViewModels.Notifications
                 // Что-то нуждается в доработке
                 if (responses.Any(x => x.HasClosedReason(WorkItems.ClosedStatus.NeedsWork)))
                 {
-                    Trace.WriteLine($"Can't close {request.Id}, responses need work");
+                    Trace.WriteLine($"{nameof(NewResponsesBaloonViewModel)}.{nameof(OnCanCloseOld)}: Can't close {request.Id}, responses need work");
                     return false;
                 }
 

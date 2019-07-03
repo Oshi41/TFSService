@@ -176,7 +176,7 @@ namespace TfsAPI.TFS
             catch (Exception e)
             {
                 // скорее всего нет прав
-                Trace.WriteLine(e);
+                Trace.WriteLine($"{nameof(CapacitySearcher)}.{nameof(FindIterations)}: " + e);
                 return null;
             }
         }
@@ -219,7 +219,7 @@ namespace TfsAPI.TFS
             }
             catch (Exception e)
             {
-                Trace.WriteLine(e);
+                Trace.WriteLine($"{nameof(CapacitySearcher)}.{nameof(QuerryCapacity)}: " + e);
                 return null;
             }
         }

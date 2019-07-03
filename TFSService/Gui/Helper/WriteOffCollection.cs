@@ -225,7 +225,7 @@ namespace Gui.Helper
             // Пользователь сам начекинил на дневной предел
             if (alreadyRecorded >= maxHoursPerDay)
             {
-                Trace.WriteLine("User already riched the day limit");
+                Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(CutOffByCapacity)}: User already riched the day limit");
                 Clear();
                 return;
             }
@@ -236,7 +236,7 @@ namespace Gui.Helper
             // Уложились в предел
             if (delta >= 0)
             {
-                Trace.WriteLine("Scheduled work don't overflow the day limit");
+                Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(CutOffByCapacity)}: Scheduled work don't overflow the day limit");
                 return;
             }
 

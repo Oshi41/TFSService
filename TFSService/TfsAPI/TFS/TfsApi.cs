@@ -28,7 +28,7 @@ namespace TfsAPI.TFS
         {
             _project = new TfsTeamProjectCollection(new Uri(url));
 
-            Trace.WriteLine("Connected to " + _project.Name);
+            Trace.WriteLine($"{nameof(TfsApi)}.ctor: Connected to " + _project.Name);
 
             _itemStore = _project.GetService<WorkItemStore>();
             _linking = _project.GetService<ILinking>();
@@ -51,7 +51,7 @@ namespace TfsAPI.TFS
         {
             if (item == null)
             {
-                Trace.WriteLine($"item is null");
+                Trace.WriteLine($"{nameof(TfsApi)}.{nameof(SaveElement)}: item is null");
                 return;
             }
 #if DEBUG
@@ -60,7 +60,7 @@ namespace TfsAPI.TFS
 #else
             if (_itemStore.UserDisplayName != Name)
             {
-                Trace.WriteLine($"Can't check-in from {Name}, authorized as {_itemStore.UserDisplayName}");
+                Trace.WriteLine($"{nameof(TfsApi)}.{nameof(SaveElement)}: Can't check-in from {Name}, authorized as {_itemStore.UserDisplayName}");
             }
             else
             {
@@ -81,7 +81,7 @@ namespace TfsAPI.TFS
                 }
                 catch (Exception e)
                 {
-                    Trace.WriteLine(e);
+                    Trace.WriteLine($"{nameof(TfsApi)}.{nameof(CheckConnection)}: " + e);
                     return false;
                 }
             }
@@ -112,7 +112,7 @@ namespace TfsAPI.TFS
         {
             item.AddHours(hours, setActive);
             SaveElement(item);
-            Trace.WriteLine($"From task {item.Id} was writed off {hours} hour(s)");
+            Trace.WriteLine($"{nameof(TfsApi)}.{nameof(WriteHours)}: From task {item.Id} was writed off {hours} hour(s)");
 
             var revisions = item.Revisions.OfType<Revision>();
             var finded = revisions
@@ -144,7 +144,7 @@ namespace TfsAPI.TFS
             // Нашел связи
             var linked = _linking.GetReferencingArtifacts(new[] { uri });
 
-            Trace.WriteLine($"{nameof(GetAssociateItems)}: Founded {linked.Length} links");
+            Trace.WriteLine($"{nameof(TfsApi)}.{nameof(GetAssociateItems)}: Founded {linked.Length} links");
 
             foreach (var artifact in linked)
             {
@@ -161,7 +161,7 @@ namespace TfsAPI.TFS
             }
 
             Trace.WriteLineIf(result.Any(),
-                $"Changeset {changeset} linked with items: {string.Join(", ", result.Select(x => x.Id))}");
+                $"{nameof(TfsApi)}.{nameof(GetAssociateItems)}: Changeset {changeset} linked with items: {string.Join(", ", result.Select(x => x.Id))}");
 
             return result;
         }
@@ -174,7 +174,7 @@ namespace TfsAPI.TFS
             }
             catch (Exception e)
             {
-                Trace.Write(e);
+                Trace.Write($"{nameof(TfsApi)}.{nameof(FindById)}: " + e);
                 return null;
             }
         }
@@ -196,7 +196,7 @@ namespace TfsAPI.TFS
 
             var items = _itemStore.Query(quarry.ToString());
 
-            Trace.WriteLine($"Tfs.Search: Founded {items.Count} items");
+            Trace.WriteLine($"{nameof(TfsApi)}.{nameof(Search)}: Tfs.Search: Founded {items.Count} items");
 
             return items.OfType<WorkItem>().ToList();
         }
@@ -278,13 +278,13 @@ namespace TfsAPI.TFS
             // Сначала сохраняем как новый таск
             SaveElement(task);
 
-            Trace.WriteLine($"Created task {task.Id}");
+            Trace.WriteLine($"{nameof(TfsApi)}.{nameof(CreateTask)}: Created task {task.Id}");
 
             // Потом меняем статус в актив
             task.State = WorkItemStates.Active;
             SaveElement(task);
 
-            Trace.WriteLine($"Task status changed to {task.State}\n" +
+            Trace.WriteLine($"{nameof(TfsApi)}.{nameof(CreateTask)}: Task status changed to {task.State}\n" +
                             "--------- BEFORE LINKING --------\n" +
                             $"Task links count: {task.Links.Count}, " +
                             $"Parent links count: {task.Links.Count}");
@@ -293,7 +293,7 @@ namespace TfsAPI.TFS
             task.Links.Add(new RelatedLink(link.ReverseEnd, parent.Id));
             SaveElement(task);
 
-            Trace.WriteLine("--------- AFTER LINKING --------\n" +
+            Trace.WriteLine($"{nameof(TfsApi)}.{nameof(CreateTask)}: --------- AFTER LINKING --------\n" +
                             $"Task links count: {task.Links.Count}, " +
                             $"Parent links count: {task.Links.Count}");
 
@@ -369,7 +369,7 @@ namespace TfsAPI.TFS
 
                     if (!assignedToMe)
                     {
-                        Trace.WriteLine($"{revision.Fields[CoreField.AssignedTo]?.Value} took your task");
+                        Trace.WriteLine($"{nameof(TfsApi)}.{nameof(GetWriteoffs)}: {revision.Fields[CoreField.AssignedTo]?.Value} took your task");
                         continue;
                     }
 
@@ -400,7 +400,7 @@ namespace TfsAPI.TFS
 
             var requests = _itemStore.Query(quarry).OfType<WorkItem>().ToList();
 
-            Trace.WriteLineIf(requests.Any(), $"Founded {requests.Count} requests");
+            Trace.WriteLineIf(requests.Any(), $"{nameof(TfsApi)}.{nameof(CloseCompletedReviews)}: Founded {requests.Count} requests");
 
             var result = new List<WorkItem>();
 
@@ -422,7 +422,7 @@ namespace TfsAPI.TFS
                     .Select(x => x.Value)
                     .ToList();
 
-                Trace.WriteLine($"Request {request.Id} has {responses.Count} responses");
+                Trace.WriteLine($"{nameof(TfsApi)}.{nameof(CloseCompletedReviews)}: Request {request.Id} has {responses.Count} responses");
 
                 if (canClose(request, responses))
                 {
@@ -436,7 +436,7 @@ namespace TfsAPI.TFS
                 SaveElement(item);
             }
 
-            Trace.WriteLineIf(result.Any(), $"Closed {result.Count} requests");
+            Trace.WriteLineIf(result.Any(), $"{nameof(TfsApi)}.{nameof(CloseCompletedReviews)}: Closed {result.Count} requests");
 
             return result;
         }

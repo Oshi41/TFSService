@@ -46,7 +46,7 @@ namespace Gui.ViewModels
 
                 if (!connect)
                 {
-                    Trace.WriteLine("User denied to connect, exit the program");
+                    Trace.WriteLine($"{nameof(MainViewModel)}.{nameof(Init)}: User denied to connect, exit the program");
                     Application.Current.Shutdown(0);
                     return;
                 }
@@ -369,20 +369,20 @@ namespace Gui.ViewModels
             // Рабочий элемент должен быть не закрытым таском 
             if (!item.IsTaskAvailable())
             {
-                Trace.WriteLine($"{nameof(MainViewModel)}: Task {item?.Id} is not exist or has been closed");
+                Trace.WriteLine($"{nameof(MainViewModel)}.{nameof(IsTaskAvailable)}: Task {item?.Id} is not exist or has been closed");
                 return false;
             }
 
             // У него должно быть запланированные часы работы
             if (!(item.Fields[WorkItems.Fields.Remaining]?.Value is int remaining) || remaining == 0)
             {
-                Trace.WriteLine($"{nameof(MainViewModel)}: Task {item?.Id} is not exist or remaining time is over");
+                Trace.WriteLine($"{nameof(MainViewModel)}.{nameof(IsTaskAvailable)}: Task {item?.Id} is not exist or remaining time is over");
                 return false;
             }
 
             // Таск должен быть на мне
             if (!_apiObserve.IsAssignedToMe(item))
-                Trace.WriteLine($"{nameof(MainViewModel)}: Task is not assigned to me");
+                Trace.WriteLine($"{nameof(MainViewModel)}.{nameof(IsTaskAvailable)}: Task is not assigned to me");
 
             return true;
         }
@@ -441,7 +441,7 @@ namespace Gui.ViewModels
 
                     settings.Begin = DateTime.Now;
 
-                    Trace.WriteLine($"{settings.Begin.ToShortTimeString()}: Welcome to a new day!");
+                    Trace.WriteLine($"{nameof(Settings)}.{nameof(TryStartWorkDay)}: {settings.Begin.ToShortTimeString()}: Welcome to a new day!");
 
                     result = true;
                 }

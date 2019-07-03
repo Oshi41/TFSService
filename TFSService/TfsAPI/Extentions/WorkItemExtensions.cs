@@ -97,13 +97,13 @@ namespace TfsAPI.Extentions
             {
                 // Открываем элемент для редактирования
                 item.Open();
-                Trace.WriteLine("Opened work item");
+                Trace.WriteLine($"{nameof(WorkItemExtensions)}.{nameof(AddHours)}: Opened work item");
             }
 
             item.Fields[WorkItems.Fields.Complited].Value = total;
             item.Fields[WorkItems.Fields.Remaining].Value = remain;
 
-            Trace.WriteLine($"Successfully added {hours} to iten {item.Id}");
+            Trace.WriteLine($"{nameof(WorkItemExtensions)}.{nameof(AddHours)}: Successfully added {hours} to iten {item.Id}");
         }
 
         /// <summary>
