@@ -274,7 +274,7 @@
     <Compile Include="RulesNew\IRule.cs" />
     <Compile Include="RulesNew\IRuleBuilder.cs" />
     <Compile Include="RulesNew\RuleBuilder.cs" />
-    <Compile Include="TFS\Build Defenitions\BuildQueueObserver.cs" />
+    <Compile Include="TFS\Build Defenitions\BuildSearcher.cs" />
     <Compile Include="TFS\Capacity\ICapacitySearcher.cs" />
     <Compile Include="TFS\Capacity\Iteration.cs" />
     <Compile Include="TFS\Capacity\Project.cs" />

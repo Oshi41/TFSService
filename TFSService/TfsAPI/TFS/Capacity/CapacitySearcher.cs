@@ -120,7 +120,8 @@ namespace TfsAPI.TFS
         /// Глубокий поиск по TFS. Возможно, займет кучу ресурсов. TODO Оптимизовать
         /// </summary>
         /// <returns></returns>
-        public IList<TeamFoundationTeam> GetAllMyTeams()
+
+        public virtual IList<TeamFoundationTeam> GetAllMyTeams()
         {
             return ItemStore
                 // Проъожу по всем проектам
@@ -174,7 +175,7 @@ namespace TfsAPI.TFS
                        .Select(x => new Iteration(x))
                        .ToList();
             }
-            catch(SecurityException e)
+            catch (SecurityException e)
             {
                 Trace.WriteLine($"{nameof(CapacitySearcher)}.{nameof(FindIterations)}: Not enough privileges");
                 return null;
@@ -293,7 +294,7 @@ namespace TfsAPI.TFS
                         {
                             result.AddRange(items);
                             changed = true;
-                        }                        
+                        }
                     }
 
                     i = i.AddDays(1);
@@ -310,13 +311,29 @@ namespace TfsAPI.TFS
             if (changed)
             {
                 var options = new MemoryCacheEntryOptions()
-                        .SetSlidingExpiration(TimeSpan.FromDays(1));                
+                        .SetSlidingExpiration(TimeSpan.FromDays(1));
 
                 _cache.Set(capacityKey, result);
-            }            
-            
+            }
+
             // На выход идут только те, которые попали в указанный предел
             return result.Where(x => x.Iteration.InRange(start, end)).ToList();
         }
-    }    
+
+        private const string _teamKey = "teamKey";
+        public override IList<TeamFoundationTeam> GetAllMyTeams()
+        {
+            if (!_cache.TryGetValue<IList<TeamFoundationTeam>>(_teamKey, out var result))
+            {
+                result = base.GetAllMyTeams();
+
+                var options = new MemoryCacheEntryOptions()
+                        .SetSlidingExpiration(TimeSpan.FromDays(1));
+
+                _cache.Set(capacityKey, result);
+            }
+
+            return result;
+        }
+    }
 }

@@ -427,13 +427,25 @@ namespace Tests
             var client = tfs.GetClient<BuildHttpClient>();
             var buildServer = tfs.GetService<IBuildServer>();
             var store = tfs.GetService<WorkItemStore>();
+            var teamService = tfs.GetService<TfsTeamService>();
 
             var project = store.Projects["SNES"];
 
-            var observer = new BuildQueueObserver(tfs.AuthorizedIdentity.DisplayName, client, buildServer, project.Guid);
+            var observer = new BuildSearcher(client, project.Guid);
+
+            var a = observer.FindCompletedBuilds(DateTime.Now.AddHours(-5), DateTime.Now);
+            //var r = observer.FindBuilds(DateTime.Now.AddHours(-5), DateTime.Now);
+
+            // var teams = teamService.QueryTeams(project.Uri.ToString()).ToList();
+
+            //foreach (Project i in store.Projects)
+            //{
+            //    var result = observer.FindQueuedBuilds(i.Name);
+            //}
+            
 
             // observer.FindBuilds(finish: DateTime.Now);
-            observer.FindQueuedBuilds();
+            
         }
 
 

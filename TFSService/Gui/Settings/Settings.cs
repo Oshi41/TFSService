@@ -29,6 +29,7 @@ namespace Gui.Settings
             MyWorkItems = new ObservableCollection<int>();
             Rules = new ObservableCollection<IRule>();
             Capacity = new Capacity();
+            MyBuilds = new ObservableCollection<string>();
         }
 
         #region Fields
@@ -57,6 +58,7 @@ namespace Gui.Settings
         private ObservableCollection<IRule> rules;
         private int itemMinutesCheck = 5;
         private int oldReviewDay = 100;
+        private ObservableCollection<string> myBuilds;
 
         #endregion
 
@@ -145,6 +147,8 @@ namespace Gui.Settings
         /// Период дней, после которого проверка кодя является устаревшей
         /// </summary>
         public int OldReviewDay { get => oldReviewDay; set => Set(ref oldReviewDay, value); }
+
+        public ObservableCollection<string> MyBuilds { get => myBuilds; set => Set(ref myBuilds, value); }
 
         #endregion
 

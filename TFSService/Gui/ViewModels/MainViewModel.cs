@@ -10,6 +10,7 @@ using Gui.Helper;
 using Gui.Settings;
 using Gui.ViewModels.DialogViewModels;
 using Gui.ViewModels.Notifications;
+using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.VersionControl.Common.Internal;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
@@ -52,7 +53,7 @@ namespace Gui.ViewModels
 
             using (var settings = Settings.Settings.Read())
             {
-                ApiObservable = await Task.Run(() => new TfsObservable(FirstConnectionViewModel.Text, settings.MyWorkItems, GetTask, settings.ItemMinutesCheck));
+                ApiObservable = await Task.Run(() => new TfsObservable(FirstConnectionViewModel.Text, settings.MyWorkItems, settings.MyBuilds, GetTask, settings.ItemMinutesCheck));
 
                 if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
                     settings.Connections.Add(FirstConnectionViewModel.Text);
@@ -100,6 +101,7 @@ namespace Gui.ViewModels
                     ApiObservable.Logon -= OnLogon;
                     ApiObservable.NewItems -= OnNewItems;
                     ApiObservable.ItemsChanged -= OnItemsChanged;
+                    ApiObservable.Builded -= OnBuilded;
                 }
 
                 _apiObserve = value;
@@ -111,9 +113,10 @@ namespace Gui.ViewModels
                     ApiObservable.Logon += OnLogon;
                     ApiObservable.NewItems += OnNewItems;
                     ApiObservable.ItemsChanged += OnItemsChanged;
+                    ApiObservable.Builded += OnBuilded;
                 }
             }
-        }
+        }        
 
         /// <summary>
         ///     Диалог запроса рабочего элемента, над которым работаем
@@ -280,6 +283,30 @@ namespace Gui.ViewModels
                     }
                 }
             });
+        }
+
+        private void OnBuilded(object sender, IList<Build> e)
+        {
+            using (var settings = Settings.Settings.Read())
+            {
+                var savedIds = settings.MyBuilds;
+                var newIds = e.Select(x => x.BuildNumber).ToList();
+                
+                var brandNewIds = newIds.Except(savedIds).ToList();
+
+                if (!brandNewIds.Any())
+                    return;
+
+                var brandNewBuild = e
+                    .Where(x => savedIds
+                            .Contains(x.BuildNumber))
+                    .ToList();
+
+                // Сохранили в настройки
+                settings.MyBuilds = new ObservableCollection<string>(brandNewIds.Concat(savedIds));
+
+                //TODO показать новые билды
+            }
         }
 
         #endregion
@@ -456,6 +483,8 @@ namespace Gui.ViewModels
 
                 // Очищаю вчерашние рабочие элементы
                 work.ClearPrevRecords();
+                // очищаю список моих билдов
+                settings.MyBuilds.Clear();
             }
 
             RefreshStats();

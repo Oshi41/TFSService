@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
@@ -36,6 +38,11 @@ namespace TfsAPI.Interfaces
         ///     Юзер залогинился
         /// </summary>
         event EventHandler Logon;
+
+        /// <summary>
+        /// Мои билды завершены
+        /// </summary>
+        event EventHandler<IList<Build>> Builded;
 
         /// <summary>
         ///     Запрашиваем обновление

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
@@ -13,6 +14,7 @@ using Microsoft.Win32;
 using TfsAPI.Comarers;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
+using TfsAPI.TFS.Build_Defenitions;
 
 namespace TfsAPI.TFS
 {
@@ -20,6 +22,7 @@ namespace TfsAPI.TFS
     {
         public TfsObservable(string url,
             IList<int> myItems,
+            IList<string> builds,
             Func<WorkItem> currentItem,
             int itemCheck)
             : base(url)
@@ -38,7 +41,11 @@ namespace TfsAPI.TFS
             MyItems = new List<WorkItem>(FindById(myItems).Values);
 
             _cache = new MemoryCache(new MemoryCacheOptions());
-            _searcher = new CachedCapacitySearcher(_cache, _project);
+            _capacitySearcher = new CachedCapacitySearcher(_cache, _project);
+
+            _buildClient = _project.GetClient<BuildHttpClient>();
+
+            _myBuilds.AddRange(builds);
         }
 
         private IEnumerable<WorkItem> MyItems
@@ -97,6 +104,30 @@ namespace TfsAPI.TFS
 
                 _changes.Clear();
             }
+
+            // Инициализировал поиск билдов
+            var buildSearcher = new BuildSearcher(_buildClient, _capacitySearcher
+                .GetAllMyTeams()
+                .Select(x => x.Identity.TeamFoundationId)
+                .ToArray());
+
+            // нашел мои билды 
+            var builds = buildSearcher
+                .FindCompletedBuilds(DateTime.Today, DateTime.Now)
+                .Where(x => string.Equals(x.RequestedBy.DisplayName, Name))
+                .ToDictionary(x => x.BuildNumber);
+
+            // Нашел ID новых билдов
+            var newBuildIds = builds.Keys.Except(_myBuilds);
+
+            // Выцепил их значения
+            var newComplited = builds.Where(x => newBuildIds.Contains(x.Key)).Select(x => x.Value).ToList();
+
+            // Если есть хоть один, пускаю событие
+            if (newComplited.Any())
+            {
+                Builded?.Invoke(this, newComplited);
+            }
         }
 
         #region Fields
@@ -112,9 +143,11 @@ namespace TfsAPI.TFS
 
         private bool _paused = true;
         private List<WorkItem> _myItems = new List<WorkItem>();
+        private List<string> _myBuilds = new List<string>();
 
         private readonly MemoryCache _cache;
-        private readonly CachedCapacitySearcher _searcher;
+        private readonly ICapacitySearcher _capacitySearcher;
+        private readonly BuildHttpClient _buildClient;
 
         #endregion
 
@@ -126,6 +159,7 @@ namespace TfsAPI.TFS
         public event EventHandler<ScheduleWorkArgs> WriteOff;
         public event EventHandler Logoff;
         public event EventHandler Logon;
+        public event EventHandler<IList<Build>> Builded;
 
         public void Start()
         {
@@ -230,7 +264,7 @@ namespace TfsAPI.TFS
 
         public override List<TeamCapacity> GetCapacity(DateTime start, DateTime end)
         {
-            return _searcher.SearchCapacities(Name, start, end);
+            return _capacitySearcher.SearchCapacities(Name, start, end);
         }
 
         #endregion
