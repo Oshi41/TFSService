@@ -45,6 +45,17 @@ namespace Setup
 
         #region overrided
 
+        public override void Commit(IDictionary savedState)
+        {
+            base.Commit(savedState);
+
+            var executingDll = Context.Parameters[AssemblyKey];
+            var parent = Path.GetDirectoryName(executingDll);
+            var exe = Path.Combine(parent, ExeName);
+
+            Process.Start(exe);
+        }
+
         public override void Install(IDictionary stateSaver)
         {
             base.Install(stateSaver);
