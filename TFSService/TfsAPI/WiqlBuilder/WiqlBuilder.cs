@@ -195,7 +195,7 @@ namespace TfsAPI.Rules
         /// <returns></returns>
         public WiqlBuilder WithAreaPath(string operand, string area)
         {
-            AddCondition(operand, $"{Sql.Fields.AreaPath} = {area}");
+            AddCondition(operand, $"{Sql.Fields.AreaPath} = {WrapValue(area)}");
             return this;
         }
 
@@ -245,6 +245,8 @@ namespace TfsAPI.Rules
         private string WrapValue(string value)
         {
             if (Macros.Contains(value.ToLower())) return value;
+
+            if (value.StartsWith("'") && value.EndsWith("'")) return value;
 
             return $"'{value}'";
         }
