@@ -297,8 +297,6 @@ namespace TfsAPI.TFS
         private void UpdateItems()
         {
             // Каждое изменение генерит кучу событий
-
-
             // запускаем обновление для каждого раюочего элемента
             MyItems
                 .AsParallel()
@@ -328,8 +326,7 @@ namespace TfsAPI.TFS
 
             // нашел мои билды 
             var builds = buildSearcher
-                .FindCompletedBuilds(DateTime.Today, DateTime.Now)
-                .Where(x => string.Equals(x.RequestedBy.DisplayName, Name))
+                .FindCompletedBuilds(DateTime.Today, DateTime.Now, actor:Name)
                 .ToDictionary(x => x.BuildNumber);
 
             // Нашел ID новых билдов

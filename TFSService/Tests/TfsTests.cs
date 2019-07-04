@@ -18,6 +18,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
+using TfsAPI.RulesNew;
 using TfsAPI.TFS;
 using TfsAPI.TFS.Build_Defenitions;
 
@@ -414,7 +415,7 @@ namespace Tests
 
             var observer = new BuildSearcher(client, project.Guid);
 
-            var a = observer.FindCompletedBuilds(DateTime.Now.AddHours(-5), DateTime.Now);
+            var a = observer.FindCompletedBuilds(DateTime.Now.AddHours(-15), DateTime.Now);
             //var r = observer.FindBuilds(DateTime.Now.AddHours(-5), DateTime.Now);
 
             // var teams = teamService.QueryTeams(project.Uri.ToString()).ToList();
@@ -426,6 +427,19 @@ namespace Tests
 
 
             // observer.FindBuilds(finish: DateTime.Now);
+        }
+
+        [TestMethod]
+        public void TestRulesCheck()
+        {
+            var api =
+                new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+
+            var builder = new RuleBuilder();
+
+            var rules = new List<IRule>{ builder.BuildPresets(StaticRules.CheckTasksAreapath, @"SNES\Secret Net Server\ПУ") };
+
+            var inconsisant = builder.CheckInconsistant(rules, api);
         }
 
 

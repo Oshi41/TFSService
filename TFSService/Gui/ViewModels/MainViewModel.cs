@@ -230,11 +230,15 @@ namespace Gui.ViewModels
 
         private void OnLogoff(object sender, EventArgs e)
         {
+            WriteDisplayTime(false);
+
             if (TryEndWorkDay()) _apiObserve.Pause();
         }
 
         private void OnLogon(object sender, EventArgs e)
         {
+            WriteDisplayTime(true);
+
             if (TryStartWorkDay()) _apiObserve.Start();
         }
 
@@ -478,6 +482,14 @@ namespace Gui.ViewModels
             }
         }
 
+        private void WriteDisplayTime(bool isLogon)
+        {
+            using (var settings = Settings.Settings.Read())
+            {
+                settings.DisplayTime.AddDate(isLogon);
+            }
+        }
+
         #endregion
 
         #region Actions
@@ -496,9 +508,15 @@ namespace Gui.ViewModels
                 var work = settings.CompletedWork;
                 work.SyncCheckins(_apiObserve);
 
-                if (!settings.Begin.IsToday())
+                if (!settings.DisplayTime.GetBegin().IsToday())
                 {
                     //Начинаю рабочий день!
+                    Trace.WriteLine($"{nameof(Settings)}.{nameof(TryStartWorkDay)}: " +
+                        $"{settings.DisplayTime.GetDisplayTime().TotalHours}h: " +
+                        $"{settings.DisplayTime.GetDisplayTime().Minutes}m:");
+
+                    // Очищаю день
+                    settings.DisplayTime.ClearPreviouse();
 
                     // Что-то не зачекинили с утра
                     if (work.ScheduledTime() != 0) work.CheckinScheduledWork(_apiObserve, settings.Capacity.Hours);
@@ -506,10 +524,10 @@ namespace Gui.ViewModels
                     // Если выставили трудозатраты не сами, то получаем из TFS
                     if (!settings.Capacity.ByUser) settings.Capacity.Hours = _apiObserve.GetCapacity();
 
-                    settings.Begin = DateTime.Now;
+                    settings.DisplayTime.AddDate(true);
 
                     Trace.WriteLine(
-                        $"{nameof(Settings)}.{nameof(TryStartWorkDay)}: {settings.Begin.ToShortTimeString()}: Welcome to a new day!");
+                        $"{nameof(Settings)}.{nameof(TryStartWorkDay)}: {settings.DisplayTime.GetBegin().ToShortTimeString()}: Welcome to a new day!");
 
                     result = true;
                 }
@@ -557,7 +575,7 @@ namespace Gui.ViewModels
                 var work = settings.CompletedWork;
 
                 // 1) С начала наблюдения уже прошло нужное кол-во часов
-                if (now - settings.Begin > TimeSpan.FromHours(settings.Capacity.Hours))
+                if (now - settings.DisplayTime.GetBegin() > TimeSpan.FromHours(settings.Capacity.Hours))
                 {
                     work.SyncDailyPlan(_apiObserve, settings.Capacity.Hours, GetTask);
                     result = true;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.TeamFoundation.Build.WebApi;
+using Microsoft.VisualStudio.Services.WebApi;
 
 namespace TfsAPI.TFS.Build_Defenitions
 {
@@ -18,7 +19,8 @@ namespace TfsAPI.TFS.Build_Defenitions
 
         public IList<Build> FindCompletedBuilds(DateTime? start = null,
             DateTime? finish = null,
-            BuildResult? result = null)
+            BuildResult? result = null,
+            string actor = null)
         {
             if (finish == null) finish = DateTime.Now;
 
@@ -29,12 +31,19 @@ namespace TfsAPI.TFS.Build_Defenitions
             foreach (var x in _myProjects)
                 try
                 {
-                    builds.AddRange(_client
-                        .GetBuildsAsync2(x,
-                            minFinishTime: start,
-                            maxFinishTime: finish,
-                            resultFilter: result)
-                        .Result);
+                    var projectBuilds = _client.GetBuildsAsync(x,
+                           minFinishTime:start,
+                           maxFinishTime:finish,
+                           resultFilter:result,
+                           requestedFor:actor)
+                        .Result;
+
+                    builds.AddRange(projectBuilds);
+                }
+                catch (AggregateException e)
+                    when (e.InnerException is VssServiceResponseException ex)
+                {
+                    Trace.WriteLine($"{nameof(BuildSearcher)}.{nameof(FindCompletedBuilds)}: Not enough privileges");
                 }
                 catch (Exception e)
                 {

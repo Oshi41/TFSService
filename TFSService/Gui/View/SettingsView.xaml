@@ -165,7 +165,7 @@
                         <TextBlock Text="{x:Static p:Resources.AS_OldReviewDays}"
                                    TextWrapping="Wrap"
                                    Margin="0,5" />
-                        <TextBox Text="{Binding Path=ItemMinutesCheck, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding Path=OldReviewDay, UpdateSourceTrigger=PropertyChanged}"
                                  HorizontalAlignment="Left"
                                  Width="50" />
                     </StackPanel>

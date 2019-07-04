@@ -51,7 +51,7 @@ namespace TfsAPI.Rules
         /// <param name="operand">Операнд условия операции</param>
         /// <param name="name">Имя пользователя. Если не указать, считается, что запрашивает залогиненый Windows пользователь</param>
         /// <returns></returns>
-        public WiqlBuilder AssignedTo(string operand = "and", string name = "@me")
+        public WiqlBuilder AssignedTo(string operand = "and", string name = WiqlOperators.cMacroMe)
         {
             name = WrapValue(name);
 
@@ -65,7 +65,7 @@ namespace TfsAPI.Rules
         /// <param name="operand">Операнд условия операции</param>
         /// <param name="name">Имя пользователя. Если не указать, считается, что запрашивает залогиненый Windows пользователь</param>
         /// <returns></returns>
-        public WiqlBuilder EverChangedBy(string operand, string name = "@me")
+        public WiqlBuilder EverChangedBy(string operand, string name = WiqlOperators.cMacroMe)
         {
             name = WrapValue(name);
 
@@ -80,7 +80,7 @@ namespace TfsAPI.Rules
         /// <returns></returns>
         public WiqlBuilder CurrentIteration(string operand = "and")
         {
-            AddCondition(operand, Sql.IsCurrentIteractionCondition);
+            AddCondition(operand, $"{Sql.Fields.IterationPath} = {WiqlOperators.cMacroCurrentIteration}");
             return this;
         }
 

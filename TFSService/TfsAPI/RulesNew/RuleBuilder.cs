@@ -140,7 +140,7 @@ namespace TfsAPI.RulesNew
                 Title = Resource.AS_Rule_AreaCondition_Title,
                 Operation = RuleOperation.SameCount,
                 Source = builder.ToString(),
-                Condition = builder.WithAreaPath("and", name).ToString()
+                Condition = builder.WithAreaPath("and", $"'{name}'").ToString()
             };
 
             return result;

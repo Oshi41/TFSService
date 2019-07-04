@@ -29,6 +29,7 @@ namespace Gui.Settings
             Rules = new ObservableCollection<IRule>();
             Capacity = new Capacity();
             MyBuilds = new ObservableCollection<string>();
+            DisplayTime = new DisplayTime();
         }
 
         #region Fields
@@ -46,7 +47,7 @@ namespace Gui.Settings
 
         private Capacity _capacity;
         private TimeSpan _duration;
-        private DateTime _begin;
+        private DisplayTime _begin;
 
         private bool _changed;
         private ObservableCollection<string> _connections;
@@ -66,10 +67,10 @@ namespace Gui.Settings
         /// <summary>
         ///     Начало рабочего дня
         /// </summary>
-        public DateTime Begin
+        public DisplayTime DisplayTime
         {
             get => _begin;
-            set => SetProperty(ref _begin, value);
+            set => Set(ref _begin, value);
         }
 
         /// <summary>

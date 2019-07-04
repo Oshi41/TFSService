@@ -311,6 +311,7 @@
     <Compile Include="Helper\WriteOff.cs" />
     <Compile Include="Helper\WriteOffCollection.cs" />
     <Compile Include="Settings\Capacity.cs" />
+    <Compile Include="Settings\DisplayTime.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="Settings\JCollectionConverter.cs" />
     <Compile Include="ViewModels\DialogViewModels\ChooseTaskViewModel.cs" />
