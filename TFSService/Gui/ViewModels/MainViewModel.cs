@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -20,6 +22,7 @@ using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
 using TfsAPI.RulesNew;
 using TfsAPI.TFS;
+using System.DirectoryServices.AccountManagement;
 
 namespace Gui.ViewModels
 {
@@ -230,15 +233,13 @@ namespace Gui.ViewModels
 
         private void OnLogoff(object sender, EventArgs e)
         {
-            WriteDisplayTime(false);
+            WriteSession();
 
             if (TryEndWorkDay()) _apiObserve.Pause();
         }
 
         private void OnLogon(object sender, EventArgs e)
         {
-            WriteDisplayTime(true);
-
             if (TryStartWorkDay()) _apiObserve.Start();
         }
 
@@ -419,8 +420,12 @@ namespace Gui.ViewModels
 
                 case WroteOffStrategy.Watch:
 
-                    if (WindowManager.ShowDialog(vm, Resources.AS_ChooseWriteoffTask, 400, 200) == true)
-                        return vm.Searcher.Selected;
+                    // Только одно окошко
+                    lock (_apiObserve)
+                    {
+                        if (WindowManager.ShowDialog(vm, Resources.AS_ChooseWriteoffTask, 400, 200) == true)
+                            return vm.Searcher.Selected;
+                    }
 
                     // Выбрать нужно обязательно
                     return FindAvailableTask(strategy);
@@ -482,11 +487,20 @@ namespace Gui.ViewModels
             }
         }
 
-        private void WriteDisplayTime(bool isLogon)
+        private void WriteSession()
         {
             using (var settings = Settings.Settings.Read())
             {
-                settings.DisplayTime.AddDate(isLogon);
+                var user = UserPrincipal.Current;
+                var logoff = DateTime.Now;
+                var logon = user.LastLogon;
+
+                if (logon.HasValue)
+                {
+                    settings.DisplayTime.AddDate(logon.Value, true);
+                }
+
+                settings.DisplayTime.AddDate(logoff, false);
             }
         }
 
@@ -524,7 +538,7 @@ namespace Gui.ViewModels
                     // Если выставили трудозатраты не сами, то получаем из TFS
                     if (!settings.Capacity.ByUser) settings.Capacity.Hours = _apiObserve.GetCapacity();
 
-                    settings.DisplayTime.AddDate(true);
+                    settings.DisplayTime.AddDate(DateTime.Now, true);
 
                     Trace.WriteLine(
                         $"{nameof(Settings)}.{nameof(TryStartWorkDay)}: {settings.DisplayTime.GetBegin().ToShortTimeString()}: Welcome to a new day!");

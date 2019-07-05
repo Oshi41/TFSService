@@ -1,6 +1,7 @@
 ﻿using Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace Gui.Settings
 
         public void ClearPreviouse()
         {
-            var keys = SessionTimes.Keys;
+            var keys = SessionTimes.Keys.ToList();
 
             var changed = false;
 
@@ -31,9 +32,15 @@ namespace Gui.Settings
                 RaiseChange();
         }
 
-        public void AddDate(bool isLogon)
+        public void AddDate(DateTime time, bool isLogon)
         {
-            SessionTimes[DateTime.Now] = isLogon;            
+            if (SessionTimes.ContainsKey(time))
+            {
+                Trace.Write($"{nameof(DisplayTime)}.{nameof(AddDate)}: Time is already recorded");
+                return;
+            }
+
+            SessionTimes[time] = isLogon;            
             RaiseChange();
         }
 
@@ -62,31 +69,17 @@ namespace Gui.Settings
             if (copy[keyes.Last()])
             {
                 copy[DateTime.Now] = false;
+                keyes = copy.Keys.OrderBy(x => x).ToList();
             }
 
-            for (int i = 0; i < keyes.Count; i++)
+            // Считаем, что нет ошибок в записи
+            for (int i = 0; i < keyes.Count; i += 2)
             {
-                var begin = keyes[0];
-
-                // Если залогинились, то ищем сл ближайший разлогон
-                if (copy[begin])
+                if (i + 1 < keyes.Count)
                 {
-                    i++;
-
-                    while (i < keyes.Count)
-                    {
-                        var end = keyes[i];
-
-                        // нашли разлогинивание
-                        if (!copy[begin])
-                        {
-                            var toAdd = end - begin;
-                            duration.Add(toAdd.Duration());
-                            break;
-                        }
-                    }
+                    var session = keyes[i + 1] - keyes[i];
+                    duration = duration.Add(session.Duration());
                 }
-
             }
 
             return duration;
