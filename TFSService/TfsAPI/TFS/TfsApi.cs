@@ -62,8 +62,15 @@ namespace TfsAPI.TFS
             }
             else
             {
-                item.Save();
-                item.SyncToLatest();
+                try
+                {
+                    item.Save();
+                    item.SyncToLatest();
+                }
+                catch (Exception e)
+                {
+                    Trace.WriteLine(e);
+                }
             }
 #endif
         }
