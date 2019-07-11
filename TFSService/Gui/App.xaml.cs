@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Windows;
+using System.Windows.Threading;
 using Gui.Helper;
 using Gui.View;
 using Gui.ViewModels.Notifications;
@@ -17,6 +18,8 @@ namespace Gui
         {
             base.OnStartup(e);
 
+            DispatcherUnhandledException += WriteEx;
+
             var listener = new TextWriterTraceListener(Settings.Settings.Read().LogPath)
             {
                 TraceOutputOptions = TraceOptions.Timestamp | TraceOptions.ThreadId | TraceOptions.DateTime |
@@ -31,6 +34,11 @@ namespace Gui
 #else
             StartProgram();
 #endif
+        }
+
+        private void WriteEx(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            Trace.WriteLine($"UNHANDLED\n\n{e}");
         }
 
         private void StartProgram()
