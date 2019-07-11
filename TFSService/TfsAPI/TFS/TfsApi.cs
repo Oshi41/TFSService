@@ -258,6 +258,7 @@ namespace TfsAPI.TFS
             task.Fields[CoreField.AssignedTo].Value = Project.AuthorizedIdentity.DisplayName;
             task.Fields[WorkItems.Fields.Remaining].Value = hours;
             task.Fields[WorkItems.Fields.Planning].Value = hours;
+            task.Fields[WorkItems.Fields.Complited].Value = 0;
 
             WorkItemLinkType link;
 

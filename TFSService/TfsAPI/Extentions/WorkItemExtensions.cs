@@ -74,6 +74,8 @@ namespace TfsAPI.Extentions
         /// <exception cref="Exception"></exception>
         public static void AddHours(this WorkItem item, byte hours, bool setActive = false)
         {
+            Trace.WriteLine($"{nameof(WorkItemExtensions)}.{nameof(AddHours)}: adding {hours} to Items {item.Id}");
+
             if (item == null)
                 throw new ArgumentException(nameof(item));
 
@@ -90,8 +92,21 @@ namespace TfsAPI.Extentions
                 item.State = "Active";
             }
 
-            var total = int.Parse(item[WorkItems.Fields.Complited].ToString()) + hours;
-            var remain = Math.Max(0, double.Parse(item[WorkItems.Fields.Remaining].ToString()) - hours);
+            if (!double.TryParse(item[WorkItems.Fields.Complited]?.ToString(), out var completed))
+            {
+                Trace.WriteLine($"Can't parse item [{WorkItems.Fields.Complited}] field");
+                completed = 0;
+            }
+
+            if (!double.TryParse(item[WorkItems.Fields.Remaining]?.ToString(), out var remaining))
+            {
+                Trace.WriteLine($"Can't parse item [{WorkItems.Fields.Remaining}] field");
+                remaining = 0;
+            }
+
+            completed += hours;
+            remaining = Math.Max(0, remaining - hours);
+
 
             if (!item.IsOpen)
             {
@@ -100,11 +115,11 @@ namespace TfsAPI.Extentions
                 Trace.WriteLine($"{nameof(WorkItemExtensions)}.{nameof(AddHours)}: Opened work item");
             }
 
-            item.Fields[WorkItems.Fields.Complited].Value = total;
-            item.Fields[WorkItems.Fields.Remaining].Value = remain;
+            item.Fields[WorkItems.Fields.Complited].Value = completed;
+            item.Fields[WorkItems.Fields.Remaining].Value = remaining;
 
             Trace.WriteLine(
-                $"{nameof(WorkItemExtensions)}.{nameof(AddHours)}: Successfully added {hours} to iten {item.Id}");
+                $"{nameof(WorkItemExtensions)}.{nameof(AddHours)}: Added hours");
         }
 
         /// <summary>
