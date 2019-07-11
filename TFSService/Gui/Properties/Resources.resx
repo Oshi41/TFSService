@@ -346,4 +346,13 @@
   <data name="AS_StrFormat_BuildedWithError" xml:space="preserve">
     <value>Сборка {0} завершена со статусом {1}</value>
   </data>
+  <data name="AS_WriteOffHours" xml:space="preserve">
+    <value>Списать часы</value>
+  </data>
+  <data name="AS_EnterWriteOffHours" xml:space="preserve">
+    <value>Необходимо указать кол-во часов для списания</value>
+  </data>
+  <data name="AS_WriteOffHours_Hint" xml:space="preserve">
+    <value>Введите кол-во часов для списания</value>
+  </data>
 </root>

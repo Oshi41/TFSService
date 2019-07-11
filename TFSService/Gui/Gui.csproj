@@ -320,6 +320,7 @@
     <Compile Include="ViewModels\DialogViewModels\FirstConnectionViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\MonthScheduleViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\DialogViewModels\WriteOffHoursViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\Notifications\BindableNotificationBase.cs" />
     <Compile Include="ViewModels\Notifications\ItemsAssignedBaloonViewModel.cs" />

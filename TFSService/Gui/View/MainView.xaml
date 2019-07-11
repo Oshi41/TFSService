@@ -72,6 +72,9 @@
                 </MenuItem>
 
                 <MenuItem Header="{x:Static p:Resources.AS_Actions}">
+                    <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
+                              Command="{Binding Path=WriteOffHorsCommand}"/>
+                    <Separator/>
                     <MenuItem Header="{x:Static p:Resources.AS_CloseCompletedReviewes}"
                               Command="{Binding Path=CodeResponsesViewModel.CloseReviewes}" />
                     <MenuItem Header="{x:Static p:Resources.AS_CloseOldReviews}"

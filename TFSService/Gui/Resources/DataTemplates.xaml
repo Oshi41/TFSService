@@ -28,6 +28,22 @@
             DataContext="{Binding Path=Searcher}" />
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type dialogViewModels:WriteOffHoursViewModel}">
+        <StackPanel Orientation="Vertical">
+            <view:WorkItemSearcherView
+                DataContext="{Binding Path=ChooseTaskVm.Searcher}" />
+
+            <TextBox Margin="10"
+                     Width="150"
+                     HorizontalAlignment="Left"
+                     materialDesign:HintAssist.IsFloating="True"
+                     materialDesign:HintAssist.Hint="{x:Static properties:Resources.AS_WriteOffHours_Hint}"
+                     Text="{Binding Path=Hours,
+                                    UpdateSourceTrigger=PropertyChanged, 
+                                    ValidatesOnDataErrors=True}"/>
+        </StackPanel>
+    </DataTemplate>
+
     <DataTemplate DataType="{x:Type dialogViewModels:CreateTaskViewModel}">
         <view:CreateTaksView />
     </DataTemplate>
