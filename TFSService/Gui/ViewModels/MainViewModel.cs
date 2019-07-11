@@ -128,7 +128,7 @@ namespace Gui.ViewModels
                 }
             }
         }
-        
+
 
         /// <summary>
         ///     Диалог запроса рабочего элемента, над которым работаем
@@ -376,14 +376,17 @@ namespace Gui.ViewModels
         /// <returns></returns>
         private WorkItem GetTask()
         {
-            _currentTask?.Item?.SyncToLatest();
-
-            if (_currentTask == null || !IsTaskAvailable(_currentTask))
+            lock (_apiObserve)
             {
-                var strategy = Settings.Settings.Read().Strategy;
+                _currentTask?.Item?.SyncToLatest();
 
-                // Вызов по событию происходит из другого потока
-                _currentTask = _safeExecutor.ExecuteInGuiThread(() => FindAvailableTask(strategy)).Result;
+                if (_currentTask == null || !IsTaskAvailable(_currentTask))
+                {
+                    var strategy = Settings.Settings.Read().Strategy;
+
+                    // Вызов по событию происходит из другого потока
+                    _currentTask = _safeExecutor.ExecuteInGuiThread(() => FindAvailableTask(strategy)).Result;
+                }
             }
 
             return _currentTask;
@@ -421,11 +424,8 @@ namespace Gui.ViewModels
                 case WroteOffStrategy.Watch:
 
                     // Только одно окошко
-                    lock (_apiObserve)
-                    {
-                        if (WindowManager.ShowDialog(vm, Resources.AS_ChooseWriteoffTask, 400, 200) == true)
-                            return vm.Searcher.Selected;
-                    }
+                    if (WindowManager.ShowDialog(vm, Resources.AS_ChooseWriteoffTask, 400, 200) == true)
+                        return vm.Searcher.Selected;
 
                     // Выбрать нужно обязательно
                     return FindAvailableTask(strategy);
@@ -452,7 +452,7 @@ namespace Gui.ViewModels
             }
 
             // У него должно быть запланированные часы работы
-            if (!(item.Fields[WorkItems.Fields.Remaining]?.Value is int remaining) || remaining == 0)
+            if (!(item.Fields[WorkItems.Fields.Remaining]?.Value is double remaining) || remaining <= 0)
             {
                 Trace.WriteLine(
                     $"{nameof(MainViewModel)}.{nameof(IsTaskAvailable)}: Task {item?.Id} is not exist or remaining time is over");

@@ -91,7 +91,7 @@ namespace TfsAPI.Extentions
             }
 
             var total = int.Parse(item[WorkItems.Fields.Complited].ToString()) + hours;
-            var remain = Math.Max(0, int.Parse(item[WorkItems.Fields.Remaining].ToString()) - hours);
+            var remain = Math.Max(0, double.Parse(item[WorkItems.Fields.Remaining].ToString()) - hours);
 
             if (!item.IsOpen)
             {
