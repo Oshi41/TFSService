@@ -82,7 +82,7 @@ namespace TfsAPI.TFS
                 try
                 {
                     var proj = new TfsTeamProjectCollection(new Uri(url));
-                    return true;
+                    return proj.AuthorizedIdentity.DisplayName != null;
                 }
                 catch (Exception e)
                 {

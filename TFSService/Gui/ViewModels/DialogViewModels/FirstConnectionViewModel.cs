@@ -30,8 +30,17 @@ namespace Gui.ViewModels.DialogViewModels
         protected override string ValidateProperty(string prop)
         {
             if (prop == nameof(Text))
+            {
                 if (!Uri.TryCreate(Text, UriKind.Absolute, out var result))
+                {
                     return Resources.AS_NotAWebAddress_Error;
+                }
+
+                if (IsConnected == false)
+                {
+                    return Resources.AS_ConnectError;
+                }
+            }
 
             return base.ValidateProperty(prop);
         }
