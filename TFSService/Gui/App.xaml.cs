@@ -38,7 +38,7 @@ namespace Gui
 
         private void WriteEx(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            Trace.WriteLine($"UNHANDLED\n\n{e}");
+            Trace.WriteLine($"UNHANDLED\n\n{e.Exception}");
         }
 
         private void StartProgram()

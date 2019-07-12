@@ -3,6 +3,7 @@ using Gui.Helper;
 using Gui.Properties;
 using Gui.ViewModels.DialogViewModels;
 using TfsAPI.RulesNew;
+using TfsAPI.RulesNew.RuleParameter;
 
 namespace Gui.ViewModels.Rules
 {
@@ -71,5 +72,17 @@ namespace Gui.ViewModels.Rules
         }
 
         #endregion
+
+        public IRuleParameter GetParameter()
+        {
+            switch (Preset)
+            {
+                case StaticRules.CheckTasksAreapath:
+                    return new AreaPathParameter(UserParameter);
+
+                default:
+                    return null;
+            }
+        }
     }
 }

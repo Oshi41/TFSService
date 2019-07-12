@@ -9,6 +9,7 @@ using TfsAPI.Constants;
 using TfsAPI.Interfaces;
 using TfsAPI.Properties;
 using TfsAPI.Rules;
+using TfsAPI.RulesNew.RuleParameter;
 
 namespace TfsAPI.RulesNew
 {
@@ -94,7 +95,7 @@ namespace TfsAPI.RulesNew
 
         #region Presets
 
-        public IRule BuildPresets(StaticRules rule, params object[] parameters)
+        public IRule BuildPresets(StaticRules rule, IRuleParameter parameter)
         {
             switch (rule)
             {
@@ -102,7 +103,7 @@ namespace TfsAPI.RulesNew
                     return AllTasksIsCurrentIteration();
 
                 case StaticRules.CheckTasksAreapath:
-                    return CheckTasksAreapath(parameters[0] as string);
+                    return CheckTasksAreapath(parameter as AreaPathParameter);
 
 
                 default:
@@ -128,7 +129,7 @@ namespace TfsAPI.RulesNew
             return result;
         }
 
-        private IRule CheckTasksAreapath(string name)
+        private IRule CheckTasksAreapath(AreaPathParameter name)
         {
             var builder = new WiqlBuilder()
                 .AssignedTo()
@@ -140,7 +141,7 @@ namespace TfsAPI.RulesNew
                 Title = Resource.AS_Rule_AreaCondition_Title,
                 Operation = RuleOperation.SameCount,
                 Source = builder.ToString(),
-                Condition = builder.WithAreaPath("and", $"name").ToString()
+                Condition = builder.WithAreaPath("and", $"{name?.AreaPath}").ToString()
             };
 
             return result;

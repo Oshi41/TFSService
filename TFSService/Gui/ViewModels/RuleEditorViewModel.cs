@@ -57,7 +57,7 @@ namespace Gui.ViewModels
                 // Если выбрали стандартные пресеты
                 if (vm.UsePresets)
                 {
-                    var rule = builder.BuildPresets(vm.Preset);
+                    var rule = builder.BuildPresets(vm.Preset, vm.GetParameter());
 
                     if (Rules.Contains(rule))
                     {

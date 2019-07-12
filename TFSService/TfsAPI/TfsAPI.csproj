@@ -274,6 +274,8 @@
     <Compile Include="RulesNew\IRule.cs" />
     <Compile Include="RulesNew\IRuleBuilder.cs" />
     <Compile Include="RulesNew\RuleBuilder.cs" />
+    <Compile Include="RulesNew\RuleParameter\AreaPathParameter.cs" />
+    <Compile Include="RulesNew\RuleParameter\IRuleParameter.cs" />
     <Compile Include="TFS\Build Defenitions\BuildSearcher.cs" />
     <Compile Include="TFS\Capacity\ICapacitySearcher.cs" />
     <Compile Include="TFS\Capacity\Iteration.cs" />

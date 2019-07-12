@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Interfaces;
+using TfsAPI.RulesNew.RuleParameter;
 
 namespace TfsAPI.RulesNew
 {
@@ -15,7 +16,7 @@ namespace TfsAPI.RulesNew
         /// <param name="rule"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        IRule BuildPresets(StaticRules rule, params object[] parameters);
+        IRule BuildPresets(StaticRules rule, IRuleParameter parameter);
 
         /// <summary>
         ///     Возвращаю неподходящие по условию рабочие элементы
