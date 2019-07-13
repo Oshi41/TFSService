@@ -355,4 +355,7 @@
   <data name="AS_WriteOffHours_Hint" xml:space="preserve">
     <value>Введите кол-во часов для списания</value>
   </data>
+  <data name="AS_CheckConnection" xml:space="preserve">
+    <value>Проверить соединение</value>
+  </data>
 </root>

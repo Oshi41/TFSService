@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Gui.Helper;
 using Gui.Properties;
 using Microsoft.TeamFoundation.Common;
@@ -24,7 +25,9 @@ namespace Gui.ViewModels.DialogViewModels
                     Text = RememberedConnections.First();
             }
 
-            SubmitCommand = ObservableCommand.FromAsyncHandler(Connect, CanConnect);
+            CheckConnectionCommand = ObservableCommand.FromAsyncHandler(Connect, CanConnect);
+            SubmitCommand = new ObservableCommand(() => { },
+                () => IsConnected);
         }
 
         protected override string ValidateProperty(string prop)
@@ -59,7 +62,7 @@ namespace Gui.ViewModels.DialogViewModels
         private string _text;
         private IList<string> _rememberedConnections;
         private readonly ActionArbiterAsync _arbiter = new ActionArbiterAsync();
-        private bool? _isConnected;
+        private bool _isConnected;
 
         #endregion
 
@@ -70,7 +73,12 @@ namespace Gui.ViewModels.DialogViewModels
             get => _text;
             set
             {
-                if (SetProperty(ref _text, value)) IsConnected = null;
+                if (SetProperty(ref _text, value)
+                    && IsConnected)
+                {
+                    // Сбрасываем подключение
+                    IsConnected = false;
+                }
             }
         }
 
@@ -80,11 +88,21 @@ namespace Gui.ViewModels.DialogViewModels
             set => SetProperty(ref _rememberedConnections, value);
         }
 
-        public bool? IsConnected
+        public bool IsConnected
         {
             get => _isConnected;
-            set => SetProperty(ref _isConnected, value);
+            set
+            {
+                if (SetProperty(ref _isConnected, value))
+                {
+                    // необходимо для валидации данных
+                    OnPropertyChanged(nameof(Text));
+                    //SubmitCommand.RaiseCanExecuteChanged();
+                }
+            }
         }
+
+        public ObservableCommand CheckConnectionCommand { get; }
 
         #endregion
 
@@ -100,14 +118,7 @@ namespace Gui.ViewModels.DialogViewModels
         {
             var connected = await TfsApi.CheckConnection(Text);
 
-            SafeExecute(() =>
-            {
-                IsConnected = connected;
-
-                // необходимо для валидации данных
-                OnPropertyChanged(nameof(Text));
-                SubmitCommand.RaiseCanExecuteChanged();
-            });
+            SafeExecute(() => IsConnected = connected);
         }
 
         #endregion
