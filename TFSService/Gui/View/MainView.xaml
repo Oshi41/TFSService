@@ -131,7 +131,7 @@
                       BorderThickness="2"
                       BorderBrush="Black"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                       HorizontalAlignment="Left"
                       ItemsSource="{Binding Path=StatsViewModel.MyItems}" />
 
