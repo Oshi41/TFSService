@@ -321,6 +321,7 @@
     <Compile Include="ViewModels\DialogViewModels\MonthScheduleViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\WriteOffHoursViewModel.cs" />
+    <Compile Include="ViewModels\FilterViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\Notifications\BindableNotificationBase.cs" />
     <Compile Include="ViewModels\Notifications\ItemsAssignedBaloonViewModel.cs" />
@@ -336,6 +337,9 @@
     </Compile>
     <Compile Include="View\DialogWindow.xaml.cs">
       <DependentUpon>DialogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\FilterView.xaml.cs">
+      <DependentUpon>FilterView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\FirstConnectView.xaml.cs">
       <DependentUpon>FirstConnectView.xaml</DependentUpon>
@@ -386,6 +390,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\DialogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\FilterView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -6,6 +6,7 @@ using System.Windows.Markup;
 using System.Windows.Threading;
 using Gui.Helper;
 using Gui.View;
+using Gui.ViewModels;
 using Gui.ViewModels.Notifications;
 using TfsAPI.Interfaces;
 using TfsAPI.TFS;
@@ -55,6 +56,14 @@ namespace Gui
 
         private void RunTests()
         {
+            var w1 = new Window
+            {
+                VerticalContentAlignment = VerticalAlignment.Top,
+                Content = new FilterViewModel(TfsAPI.Constants.WorkItemTypes.Task, TfsAPI.Constants.WorkItemTypes.Pbi)
+            };
+
+            w1.ShowDialog();
+
             CultureInfo ci = CultureInfo.InstalledUICulture;
 
             Thread.CurrentThread.CurrentUICulture = ci;

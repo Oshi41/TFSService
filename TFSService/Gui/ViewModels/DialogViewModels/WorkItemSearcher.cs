@@ -15,30 +15,28 @@ namespace Gui.ViewModels.DialogViewModels
     public class WorkItemSearcher : BindableExtended
     {
         /// <summary>
-        ///     Базовый конструктор
+        ///     Заполняем выпадающий список элементами, привязанными на меня
         /// </summary>
         /// <param name="api"></param>
-        public WorkItemSearcher(ITfsApi api)
+        /// <param name="types">Типы элементов, который хочу вывести. Cм. <see cref="WorkItemTypes" /></param>
+        public WorkItemSearcher(ITfsApi api, params ItemTypeMark[] types)
         {
             _api = api;
             _action = new TimedAction<string, IList<WorkItemVm>>(PerformSearch);
             _action.Performed += OnResult;
 
             _items = new List<WorkItemVm>();
-        }
 
-        /// <summary>
-        ///     Заполняем выпадающий список элементами, привязанными на меня
-        /// </summary>
-        /// <param name="api"></param>
-        /// <param name="types">Типы элементов, который хочу вывести. Cм. <see cref="WorkItemTypes" /></param>
-        public WorkItemSearcher(ITfsApi api, params string[] types)
-            : this(api)
-        {
-            _types = types;
+            Filter = new FilterViewModel(types?.ToArray());
+            Filter.FilterChanged += (sender, args) => TryScheduleSearch(Text);
+
             var mine = _api.GetMyWorkItems();
 
-            if (!types.IsNullOrEmpty()) mine = mine.Where(x => x.IsTypeOf(types)).ToList();
+            if (!types.IsNullOrEmpty())
+            {
+                var workTypes = types.Select(x => x.WorkType).ToArray();
+                mine = mine.Where(x => x.IsTypeOf(workTypes)).ToList();
+            }
 
             foreach (var item in mine) _items.Add(item);
         }
@@ -56,7 +54,7 @@ namespace Gui.ViewModels.DialogViewModels
         /// <summary>
         ///     Разрешенные типы рабочих элементов
         /// </summary>
-        private readonly string[] _types;
+        // private readonly string[] _types;
 
         #endregion
 
@@ -89,6 +87,8 @@ namespace Gui.ViewModels.DialogViewModels
             set => SetProperty(ref _items, value);
         }
 
+        public FilterViewModel Filter { get; set; }
+
         #endregion
 
         #region Private Methods
@@ -119,7 +119,13 @@ namespace Gui.ViewModels.DialogViewModels
             // Не получилось - ищем по строке
             else
             {
-                var finded = _api.Search(arg, _types);
+                var types = Filter
+                    ?.Marks
+                    ?.Where(x => x.IsChecked)
+                    .Select(x => x.WorkType)
+                    ?.ToArray();
+
+                var finded = _api.Search(arg, types);
                 foreach (var item in finded) list.Add(item);
             }
 

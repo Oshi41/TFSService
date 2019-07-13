@@ -67,20 +67,7 @@
                 <converters:Case If="Resolved"
                                  Value="DarkOrange" />
             </converters:SwitchConverter>
-
-            <converters:SwitchConverter x:Key="IconConverter">
-                <converters:Case If="Task">
-                    <materialDesign:PackIcon Kind="ChequeBook" />
-                </converters:Case>
-
-                <converters:Case If="Bug">
-                    <materialDesign:PackIcon Kind="Bug" />
-                </converters:Case>
-
-                <converters:Case If="Product Backlog Item">
-                    <materialDesign:PackIcon Kind="FileDocumentBoxMultipleOutline" />
-                </converters:Case>
-            </converters:SwitchConverter>
+            
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -97,7 +84,7 @@
             </Grid.RowDefinitions>
 
             <StackPanel Orientation="Horizontal">
-                <ContentControl Content="{Binding Path=Type.Name, Converter={StaticResource IconConverter}}"
+                <ContentControl Content="{Binding Path=Type.Name, Converter={StaticResource WorkTypeIconConverter}}"
                                 Margin="5" />
 
                 <TextBlock VerticalAlignment="Center">

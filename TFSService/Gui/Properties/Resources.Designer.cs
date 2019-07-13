@@ -736,6 +736,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Типы рабочих элементов.
+        /// </summary>
+        public static string AS_WorkItemTypesDescr {
+            get {
+                return ResourceManager.GetString("AS_WorkItemTypesDescr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Списать часы.
         /// </summary>
         public static string AS_WriteOffHours {

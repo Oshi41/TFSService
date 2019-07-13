@@ -358,4 +358,7 @@
   <data name="AS_CheckConnection" xml:space="preserve">
     <value>Проверить соединение</value>
   </data>
+  <data name="AS_WorkItemTypesDescr" xml:space="preserve">
+    <value>Типы рабочих элементов</value>
+  </data>
 </root>

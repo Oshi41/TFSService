@@ -141,4 +141,8 @@
         </DataTemplate.Triggers>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type viewModels:FilterViewModel}">
+        <view:FilterView/>
+    </DataTemplate>
+
 </ResourceDictionary>

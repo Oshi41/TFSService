@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="Gui.View.FilterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Gui.View"
+             xmlns:viewModels="clr-namespace:Gui.ViewModels"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:p="clr-namespace:Gui.Properties"
+             mc:Ignorable="d" 
+             d:DesignHeight="350" d:DesignWidth="350"
+             d:DataContext="{d:DesignInstance Type={x:Type viewModels:FilterViewModel}}">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <materialDesign:PopupBox StaysOpen="True">
+            <materialDesign:PopupBox.ToggleContent>
+                <materialDesign:PackIcon Kind="Filter" />
+            </materialDesign:PopupBox.ToggleContent>
+
+            <StackPanel Orientation="Vertical"
+                            MaxWidth="250"
+                            MaxHeight="250"
+                            Margin="10">
+                <TextBlock Text="{x:Static p:Resources.AS_WorkItemTypesDescr}"
+                               TextWrapping="Wrap"/>
+
+                <ItemsControl ItemsSource="{Binding Path=Marks}"
+                                  Margin="0,5">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type viewModels:ItemTypeMark}">
+                            <CheckBox IsChecked="{Binding Path=IsChecked}"
+                                          IsEnabled="{Binding Path=IsEnabled}">
+                                <DockPanel>
+                                    <ContentControl Content="{Binding Path=WorkType, Converter={StaticResource WorkTypeIconConverter}}"
+                                                    DockPanel.Dock="Left"
+                                                    Margin="0,0,3,0" />
+                                    <TextBlock Text="{Binding Path=WorkType}"/>
+                                </DockPanel>
+                            </CheckBox>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </materialDesign:PopupBox>
+    </Grid>
+</UserControl>
