@@ -62,8 +62,8 @@
                     </Setter>
 
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding Path=IsConnected}"
-                                     Value="False">
+                        <DataTrigger Binding="{Binding Path=Connection}"
+                                     Value="{x:Static dialogViewModels:ConnectionType.Failed}">
                             <Setter Property="Foreground" Value="DarkRed"/>
                             <Setter Property="Content">
                                 <Setter.Value>

@@ -27,7 +27,7 @@ namespace Gui.ViewModels.DialogViewModels
 
             CheckConnectionCommand = ObservableCommand.FromAsyncHandler(Connect, CanConnect);
             SubmitCommand = new ObservableCommand(() => { },
-                () => IsConnected);
+                () => Connection == ConnectionType.Success);
         }
 
         protected override string ValidateProperty(string prop)
@@ -39,7 +39,7 @@ namespace Gui.ViewModels.DialogViewModels
                     return Resources.AS_NotAWebAddress_Error;
                 }
 
-                if (IsConnected == false)
+                if (Connection == ConnectionType.Failed)
                 {
                     return Resources.AS_ConnectError;
                 }
@@ -51,7 +51,7 @@ namespace Gui.ViewModels.DialogViewModels
         protected override string ValidateOptionalProperty(string prop)
         {
             if (prop == nameof(Text))
-                if (IsConnected == false)
+                if (Connection == ConnectionType.Failed)
                     return Resources.AS_ConnectError;
 
             return base.ValidateOptionalProperty(prop);
@@ -62,7 +62,7 @@ namespace Gui.ViewModels.DialogViewModels
         private string _text;
         private IList<string> _rememberedConnections;
         private readonly ActionArbiterAsync _arbiter = new ActionArbiterAsync();
-        private bool _isConnected;
+        private ConnectionType _connection;
 
         #endregion
 
@@ -74,10 +74,10 @@ namespace Gui.ViewModels.DialogViewModels
             set
             {
                 if (SetProperty(ref _text, value)
-                    && IsConnected)
+                    && Connection == ConnectionType.Success)
                 {
                     // Сбрасываем подключение
-                    IsConnected = false;
+                    Connection = ConnectionType.Unknown;
                 }
             }
         }
@@ -88,12 +88,12 @@ namespace Gui.ViewModels.DialogViewModels
             set => SetProperty(ref _rememberedConnections, value);
         }
 
-        public bool IsConnected
+        public ConnectionType Connection
         {
-            get => _isConnected;
+            get => _connection;
             set
             {
-                if (SetProperty(ref _isConnected, value))
+                if (SetProperty(ref _connection, value))
                 {
                     // необходимо для валидации данных
                     OnPropertyChanged(nameof(Text));
@@ -118,9 +118,32 @@ namespace Gui.ViewModels.DialogViewModels
         {
             var connected = await TfsApi.CheckConnection(Text);
 
-            SafeExecute(() => IsConnected = connected);
+            Connection = connected ? ConnectionType.Success : ConnectionType.Failed;
+
+            CheckConnectionCommand.RaiseCanExecuteChanged();
         }
 
         #endregion
+    }
+
+    /// <summary>
+    ///     Состояние соединения.
+    /// </summary>
+    public enum ConnectionType
+    {
+        /// <summary>
+        /// Состояние неизвестно.
+        /// </summary>
+        Unknown,
+
+        /// <summary>
+        /// Соединение успешно установленно.
+        /// </summary>
+        Success,
+
+        /// <summary>
+        /// Во время соединения произошла ошибка.
+        /// </summary>
+        Failed
     }
 }
