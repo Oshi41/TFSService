@@ -1,11 +1,15 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
+using System.Threading;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Threading;
 using Gui.Helper;
 using Gui.View;
 using Gui.ViewModels.Notifications;
 using TfsAPI.Interfaces;
 using TfsAPI.TFS;
+using Calendar = System.Windows.Controls.Calendar;
 
 namespace Gui
 {
@@ -51,8 +55,22 @@ namespace Gui
 
         private void RunTests()
         {
+            CultureInfo ci = CultureInfo.InstalledUICulture;
+
+            Thread.CurrentThread.CurrentUICulture = ci;
+            Thread.CurrentThread.CurrentCulture = ci;
+
+            var w = new Window
+            {
+                Content = new Calendar()
+            };
+
+            w.Language = XmlLanguage.GetLanguage(ci.IetfLanguageTag);
+
+            w.ShowDialog();
+
             var id = 80439;
-            var api = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+            var api = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint Security");
 
             var item = api.FindById(id);
             var assigned = new ItemsAssignedBaloonViewModel(new[] {item}, "Новый элемент был назначен");

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Threading;
 using Gui.Helper;
 
@@ -13,6 +15,10 @@ namespace Gui.View
         public DialogWindow()
         {
             InitializeComponent();
+
+            Language = XmlLanguage
+                .GetLanguage(
+                    CultureInfo.InstalledUICulture.IetfLanguageTag);
         }
 
         /// <summary>

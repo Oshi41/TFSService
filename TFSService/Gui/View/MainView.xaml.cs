@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Markup;
 using Gui.ViewModels;
 
 namespace Gui.View
@@ -17,6 +19,10 @@ namespace Gui.View
         public MainView()
         {
             InitializeComponent();
+
+            Language = XmlLanguage
+                .GetLanguage(
+                    CultureInfo.InstalledUICulture.IetfLanguageTag);
 
             _trayIcon = new NotifyIcon
             {
