@@ -291,8 +291,8 @@
   <data name="AS_StrFormat_RemainingHours" xml:space="preserve">
     <value>Осталось {0} ч</value>
   </data>
-  <data name="AS_StrFormat_TotalHours" xml:space="preserve">
-    <value>Всего {0} ч</value>
+  <data name="AS_Total" xml:space="preserve">
+    <value>Всего</value>
   </data>
   <data name="AS_StrFormat_WrittenOff" xml:space="preserve">
     <value>Списано: {0} ч</value>

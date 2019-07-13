@@ -25,6 +25,7 @@ namespace Gui.ViewModels.DialogViewModels
         private DateTime _date;
         private DayViewModel _selectedDay;
         private int _sum;
+        private int _sumCapacity;
 
         public MonthCheckinsViewModel(ITfsApi api)
         {
@@ -66,6 +67,12 @@ namespace Gui.ViewModels.DialogViewModels
             set => SetProperty(ref _sum, value);
         }
 
+        public int SumCapacity
+        {
+            get => _sumCapacity;
+            set => SetProperty(ref _sumCapacity, value);
+        }
+
         private async void OnDateChanged()
         {
             IsBusy = true;
@@ -85,17 +92,20 @@ namespace Gui.ViewModels.DialogViewModels
             {
                 // чекины за месяц (один запрос к TFS)
                 var checkins = await Task.Run(() => _api.GetWriteoffs(start, end));
-                var capacities = await Task.Run(() => _api.GetCapacity(start, end));
-
-                // Получаю среднее значение
-                var capacity = (int) capacities.Average(x => x.GetCapacity(_api.Name));
 
                 var collection = new List<DayViewModel>();
 
                 var i = start;
                 while (i <= end)
                 {
-                    collection.Add(new DayViewModel(i, checkins, capacity));
+                    // Получаю кол-во часов для дня из итерации TFS
+                    var capacity = await Task
+                        .Run(() => _api
+                            ?.GetCapacity(i, i)
+                            ?.FirstOrDefault()
+                            ?.GetCapacity(_api.Name));
+
+                    collection.Add(new DayViewModel(i, checkins, capacity ?? 0));
                     i = i.AddDays(1);
                 }
 
@@ -107,6 +117,7 @@ namespace Gui.ViewModels.DialogViewModels
             {
                 Month = _cache[start].ToList();
                 Sum = Month.Sum(x => x.Hours);
+                SumCapacity = Month.Sum(x => x.Capacity);
             }
 
             SelectedDay = Month.FirstOrDefault(x => x.Time.IsToday(Date));

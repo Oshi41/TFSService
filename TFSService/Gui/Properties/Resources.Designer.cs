@@ -619,15 +619,6 @@ namespace Gui.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Всего {0} ч.
-        /// </summary>
-        public static string AS_StrFormat_TotalHours {
-            get {
-                return ResourceManager.GetString("AS_StrFormat_TotalHours", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Списано: {0} ч.
         /// </summary>
         public static string AS_StrFormat_WrittenOff {
@@ -669,6 +660,15 @@ namespace Gui.Properties {
         public static string AS_TooBigTask_Asking {
             get {
                 return ResourceManager.GetString("AS_TooBigTask_Asking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Всего.
+        /// </summary>
+        public static string AS_Total {
+            get {
+                return ResourceManager.GetString("AS_Total", resourceCulture);
             }
         }
         

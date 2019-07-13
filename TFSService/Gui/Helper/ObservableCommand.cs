@@ -152,6 +152,9 @@ namespace Gui.Helper
 
                 IsExecuting = false;
                 Executed?.Invoke(this, EventArgs.Empty);
+
+                // Иначе залагивает
+                RaiseCanExecuteChanged();
             }
         }
 
