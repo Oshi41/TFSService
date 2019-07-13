@@ -40,7 +40,8 @@
                   ItemsSource="{Binding Path=RememberedConnections}"
                   Text="{Binding Path=Text, 
                          UpdateSourceTrigger=PropertyChanged,
-                         ValidatesOnDataErrors=True}" />
+                         ValidatesOnDataErrors=True}"
+                  Padding="6"/>
 
         <Button Grid.Row="1"
                 Grid.Column="1"
