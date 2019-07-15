@@ -117,7 +117,9 @@ namespace Gui.ViewModels.DialogViewModels
             {
                 Month = _cache[start].ToList();
                 Sum = Month.Sum(x => x.Hours);
-                SumCapacity = Month.Sum(x => x.Capacity);
+                SumCapacity = Month
+                    .Where(x => !x.IsHolliday)
+                    .Sum(x => x.Capacity);
             }
 
             SelectedDay = Month.FirstOrDefault(x => x.Time.IsToday(Date));
