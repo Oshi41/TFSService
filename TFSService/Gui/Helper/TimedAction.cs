@@ -34,10 +34,6 @@ namespace Gui.Helper
         /// </summary>
         private TIn _param;
 
-        /// <summary>
-        ///     Запрос на выполнение от пользователя
-        /// </summary>
-        private bool _sheduledByUser;
 
         /// <param name="action">Длительное действие</param>
         /// <param name="interval">Интервал для выполнения действия</param>
@@ -62,12 +58,9 @@ namespace Gui.Helper
         /// <param name="e"></param>
         private async void OnPerform(object sender, ElapsedEventArgs e)
         {
-            if (!_sheduledByUser)
-                return;
-
+            _timer.Stop();
             var result = await Task.Run(() => _action(_param));
             _sync.Post(state => Performed?.Invoke(this, result), null);
-            _sheduledByUser = false;
         }
 
         /// <summary>
@@ -80,8 +73,6 @@ namespace Gui.Helper
 
             _timer.Stop();
             _timer.Start();
-
-            _sheduledByUser = true;
         }
     }
 }

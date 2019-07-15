@@ -8,7 +8,7 @@ using Gui.Helper;
 using Gui.Properties;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
-using TfsAPI.Comarers;
+using TfsAPI.Comparers;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
@@ -21,7 +21,7 @@ namespace Gui.ViewModels.Notifications
     public class NewResponsesBaloonViewModel : ItemsAssignedBaloonViewModel
     {
         private readonly ITfsApi _api;
-        private readonly IEqualityComparer<WorkItem> _comparer = new WorkItemComparer();
+        private readonly IEqualityComparer<WorkItem> _comparer = new IdWorkItemComparer();
         private readonly List<WorkItem> _reviews;
         private readonly TimeSpan _time;
         private bool _isBusy;

@@ -100,7 +100,7 @@ namespace TfsAPI.TFS
         #region Fields
 
         protected readonly TfsTeamProjectCollection Project;
-        private readonly WorkItemStore _itemStore;
+        protected readonly WorkItemStore _itemStore;
         private readonly ILinking _linking;
         private readonly VersionControlServer _versionControl;
         private readonly IIdentityManagementService2 _managementService;

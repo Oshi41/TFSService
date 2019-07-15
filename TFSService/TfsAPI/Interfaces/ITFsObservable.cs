@@ -22,7 +22,7 @@ namespace TfsAPI.Interfaces
         /// <summary>
         ///     Рабочий элемент был изменен
         /// </summary>
-        event EventHandler<Dictionary<WorkItem, List<WorkItemEventArgs>>> ItemsChanged;
+        event EventHandler<List<WorkItem>> ItemsChanged;
 
         /// <summary>
         ///     Нужно списать время у указанного рабочего элемента

@@ -12,7 +12,7 @@ using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.Win32;
-using TfsAPI.Comarers;
+using TfsAPI.Comparers;
 using TfsAPI.Interfaces;
 using TfsAPI.RulesNew;
 using TfsAPI.TFS.Build_Defenitions;
@@ -66,13 +66,7 @@ namespace TfsAPI.TFS
                 if (Equals(MyItems, value))
                     return;
 
-                if (!MyItems.IsNullOrEmpty())
-                    MyItems.ForEach(x => x.FieldChanged -= RememberChange);
-
                 _myItems = value.ToList();
-
-                if (!MyItems.IsNullOrEmpty())
-                    MyItems.ForEach(x => x.FieldChanged += RememberChange);
             }
         }
 
@@ -86,20 +80,17 @@ namespace TfsAPI.TFS
 
             var current = GetMyWorkItems();
 
-            var added = current.Except(MyItems, _comparer).ToList();
-            var removed = MyItems.Except(current, _comparer).ToList();
+            var added = current.Except(MyItems, _idComparer).ToList();
+            var removed = MyItems.Except(current, _idComparer).ToList();
 
             TryRaiseItemsAdded(added);
-            TryRaiseItemsRemoved(removed);
+            _myItems.AddRange(added);
 
-            // Удалил элементы
-            _myItems = _myItems.Except(removed, _comparer).ToList();
+            TryRaiseItemsRemoved(removed);
+            removed.ForEach(x => _myItems.Remove(x));
 
             // Обновляю нетронутые элементы по данным из TFS
-            UpdateItems();
-
-            // Добавил элементы
-            _myItems.AddRange(added);
+            UpdateAndSetItems(current);
 
             // Обновляю данные по билдам
             UpdateBuilds();
@@ -119,10 +110,9 @@ namespace TfsAPI.TFS
         private readonly Timer _itemsTimer;
         private readonly Func<WorkItem> _currentItem;
         private readonly Func<IList<IRule>> _rules;
-        private readonly IEqualityComparer<WorkItem> _comparer = new WorkItemComparer();
 
-        private readonly ConcurrentDictionary<WorkItem, List<WorkItemEventArgs>> _changes =
-            new ConcurrentDictionary<WorkItem, List<WorkItemEventArgs>>();
+        private readonly IEqualityComparer<WorkItem> _idComparer = new IdWorkItemComparer();
+        private readonly IEqualityComparer<WorkItem> _itemChangedComparer = new PartialWorkItemComparer();
 
         private bool _paused = true;
         private List<WorkItem> _myItems = new List<WorkItem>();
@@ -139,7 +129,7 @@ namespace TfsAPI.TFS
 
         public event EventHandler<CommitCheckinEventArgs> Checkin;
         public event EventHandler<List<WorkItem>> NewItems;
-        public event EventHandler<Dictionary<WorkItem, List<WorkItemEventArgs>>> ItemsChanged;
+        public event EventHandler<List<WorkItem>> ItemsChanged;
         public event EventHandler<ScheduleWorkArgs> WriteOff;
         public event EventHandler Logoff;
         public event EventHandler Logon;
@@ -207,20 +197,6 @@ namespace TfsAPI.TFS
                     Logoff?.Invoke(this, e);
                     break;
             }
-        }
-
-        private void RememberChange(object sender, WorkItemEventArgs e)
-        {
-            if (e?.Field?.WorkItem == null)
-                return;
-
-            _changes.AddOrUpdate(e.Field.WorkItem,
-                item => new List<WorkItemEventArgs> {e},
-                (item, list) =>
-                {
-                    list.Add(e);
-                    return list;
-                });
         }
 
         #endregion
@@ -293,23 +269,21 @@ namespace TfsAPI.TFS
         /// <summary>
         /// Синхронизирую данные рабочих элементов
         /// </summary>
-        /// <param name="items"></param>
-        private void UpdateItems()
+        /// <param name="copy">Список полученных из TFS элементов</param>
+        private void UpdateAndSetItems(IList<WorkItem> copy)
         {
-            // Каждое изменение генерит кучу событий
-            // запускаем обновление для каждого раюочего элемента
-            MyItems
-                .AsParallel()
-                .ForEach(x => x.SyncToLatest());
+            // Нашли изменений
+            var changed = MyItems.Except(copy, _itemChangedComparer).ToList();
 
-            // Изменений нет, выходим
-            if (_changes.IsEmpty)
-                return;
+            // Если есть изменения
+            if (changed.Any())
+            {
+                // Вызываем события
+                ItemsChanged?.Invoke(this, changed.ToList());
+            }
 
-            // Запускаем событие
-            ItemsChanged?.Invoke(this, _changes.ToDictionary(x => x.Key, x => x.Value));
-            // очищаем запомненные изменения
-            _changes.Clear();
+            // записываем новые данные
+            MyItems = copy;
         }
 
         /// <summary>
@@ -319,9 +293,10 @@ namespace TfsAPI.TFS
         {
             // Инициализировал поиск билдов
             var buildSearcher = new BuildSearcher(_buildClient, 
-                _capacitySearcher
-                    .GetAllMyTeams()
-                    .Select(x => x.Identity.TeamFoundationId)
+                _itemStore
+                    .Projects
+                    .OfType<Project>()
+                    .Select(x => x.Guid)
                     .ToArray());
 
             // нашел мои билды 

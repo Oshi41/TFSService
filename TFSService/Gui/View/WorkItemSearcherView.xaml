@@ -23,12 +23,19 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
         <!--Для поиска введите ID элемента либо ищите по ключевым словам-->
 
         <TextBlock Text="{Binding Path=Help, Mode=OneWay}"
-                   TextWrapping="Wrap" />
+                   TextWrapping="Wrap" 
+                   Grid.ColumnSpan="2"/>
 
         <ComboBox Grid.Row="1"
+                  Grid.Column="0"
                   ItemsSource="{Binding Path=Items}"
                   Text="{Binding Path=Text, UpdateSourceTrigger=PropertyChanged}"
                   SelectedValue="{Binding Path=Selected}"
@@ -47,6 +54,10 @@
                 </ItemsPanelTemplate>
             </ComboBox.ItemsPanel>
         </ComboBox>
+
+        <local:FilterView Grid.Row="1"
+                          Grid.Column="1"
+                          DataContext="{Binding Path=Filter}"/>
 
     </Grid>
 </UserControl>

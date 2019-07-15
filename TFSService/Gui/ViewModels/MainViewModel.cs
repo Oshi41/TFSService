@@ -130,7 +130,6 @@ namespace Gui.ViewModels
             }
         }
 
-
         /// <summary>
         ///     Диалог запроса рабочего элемента, над которым работаем
         /// </summary>
@@ -205,7 +204,7 @@ namespace Gui.ViewModels
 
         private void ShowMonthly()
         {
-            WindowManager.ShowDialog(new MonthCheckinsViewModel(_apiObserve), Resources.AS_MonthlySchedule, 700, 500);
+            WindowManager.ShowDialog(new MonthCheckinsViewModel(_apiObserve), Resources.AS_MonthlySchedule, 680, 530);
         }
 
         private async Task Update()
@@ -298,7 +297,7 @@ namespace Gui.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnItemsChanged(object sender, Dictionary<WorkItem, List<WorkItemEventArgs>> e)
+        private void OnItemsChanged(object sender, List<WorkItem> e)
         {
             _itemsChangedArbiter.Do(() =>
             {
@@ -307,7 +306,7 @@ namespace Gui.ViewModels
                     RefreshStats();
 
                     // Доступные элементы
-                    var active = e.Where(x => !x.Key.HasState(WorkItemStates.Closed)).Select(x => x.Key).ToList();
+                    var active = e.Where(x => !x.HasState(WorkItemStates.Closed)).ToList();
 
                     if (active.Any())
                     {
@@ -331,7 +330,7 @@ namespace Gui.ViewModels
                     return;
 
                 var brandNewBuild = e
-                    .Where(x => savedIds
+                    .Where(x => newIds
                         .Contains(x.BuildNumber))
                     .ToList();
 
@@ -381,7 +380,8 @@ namespace Gui.ViewModels
                 && FirstConnectionViewModel.CanConnect())
             {
                 await FirstConnectionViewModel.Connect();
-                return FirstConnectionViewModel.Connection == ConnectionType.Success;
+                if (FirstConnectionViewModel.Connection == ConnectionType.Success)
+                    return true;
             }
 
             return WindowManager.ShowDialog(FirstConnectionViewModel, Resources.AS_FirstConnection, 400, 200);

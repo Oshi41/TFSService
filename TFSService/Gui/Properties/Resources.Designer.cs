@@ -19,7 +19,7 @@ namespace Gui.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -214,6 +214,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Соединение установлено.
+        /// </summary>
+        public static string AS_ConnectionEstablished {
+            get {
+                return ResourceManager.GetString("AS_ConnectionEstablished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Продолжить.
         /// </summary>
         public static string AS_Continue {
@@ -372,6 +381,15 @@ namespace Gui.Properties {
         public static string AS_LogPath {
             get {
                 return ResourceManager.GetString("AS_LogPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Трудосгорание за месяц.
+        /// </summary>
+        public static string AS_MonthlyCapacity {
+            get {
+                return ResourceManager.GetString("AS_MonthlyCapacity", resourceCulture);
             }
         }
         

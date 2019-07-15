@@ -15,7 +15,7 @@
         /// <summary>
         ///     Операнд для поиска строки
         /// </summary>
-        public const string ContainsStrOperand = "Contains Words";
+        public const string ContainsStrOperand = "Contains";
 
         /// <summary>
         ///     Задание является на данную итерацию

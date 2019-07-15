@@ -82,6 +82,11 @@
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
+
+                        <DataTrigger Binding="{Binding Path=Connection}"
+                                     Value="{x:Static dialogViewModels:ConnectionType.Unknown}">
+                            <Setter Property="Foreground" Value="Black"/>
+                        </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </Button.Style>
