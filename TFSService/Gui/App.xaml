@@ -22,7 +22,8 @@
                 <ResourceDictionary Source="Resources/CalendarStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <converters:SwitchConverter x:Key="WorkTypeIconConverter">
+            <converters:SwitchConverter x:Key="WorkTypeIconConverter"
+                                        x:Shared="False">
                 <converters:Case If="{x:Static constants:WorkItemTypes.Task}">
                     <materialDesign:PackIcon Kind="ChequeBook" />
                 </converters:Case>

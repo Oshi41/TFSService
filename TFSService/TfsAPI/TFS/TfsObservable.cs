@@ -96,13 +96,13 @@ namespace TfsAPI.TFS
             _myItems = _myItems.Except(removed, _comparer).ToList();
 
             // Обновляю нетронутые элементы по данным из TFS
-            UpdateItems();
+            // UpdateItems();
 
             // Добавил элементы
             _myItems.AddRange(added);
 
             // Обновляю данные по билдам
-            UpdateBuilds();
+            // UpdateBuilds();
 
             // Т.к. правила проверять постоянно не нужно
             if (timerEllapsed)
