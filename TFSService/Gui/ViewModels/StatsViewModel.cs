@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,8 @@ namespace Gui.ViewModels
 {
     public class StatsViewModel : BindableBase
     {
+        private readonly List<WorkItemVm> _origin = new List<WorkItemVm>();
+
         private string _name;
         private int _tfsCapacity;
         private int _capacity;
@@ -47,6 +50,18 @@ namespace Gui.ViewModels
             set => SetProperty(ref _myItems, value);
         }
 
+        public StatsViewModel()
+        {
+            Filter = new FilterViewModel(WorkItemTypes.Task, 
+                WorkItemTypes.Pbi,
+                WorkItemTypes.Bug,
+                WorkItemTypes.Improvement,
+                WorkItemTypes.Incident,
+                WorkItemTypes.Feature);
+
+            Filter.FilterChanged += OnFilterChanged;
+        }
+
         public async void Refresh(ITfsApi api)
         {
             if (api == null)
@@ -61,9 +76,21 @@ namespace Gui.ViewModels
             Name = await Task.Run(() => api.Name);
             var all = await Task.Run(() => api.GetMyWorkItems().Select(x => new WorkItemVm(x)));
 
-
-            MyItems = new ObservableCollection<WorkItemVm>(all.Where(x =>
+            _origin.Clear();
+            _origin.AddRange(all.Where(x =>
                 !x.Item.IsTypeOf(WorkItemTypes.CodeReview, WorkItemTypes.ReviewResponse)));
+
+            OnFilterChanged();
         }
+
+        private void OnFilterChanged(object sender = null, EventArgs e = null)
+        {
+            var types = Filter.GetSelectedTypes();
+
+            MyItems = new ObservableCollection<WorkItemVm>(_origin
+                .Where(x => x.Item.IsTypeOf(types)));
+        }
+
+        public FilterViewModel Filter { get;  }
     }
 }
