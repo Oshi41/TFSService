@@ -84,19 +84,16 @@ namespace TfsAPI.TFS
             var removed = MyItems.Except(current, _idComparer).ToList();
 
             TryRaiseItemsAdded(added);
-            TryRaiseItemsRemoved(removed);
-
-            // Удалил элементы
-            _myItems = _myItems.Except(removed, _idComparer).ToList();
-
-            // Обновляю нетронутые элементы по данным из TFS
-            UpdateItems();
-
-            // Добавил элементы
             _myItems.AddRange(added);
 
+            TryRaiseItemsRemoved(removed);
+            removed.ForEach(x => _myItems.Remove(x));
+
+            // Обновляю нетронутые элементы по данным из TFS
+            UpdateAndSetItems(current);
+
             // Обновляю данные по билдам
-            // UpdateBuilds();
+            UpdateBuilds();
 
             // Т.к. правила проверять постоянно не нужно
             if (timerEllapsed)
@@ -272,11 +269,9 @@ namespace TfsAPI.TFS
         /// <summary>
         /// Синхронизирую данные рабочих элементов
         /// </summary>
-        /// <param name="items"></param>
-        private void UpdateItems()
+        /// <param name="copy">Список полученных из TFS элементов</param>
+        private void UpdateAndSetItems(IList<WorkItem> copy)
         {
-            // Получили свежий список
-            var copy = GetMyWorkItems();
             // Нашли изменений
             var changed = MyItems.Except(copy, _itemChangedComparer).ToList();
 

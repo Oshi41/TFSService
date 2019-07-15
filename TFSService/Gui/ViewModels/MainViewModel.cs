@@ -130,7 +130,6 @@ namespace Gui.ViewModels
             }
         }
 
-
         /// <summary>
         ///     Диалог запроса рабочего элемента, над которым работаем
         /// </summary>
@@ -331,7 +330,7 @@ namespace Gui.ViewModels
                     return;
 
                 var brandNewBuild = e
-                    .Where(x => savedIds
+                    .Where(x => newIds
                         .Contains(x.BuildNumber))
                     .ToList();
 

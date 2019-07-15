@@ -1,6 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Threading;
@@ -10,6 +12,11 @@ using Gui.ViewModels;
 using Gui.ViewModels.Notifications;
 using TfsAPI.Interfaces;
 using TfsAPI.TFS;
+using ToastNotifications;
+using ToastNotifications.Core;
+using ToastNotifications.Lifetime;
+using ToastNotifications.Messages;
+using ToastNotifications.Position;
 using Calendar = System.Windows.Controls.Calendar;
 
 namespace Gui
@@ -56,6 +63,29 @@ namespace Gui
 
         private void RunTests()
         {
+            var notifier = new Notifier(cfg =>
+            {
+                cfg.PositionProvider = new PrimaryScreenPositionProvider(Corner.BottomRight, 10, 10);
+
+                cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(TimeSpan.FromMinutes(1),
+                    MaximumNotificationCount.FromCount(10));
+            });
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(5));
+
+                try
+                {
+                    notifier.ShowError("ОШИИИБКАААААА");
+                }
+                catch (Exception e)
+                {
+                    Trace.WriteLine(e);
+                }
+                
+            });
+
             var w1 = new Window
             {
                 VerticalContentAlignment = VerticalAlignment.Top,
