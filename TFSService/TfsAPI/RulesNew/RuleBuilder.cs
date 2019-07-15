@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Attributes;
-using TfsAPI.Comarers;
+using TfsAPI.Comparers;
 using TfsAPI.Constants;
 using TfsAPI.Interfaces;
 using TfsAPI.Properties;
@@ -74,7 +74,7 @@ namespace TfsAPI.RulesNew
                 {
                     // Кол-во должно быть одинаковым
                     case RuleOperation.SameCount:
-                        var except = source.Except(conditional, new WorkItemComparer());
+                        var except = source.Except(conditional, new IdWorkItemComparer());
                         result.AddRange(except);
                         break;
 

@@ -298,7 +298,7 @@ namespace Gui.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnItemsChanged(object sender, Dictionary<WorkItem, List<WorkItemEventArgs>> e)
+        private void OnItemsChanged(object sender, List<WorkItem> e)
         {
             _itemsChangedArbiter.Do(() =>
             {
@@ -307,7 +307,7 @@ namespace Gui.ViewModels
                     RefreshStats();
 
                     // Доступные элементы
-                    var active = e.Where(x => !x.Key.HasState(WorkItemStates.Closed)).Select(x => x.Key).ToList();
+                    var active = e.Where(x => !x.HasState(WorkItemStates.Closed)).ToList();
 
                     if (active.Any())
                     {

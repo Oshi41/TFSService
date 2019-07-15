@@ -252,7 +252,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\LocalizedDescriptionAttribute.cs" />
-    <Compile Include="Comarers\WorkItemComparer.cs" />
+    <Compile Include="Comparers\PartialWorkItemComparer.cs" />
+    <Compile Include="Comparers\IdWorkItemComparer.cs" />
     <Compile Include="Constants\Sql.cs" />
     <Compile Include="Constants\WorkItemStates.cs" />
     <Compile Include="Constants\WorkItemTypes.cs" />

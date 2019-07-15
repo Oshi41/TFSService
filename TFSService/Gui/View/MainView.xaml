@@ -93,41 +93,40 @@
                       HorizontalAlignment="Stretch"
                       ItemsSource="{Binding Path=StatsViewModel.MyItems}" />
 
-            <StackPanel Grid.Row="3"
-                        Orientation="Vertical"
-                        Background="Transparent"
-                        Margin="5,0,5,10">
-                <StackPanel.ToolTip>
-                    <ToolTip>
-                        <StackPanel Orientation="Vertical"
+            <materialDesign:Card Grid.Row="3">
+
+                <StackPanel Orientation="Vertical"
+                            Background="Transparent"
+                            Margin="5,0,5,10">
+                    <StackPanel.ToolTip>
+                        <ToolTip>
+                            <StackPanel Orientation="Vertical"
                                     Margin="5">
 
-                            <TextBlock
+                                <TextBlock
                                 Text="{Binding Path=StatsViewModel.WroteOff, 
                                               StringFormat={x:Static p:Resources.AS_StrFormat_WrittenOff}}"
                                 Margin="5" />
-                            <TextBlock
+                                <TextBlock
                                 Text="{Binding Path=StatsViewModel.Capacity,
                                        StringFormat={x:Static  p:Resources.AS_StrFormat_DailyMax}}"
                                 Margin="5" />
 
-                        </StackPanel>
-                    </ToolTip>
-                </StackPanel.ToolTip>
+                            </StackPanel>
+                        </ToolTip>
+                    </StackPanel.ToolTip>
 
-                <TextBlock Text="{Binding Path=StatsViewModel.TfsCapacity, 
+                    <TextBlock Text="{Binding Path=StatsViewModel.TfsCapacity, 
                               StringFormat={x:Static p:Resources.AS_StrFormat_DailyWorkTime}}"
                            Margin="10,10,0,0"
                            ToolTip="{x:Static p:Resources.AS_TfsInfo}" />
 
-                <!--<TextBlock Text="{x:Static p:Resources.AS_WorkHoursTracking}"
-                           Margin="10,10,0,0"/>-->
-
-                <ProgressBar HorizontalAlignment="Stretch"
+                    <ProgressBar HorizontalAlignment="Stretch"
                              Maximum="{Binding Path=StatsViewModel.Capacity}"
                              Value="{Binding Path=StatsViewModel.WroteOff}"
                              Margin="5"/>
-            </StackPanel>
+                </StackPanel>
+            </materialDesign:Card>
 
         </Grid>
     </materialDesign:DialogHost>

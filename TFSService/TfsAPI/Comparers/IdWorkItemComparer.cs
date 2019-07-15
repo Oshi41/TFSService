@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
-namespace TfsAPI.Comarers
+namespace TfsAPI.Comparers
 {
     /// <summary>
     ///     Сравнивает WorkITem по ID
     /// </summary>
-    public class WorkItemComparer : IEqualityComparer<WorkItem>
+    public class IdWorkItemComparer : IEqualityComparer<WorkItem>
     {
         public bool Equals(WorkItem x, WorkItem y)
         {
