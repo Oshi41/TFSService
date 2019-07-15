@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Gui.Helper;
 using Microsoft.TeamFoundation.Common;
@@ -28,7 +29,7 @@ namespace Gui.ViewModels.DialogViewModels
             _items = new List<WorkItemVm>();
 
             Filter = new FilterViewModel(types?.ToArray());
-            Filter.FilterChanged += (sender, args) => TryScheduleSearch(Text);
+            Filter.FilterChanged += (sender, args) => UpdateByFilter(true);
 
             var mine = _api.GetMyWorkItems();
 
@@ -38,7 +39,8 @@ namespace Gui.ViewModels.DialogViewModels
                 mine = mine.Where(x => x.IsTypeOf(workTypes)).ToList();
             }
 
-            foreach (var item in mine) _items.Add(item);
+            _originItems.AddRange(mine.Select(x => new WorkItemVm(x)));
+            UpdateByFilter();
         }
 
         #region Fields
@@ -47,6 +49,7 @@ namespace Gui.ViewModels.DialogViewModels
         private readonly TimedAction<string, IList<WorkItemVm>> _action;
 
         private WorkItemVm _selected;
+        private readonly List<WorkItemVm> _originItems = new List<WorkItemVm>();
         private IList<WorkItemVm> _items;
         private string _text;
         private string _help;
@@ -119,13 +122,7 @@ namespace Gui.ViewModels.DialogViewModels
             // Не получилось - ищем по строке
             else
             {
-                var types = Filter
-                    ?.Marks
-                    ?.Where(x => x.IsChecked)
-                    .Select(x => x.WorkType)
-                    ?.ToArray();
-
-                var finded = _api.Search(arg, types);
+                var finded = _api.Search(arg, Filter.GetSelectedTypes());
                 foreach (var item in finded) list.Add(item);
             }
 
@@ -134,7 +131,30 @@ namespace Gui.ViewModels.DialogViewModels
 
         private void OnResult(object sender, IList<WorkItemVm> e)
         {
-            Items = e;
+            _originItems.Clear();
+            _originItems.AddRange(e);
+
+            UpdateByFilter();
+        }
+
+        /// <summary>
+        /// Обновяем данные по фильтру
+        /// </summary>
+        /// <param name="shouldWebRequest">Нужно ли делать Web запрос или фильтруем что есть</param>
+        private void UpdateByFilter(bool shouldWebRequest = false)
+        {
+            if (shouldWebRequest && !string.IsNullOrWhiteSpace(Text))
+            {
+                _action.Shedule(Text);
+            }
+            else
+            {
+                var types = Filter.GetSelectedTypes();
+
+                Items = _originItems
+                    .Where(x => x.Item.IsTypeOf(types))
+                    .ToList();
+            }
         }
 
         #endregion

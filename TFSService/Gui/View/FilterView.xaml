@@ -20,7 +20,8 @@
     <Grid>
         <materialDesign:PopupBox StaysOpen="True">
             <materialDesign:PopupBox.ToggleContent>
-                <materialDesign:PackIcon Kind="Filter" />
+                <materialDesign:PackIcon Kind="Filter" 
+                                         Margin="5,0"/>
             </materialDesign:PopupBox.ToggleContent>
 
             <StackPanel Orientation="Vertical"

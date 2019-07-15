@@ -28,6 +28,14 @@ namespace Gui.ViewModels
             NotifyChanges(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, Marks));
         }
 
+        public string[] GetSelectedTypes()
+        {
+            return Marks
+                .Where(x => x.IsChecked)
+                .Select(x => x.WorkType)
+                .ToArray();
+        }
+
         private void NotifyChanges(object sender, NotifyCollectionChangedEventArgs e)
         {
             var old = e?.OldItems?.OfType<INotifyPropertyChanged>().ToList();
