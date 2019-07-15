@@ -381,7 +381,7 @@ namespace Gui.ViewModels
                 && FirstConnectionViewModel.CanConnect())
             {
                 await FirstConnectionViewModel.Connect();
-                return FirstConnectionViewModel.IsConnected;
+                return FirstConnectionViewModel.Connection == ConnectionType.Success;
             }
 
             return WindowManager.ShowDialog(FirstConnectionViewModel, Resources.AS_FirstConnection, 400, 200);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.Client;
@@ -81,8 +82,10 @@ namespace TfsAPI.TFS
             {
                 try
                 {
-                    var proj = new TfsTeamProjectCollection(new Uri(url));
-                    return proj.AuthorizedIdentity.DisplayName != null;
+                    using (var proj = new TfsTeamProjectCollection(new Uri(url)))
+                    {
+                        return proj.AuthorizedIdentity.DisplayName != null;
+                    }
                 }
                 catch (Exception e)
                 {
