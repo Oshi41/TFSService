@@ -51,7 +51,7 @@ namespace Gui
             var window = new MainView();
             window.ShowDialog();
 
-            Current.Shutdown(0);
+            Current?.Shutdown(0);
         }
 
         private void RunTests()
