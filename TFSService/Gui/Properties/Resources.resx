@@ -361,4 +361,10 @@
   <data name="AS_WorkItemTypesDescr" xml:space="preserve">
     <value>Типы рабочих элементов</value>
   </data>
+  <data name="AS_ConnectionEstablished" xml:space="preserve">
+    <value>Соединение установлено</value>
+  </data>
+  <data name="AS_MonthlyCapacity" xml:space="preserve">
+    <value>Трудосгорание за месяц</value>
+  </data>
 </root>

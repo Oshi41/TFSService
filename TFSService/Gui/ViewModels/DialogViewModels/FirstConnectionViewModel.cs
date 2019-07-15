@@ -51,8 +51,12 @@ namespace Gui.ViewModels.DialogViewModels
         protected override string ValidateOptionalProperty(string prop)
         {
             if (prop == nameof(Text))
-                if (Connection == ConnectionType.Failed)
-                    return Resources.AS_ConnectError;
+            {
+                if (Connection == ConnectionType.Success)
+                {
+                    return Resources.AS_ConnectionEstablished;
+                }
+            }
 
             return base.ValidateOptionalProperty(prop);
         }
@@ -121,6 +125,7 @@ namespace Gui.ViewModels.DialogViewModels
             Connection = connected ? ConnectionType.Success : ConnectionType.Failed;
 
             CheckConnectionCommand.RaiseCanExecuteChanged();
+            SubmitCommand.RaiseCanExecuteChanged();
         }
 
         #endregion
