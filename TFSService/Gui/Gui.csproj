@@ -536,4 +536,9 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.TeamFoundationServer.ExtendedClient.16.143.2\build\Microsoft.TeamFoundationServer.ExtendedClient.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.TeamFoundationServer.ExtendedClient.16.143.2\build\Microsoft.TeamFoundationServer.ExtendedClient.targets'))" />
   </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

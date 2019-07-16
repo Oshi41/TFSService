@@ -12,7 +12,7 @@
                     xmlns:properties="clr-namespace:Gui.Properties">
 
     <DataTemplate DataType="{x:Type viewModels:WorkItemVm}">
-        <view:WorkItemView DataContext="{Binding Item}" />
+        <view:WorkItemView />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type dialogViewModels:WorkItemSearcher}">

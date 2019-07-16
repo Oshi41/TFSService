@@ -1,4 +1,7 @@
-﻿using Microsoft.TeamFoundation.WorkItemTracking.Client;
+﻿using System.Diagnostics;
+using System.Windows.Input;
+using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using Mvvm.Commands;
 
 namespace Gui.ViewModels
 {
@@ -10,9 +13,25 @@ namespace Gui.ViewModels
         public WorkItemVm(WorkItem item)
         {
             Item = item;
+
+            WebCommand = new DelegateCommand(OnNavigate, OnCanNavigate);
+        }
+
+        private void OnNavigate()
+        {
+            var link = $"{Item?.Collection?.Store?.TeamProjectCollection?.Uri}/{Item?.Project?.Name}/_workitems/edit/{Item?.Id}";
+            Process.Start(link);
+        }
+
+        private bool OnCanNavigate()
+        {
+            return Item?.Collection?.Store?.TeamProjectCollection?.Uri != null
+                   && Item.Project?.Name != null;
         }
 
         public WorkItem Item { get; }
+
+        public ICommand WebCommand { get; }
 
         public override string ToString()
         {
