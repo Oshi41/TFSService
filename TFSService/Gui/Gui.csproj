@@ -346,6 +346,7 @@
     <Compile Include="ViewModels\SafeExecutor.cs" />
     <Compile Include="ViewModels\StatsViewModel.cs" />
     <Compile Include="ViewModels\WorkItemVm.cs" />
+    <Compile Include="View\Controls\BindProxy.cs" />
     <Compile Include="View\CreateTaksView.xaml.cs">
       <DependentUpon>CreateTaksView.xaml</DependentUpon>
     </Compile>

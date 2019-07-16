@@ -9,6 +9,8 @@
         xmlns:p="clr-namespace:Gui.Properties"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:behaviors="clr-namespace:Gui.Behaviors"
+        xmlns:constants="clr-namespace:TfsAPI.Constants;assembly=TfsAPI"
+        xmlns:controls="clr-namespace:Gui.View.Controls"
         mc:Ignorable="d"
         Height="400" Width="600"
         Title="{Binding Path=StatsViewModel.Name}">
@@ -16,6 +18,11 @@
     <Window.DataContext>
         <viewmodels:MainViewModel />
     </Window.DataContext>
+
+    <Window.Resources>
+        <controls:BindProxy x:Key="BindProxy"
+                            Data="{Binding}"/>
+    </Window.Resources>
 
 
     <materialDesign:DialogHost IsOpen="{Binding Path=IsBusy}">
@@ -33,6 +40,7 @@
         </materialDesign:DialogHost.DialogContent>
 
         <Grid >
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -60,7 +68,7 @@
 
                 <MenuItem Header="{x:Static p:Resources.AS_Actions}">
                     <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
-                              Command="{Binding Path=WriteOffHorsCommand}"/>
+                              Command="{Binding Path=WriteOffHoursCommand}"/>
                     <Separator/>
                     <MenuItem Header="{x:Static p:Resources.AS_CloseCompletedReviewes}"
                               Command="{Binding Path=CodeResponsesViewModel.CloseReviewes}" />
@@ -91,7 +99,30 @@
                       ScrollViewer.VerticalScrollBarVisibility="Auto"
                       HorizontalContentAlignment="Stretch"
                       HorizontalAlignment="Stretch"
-                      ItemsSource="{Binding Path=StatsViewModel.MyItems}" />
+                      ItemsSource="{Binding Path=StatsViewModel.MyItems}" >
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}"
+                           BasedOn="{StaticResource {x:Type ListViewItem}}">
+
+                        <Setter Property="ContextMenu" Value="{x:Null}"/>
+
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=Item.Type.Name}"
+                                         Value="{x:Static constants:WorkItemTypes.Task}">
+                                <Setter Property="ContextMenu">
+                                    <Setter.Value>
+                                        <ContextMenu>
+                                            <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
+                                                      Command="{Binding Source={StaticResource BindProxy}, Path=Data.WriteOffHoursCommand}"
+                                                      CommandParameter="{Binding}"/>
+                                        </ContextMenu>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
 
             <materialDesign:Card Grid.Row="3">
 
@@ -129,6 +160,7 @@
             </materialDesign:Card>
 
         </Grid>
+
     </materialDesign:DialogHost>
 
 

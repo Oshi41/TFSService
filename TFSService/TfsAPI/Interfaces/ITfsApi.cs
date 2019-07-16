@@ -61,7 +61,6 @@ namespace TfsAPI.Interfaces
 
         /// <summary>
         ///     Возвращает кол-во часов, которое необходимо списать за день
-        ///     TODO переменовать в GetCurrentCapacity либо перегрузить метод с передачей дат
         /// </summary>
         /// <returns></returns>
         int GetCapacity();

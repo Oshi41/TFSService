@@ -35,7 +35,7 @@ namespace Gui.ViewModels
             ShowMonthlyCommand = new ObservableCommand(ShowMonthly);
             UpdateCommand = ObservableCommand.FromAsyncHandler(Update);
             SettingsCommand = new ObservableCommand(ShowSettings);
-            WriteOffHorsCommand = new ObservableCommand(OnWriteHours);
+            WriteOffHoursCommand = new ObservableCommand(OnWriteHours);
 
             Init();
         }
@@ -196,7 +196,7 @@ namespace Gui.ViewModels
         /// <summary>
         /// Принудительно списываю время
         /// </summary>
-        public ICommand WriteOffHorsCommand { get; }
+        public ICommand WriteOffHoursCommand { get; }
 
         #endregion
 
@@ -225,9 +225,20 @@ namespace Gui.ViewModels
             WindowManager.ShowDialog(vm, Resources.AS_Settings, 500);
         }
 
-        private void OnWriteHours()
+        private void OnWriteHours(object obj)
         {
             var vm = new WriteOffHoursViewModel(_apiObserve);
+
+            if (obj is WorkItemVm toWriteOff)
+            {
+                var find = vm.ChooseTaskVm.Searcher.Items.FirstOrDefault(x => x.Item.Id == toWriteOff.Item.Id);
+
+                if (find != null)
+                {
+                    vm.ChooseTaskVm.Searcher.Selected = find;
+                }
+            }
+            
 
             if (WindowManager.ShowDialog(vm, Resources.AS_ChooseWriteoffTask, 450, 240) == true)
             {
