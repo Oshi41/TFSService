@@ -235,6 +235,7 @@
     <Compile Include="Tfs Api Tests\GetAssociateItemsTests.cs" />
     <Compile Include="Tfs Api Tests\GetCheckinsTests.cs" />
     <Compile Include="Tfs Api Tests\GetParentsTests.cs" />
+    <Compile Include="Tfs Api Tests\RuleChecherTests.cs" />
     <Compile Include="Tfs Api Tests\SearchTests.cs" />
     <Compile Include="TfsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

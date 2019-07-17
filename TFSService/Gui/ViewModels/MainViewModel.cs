@@ -238,12 +238,12 @@ namespace Gui.ViewModels
                     vm.ChooseTaskVm.Searcher.Selected = find;
                 }
             }
-            
+
 
             if (WindowManager.ShowDialog(vm, Resources.AS_ChooseWriteoffTask, 450, 240) == true)
             {
                 var selected = vm.ChooseTaskVm.Searcher.Selected;
-                _apiObserve.WriteHours(selected, (byte) vm.Hours, true);
+                _apiObserve.WriteHours(selected, (byte)vm.Hours, true);
             }
         }
 
@@ -408,12 +408,17 @@ namespace Gui.ViewModels
             {
                 _currentTask?.Item?.SyncToLatest();
 
-                if (_currentTask == null || !IsTaskAvailable(_currentTask))
-                {
-                    var strategy = Settings.Settings.Read().Strategy;
+                var strategy = Settings.Settings.Read().Strategy;
 
+                try
+                {
                     // Вызов по событию происходит из другого потока
                     _currentTask = _safeExecutor.ExecuteInGuiThread(() => FindAvailableTask(strategy)).Result;
+                }
+                catch (Exception e)
+                {
+                    Trace.WriteLine(e);
+                    return null;
                 }
             }
 
@@ -451,13 +456,28 @@ namespace Gui.ViewModels
 
                 case WroteOffStrategy.Watch:
 
+                    // Если выбрали доступный элемент, добиваем его
+                    return IsTaskAvailable(_currentTask)
+                        ? _currentTask
+                        // Иначе спрашиваем о списании
+                        : FindAvailableTask(WroteOffStrategy.AskEveryTime);
+
+                case WroteOffStrategy.AskEveryTime:
                     // Только одно окошко
                     if (WindowManager.ShowDialog(vm, Resources.AS_ChooseWriteoffTask, 400, 200) == true)
                         return vm.Searcher.Selected;
 
+                    if (WindowManager.ShowConfirm(Resources.AS_SkipWriteOff, Resources.AS_SkipWriteOff_Title) == true)
+                    {
+                        return null;
+                    }
+
                     // Выбрать нужно обязательно
                     return FindAvailableTask(strategy);
 
+                // автосписание отключено
+                case WroteOffStrategy.Disabled:
+                    return null;
 
                 default:
                     throw new Exception("Unknown strategy");

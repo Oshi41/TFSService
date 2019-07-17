@@ -45,7 +45,7 @@ namespace Gui.ViewModels
 
         public static implicit operator WorkItem(WorkItemVm vm)
         {
-            return vm.Item;
+            return vm?.Item;
         }
     }
 }

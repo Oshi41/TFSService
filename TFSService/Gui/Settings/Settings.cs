@@ -53,7 +53,7 @@ namespace Gui.Settings
         private ObservableCollection<string> _connections;
         private WriteOffCollection _completedWork;
         private ObservableCollection<int> _myWorkItems;
-        private WroteOffStrategy _strategy;
+        private WroteOffStrategy _strategy = WroteOffStrategy.Disabled;
         private string _logPath = Path.Combine(Path.GetDirectoryName(SavePath), "logs.log");
         private ObservableCollection<IRule> _rules;
         private int _itemMinutesCheck = 5;
@@ -287,6 +287,12 @@ namespace Gui.Settings
         Random,
 
         [LocalizedDescription(nameof(Resources.AS_ChooseByMyOwn), typeof(Resources))]
-        Watch
+        Watch,
+        
+        [LocalizedDescription(nameof(Resources.AS_AskEveryTime), typeof(Resources))]
+        AskEveryTime,
+
+        [LocalizedDescription(nameof(Resources.AS_Disabled), typeof(Resources))]
+        Disabled,
     }
 }

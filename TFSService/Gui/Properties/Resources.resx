@@ -367,4 +367,28 @@
   <data name="AS_MonthlyCapacity" xml:space="preserve">
     <value>Трудосгорание за месяц</value>
   </data>
+  <data name="AS_AskEveryTime" xml:space="preserve">
+    <value>Спрашивать каждый раз</value>
+  </data>
+  <data name="AS_AskEveryTime_Descr" xml:space="preserve">
+    <value>Каждый час программа будет спрашивать пользователя какую задачу выбрать для списания.</value>
+  </data>
+  <data name="AS_Disabled_Descr" xml:space="preserve">
+    <value>Списывание времени отключено</value>
+  </data>
+  <data name="AS_Random_Descr" xml:space="preserve">
+    <value>Программа найдет все активные таски назначенные пользователю и выберет один из них случайно.</value>
+  </data>
+  <data name="AS_Watch_Descr" xml:space="preserve">
+    <value>Программа спросит пользователя над какой задачей он работает. Далее часы будут списываться в эту задачу до предела планируемых часов. Затем диалог вызовется снова</value>
+  </data>
+  <data name="AS_Disabled" xml:space="preserve">
+    <value>Отключено</value>
+  </data>
+  <data name="AS_SkipWriteOff" xml:space="preserve">
+    <value>Пропустить списание времени?</value>
+  </data>
+  <data name="AS_SkipWriteOff_Title" xml:space="preserve">
+    <value>Списание времени</value>
+  </data>
 </root>
