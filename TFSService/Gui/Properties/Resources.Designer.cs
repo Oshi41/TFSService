@@ -19,7 +19,7 @@ namespace Gui.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -57,6 +57,87 @@ namespace Gui.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Фильтр рабочих элементов.
+        /// </summary>
+        public static string AP_MainFilter_ToolTip {
+            get {
+                return ResourceManager.GetString("AP_MainFilter_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Область.
+        /// </summary>
+        public static string AP_MainView_Area_Column {
+            get {
+                return ResourceManager.GetString("AP_MainView_Area_Column", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Элемент.
+        /// </summary>
+        public static string AP_MainView_Element_Column {
+            get {
+                return ResourceManager.GetString("AP_MainView_Element_Column", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ID.
+        /// </summary>
+        public static string AP_MainView_Id_Column {
+            get {
+                return ResourceManager.GetString("AP_MainView_Id_Column", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Итерация.
+        /// </summary>
+        public static string AP_MainView_Iteration_Column {
+            get {
+                return ResourceManager.GetString("AP_MainView_Iteration_Column", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Показать список элементов.
+        /// </summary>
+        public static string AP_MainView_List_ToolTip {
+            get {
+                return ResourceManager.GetString("AP_MainView_List_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Состояние.
+        /// </summary>
+        public static string AP_MainView_State_Column {
+            get {
+                return ResourceManager.GetString("AP_MainView_State_Column", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Показать таблицу.
+        /// </summary>
+        public static string AP_MainView_Table_ToolTip {
+            get {
+                return ResourceManager.GetString("AP_MainView_Table_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Название.
+        /// </summary>
+        public static string AP_MainView_Title_Column {
+            get {
+                return ResourceManager.GetString("AP_MainView_Title_Column", resourceCulture);
             }
         }
         

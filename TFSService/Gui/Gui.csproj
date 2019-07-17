@@ -341,9 +341,11 @@
     <Compile Include=".Tests\TestDialogViewModel.cs" />
     <Compile Include="Behaviors\CalendarItemSourceBehavior.cs" />
     <Compile Include="Converters\DescriptionConverter.cs" />
+    <Compile Include="Converters\EnumBooleanConverter.cs" />
     <Compile Include="Converters\EnumToVisConverter.cs" />
     <Compile Include="Converters\HoursColorConverter.cs" />
     <Compile Include="Converters\InvertBoolToVisConverter.cs" />
+    <Compile Include="Converters\KeyToValueConverter.cs" />
     <Compile Include="Converters\MathCompareConverter.cs" />
     <Compile Include="Converters\NoDataErrorConverter.cs" />
     <Compile Include="Converters\IdWorkitemConverter.cs" />
@@ -377,6 +379,7 @@
     <Compile Include="ViewModels\Rules\AddRuleViewModel.cs" />
     <Compile Include="ViewModels\SafeExecutor.cs" />
     <Compile Include="ViewModels\StatsViewModel.cs" />
+    <Compile Include="ViewModels\VisibleMode.cs" />
     <Compile Include="ViewModels\WorkItemVm.cs" />
     <Compile Include="View\Controls\BindProxy.cs" />
     <Compile Include="View\CreateTaksView.xaml.cs">
@@ -571,7 +574,7 @@
   </Target>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

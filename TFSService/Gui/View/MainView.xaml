@@ -11,6 +11,7 @@
         xmlns:behaviors="clr-namespace:Gui.Behaviors"
         xmlns:constants="clr-namespace:TfsAPI.Constants;assembly=TfsAPI"
         xmlns:controls="clr-namespace:Gui.View.Controls"
+        xmlns:converters="clr-namespace:Gui.Converters"
         mc:Ignorable="d"
         Height="400" Width="600"
         Title="{Binding Path=StatsViewModel.Name}">
@@ -22,6 +23,16 @@
     <Window.Resources>
         <controls:BindProxy x:Key="BindProxy"
                             Data="{Binding}"/>
+
+        <converters:KeyToValueConverter x:Key="ListVisibleConverter"
+                                        DefaultValue="{x:Static Visibility.Collapsed}">
+            <converters:KeyValueObject Key="{x:Static viewmodels:VisibleMode.List}" Value="{x:Static Visibility.Visible}"/>
+        </converters:KeyToValueConverter>
+
+        <converters:KeyToValueConverter x:Key="TableVisibleConverter"
+                                        DefaultValue="{x:Static Visibility.Collapsed}">
+            <converters:KeyValueObject Key="{x:Static viewmodels:VisibleMode.Table}" Value="{x:Static Visibility.Visible}"/>
+        </converters:KeyToValueConverter>
     </Window.Resources>
 
 
@@ -39,7 +50,7 @@
             </StackPanel>
         </materialDesign:DialogHost.DialogContent>
 
-        <Grid >
+        <Grid>
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -81,16 +92,34 @@
 
             </Menu>
 
-            <DockPanel Grid.Row="1">
+            <ToolBar Grid.Row="1">
                 <local:FilterView DataContext="{Binding Path=StatsViewModel.Filter}"
                                   DockPanel.Dock="Left"
                                   HorizontalAlignment="Left"
                                   VerticalAlignment="Center"
-                                  Margin="5"/>
-                <TextBlock Text="{x:Static p:Resources.AS_MyWorkItems}"
-                           VerticalAlignment="Center"
-                           Margin="10,0,0,0"/>
-            </DockPanel>
+                                  Margin="5"
+                                  ToolTip="{x:Static p:Resources.AP_MainFilter_ToolTip}"/>
+
+                <Separator />
+
+                <ListBox>
+                    <ListBoxItem IsSelected="{Binding Path=ViewMode,
+                                                      Converter={StaticResource EnumBooleanConverter},
+                                                      ConverterParameter={x:Static viewmodels:VisibleMode.List}}"
+                                 ToolTip="{x:Static p:Resources.AP_MainView_List_ToolTip}"
+                                 Padding="14 6 14 6">
+                        <materialDesign:PackIcon Kind="FormatListBulleted"/>
+                    </ListBoxItem>
+                    <ListBoxItem IsSelected="{Binding Path=ViewMode,
+                                                      Converter={StaticResource EnumBooleanConverter},
+                                                      ConverterParameter={x:Static viewmodels:VisibleMode.Table}}"
+                                 ToolTip="{x:Static p:Resources.AP_MainView_Table_ToolTip}"
+                                 Padding="14 6 14 6">
+                        <materialDesign:PackIcon Kind="TableLarge"/>
+                    </ListBoxItem>
+                </ListBox>
+
+            </ToolBar>
 
             <ListView Grid.Row="2"
                       BorderThickness="2"
@@ -99,7 +128,8 @@
                       ScrollViewer.VerticalScrollBarVisibility="Auto"
                       HorizontalContentAlignment="Stretch"
                       HorizontalAlignment="Stretch"
-                      ItemsSource="{Binding Path=StatsViewModel.MyItems}" >
+                      ItemsSource="{Binding Path=StatsViewModel.MyItems}"
+                      Visibility="{Binding Path=ViewMode, Converter={StaticResource ListVisibleConverter}}">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="{x:Type ListViewItem}"
                            BasedOn="{StaticResource {x:Type ListViewItem}}">
@@ -123,6 +153,53 @@
                     </Style>
                 </ListView.ItemContainerStyle>
             </ListView>
+
+            <DataGrid Grid.Row="2"
+                      ItemsSource="{Binding Path=StatsViewModel.MyItems}"
+                      HorizontalContentAlignment="Stretch"
+                      HorizontalAlignment="Stretch"
+                      CanUserDeleteRows="False"
+                      CanUserAddRows="False"
+                      AutoGenerateColumns="False"
+                      SelectionUnit="FullRow"
+                      SelectionMode="Single"
+                      Visibility="{Binding Path=ViewMode, Converter={StaticResource TableVisibleConverter}}">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="{x:Static p:Resources.AP_MainView_Element_Column}" SortMemberPath="Item.Type.Name" Width="Auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ContentControl Content="{Binding Path=Item.Type.Name, Converter={StaticResource WorkTypeIconConverter}}"
+                                                    Margin="5"
+                                                    VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding Path=Item.Type.Name}"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_Id_Column}" Binding="{Binding Path=Item.Id}" Width="Auto" MinWidth="40"  />
+                    <DataGridTemplateColumn Header="{x:Static p:Resources.AP_MainView_Title_Column}" Width="300" MinWidth="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <Hyperlink Command="{Binding Path=WebCommand}">
+                                        <Run Text="{Binding Path=Item.Title, Mode=OneWay}"/>
+                                    </Hyperlink>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_State_Column}" Binding="{Binding Path=Item.State}" Width="Auto" MinWidth="40" />
+                    <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_Area_Column}" Binding="{Binding Path=Item.AreaPath}" Width="Auto" MinWidth="40" />
+                    <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_Iteration_Column}" Binding="{Binding Path=Item.IterationPath}" Width="Auto" MinWidth="40" />
+                </DataGrid.Columns>
+            </DataGrid>
 
             <materialDesign:Card Grid.Row="3">
 

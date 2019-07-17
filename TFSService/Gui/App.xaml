@@ -27,21 +27,42 @@
             <converters:SwitchConverter x:Key="WorkTypeIconConverter"
                                         x:Shared="False">
                 <converters:Case If="{x:Static constants:WorkItemTypes.Task}">
-                    <materialDesign:PackIcon Kind="ChequeBook" />
+                    <materialDesign:PackIcon Kind="ClipboardCheckOutline" 
+                                             Foreground="#F2CB1D" />
                 </converters:Case>
 
                 <converters:Case If="{x:Static constants:WorkItemTypes.Bug}">
-                    <materialDesign:PackIcon Kind="Bug" />
+                    <materialDesign:PackIcon Kind="ClipboardCheckOutline" 
+                                             Foreground="#CC293D" />
                 </converters:Case>
 
                 <converters:Case If="{x:Static constants:WorkItemTypes.Pbi}">
-                    <materialDesign:PackIcon Kind="FileDocumentBoxMultipleOutline" />
+                    <materialDesign:PackIcon Kind="ClipboardCheckOutline" 
+                                             Foreground="#0096CC" />
                 </converters:Case>
-
                 <converters:Case If="{x:Static constants:WorkItemTypes.Incident}">
-                    <materialDesign:PackIcon Kind="AccountAlert" />
+                    <materialDesign:PackIcon Kind="ClipboardCheckOutline" 
+                                             Foreground="#B334E8" />
+                </converters:Case>
+                <converters:Case If="{x:Static constants:WorkItemTypes.Improvement}">
+                    <materialDesign:PackIcon Kind="ClipboardCheckOutline" 
+                                             Foreground="#00964D" />
+                </converters:Case>
+                <converters:Case If="{x:Static constants:WorkItemTypes.Feature}">
+                    <materialDesign:PackIcon Kind="ClipboardCheckOutline" 
+                                             Foreground="#C73B93" />
+                </converters:Case>
+                <converters:Case If="{x:Static constants:WorkItemTypes.CodeReview}">
+                    <materialDesign:PackIcon Kind="ClipboardCheckOutline" 
+                                             Foreground="#FF9D00" />
+                </converters:Case>
+                <converters:Case If="{x:Static constants:WorkItemTypes.ReviewResponse}">
+                    <materialDesign:PackIcon Kind="ClipboardCheckOutline" 
+                                             Foreground="#FF9D00" />
                 </converters:Case>
             </converters:SwitchConverter>
+
+            <converters:EnumBooleanConverter x:Key="EnumBooleanConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

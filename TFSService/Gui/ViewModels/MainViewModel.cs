@@ -91,6 +91,7 @@ namespace Gui.ViewModels
         private StatsViewModel _statsViewModel = new StatsViewModel();
         private bool _isBusy = true;
         private NewResponsesBaloonViewModel _codeResponsesViewModel;
+        public VisibleMode _viewMode;
 
         #endregion
 
@@ -167,6 +168,12 @@ namespace Gui.ViewModels
         {
             get => _isBusy;
             set => SetProperty(ref _isBusy, value);
+        }
+
+        public VisibleMode ViewMode
+        {
+            get => _viewMode;
+            set => SetProperty(ref _viewMode, value);
         }
 
         #endregion

@@ -391,4 +391,31 @@
   <data name="AS_SkipWriteOff_Title" xml:space="preserve">
     <value>Списание времени</value>
   </data>
+  <data name="AP_MainFilter_ToolTip" xml:space="preserve">
+    <value>Фильтр рабочих элементов</value>
+  </data>
+  <data name="AP_MainView_List_ToolTip" xml:space="preserve">
+    <value>Показать список элементов</value>
+  </data>
+  <data name="AP_MainView_Table_ToolTip" xml:space="preserve">
+    <value>Показать таблицу</value>
+  </data>
+  <data name="AP_MainView_Element_Column" xml:space="preserve">
+    <value>Элемент</value>
+  </data>
+  <data name="AP_MainView_Id_Column" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="AP_MainView_Title_Column" xml:space="preserve">
+    <value>Название</value>
+  </data>
+  <data name="AP_MainView_State_Column" xml:space="preserve">
+    <value>Состояние</value>
+  </data>
+  <data name="AP_MainView_Area_Column" xml:space="preserve">
+    <value>Область</value>
+  </data>
+  <data name="AP_MainView_Iteration_Column" xml:space="preserve">
+    <value>Итерация</value>
+  </data>
 </root>
