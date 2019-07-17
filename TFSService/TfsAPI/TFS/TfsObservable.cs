@@ -241,7 +241,13 @@ namespace TfsAPI.TFS
         /// </summary>
         private void RaiseWriteOffEvent()
         {
-            WriteOff?.Invoke(this, new ScheduleWorkArgs(_currentItem(), 1));
+            // Если передан нулёвый элемент, считаем, что списывать не надо
+
+            var item = _currentItem();
+            if (item != null)
+            {
+                WriteOff?.Invoke(this, new ScheduleWorkArgs(item, 1));
+            }
         }
 
         /// <summary>

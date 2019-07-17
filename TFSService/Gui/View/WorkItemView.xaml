@@ -8,9 +8,10 @@
              xmlns:converters="clr-namespace:Gui.Converters"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:p="clr-namespace:Gui.Properties"
+             xmlns:viewModels="clr-namespace:Gui.ViewModels"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
-             d:DataContext="{d:DesignInstance Type={x:Type client:WorkItem}}">
+             d:DataContext="{d:DesignInstance Type={x:Type viewModels:WorkItemVm}}">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -74,7 +75,7 @@
     <materialDesign:Card Padding="7"
                          HorizontalAlignment="Stretch"
                          HorizontalContentAlignment="Stretch">
-        <Grid>
+        <Grid DataContext="{Binding Path=Item}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -96,8 +97,11 @@
 
 
             <TextBlock Grid.Row="1"
-                       Text="{Binding Path=Title, Mode=OneWay}"
-                       FontWeight="Bold" />
+                       FontWeight="Bold" >
+                <Hyperlink Command="{Binding RelativeSource={RelativeSource AncestorType=materialDesign:Card}, Path=DataContext.WebCommand}">
+                    <Run Text="{Binding Path=Title, Mode=OneWay}"/>
+                </Hyperlink>
+            </TextBlock>
 
             <TextBlock Grid.Row="2"
                        Text="{Binding Path=State, Mode=OneWay}"

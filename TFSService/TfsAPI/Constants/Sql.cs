@@ -65,7 +65,7 @@
             /// <summary>
             ///     Поле, содержащее инф-у итерации
             /// </summary>
-            public const string IterationPath = "[Iteration Path]";
+            public const string IterationPath = "[System.IterationPath]";
 
             /// <summary>
             ///     Область данного рабочего элемента

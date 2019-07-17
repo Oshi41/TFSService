@@ -106,6 +106,24 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Спрашивать каждый раз.
+        /// </summary>
+        public static string AS_AskEveryTime {
+            get {
+                return ResourceManager.GetString("AS_AskEveryTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Каждый час программа будет спрашивать пользователя какую задачу выбрать для списания..
+        /// </summary>
+        public static string AS_AskEveryTime_Descr {
+            get {
+                return ResourceManager.GetString("AS_AskEveryTime_Descr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Отмена.
         /// </summary>
         public static string AS_Cancel {
@@ -255,6 +273,24 @@ namespace Gui.Properties {
         public static string AS_DailyWorkHours {
             get {
                 return ResourceManager.GetString("AS_DailyWorkHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Отключено.
+        /// </summary>
+        public static string AS_Disabled {
+            get {
+                return ResourceManager.GetString("AS_Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Списывание времени отключено.
+        /// </summary>
+        public static string AS_Disabled_Descr {
+            get {
+                return ResourceManager.GetString("AS_Disabled_Descr", resourceCulture);
             }
         }
         
@@ -529,6 +565,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Программа найдет все активные таски назначенные пользователю и выберет один из них случайно..
+        /// </summary>
+        public static string AS_Random_Descr {
+            get {
+                return ResourceManager.GetString("AS_Random_Descr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Удалить.
         /// </summary>
         public static string AS_Remove {
@@ -570,6 +615,24 @@ namespace Gui.Properties {
         public static string AS_ShutdownProgram {
             get {
                 return ResourceManager.GetString("AS_ShutdownProgram", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Пропустить списание времени?.
+        /// </summary>
+        public static string AS_SkipWriteOff {
+            get {
+                return ResourceManager.GetString("AS_SkipWriteOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Списание времени.
+        /// </summary>
+        public static string AS_SkipWriteOff_Title {
+            get {
+                return ResourceManager.GetString("AS_SkipWriteOff_Title", resourceCulture);
             }
         }
         
@@ -723,6 +786,15 @@ namespace Gui.Properties {
         public static string AS_UseDefaults {
             get {
                 return ResourceManager.GetString("AS_UseDefaults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Программа спросит пользователя над какой задачей он работает. Далее часы будут списываться в эту задачу до предела планируемых часов. Затем диалог вызовется снова.
+        /// </summary>
+        public static string AS_Watch_Descr {
+            get {
+                return ResourceManager.GetString("AS_Watch_Descr", resourceCulture);
             }
         }
         

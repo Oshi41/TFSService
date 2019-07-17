@@ -35,9 +35,20 @@
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
 
+            <c:InvertBoolConverter x:Key="InvertBoolConverter" />
+
             <c:DescriptionConverter x:Key="DescriptionConverter" />
 
-            <c:InvertBoolConverter x:Key="InvertBoolConverter" />
+            <c:SwitchConverter x:Key="SelectedDescriptionConverter">
+                <c:Case If="Watch"
+                        Value="{x:Static p:Resources.AS_Watch_Descr}"/>
+                <c:Case If="Random"
+                        Value="{x:Static p:Resources.AS_Random_Descr}"/>
+                <c:Case If="AskEveryTime"
+                        Value="{x:Static p:Resources.AS_AskEveryTime_Descr}"/>
+                <c:Case If="Disabled"
+                        Value="{x:Static p:Resources.AS_Disabled_Descr}"/>
+            </c:SwitchConverter>
 
         </ResourceDictionary>
     </UserControl.Resources>
@@ -182,17 +193,37 @@
                     <TextBlock Text="{x:Static p:Resources.AS_WroteOffStrategy_Asking}"
                                TextWrapping="Wrap" />
 
-                    <ComboBox Margin="0,10"
-                              ItemsSource="{Binding Source={StaticResource wroteOffEnums}}"
-                              SelectedValue="{Binding Path=Strategy}"
-                              IsSynchronizedWithCurrentItem="True">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type ComboBoxItem}">
-                                <TextBlock Text="{Binding Converter={StaticResource DescriptionConverter}}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
+                    <DockPanel>
+                        <materialDesign:PopupBox DockPanel.Dock="Right"
+                                                 Margin="5,0"
+                                                 StaysOpen="True">
+                            <materialDesign:PopupBox.ToggleContent>
+                                <materialDesign:PackIcon Kind="InformationOutline"/>
+                            </materialDesign:PopupBox.ToggleContent>
 
+                            <ScrollViewer MaxWidth="150"
+                                          MaxHeight="150"
+                                          Padding="10"
+                                          VerticalScrollBarVisibility="Auto"
+                                          HorizontalScrollBarVisibility="Disabled">
+                                <TextBlock FontSize="12"
+                                           TextWrapping="Wrap"
+                                           Text="{Binding Path=Strategy, Converter={StaticResource SelectedDescriptionConverter}}"/>
+                            </ScrollViewer>
+                            
+                        </materialDesign:PopupBox>
+
+                        <ComboBox Margin="0,10"
+                                  ItemsSource="{Binding Source={StaticResource wroteOffEnums}}"
+                                  SelectedValue="{Binding Path=Strategy}"
+                                  IsSynchronizedWithCurrentItem="True">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type ComboBoxItem}">
+                                    <TextBlock Text="{Binding Converter={StaticResource DescriptionConverter}}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </DockPanel>
 
                 </StackPanel>
             </materialDesign:Card>

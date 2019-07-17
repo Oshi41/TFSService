@@ -8,7 +8,7 @@
                               xmlns:baloonVms="clr-namespace:Gui.View.Notifications"
                               xmlns:notifications="clr-namespace:Gui.ViewModels.Notifications"
                               mc:Ignorable="d"
-                              d:DesignHeight="450" d:DesignWidth="800"
+                              d:DesignHeight="250" d:DesignWidth="250"
                               Background="Transparent"
                               MaxHeight="500">
 
@@ -20,21 +20,36 @@
 
     </core:NotificationDisplayPart.Resources>
 
-    <materialDesign:Card Padding="7"
-                         UniformCornerRadius="10"
-                         Background="{StaticResource PrimaryHueLightBrush}">
-        <Grid>
+    <materialDesign:Card Background="{StaticResource PrimaryHueLightBrush}"
+                         Margin="2">
+        <Grid Margin="7">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0"
-                       DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type core:NotificationDisplayPart}}, Path=Notification}"
-                       Text="{Binding Message}"
-                       TextWrapping="Wrap"
-                       Style="{StaticResource MaterialDesignSubheadingTextBlock}"
-                       Margin="5" />
+            <DockPanel>
+                <Button DockPanel.Dock="Right"
+                        Click="OnClose"
+                        Style="{StaticResource MaterialDesignFlatAccentButton}"
+                        HorizontalAlignment="Right"
+                        Padding="0"
+                        Width="24"
+                        Height="24"
+                        Margin="0,-10,0,0">
+                    <Viewbox>
+                        <materialDesign:PackIcon Kind="Close"/>
+                    </Viewbox>
+                </Button>
+
+                <TextBlock DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type core:NotificationDisplayPart}}, Path=Notification}"
+                           Text="{Binding Message}"
+                           TextWrapping="Wrap"
+                           Style="{StaticResource MaterialDesignSubheadingTextBlock}"
+                           Margin="5" />
+            </DockPanel>
+
+
 
             <ContentControl Grid.Row="1"
                             Content="{Binding}"
