@@ -63,50 +63,50 @@ namespace Gui
 
         private void RunTests()
         {
-            var notifier = new Notifier(cfg =>
-            {
-                cfg.PositionProvider = new PrimaryScreenPositionProvider(Corner.BottomRight, 10, 10);
+            //var notifier = new Notifier(cfg =>
+            //{
+            //    cfg.PositionProvider = new PrimaryScreenPositionProvider(Corner.BottomRight, 10, 10);
 
-                cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(TimeSpan.FromMinutes(1),
-                    MaximumNotificationCount.FromCount(10));
-            });
+            //    cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(TimeSpan.FromMinutes(1),
+            //        MaximumNotificationCount.FromCount(10));
+            //});
 
-            Task.Run(async () =>
-            {
-                await Task.Delay(TimeSpan.FromSeconds(5));
+            //Task.Run(async () =>
+            //{
+            //    await Task.Delay(TimeSpan.FromSeconds(5));
 
-                try
-                {
-                    notifier.ShowError("ОШИИИБКАААААА");
-                }
-                catch (Exception e)
-                {
-                    Trace.WriteLine(e);
-                }
+            //    try
+            //    {
+            //        notifier.ShowError("ОШИИИБКАААААА");
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Trace.WriteLine(e);
+            //    }
                 
-            });
+            //});
 
-            var w1 = new Window
-            {
-                VerticalContentAlignment = VerticalAlignment.Top,
-                Content = new FilterViewModel(TfsAPI.Constants.WorkItemTypes.Task, TfsAPI.Constants.WorkItemTypes.Pbi)
-            };
+            //var w1 = new Window
+            //{
+            //    VerticalContentAlignment = VerticalAlignment.Top,
+            //    Content = new FilterViewModel(TfsAPI.Constants.WorkItemTypes.Task, TfsAPI.Constants.WorkItemTypes.Pbi)
+            //};
 
-            w1.ShowDialog();
+            //w1.ShowDialog();
 
-            CultureInfo ci = CultureInfo.InstalledUICulture;
+            //CultureInfo ci = CultureInfo.InstalledUICulture;
 
-            Thread.CurrentThread.CurrentUICulture = ci;
-            Thread.CurrentThread.CurrentCulture = ci;
+            //Thread.CurrentThread.CurrentUICulture = ci;
+            //Thread.CurrentThread.CurrentCulture = ci;
 
-            var w = new Window
-            {
-                Content = new Calendar()
-            };
+            //var w = new Window
+            //{
+            //    Content = new Calendar()
+            //};
 
-            w.Language = XmlLanguage.GetLanguage(ci.IetfLanguageTag);
+            //w.Language = XmlLanguage.GetLanguage(ci.IetfLanguageTag);
 
-            w.ShowDialog();
+            //w.ShowDialog();
 
             var id = 80439;
             var api = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint Security");

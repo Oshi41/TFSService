@@ -25,15 +25,14 @@ namespace Gui.View.Notifications
 
             MouseDoubleClick += DetectDoubleClick;
 
-            AddHandler(Mouse.MouseDownEvent, new MouseButtonEventHandler((s, args) => DetectClosingSlide(args)));
-            // PreviewMouseDown += (s, args) => DetectClosingSlide(args);
-            MouseUp += (s, args) =>
-            {
-                DetectClosingSlide(args);
+            //AddHandler(Mouse.MouseDownEvent, new MouseButtonEventHandler((s, args) => DetectClosingSlide(args)));
+            //MouseUp += (s, args) =>
+            //{
+            //    DetectClosingSlide(args);
 
-                if (!_isClosed && Notification.CanClose)
-                    Notification.Options?.NotificationClickAction?.Invoke(Notification as NotificationBase);
-            };
+            //    if (!_isClosed && Notification.CanClose)
+            //        Notification.Options?.NotificationClickAction?.Invoke(Notification as NotificationBase);
+            //};
         }
 
         private void DetectDoubleClick(object sender, MouseButtonEventArgs e)
@@ -80,10 +79,7 @@ namespace Gui.View.Notifications
                 && DetectClosingSlide(pos, System.Windows.Forms.FlowDirection.TopDown,
                     System.Windows.Forms.FlowDirection.LeftToRight))
             {
-                _isDragging = false;
-                _isClosed = true;
-                OnClose();
-                ReleaseMouseCapture();
+                OnCloseInner();
                 return true;
             }
 
@@ -120,6 +116,19 @@ namespace Gui.View.Notifications
             return false;
         }
 
+        private void OnCloseInner()
+        {
+            _isDragging = false;
+            _isClosed = true;
+            OnClose();
+            ReleaseMouseCapture();
+        }
+
         #endregion
+
+        private void OnClose(object sender, RoutedEventArgs e)
+        {
+            OnCloseInner();
+        }
     }
 }
