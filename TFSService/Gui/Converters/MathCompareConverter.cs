@@ -21,13 +21,20 @@ namespace Gui.Converters
     {
         public OperationTypes Operation { get; set; }
 
+        public object TrueValue { get; set; } = true;
+        public object FalseValue { get; set; } = false;
+
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values != null
                 && values.Count() >= 2
                 && double.TryParse(values[0]?.ToString(), out var x)
                 && double.TryParse(values[1]?.ToString(), out var y))
-                return GetResult(x, y, Operation);
+            {
+                return GetResult(x, y, Operation)
+                    ? TrueValue
+                    : FalseValue;
+            }
 
             return Binding.DoNothing;
         }
