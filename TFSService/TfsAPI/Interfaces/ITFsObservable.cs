@@ -45,7 +45,7 @@ namespace TfsAPI.Interfaces
         event EventHandler<IList<Build>> Builded;
 
         /// <summary>
-        /// Список рабочих элементов не подходящих под установленные правила
+        ///     Список рабочих элементов не подходящих под установленные правила
         /// </summary>
         event EventHandler<Dictionary<IRule, IList<WorkItem>>> RuleMismatch;
 

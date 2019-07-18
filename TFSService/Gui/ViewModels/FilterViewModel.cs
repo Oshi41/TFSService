@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.TeamFoundation.Common;
-using Microsoft.VisualStudio.Services.Graph;
 using Mvvm;
 
 namespace Gui.ViewModels
 {
     public class FilterViewModel : BindableBase
     {
-        public ObservableCollection<ItemTypeMark> Marks { get; }
-
-        public event EventHandler FilterChanged;
-
         public FilterViewModel(params ItemTypeMark[] types)
         {
             Marks = new ObservableCollection<ItemTypeMark>(types ?? new ItemTypeMark[] { });
@@ -27,6 +19,10 @@ namespace Gui.ViewModels
             // Подписываемся на события
             NotifyChanges(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, Marks));
         }
+
+        public ObservableCollection<ItemTypeMark> Marks { get; }
+
+        public event EventHandler FilterChanged;
 
         public string[] GetSelectedTypes()
         {
@@ -41,24 +37,16 @@ namespace Gui.ViewModels
             var old = e?.OldItems?.OfType<INotifyPropertyChanged>().ToList();
             var added = e?.NewItems?.OfType<INotifyPropertyChanged>().ToList();
 
-            if (!old.IsNullOrEmpty())
-            {
-                old.ForEach(x => x.PropertyChanged -= MarkDirty);
-            }
+            if (!old.IsNullOrEmpty()) old.ForEach(x => x.PropertyChanged -= MarkDirty);
 
-            if (!added.IsNullOrEmpty())
-            {
-                added.ForEach(x => x.PropertyChanged += MarkDirty);
-            }
+            if (!added.IsNullOrEmpty()) added.ForEach(x => x.PropertyChanged += MarkDirty);
         }
 
         private void MarkDirty(object sender, PropertyChangedEventArgs e)
         {
             if (Marks.All(x => !x.IsChecked) && sender is ItemTypeMark mark)
-            {
                 // Насильно включаем последний элемент
                 mark.IsChecked = true;
-            }
 
             FilterChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -66,9 +54,16 @@ namespace Gui.ViewModels
 
     public class ItemTypeMark : BindableBase
     {
+        private bool _isChecked;
         private bool _isEnabled;
         private string _workType;
-        private bool _isChecked;
+
+        public ItemTypeMark(string workType, bool isChecked = true, bool enable = true)
+        {
+            WorkType = workType;
+            IsEnabled = enable;
+            IsChecked = isChecked;
+        }
 
         public bool IsEnabled
         {
@@ -86,13 +81,6 @@ namespace Gui.ViewModels
         {
             get => _isChecked;
             set => SetProperty(ref _isChecked, value);
-        }
-
-        public ItemTypeMark(string workType, bool isChecked = true, bool enable = true)
-        {
-            WorkType = workType;
-            IsEnabled = enable;
-            IsChecked = isChecked;
         }
 
         public static implicit operator ItemTypeMark(string name)

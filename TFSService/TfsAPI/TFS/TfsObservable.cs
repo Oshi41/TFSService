@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
-using Microsoft.VisualStudio.Services.Common;
 using Microsoft.Win32;
 using TfsAPI.Comparers;
 using TfsAPI.Interfaces;
@@ -97,10 +94,8 @@ namespace TfsAPI.TFS
 
             // Т.к. правила проверять постоянно не нужно
             if (timerEllapsed)
-            {
                 // Проверяем правила
                 CheckRules();
-            }
         }
 
         #region Fields
@@ -237,21 +232,18 @@ namespace TfsAPI.TFS
         #region Updatings
 
         /// <summary>
-        /// Запускаем событие списания часа
+        ///     Запускаем событие списания часа
         /// </summary>
         private void RaiseWriteOffEvent()
         {
             // Если передан нулёвый элемент, считаем, что списывать не надо
 
             var item = _currentItem();
-            if (item != null)
-            {
-                WriteOff?.Invoke(this, new ScheduleWorkArgs(item, 1));
-            }
+            if (item != null) WriteOff?.Invoke(this, new ScheduleWorkArgs(item, 1));
         }
 
         /// <summary>
-        /// Пытаемся вызвать собтие на добавление новых рабочих элементов
+        ///     Пытаемся вызвать собтие на добавление новых рабочих элементов
         /// </summary>
         /// <param name="added"></param>
         private void TryRaiseItemsAdded(IEnumerable<WorkItem> added)
@@ -261,7 +253,7 @@ namespace TfsAPI.TFS
         }
 
         /// <summary>
-        /// Вызываем событие для удалённых элементов
+        ///     Вызываем событие для удалённых элементов
         /// </summary>
         /// <param name="removed"></param>
         private void TryRaiseItemsRemoved(IEnumerable<WorkItem> removed)
@@ -273,7 +265,7 @@ namespace TfsAPI.TFS
         }
 
         /// <summary>
-        /// Синхронизирую данные рабочих элементов
+        ///     Синхронизирую данные рабочих элементов
         /// </summary>
         /// <param name="copy">Список полученных из TFS элементов</param>
         private void UpdateAndSetItems(IList<WorkItem> copy)
@@ -283,22 +275,20 @@ namespace TfsAPI.TFS
 
             // Если есть изменения
             if (changed.Any())
-            {
                 // Вызываем события
                 ItemsChanged?.Invoke(this, changed.ToList());
-            }
 
             // записываем новые данные
             MyItems = copy;
         }
 
         /// <summary>
-        /// Обновляю список билдов
+        ///     Обновляю список билдов
         /// </summary>
         private void UpdateBuilds()
         {
             // Инициализировал поиск билдов
-            var buildSearcher = new BuildSearcher(_buildClient, 
+            var buildSearcher = new BuildSearcher(_buildClient,
                 _itemStore
                     .Projects
                     .OfType<Project>()
@@ -307,7 +297,7 @@ namespace TfsAPI.TFS
 
             // нашел мои билды 
             var builds = buildSearcher
-                .FindCompletedBuilds(DateTime.Today, DateTime.Now, actor:Name)
+                .FindCompletedBuilds(DateTime.Today, DateTime.Now, actor: Name)
                 .ToDictionary(x => x.BuildNumber);
 
             // Нашел ID новых билдов
@@ -324,7 +314,7 @@ namespace TfsAPI.TFS
         }
 
         /// <summary>
-        /// Проверяю рабочие элементы на заданные правила
+        ///     Проверяю рабочие элементы на заданные правила
         /// </summary>
         private void CheckRules()
         {

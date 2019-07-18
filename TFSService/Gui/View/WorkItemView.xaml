@@ -68,7 +68,7 @@
                 <converters:Case If="Resolved"
                                  Value="DarkOrange" />
             </converters:SwitchConverter>
-            
+
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -97,9 +97,10 @@
 
 
             <TextBlock Grid.Row="1"
-                       FontWeight="Bold" >
-                <Hyperlink Command="{Binding RelativeSource={RelativeSource AncestorType=materialDesign:Card}, Path=DataContext.WebCommand}">
-                    <Run Text="{Binding Path=Title, Mode=OneWay}"/>
+                       FontWeight="Bold">
+                <Hyperlink
+                    Command="{Binding RelativeSource={RelativeSource AncestorType=materialDesign:Card}, Path=DataContext.WebCommand}">
+                    <Run Text="{Binding Path=Title, Mode=OneWay}" />
                 </Hyperlink>
             </TextBlock>
 

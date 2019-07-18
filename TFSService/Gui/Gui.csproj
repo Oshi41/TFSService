@@ -345,7 +345,6 @@
     <Compile Include="Converters\EnumToVisConverter.cs" />
     <Compile Include="Converters\HoursColorConverter.cs" />
     <Compile Include="Converters\InvertBoolToVisConverter.cs" />
-    <Compile Include="Converters\KeyToValueConverter.cs" />
     <Compile Include="Converters\MathCompareConverter.cs" />
     <Compile Include="Converters\NoDataErrorConverter.cs" />
     <Compile Include="Converters\IdWorkitemConverter.cs" />
@@ -432,6 +431,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\DataTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\RadioButtonStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -574,7 +577,7 @@
   </Target>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

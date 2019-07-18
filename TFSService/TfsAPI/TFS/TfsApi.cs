@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.Client;
@@ -58,11 +57,9 @@ namespace TfsAPI.TFS
 
 #else
             if (_itemStore.UserDisplayName != Name)
-            {
-                Trace.WriteLine($"{nameof(TfsApi)}.{nameof(SaveElement)}: Can't check-in from {Name}, authorized as {_itemStore.UserDisplayName}");
-            }
+                Trace.WriteLine(
+                    $"{nameof(TfsApi)}.{nameof(SaveElement)}: Can't check-in from {Name}, authorized as {_itemStore.UserDisplayName}");
             else
-            {
                 try
                 {
                     item.Save();
@@ -72,7 +69,6 @@ namespace TfsAPI.TFS
                 {
                     Trace.WriteLine(e);
                 }
-            }
 #endif
         }
 
@@ -94,7 +90,7 @@ namespace TfsAPI.TFS
                 }
             }
 
-            return await Task.Run((Func<bool>) CheckConnectSync);
+            return await Task.Run(CheckConnectSync);
         }
 
         #region Fields

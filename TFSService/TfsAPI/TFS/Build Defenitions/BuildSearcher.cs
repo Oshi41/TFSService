@@ -32,10 +32,10 @@ namespace TfsAPI.TFS.Build_Defenitions
                 try
                 {
                     var projectBuilds = _client.GetBuildsAsync(x,
-                           minFinishTime:start,
-                           maxFinishTime:finish,
-                           resultFilter:result,
-                           requestedFor:actor)
+                            minFinishTime: start,
+                            maxFinishTime: finish,
+                            resultFilter: result,
+                            requestedFor: actor)
                         .Result;
 
                     builds.AddRange(projectBuilds);

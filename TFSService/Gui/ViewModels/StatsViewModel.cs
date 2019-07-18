@@ -13,12 +13,24 @@ namespace Gui.ViewModels
     public class StatsViewModel : BindableBase
     {
         private readonly List<WorkItemVm> _origin = new List<WorkItemVm>();
+        private int _capacity;
+        private ObservableCollection<WorkItemVm> _myItems;
 
         private string _name;
         private int _tfsCapacity;
-        private int _capacity;
-        private ObservableCollection<WorkItemVm> _myItems;
         private int _wroteOff;
+
+        public StatsViewModel()
+        {
+            Filter = new FilterViewModel(WorkItemTypes.Task,
+                WorkItemTypes.Pbi,
+                WorkItemTypes.Bug,
+                WorkItemTypes.Improvement,
+                WorkItemTypes.Incident,
+                WorkItemTypes.Feature);
+
+            Filter.FilterChanged += OnFilterChanged;
+        }
 
         public string Name
         {
@@ -50,17 +62,7 @@ namespace Gui.ViewModels
             set => SetProperty(ref _myItems, value);
         }
 
-        public StatsViewModel()
-        {
-            Filter = new FilterViewModel(WorkItemTypes.Task, 
-                WorkItemTypes.Pbi,
-                WorkItemTypes.Bug,
-                WorkItemTypes.Improvement,
-                WorkItemTypes.Incident,
-                WorkItemTypes.Feature);
-
-            Filter.FilterChanged += OnFilterChanged;
-        }
+        public FilterViewModel Filter { get; }
 
         public async void Refresh(ITfsApi api)
         {
@@ -90,7 +92,5 @@ namespace Gui.ViewModels
             MyItems = new ObservableCollection<WorkItemVm>(_origin
                 .Where(x => x.Item.IsTypeOf(types)));
         }
-
-        public FilterViewModel Filter { get;  }
     }
 }

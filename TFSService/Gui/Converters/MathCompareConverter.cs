@@ -30,11 +30,9 @@ namespace Gui.Converters
                 && values.Count() >= 2
                 && double.TryParse(values[0]?.ToString(), out var x)
                 && double.TryParse(values[1]?.ToString(), out var y))
-            {
                 return GetResult(x, y, Operation)
                     ? TrueValue
                     : FalseValue;
-            }
 
             return Binding.DoNothing;
         }

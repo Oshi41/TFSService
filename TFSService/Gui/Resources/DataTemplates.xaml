@@ -40,7 +40,7 @@
                      materialDesign:HintAssist.Hint="{x:Static properties:Resources.AS_WriteOffHours_Hint}"
                      Text="{Binding Path=Hours,
                                     UpdateSourceTrigger=PropertyChanged, 
-                                    ValidatesOnDataErrors=True}"/>
+                                    ValidatesOnDataErrors=True}" />
         </StackPanel>
     </DataTemplate>
 
@@ -142,7 +142,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type viewModels:FilterViewModel}">
-        <view:FilterView/>
+        <view:FilterView />
     </DataTemplate>
 
 </ResourceDictionary>

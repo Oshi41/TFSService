@@ -42,6 +42,11 @@ namespace Gui.View.Notifications
                 options.DoubleClickAction(Notification as BindableNotificationBase);
         }
 
+        private void OnClose(object sender, RoutedEventArgs e)
+        {
+            OnCloseInner();
+        }
+
         #region Slide closing
 
         private void DetectClosingSlide(MouseButtonEventArgs e)
@@ -125,10 +130,5 @@ namespace Gui.View.Notifications
         }
 
         #endregion
-
-        private void OnClose(object sender, RoutedEventArgs e)
-        {
-            OnCloseInner();
-        }
     }
 }

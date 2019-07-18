@@ -164,7 +164,7 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
-        /// Открывает элементв на web интерфейсе
+        ///     Открывает элементв на web интерфейсе
         /// </summary>
         /// <param name="item"></param>
         public static void OpenLink(this WorkItem item)

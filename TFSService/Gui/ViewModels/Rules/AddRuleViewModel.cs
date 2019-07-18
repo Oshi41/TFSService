@@ -34,6 +34,18 @@ namespace Gui.ViewModels.Rules
         {
         }
 
+        public IRuleParameter GetParameter()
+        {
+            switch (Preset)
+            {
+                case StaticRules.CheckTasksAreapath:
+                    return new AreaPathParameter(UserParameter);
+
+                default:
+                    return null;
+            }
+        }
+
         #region Properties
 
         /// <summary>
@@ -72,17 +84,5 @@ namespace Gui.ViewModels.Rules
         }
 
         #endregion
-
-        public IRuleParameter GetParameter()
-        {
-            switch (Preset)
-            {
-                case StaticRules.CheckTasksAreapath:
-                    return new AreaPathParameter(UserParameter);
-
-                default:
-                    return null;
-            }
-        }
     }
 }

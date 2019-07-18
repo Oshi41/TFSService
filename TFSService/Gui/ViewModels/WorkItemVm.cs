@@ -17,9 +17,14 @@ namespace Gui.ViewModels
             WebCommand = new DelegateCommand(OnNavigate, OnCanNavigate);
         }
 
+        public WorkItem Item { get; }
+
+        public ICommand WebCommand { get; }
+
         private void OnNavigate()
         {
-            var link = $"{Item?.Collection?.Store?.TeamProjectCollection?.Uri}/{Item?.Project?.Name}/_workitems/edit/{Item?.Id}";
+            var link =
+                $"{Item?.Collection?.Store?.TeamProjectCollection?.Uri}/{Item?.Project?.Name}/_workitems/edit/{Item?.Id}";
             Process.Start(link);
         }
 
@@ -28,10 +33,6 @@ namespace Gui.ViewModels
             return Item?.Collection?.Store?.TeamProjectCollection?.Uri != null
                    && Item.Project?.Name != null;
         }
-
-        public WorkItem Item { get; }
-
-        public ICommand WebCommand { get; }
 
         public override string ToString()
         {

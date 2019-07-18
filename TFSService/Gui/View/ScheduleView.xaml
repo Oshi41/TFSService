@@ -21,9 +21,9 @@
             <converters:MathCompareConverter x:Key="HoursOverflowConverter"
                                              Operation="More"
                                              TrueValue="{x:Static Visibility.Visible}"
-                                             FalseValue="{x:Static Visibility.Collapsed}"/>
+                                             FalseValue="{x:Static Visibility.Collapsed}" />
 
-            <converters:InvertBoolToVisConverter x:Key="InvertBoolToVisConverter"/>
+            <converters:InvertBoolToVisConverter x:Key="InvertBoolToVisConverter" />
 
             <converters:HoursColorConverter x:Key="HoursColorConverter"
                                             NormalColor="Transparent"
@@ -70,22 +70,23 @@
                   ToolTip="{Binding ElementName=Descr, Path=Text, Mode=OneWay}">
 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="{x:Static p:Resources.AS_MonthlyCapacity}"
                            Margin="0,10,0,0"
-                           TextWrapping="Wrap"/>
+                           TextWrapping="Wrap" />
 
                 <TextBlock Grid.Row="1"
                            Margin="0,5,0,0"
                            x:Name="Descr">
-                    <Run Text="{x:Static p:Resources.AS_Total}"/>
-                    <Run Text="{Binding Path=Sum, Mode=OneWay, StringFormat={x:Static p:Resources.AS_StrFormat_Hours}}"/>
-                    <Run Text="/"/>
-                    <Run Text="{Binding Path=SumCapacity, Mode=OneWay, StringFormat={x:Static p:Resources.AS_StrFormat_Hours}}"/>
+                    <Run Text="{x:Static p:Resources.AS_Total}" />
+                    <Run Text="{Binding Path=Sum, Mode=OneWay, StringFormat={x:Static p:Resources.AS_StrFormat_Hours}}" />
+                    <Run Text="/" />
+                    <Run
+                        Text="{Binding Path=SumCapacity, Mode=OneWay, StringFormat={x:Static p:Resources.AS_StrFormat_Hours}}" />
                 </TextBlock>
 
                 <ProgressBar x:Name="RegularProgress"
@@ -94,11 +95,11 @@
                              Margin="0,10,0,0"
                              Maximum="{Binding Path=SumCapacity}"
                              Value="{Binding Path=Sum}"
-                             Background="DarkGreen">
+                             Foreground="DarkGreen">
                     <ProgressBar.Visibility>
                         <MultiBinding Converter="{StaticResource HoursOverflowConverter}">
-                            <Binding Path="SumCapacity"/>
-                            <Binding Path="Sum"/>
+                            <Binding Path="SumCapacity" />
+                            <Binding Path="Sum" />
                         </MultiBinding>
                     </ProgressBar.Visibility>
                 </ProgressBar>
@@ -112,7 +113,7 @@
                              Value="{Binding Path=SumCapacity}"
                              Visibility="{Binding ElementName=RegularProgress, 
                                                   Path=IsVisible,
-                                                  Converter={StaticResource InverseBoolToVisConverter}}"/>
+                                                  Converter={StaticResource InverseBoolToVisConverter}}" />
             </Grid>
 
             <Calendar Grid.Row="1"
@@ -128,9 +129,11 @@
 
             <TextBlock Grid.Row="2"
                        Margin="10,10,0,0">
-                <Run Text="{Binding Path=SelectedDay.Hours, Mode=OneWay, StringFormat={x:Static p:Resources.AS_StrFormat_Hours}}" />
+                <Run
+                    Text="{Binding Path=SelectedDay.Hours, Mode=OneWay, StringFormat={x:Static p:Resources.AS_StrFormat_Hours}}" />
                 <Run Text="/" />
-                <Run Text="{Binding Path=SelectedDay.Capacity, Mode=OneWay, StringFormat={x:Static p:Resources.AS_StrFormat_Hours}}" />
+                <Run
+                    Text="{Binding Path=SelectedDay.Capacity, Mode=OneWay, StringFormat={x:Static p:Resources.AS_StrFormat_Hours}}" />
             </TextBlock>
 
             <ListBox Grid.Column="1"

@@ -15,10 +15,10 @@ namespace Gui.ViewModels.DialogViewModels
     public class SettingsViewModel : BindableExtended
     {
         private readonly ITfsApi _api;
-        private bool _capacityByUser;
-        private bool _changed;
 
         private int _capacity;
+        private bool _capacityByUser;
+        private bool _changed;
         private string _connection;
         private TimeSpan _dayDuration;
         private int _itemMinutesCheck;

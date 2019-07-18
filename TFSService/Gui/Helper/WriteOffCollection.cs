@@ -125,10 +125,7 @@ namespace Gui.Helper
                 var item = currentItem();
 
                 // Если элемент нулёвый, считаем, что списание выключено
-                if (item != null)
-                {
-                    ScheduleWork(item.Id, delta);
-                }
+                if (item != null) ScheduleWork(item.Id, delta);
             }
 
             CheckinWork(api);

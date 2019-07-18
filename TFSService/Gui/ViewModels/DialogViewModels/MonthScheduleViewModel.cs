@@ -20,9 +20,10 @@ namespace Gui.ViewModels.DialogViewModels
         private readonly Dictionary<DateTime, List<DayViewModel>> _cache =
             new Dictionary<DateTime, List<DayViewModel>>();
 
+        private DateTime _date;
+
         private bool _isBusy;
         private List<DayViewModel> _month;
-        private DateTime _date;
         private DayViewModel _selectedDay;
         private int _sum;
         private int _sumCapacity;

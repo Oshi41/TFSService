@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Gui.Helper;
 using Gui.Properties;
 using Microsoft.TeamFoundation.Common;
@@ -34,15 +33,9 @@ namespace Gui.ViewModels.DialogViewModels
         {
             if (prop == nameof(Text))
             {
-                if (!Uri.TryCreate(Text, UriKind.Absolute, out var result))
-                {
-                    return Resources.AS_NotAWebAddress_Error;
-                }
+                if (!Uri.TryCreate(Text, UriKind.Absolute, out var result)) return Resources.AS_NotAWebAddress_Error;
 
-                if (Connection == ConnectionType.Failed)
-                {
-                    return Resources.AS_ConnectError;
-                }
+                if (Connection == ConnectionType.Failed) return Resources.AS_ConnectError;
             }
 
             return base.ValidateProperty(prop);
@@ -51,12 +44,8 @@ namespace Gui.ViewModels.DialogViewModels
         protected override string ValidateOptionalProperty(string prop)
         {
             if (prop == nameof(Text))
-            {
                 if (Connection == ConnectionType.Success)
-                {
                     return Resources.AS_ConnectionEstablished;
-                }
-            }
 
             return base.ValidateOptionalProperty(prop);
         }
@@ -79,10 +68,8 @@ namespace Gui.ViewModels.DialogViewModels
             {
                 if (SetProperty(ref _text, value)
                     && Connection == ConnectionType.Success)
-                {
                     // Сбрасываем подключение
                     Connection = ConnectionType.Unknown;
-                }
             }
         }
 
@@ -98,11 +85,9 @@ namespace Gui.ViewModels.DialogViewModels
             set
             {
                 if (SetProperty(ref _connection, value))
-                {
                     // необходимо для валидации данных
                     OnPropertyChanged(nameof(Text));
-                    //SubmitCommand.RaiseCanExecuteChanged();
-                }
+                //SubmitCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -137,17 +122,17 @@ namespace Gui.ViewModels.DialogViewModels
     public enum ConnectionType
     {
         /// <summary>
-        /// Состояние неизвестно.
+        ///     Состояние неизвестно.
         /// </summary>
         Unknown,
 
         /// <summary>
-        /// Соединение успешно установленно.
+        ///     Соединение успешно установленно.
         /// </summary>
         Success,
 
         /// <summary>
-        /// Во время соединения произошла ошибка.
+        ///     Во время соединения произошла ошибка.
         /// </summary>
         Failed
     }

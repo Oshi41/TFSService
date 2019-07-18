@@ -24,15 +24,15 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <!--Для поиска введите ID элемента либо ищите по ключевым словам-->
 
         <TextBlock Text="{Binding Path=Help, Mode=OneWay}"
-                   TextWrapping="Wrap" 
-                   Grid.ColumnSpan="2"/>
+                   TextWrapping="Wrap"
+                   Grid.ColumnSpan="2" />
 
         <ComboBox Grid.Row="1"
                   Grid.Column="0"
@@ -57,7 +57,7 @@
 
         <local:FilterView Grid.Row="1"
                           Grid.Column="1"
-                          DataContext="{Binding Path=Filter}"/>
+                          DataContext="{Binding Path=Filter}" />
 
     </Grid>
 </UserControl>

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TfsAPI.RulesNew;
 
 namespace Tests.Tfs_Api_Tests
@@ -19,7 +14,7 @@ namespace Tests.Tfs_Api_Tests
 
             var currentIter = ruleBuilder.BuildPresets(StaticRules.AllTasksIsCurrentIteration, null);
 
-            var result = ruleBuilder.CheckInconsistant(new IRule[] {currentIter}, api);
+            var result = ruleBuilder.CheckInconsistant(new[] {currentIter}, api);
         }
     }
 }

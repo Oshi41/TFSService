@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Gui.Helper;
 using Microsoft.TeamFoundation.Common;
@@ -138,7 +137,7 @@ namespace Gui.ViewModels.DialogViewModels
         }
 
         /// <summary>
-        /// Обновяем данные по фильтру
+        ///     Обновяем данные по фильтру
         /// </summary>
         /// <param name="shouldWebRequest">Нужно ли делать Web запрос или фильтруем что есть</param>
         private void UpdateByFilter(bool shouldWebRequest = false)

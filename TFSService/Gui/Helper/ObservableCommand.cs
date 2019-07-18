@@ -43,7 +43,9 @@ namespace Gui.Helper
         #region Constructors
 
         public ObservableCommand(Action<object> action, Func<object, bool> predicat = null)
-            : base(action, predicat ?? (o => true)) {  }
+            : base(action, predicat ?? (o => true))
+        {
+        }
 
         /// <summary>
         ///     Creates a new instance of <see cref="T:Mvvm.Commands.DelegateCommand" /> with the <see cref="T:System.Action" /> to
@@ -54,7 +56,7 @@ namespace Gui.Helper
         ///     <see cref="M:System.Windows.Input.ICommand.Execute(System.Object)" /> is called.
         /// </param>
         public ObservableCommand(Action executeMethod)
-            : this(executeMethod, () => true, false)
+            : this(executeMethod, () => true)
         {
         }
 
@@ -82,7 +84,7 @@ namespace Gui.Helper
         }
 
         private ObservableCommand(Func<Task> executeMethod)
-            : this(executeMethod, () => true, false)
+            : this(executeMethod, () => true)
         {
         }
 

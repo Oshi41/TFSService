@@ -18,34 +18,6 @@ namespace Gui.Helper
     /// </summary>
     public class WindowManager
     {
-        #region Private
-
-        /// <summary>
-        ///     Класс для показа всплывающих уведомлений
-        /// </summary>
-        private static readonly Notifier Notifier = new Notifier(cfg =>
-        {
-            cfg.PositionProvider = new PrimaryScreenPositionProvider(Corner.BottomRight, 10, 10);
-
-            cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(TimeSpan.FromMinutes(1),
-                MaximumNotificationCount.FromCount(10));
-        });
-
-        private static void CheckAndMaximizeMainWindow()
-        {
-            var main = App.Current?.MainWindow;
-
-            if (main == null)
-                return;
-
-            if (main.WindowState == WindowState.Minimized)
-            {
-                main.WindowState = WindowState.Normal;
-            }
-        }
-
-        #endregion
-
         /// <summary>
         ///     Показываю диалоговое окно с 2-3 кнопками
         /// </summary>
@@ -177,5 +149,30 @@ namespace Gui.Helper
                     return null;
             }
         }
+
+        #region Private
+
+        /// <summary>
+        ///     Класс для показа всплывающих уведомлений
+        /// </summary>
+        private static readonly Notifier Notifier = new Notifier(cfg =>
+        {
+            cfg.PositionProvider = new PrimaryScreenPositionProvider(Corner.BottomRight, 10, 10);
+
+            cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(TimeSpan.FromMinutes(1),
+                MaximumNotificationCount.FromCount(10));
+        });
+
+        private static void CheckAndMaximizeMainWindow()
+        {
+            var main = Application.Current?.MainWindow;
+
+            if (main == null)
+                return;
+
+            if (main.WindowState == WindowState.Minimized) main.WindowState = WindowState.Normal;
+        }
+
+        #endregion
     }
 }

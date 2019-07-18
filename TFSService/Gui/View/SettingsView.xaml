@@ -41,13 +41,13 @@
 
             <c:SwitchConverter x:Key="SelectedDescriptionConverter">
                 <c:Case If="Watch"
-                        Value="{x:Static p:Resources.AS_Watch_Descr}"/>
+                        Value="{x:Static p:Resources.AS_Watch_Descr}" />
                 <c:Case If="Random"
-                        Value="{x:Static p:Resources.AS_Random_Descr}"/>
+                        Value="{x:Static p:Resources.AS_Random_Descr}" />
                 <c:Case If="AskEveryTime"
-                        Value="{x:Static p:Resources.AS_AskEveryTime_Descr}"/>
+                        Value="{x:Static p:Resources.AS_AskEveryTime_Descr}" />
                 <c:Case If="Disabled"
-                        Value="{x:Static p:Resources.AS_Disabled_Descr}"/>
+                        Value="{x:Static p:Resources.AS_Disabled_Descr}" />
             </c:SwitchConverter>
 
         </ResourceDictionary>
@@ -198,7 +198,7 @@
                                                  Margin="5,0"
                                                  StaysOpen="True">
                             <materialDesign:PopupBox.ToggleContent>
-                                <materialDesign:PackIcon Kind="InformationOutline"/>
+                                <materialDesign:PackIcon Kind="InformationOutline" />
                             </materialDesign:PopupBox.ToggleContent>
 
                             <ScrollViewer MaxWidth="150"
@@ -208,9 +208,9 @@
                                           HorizontalScrollBarVisibility="Disabled">
                                 <TextBlock FontSize="12"
                                            TextWrapping="Wrap"
-                                           Text="{Binding Path=Strategy, Converter={StaticResource SelectedDescriptionConverter}}"/>
+                                           Text="{Binding Path=Strategy, Converter={StaticResource SelectedDescriptionConverter}}" />
                             </ScrollViewer>
-                            
+
                         </materialDesign:PopupBox>
 
                         <ComboBox Margin="0,10"

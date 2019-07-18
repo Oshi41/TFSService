@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.DirectoryServices.AccountManagement;
 using System.Linq;
-using System.Security.Claims;
-using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -22,7 +21,6 @@ using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
 using TfsAPI.RulesNew;
 using TfsAPI.TFS;
-using System.DirectoryServices.AccountManagement;
 
 namespace Gui.ViewModels
 {
@@ -58,6 +56,8 @@ namespace Gui.ViewModels
 
             using (var settings = Settings.Settings.Read())
             {
+                ViewMode = settings.ViewMode;
+
                 ApiObservable = await Task.Run(() => new TfsObservable(FirstConnectionViewModel.Text,
                     settings.MyWorkItems,
                     settings.MyBuilds,
@@ -201,7 +201,7 @@ namespace Gui.ViewModels
         public ICommand SettingsCommand { get; }
 
         /// <summary>
-        /// Принудительно списываю время
+        ///     Принудительно списываю время
         /// </summary>
         public ICommand WriteOffHoursCommand { get; }
 
@@ -211,7 +211,7 @@ namespace Gui.ViewModels
 
         private void ShowMonthly()
         {
-            WindowManager.ShowDialog(new MonthCheckinsViewModel(_apiObserve), Resources.AS_MonthlySchedule, 680, 530);
+            WindowManager.ShowDialog(new MonthCheckinsViewModel(_apiObserve), Resources.AS_MonthlySchedule, 680, 600);
         }
 
         private async Task Update()
@@ -240,17 +240,14 @@ namespace Gui.ViewModels
             {
                 var find = vm.ChooseTaskVm.Searcher.Items.FirstOrDefault(x => x.Item.Id == toWriteOff.Item.Id);
 
-                if (find != null)
-                {
-                    vm.ChooseTaskVm.Searcher.Selected = find;
-                }
+                if (find != null) vm.ChooseTaskVm.Searcher.Selected = find;
             }
 
 
             if (WindowManager.ShowDialog(vm, Resources.AS_ChooseWriteoffTask, 450, 240) == true)
             {
                 var selected = vm.ChooseTaskVm.Searcher.Selected;
-                _apiObserve.WriteHours(selected, (byte)vm.Hours, true);
+                _apiObserve.WriteHours(selected, (byte) vm.Hours, true);
             }
         }
 
@@ -475,9 +472,7 @@ namespace Gui.ViewModels
                         return vm.Searcher.Selected;
 
                     if (WindowManager.ShowConfirm(Resources.AS_SkipWriteOff, Resources.AS_SkipWriteOff_Title) == true)
-                    {
                         return null;
-                    }
 
                     // Выбрать нужно обязательно
                     return FindAvailableTask(strategy);
@@ -550,12 +545,11 @@ namespace Gui.ViewModels
                 var logoff = DateTime.Now;
                 var logon = user.LastLogon;
 
-                if (logon.HasValue)
-                {
-                    settings.DisplayTime.AddDate(logon.Value, true);
-                }
+                if (logon.HasValue) settings.DisplayTime.AddDate(logon.Value, true);
 
                 settings.DisplayTime.AddDate(logoff, false);
+
+                settings.ViewMode = ViewMode;
             }
         }
 
@@ -581,8 +575,8 @@ namespace Gui.ViewModels
                 {
                     //Начинаю рабочий день!
                     Trace.WriteLine($"{nameof(Settings)}.{nameof(TryStartWorkDay)}: " +
-                        $"{settings.DisplayTime.GetDisplayTime().TotalHours}h: " +
-                        $"{settings.DisplayTime.GetDisplayTime().Minutes}m:");
+                                    $"{settings.DisplayTime.GetDisplayTime().TotalHours}h: " +
+                                    $"{settings.DisplayTime.GetDisplayTime().Minutes}m:");
 
                     // Очищаю день
                     settings.DisplayTime.ClearPreviouse();

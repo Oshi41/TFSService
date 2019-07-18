@@ -37,10 +37,7 @@ namespace Gui.ViewModels.Notifications
         /// <param name="obj"></param>
         private void OnClick()
         {
-            if (Item?.Uri != null)
-            {
-                Item.OpenLink();
-            }
+            if (Item?.Uri != null) Item.OpenLink();
         }
     }
 }

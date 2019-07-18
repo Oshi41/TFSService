@@ -1,10 +1,8 @@
-﻿using Mvvm;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Mvvm;
 using TfsAPI.Extentions;
 
 namespace Gui.Settings
@@ -20,13 +18,11 @@ namespace Gui.Settings
             var changed = false;
 
             foreach (var time in keys)
-            {
                 if (!time.IsToday())
                 {
                     SessionTimes.Remove(time);
                     changed = true;
                 }
-            }
 
             if (changed)
                 RaiseChange();
@@ -40,17 +36,15 @@ namespace Gui.Settings
                 return;
             }
 
-            SessionTimes[time] = isLogon;            
+            SessionTimes[time] = isLogon;
             RaiseChange();
         }
 
         public DateTime GetBegin()
         {
             foreach (var item in SessionTimes)
-            {
                 if (item.Value)
                     return item.Key;
-            }
 
             return DateTime.MinValue;
         }
@@ -73,14 +67,12 @@ namespace Gui.Settings
             }
 
             // Считаем, что нет ошибок в записи
-            for (int i = 0; i < keyes.Count; i += 2)
-            {
+            for (var i = 0; i < keyes.Count; i += 2)
                 if (i + 1 < keyes.Count)
                 {
                     var session = keyes[i + 1] - keyes[i];
                     duration = duration.Add(session.Duration());
                 }
-            }
 
             return duration;
         }
@@ -89,6 +81,5 @@ namespace Gui.Settings
         {
             OnPropertyChanged(nameof(SessionTimes));
         }
-
     }
 }

@@ -43,10 +43,7 @@ namespace Gui.ViewModels.Notifications
         {
             var link = Selected?.Item?.Uri?.ToString();
 
-            if (link != null)
-            {
-                Selected.Item.OpenLink();
-            }
+            if (link != null) Selected.Item.OpenLink();
         }
 
         private bool CanOpenLink()

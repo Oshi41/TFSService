@@ -8,6 +8,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using Gui.Helper;
 using Gui.Properties;
+using Gui.ViewModels;
 using Mvvm;
 using Newtonsoft.Json;
 using TfsAPI.Attributes;
@@ -59,6 +60,7 @@ namespace Gui.Settings
         private int _itemMinutesCheck = 5;
         private int _oldReviewDay = 100;
         private ObservableCollection<string> _myBuilds;
+        private VisibleMode _viewMode;
 
         #endregion
 
@@ -164,6 +166,12 @@ namespace Gui.Settings
             set => Set(ref _oldReviewDay, value);
         }
 
+        public VisibleMode ViewMode
+        {
+            get => _viewMode;
+            set => SetProperty(ref _viewMode, value);
+        }
+
         public ObservableCollection<string> MyBuilds
         {
             get => _myBuilds;
@@ -197,7 +205,7 @@ namespace Gui.Settings
             }
             else
             {
-                Trace.WriteLine($"{nameof(Gui.Settings.Settings)}.{nameof(Read)}:Creating new settings");
+                Trace.WriteLine($"{nameof(Settings)}.{nameof(Read)}:Creating new settings");
 
                 settings = new Settings();
             }
@@ -217,7 +225,7 @@ namespace Gui.Settings
 
             File.WriteAllText(SavePath, JsonConvert.SerializeObject(this, JsonSettings));
 
-            Trace.WriteLine($"{nameof(Gui.Settings.Settings)}.{nameof(Write)}: JsonSettings saved");
+            Trace.WriteLine($"{nameof(Settings)}.{nameof(Write)}: JsonSettings saved");
         }
 
         /// <summary>
@@ -288,11 +296,11 @@ namespace Gui.Settings
 
         [LocalizedDescription(nameof(Resources.AS_ChooseByMyOwn), typeof(Resources))]
         Watch,
-        
+
         [LocalizedDescription(nameof(Resources.AS_AskEveryTime), typeof(Resources))]
         AskEveryTime,
 
         [LocalizedDescription(nameof(Resources.AS_Disabled), typeof(Resources))]
-        Disabled,
+        Disabled
     }
 }

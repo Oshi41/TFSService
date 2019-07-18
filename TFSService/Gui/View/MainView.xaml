@@ -13,7 +13,7 @@
         xmlns:controls="clr-namespace:Gui.View.Controls"
         xmlns:converters="clr-namespace:Gui.Converters"
         mc:Ignorable="d"
-        Height="400" Width="600"
+        Height="450" Width="950"
         Title="{Binding Path=StatsViewModel.Name}">
 
     <Window.DataContext>
@@ -21,20 +21,21 @@
     </Window.DataContext>
 
     <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/materialdesigntheme.radiobutton.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        
         <controls:BindProxy x:Key="BindProxy"
-                            Data="{Binding}"/>
+                            Data="{Binding}" />
 
-        <converters:KeyToValueConverter x:Key="ListVisibleConverter"
-                                        DefaultValue="{x:Static Visibility.Collapsed}">
-            <converters:KeyValueObject Key="{x:Static viewmodels:VisibleMode.List}" Value="{x:Static Visibility.Visible}"/>
-        </converters:KeyToValueConverter>
-
-        <converters:KeyToValueConverter x:Key="TableVisibleConverter"
-                                        DefaultValue="{x:Static Visibility.Collapsed}">
-            <converters:KeyValueObject Key="{x:Static viewmodels:VisibleMode.Table}" Value="{x:Static Visibility.Visible}"/>
-        </converters:KeyToValueConverter>
+        <converters:SwitchConverter x:Key="TransitionConverter"
+                                    Default="0">
+            <converters:Case If="Table"
+                             Value="1" />
+        </converters:SwitchConverter>
+        </ResourceDictionary>
     </Window.Resources>
-
 
     <materialDesign:DialogHost IsOpen="{Binding Path=IsBusy}">
 
@@ -53,10 +54,10 @@
         <Grid>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Menu FontSize="12"
@@ -79,8 +80,8 @@
 
                 <MenuItem Header="{x:Static p:Resources.AS_Actions}">
                     <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
-                              Command="{Binding Path=WriteOffHoursCommand}"/>
-                    <Separator/>
+                              Command="{Binding Path=WriteOffHoursCommand}" />
+                    <Separator />
                     <MenuItem Header="{x:Static p:Resources.AS_CloseCompletedReviewes}"
                               Command="{Binding Path=CodeResponsesViewModel.CloseReviewes}" />
                     <MenuItem Header="{x:Static p:Resources.AS_CloseOldReviews}"
@@ -98,108 +99,132 @@
                                   HorizontalAlignment="Left"
                                   VerticalAlignment="Center"
                                   Margin="5"
-                                  ToolTip="{x:Static p:Resources.AP_MainFilter_ToolTip}"/>
+                                  ToolTip="{x:Static p:Resources.AP_MainFilter_ToolTip}" />
 
                 <Separator />
 
-                <ListBox>
-                    <ListBoxItem IsSelected="{Binding Path=ViewMode,
+                <RadioButton Style="{StaticResource RadioButton.Toolbar.Style}"
+                             ToolTip="{x:Static p:Resources.AP_MainView_List_ToolTip}"
+
+                             IsChecked="{Binding Path=ViewMode,
                                                       Converter={StaticResource EnumBooleanConverter},
-                                                      ConverterParameter={x:Static viewmodels:VisibleMode.List}}"
-                                 ToolTip="{x:Static p:Resources.AP_MainView_List_ToolTip}"
-                                 Padding="14 6 14 6">
-                        <materialDesign:PackIcon Kind="FormatListBulleted"/>
-                    </ListBoxItem>
-                    <ListBoxItem IsSelected="{Binding Path=ViewMode,
+                                                      ConverterParameter={x:Static viewmodels:VisibleMode.List}}">
+                    <materialDesign:PackIcon Kind="FormatListBulleted" />
+                </RadioButton>
+
+                <RadioButton Style="{StaticResource RadioButton.Toolbar.Style}"
+                             materialDesign:RippleAssist.IsDisabled="True"
+                             ToolTip="{x:Static p:Resources.AP_MainView_Table_ToolTip}"
+
+                              IsChecked="{Binding Path=ViewMode,
                                                       Converter={StaticResource EnumBooleanConverter},
-                                                      ConverterParameter={x:Static viewmodels:VisibleMode.Table}}"
-                                 ToolTip="{x:Static p:Resources.AP_MainView_Table_ToolTip}"
-                                 Padding="14 6 14 6">
-                        <materialDesign:PackIcon Kind="TableLarge"/>
-                    </ListBoxItem>
-                </ListBox>
+                                                      ConverterParameter={x:Static viewmodels:VisibleMode.Table}}">
+                    <materialDesign:PackIcon Kind="TableLarge" />
+                </RadioButton>
 
             </ToolBar>
 
-            <ListView Grid.Row="2"
-                      BorderThickness="2"
-                      BorderBrush="Black"
-                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                      ScrollViewer.VerticalScrollBarVisibility="Auto"
-                      HorizontalContentAlignment="Stretch"
-                      HorizontalAlignment="Stretch"
-                      ItemsSource="{Binding Path=StatsViewModel.MyItems}"
-                      Visibility="{Binding Path=ViewMode, Converter={StaticResource ListVisibleConverter}}">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}"
-                           BasedOn="{StaticResource {x:Type ListViewItem}}">
+            <materialDesign:Transitioner Grid.Row="2"
+                                         SelectedIndex="{Binding Path=ViewMode, Converter={StaticResource TransitionConverter}}">
+                <materialDesign:TransitionerSlide>
+                    <materialDesign:TransitionerSlide.ForwardWipe>
+                        <materialDesign:SlideWipe Direction="Left" />
+                    </materialDesign:TransitionerSlide.ForwardWipe>
+                    <materialDesign:TransitionerSlide.BackwardWipe>
+                        <materialDesign:SlideWipe Direction="Right" />
+                    </materialDesign:TransitionerSlide.BackwardWipe>
+                    <ListView BorderThickness="2"
+                              BorderBrush="Black"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              HorizontalContentAlignment="Stretch"
+                              HorizontalAlignment="Stretch"
+                              ItemsSource="{Binding Path=StatsViewModel.MyItems}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListViewItem}"
+                                   BasedOn="{StaticResource {x:Type ListViewItem}}">
 
-                        <Setter Property="ContextMenu" Value="{x:Null}"/>
+                                <Setter Property="ContextMenu" Value="{x:Null}" />
 
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=Item.Type.Name}"
-                                         Value="{x:Static constants:WorkItemTypes.Task}">
-                                <Setter Property="ContextMenu">
-                                    <Setter.Value>
-                                        <ContextMenu>
-                                            <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
-                                                      Command="{Binding Source={StaticResource BindProxy}, Path=Data.WriteOffHoursCommand}"
-                                                      CommandParameter="{Binding}"/>
-                                        </ContextMenu>
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ListView.ItemContainerStyle>
-            </ListView>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=Item.Type.Name}"
+                                                 Value="{x:Static constants:WorkItemTypes.Task}">
+                                        <Setter Property="ContextMenu">
+                                            <Setter.Value>
+                                                <ContextMenu>
+                                                    <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
+                                                              Command="{Binding Source={StaticResource BindProxy}, Path=Data.WriteOffHoursCommand}"
+                                                              CommandParameter="{Binding}" />
+                                                </ContextMenu>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                </materialDesign:TransitionerSlide>
 
-            <DataGrid Grid.Row="2"
-                      ItemsSource="{Binding Path=StatsViewModel.MyItems}"
-                      HorizontalContentAlignment="Stretch"
-                      HorizontalAlignment="Stretch"
-                      CanUserDeleteRows="False"
-                      CanUserAddRows="False"
-                      AutoGenerateColumns="False"
-                      SelectionUnit="FullRow"
-                      SelectionMode="Single"
-                      Visibility="{Binding Path=ViewMode, Converter={StaticResource TableVisibleConverter}}">
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="{x:Static p:Resources.AP_MainView_Element_Column}" SortMemberPath="Item.Type.Name" Width="Auto">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <ContentControl Content="{Binding Path=Item.Type.Name, Converter={StaticResource WorkTypeIconConverter}}"
-                                                    Margin="5"
-                                                    VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="1"
-                                               Text="{Binding Path=Item.Type.Name}"
-                                               VerticalAlignment="Center" />
-                                </Grid>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_Id_Column}" Binding="{Binding Path=Item.Id}" Width="Auto" MinWidth="40"  />
-                    <DataGridTemplateColumn Header="{x:Static p:Resources.AP_MainView_Title_Column}" Width="300" MinWidth="100">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock>
-                                    <Hyperlink Command="{Binding Path=WebCommand}">
-                                        <Run Text="{Binding Path=Item.Title, Mode=OneWay}"/>
-                                    </Hyperlink>
-                                </TextBlock>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_State_Column}" Binding="{Binding Path=Item.State}" Width="Auto" MinWidth="40" />
-                    <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_Area_Column}" Binding="{Binding Path=Item.AreaPath}" Width="Auto" MinWidth="40" />
-                    <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_Iteration_Column}" Binding="{Binding Path=Item.IterationPath}" Width="Auto" MinWidth="40" />
-                </DataGrid.Columns>
-            </DataGrid>
+                <materialDesign:TransitionerSlide>
+                    <materialDesign:TransitionerSlide.ForwardWipe>
+                        <materialDesign:SlideWipe Direction="Left" />
+                    </materialDesign:TransitionerSlide.ForwardWipe>
+                    <materialDesign:TransitionerSlide.BackwardWipe>
+                        <materialDesign:SlideWipe Direction="Right" />
+                    </materialDesign:TransitionerSlide.BackwardWipe>
+                    <DataGrid ItemsSource="{Binding Path=StatsViewModel.MyItems}"
+                              HorizontalContentAlignment="Stretch"
+                              HorizontalAlignment="Stretch"
+                              CanUserDeleteRows="False"
+                              CanUserAddRows="False"
+                              AutoGenerateColumns="False"
+                              SelectionUnit="FullRow"
+                              SelectionMode="Single">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="{x:Static p:Resources.AP_MainView_Element_Column}"
+                                                    SortMemberPath="Item.Type.Name" Width="Auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <ContentControl
+                                                Content="{Binding Path=Item.Type.Name, Converter={StaticResource WorkTypeIconConverter}}"
+                                                Margin="5"
+                                                VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding Path=Item.Type.Name}"
+                                                       VerticalAlignment="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_Id_Column}"
+                                                Binding="{Binding Path=Item.Id}" Width="Auto" MinWidth="40" />
+                            <DataGridTemplateColumn Header="{x:Static p:Resources.AP_MainView_Title_Column}"
+                                                    Width="300" MinWidth="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock>
+                                            <Hyperlink Command="{Binding Path=WebCommand}">
+                                                <Run Text="{Binding Path=Item.Title, Mode=OneWay}" />
+                                            </Hyperlink>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_State_Column}"
+                                                Binding="{Binding Path=Item.State}" Width="Auto" MinWidth="40" />
+                            <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_Area_Column}"
+                                                Binding="{Binding Path=Item.AreaPath}" Width="Auto" MinWidth="40" />
+                            <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_Iteration_Column}"
+                                                Binding="{Binding Path=Item.IterationPath}" Width="Auto" MinWidth="40" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </materialDesign:TransitionerSlide>
+            </materialDesign:Transitioner>
 
             <materialDesign:Card Grid.Row="3">
 
@@ -209,36 +234,36 @@
                     <StackPanel.ToolTip>
                         <ToolTip>
                             <StackPanel Orientation="Vertical"
-                                    Margin="5">
+                                        Margin="5">
 
                                 <TextBlock
-                                Text="{Binding Path=StatsViewModel.WroteOff, 
+                                    Text="{Binding Path=StatsViewModel.WroteOff, 
                                               StringFormat={x:Static p:Resources.AS_StrFormat_WrittenOff}}"
-                                Margin="5" />
+                                    Margin="5" />
                                 <TextBlock
-                                Text="{Binding Path=StatsViewModel.Capacity,
+                                    Text="{Binding Path=StatsViewModel.Capacity,
                                        StringFormat={x:Static  p:Resources.AS_StrFormat_DailyMax}}"
-                                Margin="5" />
+                                    Margin="5" />
 
                             </StackPanel>
                         </ToolTip>
                     </StackPanel.ToolTip>
 
-                    <TextBlock Text="{Binding Path=StatsViewModel.TfsCapacity, 
+                    <TextBlock
+                        Text="{Binding Path=StatsViewModel.TfsCapacity, 
                               StringFormat={x:Static p:Resources.AS_StrFormat_DailyWorkTime}}"
-                           Margin="10,10,0,0"
-                           ToolTip="{x:Static p:Resources.AS_TfsInfo}" />
+                        Margin="10,10,0,0"
+                        ToolTip="{x:Static p:Resources.AS_TfsInfo}" />
 
                     <ProgressBar HorizontalAlignment="Stretch"
-                             Maximum="{Binding Path=StatsViewModel.Capacity}"
-                             Value="{Binding Path=StatsViewModel.WroteOff}"
-                             Margin="5"/>
+                                 Maximum="{Binding Path=StatsViewModel.Capacity}"
+                                 Value="{Binding Path=StatsViewModel.WroteOff}"
+                                 Margin="5" />
                 </StackPanel>
             </materialDesign:Card>
 
         </Grid>
 
     </materialDesign:DialogHost>
-
 
 </Window>

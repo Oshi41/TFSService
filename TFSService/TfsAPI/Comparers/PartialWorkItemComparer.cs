@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.TeamFoundation.Common;
+﻿using System.Collections.Generic;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace TfsAPI.Comparers
 {
-    class PartialWorkItemComparer : IEqualityComparer<WorkItem>
+    internal class PartialWorkItemComparer : IEqualityComparer<WorkItem>
     {
         public bool Equals(WorkItem x, WorkItem y)
         {
@@ -22,6 +17,11 @@ namespace TfsAPI.Comparers
             // Изменилось оно, значит что-то произошло
             return x.Id == y.Id
                    && SafeEqualsCoreFields(x.Fields, y.Fields, CoreField.ChangedDate);
+        }
+
+        public int GetHashCode(WorkItem obj)
+        {
+            return obj.Id;
         }
 
         private bool SafeEqualsCoreFields(FieldCollection x, FieldCollection y, params CoreField[] fields)
@@ -40,10 +40,7 @@ namespace TfsAPI.Comparers
                 var yField = y.TryGetById((int) field);
 
                 // У всех рабочих элементов нет такого поля, пропускаем
-                if (xField == null && yField == null)
-                {
-                    continue;
-                }
+                if (xField == null && yField == null) continue;
 
                 // У одного из элементов нет поля
                 if (xField == null || yField == null)
@@ -55,11 +52,6 @@ namespace TfsAPI.Comparers
             }
 
             return true;
-        }
-
-        public int GetHashCode(WorkItem obj)
-        {
-            return obj.Id;
         }
     }
 }

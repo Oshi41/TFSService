@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
@@ -29,11 +30,18 @@ namespace Gui.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            foreach (var statement in Cases)
-                if (string.Equals(value?.ToString(), statement.If))
-                    return statement.Value;
+            // Идет проверка по Equals объекта
+            var first = Cases.FirstOrDefault(x => Equals(x?.If, value));
+            if (first == null)
+            {
+                // иначе проверяем как строку
+                var strVal = value?.ToString();
+                first = Cases.FirstOrDefault(x => string.Equals(strVal, x?.If?.ToString()));
+            }
 
-            return Default;
+            return first == null
+                ? Default
+                : first.Value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -61,14 +69,14 @@ namespace Gui.Converters
     internal class Case : DependencyObject
     {
         public static readonly DependencyProperty IfProperty = DependencyProperty.Register(
-            "If", typeof(string), typeof(Case), new PropertyMetadata(default(string)));
+            "If", typeof(object), typeof(Case), new PropertyMetadata(default(object)));
 
         public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
             "Value", typeof(object), typeof(Case), new PropertyMetadata(default(object)));
 
-        public string If
+        public object If
         {
-            get => (string) GetValue(IfProperty);
+            get => GetValue(IfProperty);
             set => SetValue(IfProperty, value);
         }
 

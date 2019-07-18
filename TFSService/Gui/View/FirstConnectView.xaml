@@ -24,13 +24,13 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <TextBlock Text="{x:Static p:Resources.AS_EnterTfsUri}"
-                   TextWrapping="Wrap" 
-                   Grid.ColumnSpan="2"/>
+                   TextWrapping="Wrap"
+                   Grid.ColumnSpan="2" />
 
         <ComboBox Grid.Row="1"
                   Grid.Column="0"
@@ -41,7 +41,7 @@
                   Text="{Binding Path=Text, 
                          UpdateSourceTrigger=PropertyChanged,
                          ValidatesOnDataErrors=True}"
-                  Padding="6"/>
+                  Padding="6" />
 
         <Button Grid.Row="1"
                 Grid.Column="1"
@@ -52,22 +52,22 @@
             <Button.Style>
                 <Style TargetType="{x:Type Button}"
                        BasedOn="{StaticResource {x:Type Button}}">
-                    <Setter Property="Margin" Value="5"/>
+                    <Setter Property="Margin" Value="5" />
 
-                    <Setter Property="Foreground" Value="DarkGreen"/>
+                    <Setter Property="Foreground" Value="DarkGreen" />
                     <Setter Property="Content">
                         <Setter.Value>
-                            <materialDesign:PackIcon Kind="LanConnect"/>
+                            <materialDesign:PackIcon Kind="LanConnect" />
                         </Setter.Value>
                     </Setter>
 
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Path=Connection}"
                                      Value="{x:Static dialogViewModels:ConnectionType.Failed}">
-                            <Setter Property="Foreground" Value="DarkRed"/>
+                            <Setter Property="Foreground" Value="DarkRed" />
                             <Setter Property="Content">
                                 <Setter.Value>
-                                    <materialDesign:PackIcon Kind="LanDisconnect"/>
+                                    <materialDesign:PackIcon Kind="LanDisconnect" />
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
@@ -75,17 +75,17 @@
 
                         <DataTrigger Binding="{Binding Path=CheckConnectionCommand.IsExecuting}"
                                      Value="true">
-                            <Setter Property="Foreground" Value="Black"/>
+                            <Setter Property="Foreground" Value="Black" />
                             <Setter Property="Content">
                                 <Setter.Value>
-                                    <materialDesign:PackIcon Kind="Flattr"/>
+                                    <materialDesign:PackIcon Kind="Flattr" />
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
 
                         <DataTrigger Binding="{Binding Path=Connection}"
                                      Value="{x:Static dialogViewModels:ConnectionType.Unknown}">
-                            <Setter Property="Foreground" Value="Black"/>
+                            <Setter Property="Foreground" Value="Black" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
