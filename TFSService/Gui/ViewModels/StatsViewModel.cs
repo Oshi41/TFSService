@@ -20,14 +20,9 @@ namespace Gui.ViewModels
         private int _tfsCapacity;
         private int _wroteOff;
 
-        public StatsViewModel()
+        public StatsViewModel(FilterViewModel filter)
         {
-            Filter = new FilterViewModel(WorkItemTypes.Task,
-                WorkItemTypes.Pbi,
-                WorkItemTypes.Bug,
-                WorkItemTypes.Improvement,
-                WorkItemTypes.Incident,
-                WorkItemTypes.Feature);
+            Filter = new FilterViewModel(filter);
 
             Filter.FilterChanged += OnFilterChanged;
         }

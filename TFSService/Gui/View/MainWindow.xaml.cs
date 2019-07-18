@@ -30,8 +30,8 @@ namespace Gui.View
             //    });
 
 
-            var vm = new MonthCheckinsViewModel(new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
-            WindowManager.ShowDialog(vm, "Расписание на месяц", 500, 500);
+            //var vm = new MonthCheckinsViewModel(new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security"));
+            //WindowManager.ShowDialog(vm, "Расписание на месяц", 500, 500);
 
             //var tfs = new Tfs("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
             //tfs.ItemsChanged += (sender, item) => { MessageBox.Show(string.Join(", ", item.Keys.Select(x => x.Id))); };

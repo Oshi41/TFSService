@@ -58,6 +58,8 @@ namespace Gui.ViewModels
             {
                 ViewMode = settings.ViewMode;
 
+                StatsViewModel = new StatsViewModel(settings.MainFilter);
+
                 ApiObservable = await Task.Run(() => new TfsObservable(FirstConnectionViewModel.Text,
                     settings.MyWorkItems,
                     settings.MyBuilds,
@@ -88,7 +90,7 @@ namespace Gui.ViewModels
         private ITFsObservable _apiObserve;
 
         private WorkItemVm _currentTask;
-        private StatsViewModel _statsViewModel = new StatsViewModel();
+        private StatsViewModel _statsViewModel;
         private bool _isBusy = true;
         private NewResponsesBaloonViewModel _codeResponsesViewModel;
         public VisibleMode _viewMode;
@@ -264,7 +266,7 @@ namespace Gui.ViewModels
 
         private void OnLogoff(object sender, EventArgs e)
         {
-            WriteSession();
+            SaveSettings();
 
             if (TryEndWorkDay()) _apiObserve.Pause();
         }
@@ -537,7 +539,7 @@ namespace Gui.ViewModels
             }
         }
 
-        private void WriteSession()
+        private void SaveSettings()
         {
             using (var settings = Settings.Settings.Read())
             {
@@ -550,6 +552,7 @@ namespace Gui.ViewModels
                 settings.DisplayTime.AddDate(logoff, false);
 
                 settings.ViewMode = ViewMode;
+                settings.MainFilter = StatsViewModel?.Filter;
             }
         }
 

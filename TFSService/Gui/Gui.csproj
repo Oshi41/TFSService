@@ -368,7 +368,8 @@
     <Compile Include="ViewModels\DialogViewModels\MonthScheduleViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\WriteOffHoursViewModel.cs" />
-    <Compile Include="ViewModels\FilterViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterViewModel.cs" />
+    <Compile Include="ViewModels\Filter\ItemTypeMark.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\Notifications\BindableNotificationBase.cs" />
     <Compile Include="ViewModels\Notifications\ItemsAssignedBaloonViewModel.cs" />
@@ -577,7 +578,7 @@
   </Target>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

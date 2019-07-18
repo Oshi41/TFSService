@@ -11,6 +11,7 @@ using Gui.Properties;
 using Gui.ViewModels;
 using Mvvm;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using TfsAPI.Attributes;
 using TfsAPI.Extentions;
 using TfsAPI.RulesNew;
@@ -61,6 +62,7 @@ namespace Gui.Settings
         private int _oldReviewDay = 100;
         private ObservableCollection<string> _myBuilds;
         private VisibleMode _viewMode;
+        private FilterViewModel _mainFilter;
 
         #endregion
 
@@ -133,6 +135,7 @@ namespace Gui.Settings
         /// <summary>
         ///     Стратегия как выбираем таск для списывания времени
         /// </summary>
+        [JsonConverter(typeof(StringEnumConverter))]
         public WroteOffStrategy Strategy
         {
             get => _strategy;
@@ -166,10 +169,29 @@ namespace Gui.Settings
             set => Set(ref _oldReviewDay, value);
         }
 
+        /// <summary>
+        /// Отображение на главном окне (список/таблица)
+        /// </summary>
+        [JsonConverter(typeof(StringEnumConverter))]
         public VisibleMode ViewMode
         {
             get => _viewMode;
             set => SetProperty(ref _viewMode, value);
+        }
+
+        public FilterViewModel MainFilter
+        {
+            get => _mainFilter;
+            set
+            {
+                if (!Equals(value, _mainFilter))
+                {
+                    _mainFilter = new FilterViewModel(value);
+                    OnPropertyChanged();
+
+                    NotifyChanges();
+                }
+            }
         }
 
         public ObservableCollection<string> MyBuilds
@@ -261,7 +283,7 @@ namespace Gui.Settings
             return SetProperty(ref storage, value, propertyName);
         }
 
-        private void NotifyChanges(object sender, EventArgs e)
+        private void NotifyChanges(object sender = null, EventArgs e = null)
         {
             _changed = true;
         }

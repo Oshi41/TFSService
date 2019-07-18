@@ -5,19 +5,39 @@ using System.ComponentModel;
 using System.Linq;
 using Microsoft.TeamFoundation.Common;
 using Mvvm;
+using Newtonsoft.Json;
+using TfsAPI.Constants;
 
 namespace Gui.ViewModels
 {
     public class FilterViewModel : BindableBase
     {
-        public FilterViewModel(params ItemTypeMark[] types)
+        [JsonConstructor]
+        public FilterViewModel(params ItemTypeMark[] marks)
         {
-            Marks = new ObservableCollection<ItemTypeMark>(types ?? new ItemTypeMark[] { });
+            Marks = new ObservableCollection<ItemTypeMark>(marks ?? new ItemTypeMark[]
+            {
+                WorkItemTypes.Task,
+                WorkItemTypes.Pbi,
+                WorkItemTypes.Bug,
+                WorkItemTypes.Improvement,
+                WorkItemTypes.Incident,
+                WorkItemTypes.Feature,
+                WorkItemTypes.CodeReview,
+                WorkItemTypes.ReviewResponse,
+            });
 
             Marks.CollectionChanged += NotifyChanges;
 
             // Подписываемся на события
             NotifyChanges(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, Marks));
+        }
+
+        // Конструктор копирования
+        public FilterViewModel(FilterViewModel source)
+            : this(source?.Marks?.ToArray())
+        {
+            
         }
 
         public ObservableCollection<ItemTypeMark> Marks { get; }
@@ -49,43 +69,6 @@ namespace Gui.ViewModels
                 mark.IsChecked = true;
 
             FilterChanged?.Invoke(this, EventArgs.Empty);
-        }
-    }
-
-    public class ItemTypeMark : BindableBase
-    {
-        private bool _isChecked;
-        private bool _isEnabled;
-        private string _workType;
-
-        public ItemTypeMark(string workType, bool isChecked = true, bool enable = true)
-        {
-            WorkType = workType;
-            IsEnabled = enable;
-            IsChecked = isChecked;
-        }
-
-        public bool IsEnabled
-        {
-            get => _isEnabled;
-            set => SetProperty(ref _isEnabled, value);
-        }
-
-        public string WorkType
-        {
-            get => _workType;
-            set => SetProperty(ref _workType, value);
-        }
-
-        public bool IsChecked
-        {
-            get => _isChecked;
-            set => SetProperty(ref _isChecked, value);
-        }
-
-        public static implicit operator ItemTypeMark(string name)
-        {
-            return new ItemTypeMark(name);
         }
     }
 }
