@@ -25,15 +25,22 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/materialdesigntheme.radiobutton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-        
-        <controls:BindProxy x:Key="BindProxy"
+
+            <controls:BindProxy x:Key="BindProxy"
                             Data="{Binding}" />
 
-        <converters:SwitchConverter x:Key="TransitionConverter"
+            <converters:SwitchConverter x:Key="TransitionConverter"
                                     Default="0">
-            <converters:Case If="Table"
+                <converters:Case If="Table"
                              Value="1" />
-        </converters:SwitchConverter>
+            </converters:SwitchConverter>
+
+            <converters:MathCompareConverter x:Key="HoursOverflowConverter"
+                                             Operation="More"
+                                             TrueValue="{x:Static Visibility.Visible}"
+                                             FalseValue="{x:Static Visibility.Collapsed}" />
+
+            <converters:InvertBoolToVisConverter x:Key="InvertBoolToVisConverter"/>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -98,8 +105,7 @@
                                   DockPanel.Dock="Left"
                                   HorizontalAlignment="Left"
                                   VerticalAlignment="Center"
-                                  Margin="5"
-                                  ToolTip="{x:Static p:Resources.AP_MainFilter_ToolTip}" />
+                                  Margin="5"/>
 
                 <Separator />
 
@@ -255,10 +261,31 @@
                         Margin="10,10,0,0"
                         ToolTip="{x:Static p:Resources.AS_TfsInfo}" />
 
-                    <ProgressBar HorizontalAlignment="Stretch"
-                                 Maximum="{Binding Path=StatsViewModel.Capacity}"
-                                 Value="{Binding Path=StatsViewModel.WroteOff}"
-                                 Margin="5" />
+
+                    <Grid>
+                        <ProgressBar x:Name="RegularBar"
+                                     HorizontalAlignment="Stretch"
+                                     Maximum="{Binding Path=StatsViewModel.Capacity}"
+                                     Value="{Binding Path=StatsViewModel.WroteOff}"
+                                     Foreground="DarkGreen"
+                                     Margin="5" >
+                            <ProgressBar.Visibility>
+                                <MultiBinding Converter="{StaticResource HoursOverflowConverter}">
+                                    <Binding Path="StatsViewModel.Capacity"/>
+                                    <Binding Path="StatsViewModel.WroteOff"/>
+                                </MultiBinding>
+                            </ProgressBar.Visibility>
+                        </ProgressBar>
+
+                        <ProgressBar HorizontalAlignment="Stretch"
+                                     Maximum="{Binding Path=StatsViewModel.WroteOff}"
+                                     Value="{Binding Path=StatsViewModel.Capacity}"
+                                     Background="DarkOrange"
+                                     Foreground="DarkGreen"
+                                     Margin="5" 
+                                     Visibility="{Binding ElementName=RegularBar, Path=IsVisible, Converter={StaticResource InvertBoolToVisConverter}}"/>
+                    </Grid>
+                    
                 </StackPanel>
             </materialDesign:Card>
 

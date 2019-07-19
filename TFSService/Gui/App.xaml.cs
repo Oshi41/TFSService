@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Gui.Helper;
 using Gui.View;
+using Gui.ViewModels;
 using Gui.ViewModels.Notifications;
 using TfsAPI.Interfaces;
 using TfsAPI.TFS;
@@ -51,6 +52,16 @@ namespace Gui
 
         private void RunTests()
         {
+            var window = new Window
+            {
+                Content = new FilterView
+                {
+                    DataContext = new FilterViewModel(null, null)
+                }
+            };
+
+            window.ShowDialog();
+
             //var notifier = new Notifier(cfg =>
             //{
             //    cfg.PositionProvider = new PrimaryScreenPositionProvider(Corner.BottomRight, 10, 10);
@@ -96,19 +107,19 @@ namespace Gui
 
             //w.ShowDialog();
 
-            var id = 80439;
-            var api = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint Security");
+            //var id = 80439;
+            //var api = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint Security");
 
-            var item = api.FindById(id);
-            var assigned = new ItemsAssignedBaloonViewModel(new[] {item}, "Новый элемент был назначен");
+            //var item = api.FindById(id);
+            //var assigned = new ItemsAssignedBaloonViewModel(new[] {item}, "Новый элемент был назначен");
 
-            WindowManager.ShowBaloon(assigned);
+            //WindowManager.ShowBaloon(assigned);
 
 
-            var write = new WriteOffBaloonViewModel(new ScheduleWorkArgs(item, 4));
-            WindowManager.ShowBaloon(write);
+            //var write = new WriteOffBaloonViewModel(new ScheduleWorkArgs(item, 4));
+            //WindowManager.ShowBaloon(write);
 
-            var items = api.GetMyWorkItems();
+            //var items = api.GetMyWorkItems();
 
             //var response = new NewResponsesBaloonViewModel(items.Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse)),
             //    items.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)), api, "Мои проверки кода");
@@ -123,6 +134,8 @@ namespace Gui
 
             //WindowManager.ShowDialog(new TestDialogViewModel(true, true), "Wait for error", width: 300, height: 200);
             //WindowManager.ShowDialog(new TestDialogViewModel(false, false), "No error no awaiting", width: 300, height: 200);
+
+            App.Current.Shutdown();
         }
     }
 }

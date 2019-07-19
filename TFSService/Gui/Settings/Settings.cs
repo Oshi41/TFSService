@@ -221,14 +221,13 @@ namespace Gui.Settings
         {
             Settings settings;
 
-            if (File.Exists(SavePath))
+            try
             {
                 settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(SavePath), JsonSettings);
             }
-            else
+            catch (Exception e)
             {
-                Trace.WriteLine($"{nameof(Settings)}.{nameof(Read)}:Creating new settings");
-
+                Trace.WriteLine($"Error during read settings, creating new one. The exception is :\n{e}");
                 settings = new Settings();
             }
 

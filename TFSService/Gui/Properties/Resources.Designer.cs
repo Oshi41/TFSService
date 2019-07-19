@@ -19,7 +19,7 @@ namespace Gui.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -417,6 +417,24 @@ namespace Gui.Properties {
         public static string AS_EnterWriteOffHours {
             get {
                 return ResourceManager.GetString("AS_EnterWriteOffHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Состояние.
+        /// </summary>
+        public static string AS_Filter_WorkItemStates {
+            get {
+                return ResourceManager.GetString("AS_Filter_WorkItemStates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Типы рабочих элементов.
+        /// </summary>
+        public static string AS_Filter_WorkTypes {
+            get {
+                return ResourceManager.GetString("AS_Filter_WorkTypes", resourceCulture);
             }
         }
         
@@ -903,15 +921,6 @@ namespace Gui.Properties {
         public static string AS_WorkItemRules {
             get {
                 return ResourceManager.GetString("AS_WorkItemRules", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Типы рабочих элементов.
-        /// </summary>
-        public static string AS_WorkItemTypesDescr {
-            get {
-                return ResourceManager.GetString("AS_WorkItemTypesDescr", resourceCulture);
             }
         }
         

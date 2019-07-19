@@ -1,6 +1,14 @@
-﻿namespace Gui.Tests
+﻿
+
+namespace Gui.Tests
 {
+
 #if TESTS
+    using System;
+    using System.Threading.Tasks;
+    using Gui.Helper;
+    using Gui.ViewModels.DialogViewModels;
+
     internal class TestDialogViewModel : BindableExtended
     {
         private readonly bool _setError;

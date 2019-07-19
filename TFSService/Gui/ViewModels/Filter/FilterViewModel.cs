@@ -1,74 +1,92 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using Gui.ViewModels.Filter;
 using Microsoft.TeamFoundation.Common;
+using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using Microsoft.VisualStudio.Services.Common;
 using Mvvm;
 using Newtonsoft.Json;
 using TfsAPI.Constants;
+using TfsAPI.Extentions;
 
 namespace Gui.ViewModels
 {
     public class FilterViewModel : BindableBase
     {
+        public CategoryFilterViewModel WorkTypes { get; }
+        public CategoryFilterViewModel States { get; }
+
+        public event EventHandler FilterChanged;
+
         [JsonConstructor]
-        public FilterViewModel(params ItemTypeMark[] marks)
+        public FilterViewModel(CategoryFilterViewModel states, CategoryFilterViewModel workTypes)
         {
-            Marks = new ObservableCollection<ItemTypeMark>(marks ?? new ItemTypeMark[]
-            {
-                WorkItemTypes.Task,
-                WorkItemTypes.Pbi,
-                WorkItemTypes.Bug,
-                WorkItemTypes.Improvement,
-                WorkItemTypes.Incident,
-                WorkItemTypes.Feature,
-                WorkItemTypes.CodeReview,
-                WorkItemTypes.ReviewResponse,
-            });
+            WorkTypes = states ?? new CategoryFilterViewModel(
+                         Properties.Resources.AS_Filter_WorkTypes,
+                         new ItemTypeMark[]
+                         {
+                             WorkItemTypes.Task,
+                             WorkItemTypes.Pbi,
+                             WorkItemTypes.Bug,
+                             WorkItemTypes.Improvement,
+                             WorkItemTypes.Incident,
+                             WorkItemTypes.Feature,
+                             WorkItemTypes.CodeReview,
+                             WorkItemTypes.ReviewResponse
 
-            Marks.CollectionChanged += NotifyChanges;
+                         }, true);
 
-            // Подписываемся на события
-            NotifyChanges(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, Marks));
+
+            States = workTypes ?? new CategoryFilterViewModel(
+                            Properties.Resources.AS_Filter_WorkItemStates,
+                            new ItemTypeMark[]
+                            {
+                                WorkItemStates.New,
+                                WorkItemStates.Active,
+                                WorkItemStates.Resolved,
+                                WorkItemStates.Requested
+                            }, true);
+
+            WorkTypes.FilterChanged += OnFilterChanged;
+            States.FilterChanged += OnFilterChanged;
         }
 
-        // Конструктор копирования
         public FilterViewModel(FilterViewModel source)
-            : this(source?.Marks?.ToArray())
+            : this(source?.States, source?.WorkTypes)
         {
             
         }
 
-        public ObservableCollection<ItemTypeMark> Marks { get; }
-
-        public event EventHandler FilterChanged;
-
-        public string[] GetSelectedTypes()
+        private void OnFilterChanged(object sender, EventArgs e)
         {
-            return Marks
-                .Where(x => x.IsChecked)
-                .Select(x => x.WorkType)
-                .ToArray();
-        }
-
-        private void NotifyChanges(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            var old = e?.OldItems?.OfType<INotifyPropertyChanged>().ToList();
-            var added = e?.NewItems?.OfType<INotifyPropertyChanged>().ToList();
-
-            if (!old.IsNullOrEmpty()) old.ForEach(x => x.PropertyChanged -= MarkDirty);
-
-            if (!added.IsNullOrEmpty()) added.ForEach(x => x.PropertyChanged += MarkDirty);
-        }
-
-        private void MarkDirty(object sender, PropertyChangedEventArgs e)
-        {
-            if (Marks.All(x => !x.IsChecked) && sender is ItemTypeMark mark)
-                // Насильно включаем последний элемент
-                mark.IsChecked = true;
-
             FilterChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public bool Accepted(WorkItemVm item)
+        {
+            return Accepted(item?.Item);
+        }
+
+        public bool Accepted(WorkItem item)
+        {
+            if (item == null)
+                return false;
+
+            if (WorkTypes.IsEnable && !item.IsTypeOf(WorkTypes.GetSelected()))
+                return false;
+
+            if (States.IsEnable)
+            {
+                var states = States.GetSelected();
+                if (!states.Any(item.HasState))
+                    return false;
+            }
+
+            return true;
         }
     }
 }

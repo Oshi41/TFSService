@@ -7,12 +7,12 @@ namespace Gui.ViewModels
     {
         private bool _isChecked;
         private bool _isEnabled;
-        private string _workType;
+        private string _value;
 
         [JsonConstructor]
-        public ItemTypeMark(string workType, bool isChecked = true, bool isEnabled = true)
+        public ItemTypeMark(string value, bool isChecked = true, bool isEnabled = true)
         {
-            WorkType = workType;
+            Value = value;
             IsEnabled = isEnabled;
             IsChecked = isChecked;
         }
@@ -23,10 +23,10 @@ namespace Gui.ViewModels
             set => SetProperty(ref _isEnabled, value);
         }
 
-        public string WorkType
+        public string Value
         {
-            get => _workType;
-            set => SetProperty(ref _workType, value);
+            get => _value;
+            set => SetProperty(ref _value, value);
         }
 
         public bool IsChecked

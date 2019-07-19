@@ -20,7 +20,13 @@ namespace Gui.ViewModels.DialogViewModels
             _tfs = tfs;
             SpecialCommand = new ObservableCommand(CreateTask);
 
-            Searcher = new WorkItemSearcher(_tfs, WorkItemTypes.Task)
+            Searcher = new WorkItemSearcher(_tfs,
+                new ItemTypeMark[] { WorkItemTypes.Task },
+                new ItemTypeMark[]
+                {
+                    WorkItemStates.New,
+                    WorkItemStates.Active,
+                })
             {
                 Help = Resources.AS_ChooseTask
             };

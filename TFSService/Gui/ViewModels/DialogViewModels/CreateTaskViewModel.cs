@@ -19,11 +19,20 @@ namespace Gui.ViewModels.DialogViewModels
         {
             _tfs = tfs;
             // Ищем для привязки только указанные типы
-            Searcher = new WorkItemSearcher(tfs,
-                WorkItemTypes.Pbi,
-                WorkItemTypes.Bug,
-                WorkItemTypes.Improvement,
-                WorkItemTypes.Incident)
+            Searcher = new WorkItemSearcher(
+                _tfs,
+                new ItemTypeMark[]
+                {
+                    WorkItemTypes.Pbi,
+                    WorkItemTypes.Bug,
+                    WorkItemTypes.Improvement,
+                    WorkItemTypes.Incident
+                },
+                new ItemTypeMark[]
+                {
+                    WorkItemStates.Active,
+                    WorkItemStates.Resolved,
+                })
             {
                 Help = Resources.AS_ChooseParentItem
             };

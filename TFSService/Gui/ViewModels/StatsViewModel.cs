@@ -74,18 +74,14 @@ namespace Gui.ViewModels
             var all = await Task.Run(() => api.GetMyWorkItems().Select(x => new WorkItemVm(x)));
 
             _origin.Clear();
-            _origin.AddRange(all.Where(x =>
-                !x.Item.IsTypeOf(WorkItemTypes.CodeReview, WorkItemTypes.ReviewResponse)));
+            _origin.AddRange(all);
 
             OnFilterChanged();
         }
 
         private void OnFilterChanged(object sender = null, EventArgs e = null)
         {
-            var types = Filter.GetSelectedTypes();
-
-            MyItems = new ObservableCollection<WorkItemVm>(_origin
-                .Where(x => x.Item.IsTypeOf(types)));
+            MyItems = new ObservableCollection<WorkItemVm>(_origin.Where(x => Filter.Accepted(x.Item)));
         }
     }
 }

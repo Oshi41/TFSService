@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="Gui.View.FilterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Gui.View"
+             xmlns:viewModels="clr-namespace:Gui.ViewModels"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:p="clr-namespace:Gui.Properties"
+             xmlns:converters="clr-namespace:Gui.Converters"
+             xmlns:constants="clr-namespace:TfsAPI.Constants;assembly=TfsAPI"
+             xmlns:filter="clr-namespace:Gui.View.Filter"
+             mc:Ignorable="d"
+             d:DesignHeight="350" d:DesignWidth="350"
+             d:DataContext="{d:DesignInstance Type={x:Type viewModels:FilterViewModel}}">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:SwitchConverter x:Key="StateColorConverter"
+                                        Default="{StaticResource MaterialDesignToolForeground}">
+                <converters:Case If="{x:Static constants:WorkItemStates.Active}"
+                                 Value="{x:Static Brushes.Blue}"/>
+
+                <converters:Case If="{x:Static constants:WorkItemStates.Resolved}"
+                                 Value="{x:Static Brushes.DarkOrange}"/>
+
+                <converters:Case If="{x:Static constants:WorkItemStates.New}"
+                                 Value="{x:Static Brushes.DarkGreen}"/>
+            </converters:SwitchConverter>
+
+            <Style TargetType="{x:Type TextBlock}"
+                   BasedOn="{StaticResource {x:Type TextBlock}}">
+                <Setter Property="TextWrapping" Value="Wrap"/>
+            </Style>
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+
+    <Grid>
+        <materialDesign:PopupBox StaysOpen="True">
+            <materialDesign:PopupBox.ToggleContent>
+                <materialDesign:PackIcon Kind="Filter"
+                                         Margin="5,0" />
+            </materialDesign:PopupBox.ToggleContent>
+
+            <ScrollViewer MaxWidth="250"
+                          MaxHeight="250"
+                          Padding="10"
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto">
+
+                <StackPanel Orientation="Vertical">
+                    <filter:CategoryFilterView DataContext="{Binding Path=WorkTypes}">
+                        <filter:CategoryFilterView.Resources>
+                            <DataTemplate DataType="{x:Type viewModels:ItemTypeMark}">
+                                <CheckBox IsChecked="{Binding Path=IsChecked}"
+                                          IsEnabled="{Binding Path=IsEnabled}">
+                                    <DockPanel>
+                                        <ContentControl
+                                            Content="{Binding Path=Value, Converter={StaticResource WorkTypeIconConverter}}"
+                                            DockPanel.Dock="Left"
+                                            Margin="0,0,3,0" />
+                                        <TextBlock Text="{Binding Path=Value}" />
+                                    </DockPanel>
+                                </CheckBox>
+                            </DataTemplate>
+                        </filter:CategoryFilterView.Resources>
+                    </filter:CategoryFilterView>
+
+                    <filter:CategoryFilterView Margin="0,20,0,0"
+                                               DataContext="{Binding Path=States}">
+                        <filter:CategoryFilterView.Resources>
+                            <DataTemplate DataType="{x:Type viewModels:ItemTypeMark}">
+                                <CheckBox IsChecked="{Binding Path=IsChecked}"
+                                          IsEnabled="{Binding Path=IsEnabled}"
+                                          Content="{Binding Path=Value}"
+                                          Foreground="{Binding Path=Value, Converter={StaticResource StateColorConverter}}"/>
+                            </DataTemplate>
+                        </filter:CategoryFilterView.Resources>
+                    </filter:CategoryFilterView>
+                </StackPanel>
+            </ScrollViewer>
+        </materialDesign:PopupBox>
+    </Grid>
+</UserControl>

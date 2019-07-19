@@ -368,6 +368,7 @@
     <Compile Include="ViewModels\DialogViewModels\MonthScheduleViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\WriteOffHoursViewModel.cs" />
+    <Compile Include="ViewModels\Filter\CategoryFilterViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterViewModel.cs" />
     <Compile Include="ViewModels\Filter\ItemTypeMark.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -388,7 +389,10 @@
     <Compile Include="View\DialogWindow.xaml.cs">
       <DependentUpon>DialogWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\FilterView.xaml.cs">
+    <Compile Include="View\Filter\CategoryFilterView.xaml.cs">
+      <DependentUpon>CategoryFilterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Filter\FilterView.xaml.cs">
       <DependentUpon>FilterView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\FirstConnectView.xaml.cs">
@@ -447,7 +451,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\FilterView.xaml">
+    <Page Include="View\Filter\CategoryFilterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Filter\FilterView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -578,7 +586,7 @@
   </Target>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

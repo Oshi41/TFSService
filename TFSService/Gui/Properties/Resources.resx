@@ -358,7 +358,7 @@
   <data name="AS_CheckConnection" xml:space="preserve">
     <value>Проверить соединение</value>
   </data>
-  <data name="AS_WorkItemTypesDescr" xml:space="preserve">
+  <data name="AS_Filter_WorkTypes" xml:space="preserve">
     <value>Типы рабочих элементов</value>
   </data>
   <data name="AS_ConnectionEstablished" xml:space="preserve">
@@ -417,5 +417,8 @@
   </data>
   <data name="AP_MainView_Iteration_Column" xml:space="preserve">
     <value>Итерация</value>
+  </data>
+  <data name="AS_Filter_WorkItemStates" xml:space="preserve">
+    <value>Состояние</value>
   </data>
 </root>

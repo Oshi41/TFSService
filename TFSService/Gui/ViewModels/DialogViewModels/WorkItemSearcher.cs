@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Gui.Helper;
+using Gui.ViewModels.Filter;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Constants;
@@ -19,7 +20,7 @@ namespace Gui.ViewModels.DialogViewModels
         /// </summary>
         /// <param name="api"></param>
         /// <param name="types">Типы элементов, который хочу вывести. Cм. <see cref="WorkItemTypes" /></param>
-        public WorkItemSearcher(ITfsApi api, params ItemTypeMark[] types)
+        public WorkItemSearcher(ITfsApi api, IEnumerable<ItemTypeMark> types, IEnumerable<ItemTypeMark> states = null)
         {
             _api = api;
             _action = new TimedAction<string, IList<WorkItemVm>>(PerformSearch);
@@ -27,16 +28,20 @@ namespace Gui.ViewModels.DialogViewModels
 
             _items = new List<WorkItemVm>();
 
-            Filter = new FilterViewModel(types?.ToArray());
+            Filter = new FilterViewModel(
+                new CategoryFilterViewModel(
+                    Properties.Resources.AS_Filter_WorkTypes,
+                    types,
+                    true, 
+                    false), 
+                new CategoryFilterViewModel(Properties.Resources.AS_Filter_WorkItemStates,
+                    states,
+                    true,
+                    false));
             Filter.FilterChanged += (sender, args) => UpdateByFilter(true);
 
-            var mine = _api.GetMyWorkItems();
-
-            if (!types.IsNullOrEmpty())
-            {
-                var workTypes = types.Select(x => x.WorkType).ToArray();
-                mine = mine.Where(x => x.IsTypeOf(workTypes)).ToList();
-            }
+            var mine = _api
+                .GetMyWorkItems();
 
             _originItems.AddRange(mine.Select(x => new WorkItemVm(x)));
             UpdateByFilter();
@@ -121,7 +126,7 @@ namespace Gui.ViewModels.DialogViewModels
             // Не получилось - ищем по строке
             else
             {
-                var finded = _api.Search(arg, Filter.GetSelectedTypes());
+                var finded = _api.Search(arg, Filter.WorkTypes.GetSelected());
                 foreach (var item in finded) list.Add(item);
             }
 
@@ -148,10 +153,8 @@ namespace Gui.ViewModels.DialogViewModels
             }
             else
             {
-                var types = Filter.GetSelectedTypes();
-
                 Items = _originItems
-                    .Where(x => x.Item.IsTypeOf(types))
+                    .Where(x => Filter.Accepted(x.Item))
                     .ToList();
             }
         }
