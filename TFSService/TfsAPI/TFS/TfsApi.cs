@@ -52,8 +52,19 @@ namespace TfsAPI.TFS
                 Trace.WriteLine($"{nameof(TfsApi)}.{nameof(SaveElement)}: item is null");
                 return;
             }
+            
 #if DEBUG
             Trace.WriteLine($"Imagine that we have saved {item.Id} item");
+
+            try
+            {
+                item.Save();
+                item.SyncToLatest();
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine(e);
+            }
 
 #else
             if (_itemStore.UserDisplayName != Name)
@@ -114,6 +125,8 @@ namespace TfsAPI.TFS
 
         public Revision WriteHours(WorkItem item, byte hours, bool setActive)
         {
+            item.SyncToLatest();
+
             item.AddHours(hours, setActive);
             SaveElement(item);
             Trace.WriteLine(

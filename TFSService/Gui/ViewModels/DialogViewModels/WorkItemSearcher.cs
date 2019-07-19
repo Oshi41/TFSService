@@ -33,11 +33,13 @@ namespace Gui.ViewModels.DialogViewModels
                     Properties.Resources.AS_Filter_WorkTypes,
                     types,
                     true, 
-                    false), 
+                    false,
+                    true), 
                 new CategoryFilterViewModel(Properties.Resources.AS_Filter_WorkItemStates,
                     states,
                     true,
-                    false));
+                    false,
+                    true));
             Filter.FilterChanged += (sender, args) => UpdateByFilter(true);
 
             var mine = _api

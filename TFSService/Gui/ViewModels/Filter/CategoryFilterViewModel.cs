@@ -28,9 +28,17 @@ namespace Gui.ViewModels.Filter
         [JsonConstructor]
         public CategoryFilterViewModel(string title, 
             IEnumerable<ItemTypeMark> marks, 
-            bool isEnable, 
-            bool canDisable = true,
-            bool shouldRestrictNotSelected = true)
+            bool isEnable)
+            : this(title, marks, isEnable, true, true)
+        {
+            
+        }
+
+        public CategoryFilterViewModel(string title, 
+            IEnumerable<ItemTypeMark> marks, 
+            bool isEnable,
+            bool canDisable,
+            bool shouldRestrictNotSelected)
         {
             Title = title;
             CanDisable = canDisable;
@@ -60,7 +68,7 @@ namespace Gui.ViewModels.Filter
         public string Title { get; }
         
         [JsonIgnore]
-        public bool CanDisable { get; }
+        public bool CanDisable { get; } = true;
 
         public event EventHandler FilterChanged;
 
