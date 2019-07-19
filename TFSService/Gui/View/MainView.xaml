@@ -179,6 +179,7 @@
                         <materialDesign:SlideWipe Direction="Right" />
                     </materialDesign:TransitionerSlide.BackwardWipe>
                     <DataGrid ItemsSource="{Binding Path=StatsViewModel.MyItems}"
+                              IsReadOnly="True"
                               HorizontalContentAlignment="Stretch"
                               HorizontalAlignment="Stretch"
                               CanUserDeleteRows="False"
@@ -186,6 +187,29 @@
                               AutoGenerateColumns="False"
                               SelectionUnit="FullRow"
                               SelectionMode="Single">
+                        <DataGrid.ItemContainerStyle>
+                            <Style TargetType="{x:Type DataGridRow}"
+                                   BasedOn="{StaticResource {x:Type DataGridRow}}">
+
+                                <Setter Property="ContextMenu" Value="{x:Null}" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=Item.Type.Name}"
+                                                 Value="{x:Static constants:WorkItemTypes.Task}">
+                                        <Setter Property="ContextMenu">
+                                            <Setter.Value>
+                                                <ContextMenu>
+                                                    <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
+                                                              Command="{Binding Source={StaticResource BindProxy}, Path=Data.WriteOffHoursCommand}"
+                                                              CommandParameter="{Binding}" />
+                                                </ContextMenu>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.ItemContainerStyle>
+
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="{x:Static p:Resources.AP_MainView_Element_Column}"
                                                     SortMemberPath="Item.Type.Name" Width="Auto">
