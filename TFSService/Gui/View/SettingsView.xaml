@@ -93,16 +93,28 @@
 
             <DockPanel Margin="0,20,0,10">
                 <Button DockPanel.Dock="Right"
-                        Content="..."
-                        VerticalAlignment="Center"
-                        Height="{Binding ElementName=LogText, Path=ActualHeight}"
+                        Content="{x:Static p:Resources.AS_TryChange}"
+                        VerticalAlignment="Bottom"
                         Command="{Binding Path=ChooseLogFileCommand}" />
 
-                <TextBox x:Name="LogText"
+                <HeaderedContentControl VerticalAlignment="Top" 
+                                        Header="{x:Static p:Resources.AS_LogPath}">
+                    <HeaderedContentControl.Content>
+                        <TextBlock VerticalAlignment="Top">
+                            <Hyperlink Command="{Binding Path=OpenLogsFolderCommand}">
+                                <Run Text="{Binding Path=LogsPath, Mode=OneWay}"/>
+                            </Hyperlink>
+                        </TextBlock>
+                    </HeaderedContentControl.Content>
+                </HeaderedContentControl>
+
+                <!--<TextBox x:Name="LogText"
                          IsReadOnly="True"
                          Text="{Binding Path=LogsPath, UpdateSourceTrigger=PropertyChanged}"
                          materialDesign:HintAssist.Hint="{x:Static p:Resources.AS_LogPath}"
-                         materialDesign:HintAssist.IsFloating="True" />
+                         materialDesign:HintAssist.IsFloating="True" >
+
+                </TextBox>-->
             </DockPanel>
 
 

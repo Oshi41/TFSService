@@ -520,6 +520,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Папка с логами программы.
+        /// </summary>
+        public static string AS_LogsFolderPath {
+            get {
+                return ResourceManager.GetString("AS_LogsFolderPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Трудосгорание за месяц.
         /// </summary>
         public static string AS_MonthlyCapacity {

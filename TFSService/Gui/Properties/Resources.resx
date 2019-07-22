@@ -421,4 +421,7 @@
   <data name="AS_Filter_WorkItemStates" xml:space="preserve">
     <value>Состояние</value>
   </data>
+  <data name="AS_LogsFolderPath" xml:space="preserve">
+    <value>Папка с логами программы</value>
+  </data>
 </root>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Gui.Helper;
@@ -33,6 +34,7 @@ namespace Gui.ViewModels.DialogViewModels
             ConnectCommand = new ObservableCommand(OnConnect);
             SubmitCommand = new ObservableCommand(OnSave, OnCanSave);
             ChooseLogFileCommand = new ObservableCommand(OnChooseFile);
+            OpenLogsFolderCommand = new ObservableCommand(() => Process.Start(LogsPath));
 
 
             Init(currentConnection);
@@ -167,6 +169,8 @@ namespace Gui.ViewModels.DialogViewModels
             get => _oldReviewDay;
             set => SetProperty(ref _oldReviewDay, value);
         }
+
+        public ICommand OpenLogsFolderCommand { get; }
 
         #endregion
     }
