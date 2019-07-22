@@ -16,19 +16,25 @@ namespace TfsAPI.Extentions
         public static bool IsTermwiseEquals(this IEnumerable source, IEnumerable sequence,
             IEqualityComparer<object> comparer = null)
         {
+            return IsTermwiseEquals(source.OfType<object>(), sequence.OfType<object>(), comparer);
+        }
+
+        public static bool IsTermwiseEquals<T>(this IEnumerable<T> source, IEnumerable<T> sequence,
+            IEqualityComparer<T> comparer = null)
+        {
             if (source == null && sequence == null)
                 return true;
 
             if (source == null || sequence == null)
                 return false;
 
-            var x = source.OfType<object>().ToList();
-            var y = sequence.OfType<object>().ToList();
+            var x = source.ToList();
+            var y = sequence.ToList();
 
-            if (x.Count() != y.Count())
+            if (x.Count != y.Count)
                 return false;
 
-            var except = x.Except(y, comparer ?? EqualityComparer<object>.Default);
+            var except = x.Except(y, comparer ?? EqualityComparer<T>.Default);
 
             return !except.Any();
         }

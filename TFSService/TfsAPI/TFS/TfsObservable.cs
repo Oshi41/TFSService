@@ -35,11 +35,17 @@ namespace TfsAPI.TFS
             _currentItem = currentItem;
             _rules = rules;
             _versionControl = Project.GetService<VersionControlServer>();
-            _hourTimer = new Timer(1000 * 60 * 60);
-            _hourTimer.Elapsed += (sender, args) => RequestUpdate(true);
 
-            _itemsTimer = new Timer(1000 * 60 * coolDown);
-            _hourTimer.Elapsed += (sender, args) => RequestUpdate();
+            _resumeTimer.AddAction(TimeSpan.FromMinutes(coolDown), RequestUpdate);
+            _resumeTimer.AddAction(TimeSpan.FromHours(1),
+                () =>
+                {
+                    // Списываю часы
+                    RaiseWriteOffEvent();
+
+                    // обновляю рабочие элементы
+                    RequestUpdate();
+                });
 
             SystemEvents.SessionSwitch += OnSessionSwitched;
             AppDomain.CurrentDomain.ProcessExit += (sender, e) => Logoff?.Invoke(this, e);
@@ -67,42 +73,11 @@ namespace TfsAPI.TFS
             }
         }
 
-        private void RequestUpdate(bool timerEllapsed)
-        {
-            // Находимся в режиме ожилания
-            if (_paused) return;
-
-            // По запросу таймера спишем время
-            if (timerEllapsed) RaiseWriteOffEvent();
-
-            var current = GetMyWorkItems();
-
-            var added = current.Except(MyItems, _idComparer).ToList();
-            var removed = MyItems.Except(current, _idComparer).ToList();
-
-            TryRaiseItemsAdded(added);
-            _myItems.AddRange(added);
-
-            TryRaiseItemsRemoved(removed);
-            removed.ForEach(x => _myItems.Remove(x));
-
-            // Обновляю нетронутые элементы по данным из TFS
-            UpdateAndSetItems(current);
-
-            // Обновляю данные по билдам
-            UpdateBuilds();
-
-            // Т.к. правила проверять постоянно не нужно
-            if (timerEllapsed)
-                // Проверяем правила
-                CheckRules();
-        }
-
         #region Fields
 
+        private readonly ResumeTimer.ResumeTimer _resumeTimer = new ResumeTimer.ResumeTimer();
+
         private readonly VersionControlServer _versionControl;
-        private readonly Timer _hourTimer;
-        private readonly Timer _itemsTimer;
         private readonly Func<WorkItem> _currentItem;
         private readonly Func<IList<IRule>> _rules;
 
@@ -141,8 +116,7 @@ namespace TfsAPI.TFS
             RequestUpdate();
 
             _versionControl.CommitCheckin += OnCheckIn;
-            _hourTimer.Start();
-            _itemsTimer.Start();
+            _resumeTimer.Start();
         }
 
         public void Pause()
@@ -154,13 +128,19 @@ namespace TfsAPI.TFS
             _paused = true;
 
             _versionControl.CommitCheckin -= OnCheckIn;
-            _hourTimer.Stop();
-            _itemsTimer.Stop();
+            _resumeTimer.Pause();
         }
 
         public void RequestUpdate()
         {
-            RequestUpdate(false);
+            // Обновляю рабочие элемениты
+            UpdateWorkItems();
+
+            // Обновляю список моих билдов
+            UpdateBuilds();
+
+            // Проверяю правила
+            CheckRules();
         }
 
         #endregion
@@ -230,6 +210,23 @@ namespace TfsAPI.TFS
         #endregion
 
         #region Updatings
+
+        private void UpdateWorkItems()
+        {
+            var current = GetMyWorkItems();
+
+            var added = current.Except(MyItems, _idComparer).ToList();
+            var removed = MyItems.Except(current, _idComparer).ToList();
+
+            TryRaiseItemsAdded(added);
+            _myItems.AddRange(added);
+
+            TryRaiseItemsRemoved(removed);
+            removed.ForEach(x => _myItems.Remove(x));
+
+            // Обновляю нетронутые элементы по данным из TFS
+            UpdateAndSetItems(current);
+        }
 
         /// <summary>
         ///     Запускаем событие списания часа
