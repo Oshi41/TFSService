@@ -424,4 +424,7 @@
   <data name="AS_LogsFolderPath" xml:space="preserve">
     <value>Папка с логами программы</value>
   </data>
+  <data name="AS_ObservableItems_Title" xml:space="preserve">
+    <value>Наблюдаемые рабочие элементы</value>
+  </data>
 </root>

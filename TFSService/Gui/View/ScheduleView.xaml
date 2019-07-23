@@ -11,6 +11,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:b="clr-namespace:Gui.Behaviors"
              xmlns:tfs="clr-namespace:Microsoft.TeamFoundation.WorkItemTracking.Client;assembly=Microsoft.TeamFoundation.WorkItemTracking.Client"
+             xmlns:controls="clr-namespace:Gui.View.Controls"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type={x:Type dialogViewModels:MonthCheckinsViewModel}}">
@@ -41,15 +42,7 @@
     <materialDesign:DialogHost IsOpen="{Binding Path=IsBusy}">
 
         <materialDesign:DialogHost.DialogContent>
-            <StackPanel Orientation="Vertical"
-                        Margin="10">
-                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
-                             Maximum="10"
-                             Value="5"
-                             IsIndeterminate="True" />
-                <TextBlock Text="{x:Static p:Resources.AS_Load}"
-                           Margin="0,5" />
-            </StackPanel>
+            <controls:AwaitingContent/>
         </materialDesign:DialogHost.DialogContent>
 
         <Grid Background="White">

@@ -21,6 +21,22 @@ namespace Gui.ViewModels.DialogViewModels
         /// <param name="api"></param>
         /// <param name="types">Типы элементов, который хочу вывести. Cм. <see cref="WorkItemTypes" /></param>
         public WorkItemSearcher(ITfsApi api, IEnumerable<ItemTypeMark> types, IEnumerable<ItemTypeMark> states = null)
+            : this(api, new FilterViewModel(
+                new CategoryFilterViewModel(
+                    Properties.Resources.AS_Filter_WorkTypes,
+                    types,
+                    true,
+                    false,
+                    true),
+                new CategoryFilterViewModel(Properties.Resources.AS_Filter_WorkItemStates,
+                    states,
+                    true,
+                    false,
+                    true)))
+        {
+        }
+
+        public WorkItemSearcher(ITfsApi api, FilterViewModel filter)
         {
             _api = api;
             _action = new TimedAction<string, IList<WorkItemVm>>(PerformSearch);
@@ -28,18 +44,7 @@ namespace Gui.ViewModels.DialogViewModels
 
             _items = new List<WorkItemVm>();
 
-            Filter = new FilterViewModel(
-                new CategoryFilterViewModel(
-                    Properties.Resources.AS_Filter_WorkTypes,
-                    types,
-                    true, 
-                    false,
-                    true), 
-                new CategoryFilterViewModel(Properties.Resources.AS_Filter_WorkItemStates,
-                    states,
-                    true,
-                    false,
-                    true));
+            Filter = new FilterViewModel(filter);
             Filter.FilterChanged += (sender, args) => UpdateByFilter(true);
 
             var mine = _api

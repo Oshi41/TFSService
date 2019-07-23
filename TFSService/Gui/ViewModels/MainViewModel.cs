@@ -35,6 +35,7 @@ namespace Gui.ViewModels
             UpdateCommand = ObservableCommand.FromAsyncHandler(Update);
             SettingsCommand = new ObservableCommand(ShowSettings);
             WriteOffHoursCommand = new ObservableCommand(OnWriteHours);
+            ObservableItemsCommand = new ObservableCommand(OnShowObservableItems);
 
             Init();
         }
@@ -208,6 +209,11 @@ namespace Gui.ViewModels
         ///     Принудительно списываю время
         /// </summary>
         public ICommand WriteOffHoursCommand { get; }
+        
+        /// <summary>
+        /// Наблюдаемые элементы
+        /// </summary>
+        public ICommand ObservableItemsCommand { get; }
 
         #endregion
 
@@ -252,6 +258,19 @@ namespace Gui.ViewModels
             {
                 var selected = vm.ChooseTaskVm.Searcher.Selected;
                 _apiObserve.WriteHours(selected, (byte) vm.Hours, true);
+            }
+        }
+
+        private void OnShowObservableItems()
+        {
+            var vm = new ObservingWorkItemsViewModel(_apiObserve, Settings.Settings.Read().ObservingItems);
+
+            if (WindowManager.ShowDialog(vm, Resources.AS_ObservableItems_Title, width: 800, height:400) == true)
+            {
+                using (var settings = Settings.Settings.Read())
+                {
+                    settings.ObservingItems = new ObservableCollection<IObservingItem>(vm.ObservingItems.Select(x => new ObservingItemJson(x)));
+                }
             }
         }
 

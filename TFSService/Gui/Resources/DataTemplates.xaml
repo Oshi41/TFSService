@@ -145,4 +145,8 @@
         <view:FilterView />
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type dialogViewModels:ObservingWorkItemsViewModel}">
+        <view:ObservingWorkItemsView/>
+    </DataTemplate>
+
 </ResourceDictionary>

@@ -29,10 +29,10 @@
             <controls:BindProxy x:Key="BindProxy"
                             Data="{Binding}" />
 
-            <converters:SwitchConverter x:Key="TransitionConverter"
-                                    Default="0">
-                <converters:Case If="Table"
-                             Value="1" />
+            <converters:SwitchConverter x:Key="IsTaskConverter"
+                                        Default="Collapsed">
+                <converters:Case If="{x:Static constants:WorkItemTypes.Task}"
+                                 Value="Visible" />
             </converters:SwitchConverter>
 
             <converters:MathCompareConverter x:Key="HoursOverflowConverter"
@@ -89,6 +89,9 @@
                     <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
                               Command="{Binding Path=WriteOffHoursCommand}" />
                     <Separator />
+                    <MenuItem Header="{x:Static p:Resources.AS_ObservableItems_Title}"
+                              Command="{Binding Path=ObservableItemsCommand}" />
+                    <Separator/>
                     <MenuItem Header="{x:Static p:Resources.AS_CloseCompletedReviewes}"
                               Command="{Binding Path=CodeResponsesViewModel.CloseReviewes}" />
                     <MenuItem Header="{x:Static p:Resources.AS_CloseOldReviews}"
@@ -130,131 +133,17 @@
 
             </ToolBar>
 
-            <materialDesign:Transitioner Grid.Row="2"
-                                         SelectedIndex="{Binding Path=ViewMode, Converter={StaticResource TransitionConverter}}">
-                <materialDesign:TransitionerSlide>
-                    <materialDesign:TransitionerSlide.ForwardWipe>
-                        <materialDesign:SlideWipe Direction="Left" />
-                    </materialDesign:TransitionerSlide.ForwardWipe>
-                    <materialDesign:TransitionerSlide.BackwardWipe>
-                        <materialDesign:SlideWipe Direction="Right" />
-                    </materialDesign:TransitionerSlide.BackwardWipe>
-                    <ListView BorderThickness="2"
-                              BorderBrush="Black"
-                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                              ScrollViewer.VerticalScrollBarVisibility="Auto"
-                              HorizontalContentAlignment="Stretch"
-                              HorizontalAlignment="Stretch"
-                              ItemsSource="{Binding Path=StatsViewModel.MyItems}">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListViewItem}"
-                                   BasedOn="{StaticResource {x:Type ListViewItem}}">
-
-                                <Setter Property="ContextMenu" Value="{x:Null}" />
-
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Path=Item.Type.Name}"
-                                                 Value="{x:Static constants:WorkItemTypes.Task}">
-                                        <Setter Property="ContextMenu">
-                                            <Setter.Value>
-                                                <ContextMenu>
-                                                    <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
-                                                              Command="{Binding Source={StaticResource BindProxy}, Path=Data.WriteOffHoursCommand}"
-                                                              CommandParameter="{Binding}" />
-                                                </ContextMenu>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                    </ListView>
-                </materialDesign:TransitionerSlide>
-
-                <materialDesign:TransitionerSlide>
-                    <materialDesign:TransitionerSlide.ForwardWipe>
-                        <materialDesign:SlideWipe Direction="Left" />
-                    </materialDesign:TransitionerSlide.ForwardWipe>
-                    <materialDesign:TransitionerSlide.BackwardWipe>
-                        <materialDesign:SlideWipe Direction="Right" />
-                    </materialDesign:TransitionerSlide.BackwardWipe>
-                    <DataGrid ItemsSource="{Binding Path=StatsViewModel.MyItems}"
-                              IsReadOnly="True"
-                              HorizontalContentAlignment="Stretch"
-                              HorizontalAlignment="Stretch"
-                              CanUserDeleteRows="False"
-                              CanUserAddRows="False"
-                              AutoGenerateColumns="False"
-                              SelectionUnit="FullRow"
-                              SelectionMode="Single">
-                        <DataGrid.ItemContainerStyle>
-                            <Style TargetType="{x:Type DataGridRow}"
-                                   BasedOn="{StaticResource {x:Type DataGridRow}}">
-
-                                <Setter Property="ContextMenu" Value="{x:Null}" />
-
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Path=Item.Type.Name}"
-                                                 Value="{x:Static constants:WorkItemTypes.Task}">
-                                        <Setter Property="ContextMenu">
-                                            <Setter.Value>
-                                                <ContextMenu>
-                                                    <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
-                                                              Command="{Binding Source={StaticResource BindProxy}, Path=Data.WriteOffHoursCommand}"
-                                                              CommandParameter="{Binding}" />
-                                                </ContextMenu>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </DataGrid.ItemContainerStyle>
-
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="{x:Static p:Resources.AP_MainView_Element_Column}"
-                                                    SortMemberPath="Item.Type.Name" Width="Auto">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <ContentControl
-                                                Content="{Binding Path=Item.Type.Name, Converter={StaticResource WorkTypeIconConverter}}"
-                                                Margin="5"
-                                                VerticalAlignment="Center" />
-                                            <TextBlock Grid.Column="1"
-                                                       Text="{Binding Path=Item.Type.Name}"
-                                                       VerticalAlignment="Center" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_Id_Column}"
-                                                Binding="{Binding Path=Item.Id}" Width="Auto" MinWidth="40" />
-                            <DataGridTemplateColumn Header="{x:Static p:Resources.AP_MainView_Title_Column}"
-                                                    Width="300" MinWidth="100">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock>
-                                            <Hyperlink Command="{Binding Path=WebCommand}">
-                                                <Run Text="{Binding Path=Item.Title, Mode=OneWay}" />
-                                            </Hyperlink>
-                                        </TextBlock>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_State_Column}"
-                                                Binding="{Binding Path=Item.State}" Width="Auto" MinWidth="40" />
-                            <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_Area_Column}"
-                                                Binding="{Binding Path=Item.AreaPath}" Width="Auto" MinWidth="40" />
-                            <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_Iteration_Column}"
-                                                Binding="{Binding Path=Item.IterationPath}" Width="Auto" MinWidth="40" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </materialDesign:TransitionerSlide>
-            </materialDesign:Transitioner>
+            <controls:WorkItemsView Grid.Row="2"
+                                    ViewMode="{Binding Path=ViewMode}"
+                                    Items="{Binding Path=StatsViewModel.MyItems}">
+                <controls:WorkItemsView.ItemMenu>
+                    <ContextMenu Visibility="{Binding Path=Item.Type.Name, Converter={StaticResource IsTaskConverter}}">
+                        <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
+                                  Command="{Binding Source={StaticResource BindProxy}, Path=Data.WriteOffHoursCommand}"
+                                  CommandParameter="{Binding}" />
+                    </ContextMenu>
+                </controls:WorkItemsView.ItemMenu>
+            </controls:WorkItemsView>
 
             <materialDesign:Card Grid.Row="3">
 

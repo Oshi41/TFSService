@@ -1,0 +1,123 @@
+﻿<UserControl x:Class="Gui.View.Controls.WorkItemsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Gui.View.Controls"
+             xmlns:constants="clr-namespace:TfsAPI.Constants;assembly=TfsAPI"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:p="clr-namespace:Gui.Properties"
+             xmlns:converters="clr-namespace:Gui.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             x:Name="MainControl">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+
+            <converters:SwitchConverter x:Key="TransitionConverter"
+                                        Default="0">
+                <converters:Case If="Table"
+                                 Value="1" />
+            </converters:SwitchConverter>
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+
+    <materialDesign:Transitioner SelectedIndex="{Binding ElementName=MainControl, Path=ViewMode, Converter={StaticResource TransitionConverter}}">
+        <materialDesign:TransitionerSlide>
+            <materialDesign:TransitionerSlide.ForwardWipe>
+                <materialDesign:SlideWipe Direction="Left" />
+            </materialDesign:TransitionerSlide.ForwardWipe>
+            <materialDesign:TransitionerSlide.BackwardWipe>
+                <materialDesign:SlideWipe Direction="Right" />
+            </materialDesign:TransitionerSlide.BackwardWipe>
+            <ListView BorderThickness="2"
+                      BorderBrush="Black"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      HorizontalContentAlignment="Stretch"
+                      HorizontalAlignment="Stretch"
+                      ItemsSource="{Binding ElementName=MainControl, Path=Items}"
+                      SelectedValue="{Binding ElementName=MainControl, Path=Selected}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}"
+                                   BasedOn="{StaticResource {x:Type ListViewItem}}">
+                        <Setter Property="ContextMenu" Value="{Binding ElementName=MainControl, Path=ItemMenu}" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </materialDesign:TransitionerSlide>
+
+        <materialDesign:TransitionerSlide>
+            <materialDesign:TransitionerSlide.ForwardWipe>
+                <materialDesign:SlideWipe Direction="Left" />
+            </materialDesign:TransitionerSlide.ForwardWipe>
+            <materialDesign:TransitionerSlide.BackwardWipe>
+                <materialDesign:SlideWipe Direction="Right" />
+            </materialDesign:TransitionerSlide.BackwardWipe>
+            <DataGrid ItemsSource="{Binding ElementName=MainControl, Path=Items}"
+                      SelectedValue="{Binding ElementName=MainControl, Path=Selected}"
+                      IsReadOnly="True"
+                      HorizontalContentAlignment="Stretch"
+                      HorizontalAlignment="Stretch"
+                      CanUserDeleteRows="False"
+                      CanUserAddRows="False"
+                      AutoGenerateColumns="False"
+                      SelectionUnit="FullRow"
+                      SelectionMode="Single">
+                <DataGrid.ItemContainerStyle>
+                    <Style TargetType="{x:Type DataGridRow}"
+                                   BasedOn="{StaticResource {x:Type DataGridRow}}">
+                        <Setter Property="ContextMenu" Value="{Binding ElementName=MainControl, Path=ItemMenu}" />
+                    </Style>
+                </DataGrid.ItemContainerStyle>
+
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="{x:Static p:Resources.AP_MainView_Element_Column}"
+                                                    SortMemberPath="Item.Type.Name" 
+                                                    Width="Auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ContentControl
+                                                Content="{Binding Path=Item.Type.Name, Converter={StaticResource WorkTypeIconConverter}}"
+                                                Margin="5"
+                                                VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1"
+                                                       Text="{Binding Path=Item.Type.Name}"
+                                                       VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_Id_Column}"
+                                                Binding="{Binding Path=Item.Id}" Width="Auto" MinWidth="40" />
+                    <DataGridTemplateColumn Header="{x:Static p:Resources.AP_MainView_Title_Column}"
+                                                    Width="300" MinWidth="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                            <Hyperlink Command="{Binding Path=WebCommand}">
+                                                <Run Text="{Binding Path=Item.Title, Mode=OneWay}" />
+                                            </Hyperlink>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_State_Column}"
+                                                Binding="{Binding Path=Item.State}" Width="Auto" MinWidth="40" />
+                    <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_Area_Column}"
+                                                Binding="{Binding Path=Item.AreaPath}" Width="Auto" MinWidth="40" />
+                    <DataGridTextColumn Header="{x:Static p:Resources.AP_MainView_Iteration_Column}"
+                                                Binding="{Binding Path=Item.IterationPath}" Width="Auto" MinWidth="40" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </materialDesign:TransitionerSlide>
+    </materialDesign:Transitioner>
+</UserControl>

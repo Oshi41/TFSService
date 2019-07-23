@@ -619,6 +619,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Наблюдаемые рабочие элементы.
+        /// </summary>
+        public static string AS_ObservableItems_Title {
+            get {
+                return ResourceManager.GetString("AS_ObservableItems_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Количество дней, после которого запрос на проверку кода считается устаревшим.
         /// </summary>
         public static string AS_OldReviewDays {
