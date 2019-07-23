@@ -131,6 +131,14 @@
                     <materialDesign:PackIcon Kind="TableLarge" />
                 </RadioButton>
 
+                <Separator />
+
+                <Button Style="{StaticResource MaterialDesignToolButton}"
+                        Command="{Binding Path=UpdateCommand}"
+                        ToolTip="{x:Static p:Resources.AS_Update}">
+                    <materialDesign:PackIcon Kind="Update"/>
+                </Button>
+
             </ToolBar>
 
             <controls:WorkItemsView Grid.Row="2"
