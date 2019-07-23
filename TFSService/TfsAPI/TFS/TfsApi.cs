@@ -232,19 +232,14 @@ namespace TfsAPI.TFS
             return searcher.SearchCapacities(Name, start, end);
         }
 
-        public virtual IList<WorkItem> GetMyWorkItems()
+        public virtual WorkItemCollection GetMyWorkItems()
         {
             return QueryItems(_myItemsQuerry);
         }
 
-        public IList<WorkItem> QueryItems(string additionalQuery)
+        public WorkItemCollection QueryItems(string additionalQuery)
         {
-            if (string.IsNullOrWhiteSpace(additionalQuery))
-                return new List<WorkItem>();
-
-            var items = _itemStore.Query(additionalQuery);
-
-            return items.OfType<WorkItem>().ToList();
+            return _itemStore.Query(additionalQuery);
         }
 
         public WorkItem CreateTask(string title, WorkItem parent, uint hours)

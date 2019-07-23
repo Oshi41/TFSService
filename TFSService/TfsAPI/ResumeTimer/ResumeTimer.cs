@@ -46,8 +46,6 @@ namespace TfsAPI.ResumeTimer
 
         private void TryInvoke(object sender, ElapsedEventArgs e)
         {
-            var now = DateTime.Now;
-
             _histories.ForEach(x => x.TryExecute());
         }
     }

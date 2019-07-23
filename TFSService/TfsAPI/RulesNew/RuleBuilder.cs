@@ -6,6 +6,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Attributes;
 using TfsAPI.Comparers;
 using TfsAPI.Constants;
+using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
 using TfsAPI.Properties;
 using TfsAPI.Rules;
@@ -81,7 +82,7 @@ namespace TfsAPI.RulesNew
                     // Кол-во запроса должно быть нулевым
                     case RuleOperation.ZeroCount:
                         // Пока проверяется только первое условие
-                        result.AddRange(source);
+                        result.AddRange(source.ToList());
                         break;
                 }
             }

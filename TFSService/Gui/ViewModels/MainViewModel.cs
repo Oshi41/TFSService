@@ -529,8 +529,8 @@ namespace Gui.ViewModels
                 .GetMyWorkItems();
 
             CodeResponsesViewModel = new NewResponsesBaloonViewModel(
-                all.Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse)).ToList(),
-                all.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)).ToList(),
+                all.Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse)),
+                all.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)),
                 ApiObservable);
 
             using (var settings = Settings.Settings.Read())

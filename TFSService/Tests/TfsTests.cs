@@ -92,7 +92,7 @@ namespace Tests
             {
                 var all = tfs.GetMyWorkItems();
 
-                Assert.IsTrue(all.Any());
+                Assert.IsTrue(all.Count > 0);
             }
         }
 

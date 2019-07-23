@@ -78,14 +78,14 @@ namespace TfsAPI.Interfaces
         /// </summary>
         /// <param name="type">Тип рабочего элемента. См. <see cref="WorkItemTypes" /></param>
         /// <returns></returns>
-        IList<WorkItem> GetMyWorkItems();
+        WorkItemCollection GetMyWorkItems();
 
         /// <summary>
         ///     Запрашиваем рабочие элементы по строке
         /// </summary>
         /// <param name="additionalQuery"></param>
         /// <returns></returns>
-        IList<WorkItem> QueryItems(string additionalQuery);
+        WorkItemCollection QueryItems(string additionalQuery);
 
         /// <summary>
         ///     Создание нового рабочего элемента

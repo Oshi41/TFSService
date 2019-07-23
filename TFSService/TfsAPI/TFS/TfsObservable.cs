@@ -10,6 +10,7 @@ using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.Win32;
 using TfsAPI.Comparers;
+using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
 using TfsAPI.RulesNew;
 using TfsAPI.TFS.Build_Defenitions;
@@ -184,9 +185,9 @@ namespace TfsAPI.TFS
         ///     Добавил хэширование, чтобы не делать запросы чаще, чем раз в минуту
         /// </summary>
         /// <returns></returns>
-        public override IList<WorkItem> GetMyWorkItems()
+        public override WorkItemCollection GetMyWorkItems()
         {
-            if (!_cache.TryGetValue<IList<WorkItem>>(MyWorkItemsKey, out var result))
+            if (!_cache.TryGetValue<WorkItemCollection>(MyWorkItemsKey, out var result))
             {
                 result = base.GetMyWorkItems();
 
@@ -225,7 +226,7 @@ namespace TfsAPI.TFS
             removed.ForEach(x => _myItems.Remove(x));
 
             // Обновляю нетронутые элементы по данным из TFS
-            UpdateAndSetItems(current);
+            UpdateAndSetItems(current.ToList());
         }
 
         /// <summary>
