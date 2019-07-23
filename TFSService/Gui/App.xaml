@@ -30,7 +30,7 @@
                 </converters:Case>
 
                 <converters:Case If="{x:Static constants:WorkItemTypes.Bug}">
-                    <materialDesign:PackIcon Kind="Bug"
+                    <materialDesign:PackIcon Kind="ClipboardCheckOutline"
                                              Foreground="#CC293D" />
                 </converters:Case>
 

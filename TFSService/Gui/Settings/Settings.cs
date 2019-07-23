@@ -14,6 +14,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using TfsAPI.Attributes;
 using TfsAPI.Extentions;
+using TfsAPI.Interfaces;
+using TfsAPI.ObservingItems;
 using TfsAPI.RulesNew;
 
 namespace Gui.Settings
@@ -27,11 +29,12 @@ namespace Gui.Settings
         {
             CompletedWork = new WriteOffCollection();
             Connections = new ObservableCollection<string>();
-            MyWorkItems = new ObservableCollection<int>();
+            MyWorkItems = new ObservableCollection<IObservingItem>();
             Rules = new ObservableCollection<IRule>();
             Capacity = new Capacity();
             MyBuilds = new ObservableCollection<string>();
             DisplayTime = new DisplayTime();
+            ObservingItems = new ObservableCollection<IObservingItem>();
         }
 
         #region Fields
@@ -43,7 +46,7 @@ namespace Gui.Settings
 
         private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
         {
-            TypeNameHandling = TypeNameHandling.Auto,
+            TypeNameHandling = TypeNameHandling.None,
             Formatting = Formatting.Indented
         };
 
@@ -54,7 +57,7 @@ namespace Gui.Settings
         private bool _changed;
         private ObservableCollection<string> _connections;
         private WriteOffCollection _completedWork;
-        private ObservableCollection<int> _myWorkItems;
+        private ObservableCollection<IObservingItem> _myWorkItems;
         private WroteOffStrategy _strategy = WroteOffStrategy.Disabled;
         private string _logPath = Path.Combine(Path.GetDirectoryName(SavePath), "logs.log");
         private ObservableCollection<IRule> _rules;
@@ -63,6 +66,7 @@ namespace Gui.Settings
         private ObservableCollection<string> _myBuilds;
         private VisibleMode _viewMode;
         private FilterViewModel _mainFilter;
+        private ObservableCollection<IObservingItem> _observingItems;
 
         #endregion
 
@@ -116,7 +120,8 @@ namespace Gui.Settings
         /// <summary>
         ///     Список рабочих элементов на мне
         /// </summary>
-        public ObservableCollection<int> MyWorkItems
+        [JsonConverter(typeof(JCollectionConverter<IObservingItem, ObservingItemJson>))]
+        public ObservableCollection<IObservingItem> MyWorkItems
         {
             get => _myWorkItems;
             set => Set(ref _myWorkItems, value);
@@ -198,6 +203,16 @@ namespace Gui.Settings
         {
             get => _myBuilds;
             set => Set(ref _myBuilds, value);
+        }
+
+        /// <summary>
+        /// Список рабочих элементов, за которыми я наблюдаю
+        /// </summary>
+        [JsonConverter(typeof(JCollectionConverter<IObservingItem, ObservingItemJson>))]
+        public ObservableCollection<IObservingItem> ObservingItems
+        {
+            get => _observingItems;
+            set => Set(ref _observingItems, value);
         }
 
         #endregion

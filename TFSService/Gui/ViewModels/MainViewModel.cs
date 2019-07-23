@@ -19,6 +19,7 @@ using Mvvm;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
+using TfsAPI.ObservingItems;
 using TfsAPI.RulesNew;
 using TfsAPI.TFS;
 
@@ -43,7 +44,7 @@ namespace Gui.ViewModels
             IsBusy = true;
 
             // Пропускаю первое вхождение (инициализация)
-            _itemsChangedArbiter.Skip(1);
+            // _itemsChangedArbiter.Skip(1);
 
             var connect = await TryConnect() == true;
 
@@ -65,7 +66,8 @@ namespace Gui.ViewModels
                     settings.MyBuilds,
                     settings.ItemMinutesCheck,
                     GetTask,
-                    () => Settings.Settings.Read().Rules));
+                    () => Settings.Settings.Read().Rules,
+                    GetObservingItems));
 
                 if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
                     settings.Connections.Add(FirstConnectionViewModel.Text);
@@ -330,6 +332,27 @@ namespace Gui.ViewModels
                         var baloon = new ItemsAssignedBaloonViewModel(active, Resources.AS_ItemsChanged);
                         WindowManager.ShowBaloon(baloon);
                     }
+
+                    // При каждом изменении сохраняю в конфиг
+                    using (var settings = Settings.Settings.Read())
+                    {
+                        // Получил список наблюдаемых рабочих элементов
+                        var observed = settings.ObservingItems;
+
+                        // Получил коллекцию изменений с новым значением истории
+                        var changes = e
+                            .Where(x => observed.Any(y => y.Id == x.Id))
+                            .Select(x => new ObservingItemJson(x))
+                            .ToList();
+
+                        // Удалили старую историю
+                        foreach (var item in changes)
+                        {
+                            var find = observed.FirstOrDefault(x => x.Id == item.Id);
+                            if (find != null) observed.Remove(find);
+                            observed.Add(item);
+                        }
+                    }
                 }
             });
         }
@@ -535,7 +558,7 @@ namespace Gui.ViewModels
 
             using (var settings = Settings.Settings.Read())
             {
-                settings.MyWorkItems = new ObservableCollection<int>(all.Select(x => x.Id));
+                settings.MyWorkItems = new ObservableCollection<IObservingItem>(all.Select(x => new ObservingItemJson(x)));
             }
         }
 
@@ -554,6 +577,20 @@ namespace Gui.ViewModels
                 settings.ViewMode = ViewMode;
                 settings.MainFilter = StatsViewModel?.Filter;
             }
+        }
+
+        /// <summary>
+        /// Получает список наблюдаемых рабочих элементов вместе с рабочими элементами на мне
+        /// </summary>
+        /// <returns></returns>
+        private IList<IObservingItem> GetObservingItems()
+        {
+            var settings = Settings.Settings.Read();
+
+            return settings.ObservingItems
+                .Concat(settings.MyWorkItems)
+                .Distinct()
+                .ToList();
         }
 
         #endregion

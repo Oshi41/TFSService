@@ -293,6 +293,8 @@
     <Compile Include="Interfaces\ITfsApi.cs" />
     <Compile Include="Interfaces\ITFsObservable.cs" />
     <Compile Include="Constants\WorkItems.cs" />
+    <Compile Include="Interfaces\IObservingItem.cs" />
+    <Compile Include="ObservingItems\ObservingItemJson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extentions\WorkItemExtensions.cs" />
     <Compile Include="Properties\Resource.Designer.cs">
@@ -327,6 +329,7 @@
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

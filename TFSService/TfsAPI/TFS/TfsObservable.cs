@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Timers;
@@ -8,10 +9,12 @@ using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using Microsoft.VisualStudio.Services.Common;
 using Microsoft.Win32;
 using TfsAPI.Comparers;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
+using TfsAPI.ObservingItems;
 using TfsAPI.RulesNew;
 using TfsAPI.TFS.Build_Defenitions;
 
@@ -25,16 +28,20 @@ namespace TfsAPI.TFS
         /// <param name="coolDown">Время между обновлениями рабочих элементов в минутах</param>
         /// <param name="currentItem">Функция получения рабочего элемента для списания времени</param>
         /// <param name="rules">Функция для получения списка правил проверка рабочих элементов</param>
+        /// <param name="history">Элементы, за которыми я наблюдаю</param>
         public TfsObservable(string url,
-            IList<int> myItems,
+            IList<IObservingItem> myItems,
             IList<string> builds,
             int coolDown,
             Func<WorkItem> currentItem,
-            Func<IList<IRule>> rules)
+            Func<IList<IRule>> rules,
+            Func<IList<IObservingItem>> history)
             : base(url)
         {
             _currentItem = currentItem;
             _rules = rules;
+            _history = history;
+
             _versionControl = Project.GetService<VersionControlServer>();
 
             _resumeTimer.AddAction(TimeSpan.FromMinutes(coolDown), RequestUpdate);
@@ -51,7 +58,7 @@ namespace TfsAPI.TFS
             SystemEvents.SessionSwitch += OnSessionSwitched;
             AppDomain.CurrentDomain.ProcessExit += (sender, e) => Logoff?.Invoke(this, e);
 
-            MyItems = new List<WorkItem>(FindById(myItems).Values);
+            MyItems = new List<WorkItem>(FindById(myItems.Select(x => x.Id)).Values);
 
             _cache = new MemoryCache(new MemoryCacheOptions());
             _capacitySearcher = new CachedCapacitySearcher(_cache, Project);
@@ -81,6 +88,7 @@ namespace TfsAPI.TFS
         private readonly VersionControlServer _versionControl;
         private readonly Func<WorkItem> _currentItem;
         private readonly Func<IList<IRule>> _rules;
+        private readonly Func<IList<IObservingItem>> _history;
 
         private readonly IEqualityComparer<WorkItem> _idComparer = new IdWorkItemComparer();
         private readonly IEqualityComparer<WorkItem> _itemChangedComparer = new PartialWorkItemComparer();
@@ -142,6 +150,10 @@ namespace TfsAPI.TFS
 
             // Проверяю правила
             CheckRules();
+
+            // Проверяю ЗНАЧИМЫЕ изменения раб. элементов
+            // Обязательно это делать последним!
+            GetNewHistory(_history?.Invoke(), _myItems);
         }
 
         #endregion
@@ -326,6 +338,54 @@ namespace TfsAPI.TFS
                 return;
 
             RuleMismatch?.Invoke(this, inconsistent);
+        }
+
+        /// <summary>
+        /// Обновляю историю рабочих элементов
+        /// </summary>
+        /// <param name="history">Предыдущая история рабочих эементов</param>
+        /// <param name="current">История рабочих элементов, требущая обновления</param>
+        /// <returns></returns>
+        private void GetNewHistory(IEnumerable<IObservingItem> history, IList<WorkItem> current)
+        {
+            if (history.IsNullOrEmpty())
+            {
+                new List<IObservingItem>();
+                return;
+            }
+
+            // Выцепил те ID, которые уже актуализированы
+            var currentIds = current.Select(x => x.Id).ToList();
+
+            // Вытащил те Id, которые необходимо запросить
+            var needToRequest = history.Select(x => x.Id).Except(currentIds).ToList();
+
+            // Запрос к TFS
+            var finded = FindById(needToRequest);
+
+            // Вписал в мапу акутальные значения
+            foreach (var item in current)
+            {
+                finded[item.Id] = item;
+            }
+
+            // Актуальная история элементов
+            var result = finded.Select(x => (IObservingItem)new ObservingItemJson(x.Value)).ToList();
+
+            // Нашёл отличия
+            var changed = history.Except(result).ToList();
+
+            // Выбрасываю событие, если было изменение
+            if (changed.Any())
+            {
+                // Вытаскиваю рабочие элементы для событий
+                var changedWorkItems = changed
+                    .Where(x => finded.ContainsKey(x.Id))
+                    .Select(x => finded[x.Id])
+                    .ToList();
+
+                ItemsChanged?.Invoke(this, changedWorkItems);
+            }
         }
 
         #endregion
