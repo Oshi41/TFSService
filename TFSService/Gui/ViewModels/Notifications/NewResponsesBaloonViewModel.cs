@@ -38,11 +38,11 @@ namespace Gui.ViewModels.Notifications
             _time = TimeSpan.FromDays(Settings.Settings.Read().OldReviewDay);
 
             CloseReviewes = ObservableCommand.FromAsyncHandler(OnCloseGoodLooking, OnCanCloseGoodLooking).ExecuteOnce();
-            CloseOldReviewes = ObservableCommand.FromAsyncHandler(OnCloseOld, OnCanCloseOld).ExecuteOnce();
+            CloseOldRequests = ObservableCommand.FromAsyncHandler(OnCloseOldRequests, OnCanCloseOldRequests).ExecuteOnce();
         }
 
         public ICommand CloseReviewes { get; }
-        public ICommand CloseOldReviewes { get; }
+        public ICommand CloseOldRequests { get; }
 
         public bool IsBusy
         {
@@ -56,36 +56,15 @@ namespace Gui.ViewModels.Notifications
             return _reviews.Any(x => x.IsNotClosed());
         }
 
-        private bool OnCanCloseOld()
+        private bool OnCanCloseOldRequests()
         {
-            var now = DateTime.Now;
-
-            return OnCanCloseGoodLooking()
-                   && _reviews.Any(x => IsOld(x.CreatedDate));
+            // Есть ли старый запросы проверки кода от кого-то на мне
+            return Items.Select(x => x.Item).Any(x => IsOld(x.CreatedDate));
         }
 
-        private async Task OnCloseOld()
+        private async Task OnCloseOldRequests()
         {
-            await CloseReviewesInner((request, responses) =>
-            {
-                if (responses.IsNullOrEmpty()
-                    || request.HasState(WorkItemStates.Closed))
-                    return false;
-
-                // Старый запрос и уже не важен
-                if (IsOld(request.CreatedDate))
-                    return true;
-
-                // Что-то нуждается в доработке
-                if (responses.Any(x => x.HasClosedReason(WorkItems.ClosedStatus.NeedsWork)))
-                {
-                    Trace.WriteLine(
-                        $"{nameof(NewResponsesBaloonViewModel)}.{nameof(OnCanCloseOld)}: Can't close {request.Id}, responses need work");
-                    return false;
-                }
-
-                return true;
-            }, _reviews);
+            var items = await Task.Run(() => _api.CloseRequests(x => IsOld(x.CreatedDate)));
         }
 
         private async Task OnCloseGoodLooking()

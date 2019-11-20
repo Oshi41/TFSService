@@ -19,7 +19,7 @@ namespace Gui.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -277,7 +277,7 @@ namespace Gui.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Закрыть оконченные Code Reviews.
+        ///   Looks up a localized string similar to Закрыть успешные запросы проверки кода.
         /// </summary>
         public static string AS_CloseCompletedReviewes {
             get {
@@ -286,7 +286,7 @@ namespace Gui.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Закрыть старые Code Reviews.
+        ///   Looks up a localized string similar to Закрыть устаревшие запросы на проверку кода.
         /// </summary>
         public static string AS_CloseOldReviews {
             get {

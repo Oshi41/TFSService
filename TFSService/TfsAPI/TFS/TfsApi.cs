@@ -455,6 +455,35 @@ namespace TfsAPI.TFS
             return result;
         }
 
+        public List<WorkItem> CloseRequests(Predicate<WorkItem> canClose)
+        {
+            if (canClose == null)
+                throw new ArgumentException(nameof(canClose));
+
+            var quarry = _myItemsQuerry +
+                         // Ищем запрошенные у меня проверки кода
+                         $"and {Sql.Fields.WorkItemType} = '{WorkItemTypes.ReviewResponse}'";
+
+            var items = _itemStore.Query(quarry).OfType<WorkItem>().ToList();
+
+            Trace.WriteLineIf(items.Any(),
+                $"{nameof(TfsApi)}.{nameof(CloseRequests)}: Founded {items.Count} requests assigned to me");
+
+            var canBeClosed = items.Where(x => canClose(x)).ToList();
+
+            foreach (var item in canBeClosed)
+            {
+                if (!item.IsOpen)
+                    item.Open();
+
+                item.Fields[WorkItems.Fields.ClosedStatus].Value = WorkItems.ClosedStatus.LooksGood;
+                item.State = WorkItemStates.Closed;
+                SaveElement(item);
+            }
+
+            return canBeClosed;
+        }
+
         public List<WorkItem> GetParents(params WorkItem[] items)
         {
             var result = new List<WorkItem>();

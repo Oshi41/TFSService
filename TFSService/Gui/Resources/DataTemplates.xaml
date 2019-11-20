@@ -85,7 +85,7 @@
                               Command="{Binding Path=CloseReviewes}" />
 
                     <MenuItem Header="{x:Static properties:Resources.AS_CloseOldReviews}"
-                              Command="{Binding Path=CloseOldReviewes}" />
+                              Command="{Binding Path=CloseOldRequests}" />
                 </ContextMenu>
             </baloonVms:NewItemsBaloonView.ContextMenu>
         </baloonVms:NewItemsBaloonView>

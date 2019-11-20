@@ -128,6 +128,13 @@ namespace TfsAPI.Interfaces
         List<WorkItem> CloseCompletedReviews(CanCloseReview canRemove);
 
         /// <summary>
+        ///     Кто-то запросил у меня проверку кода, закрываю такие рабочие элементы по предикату
+        /// </summary>
+        /// <param name="canClose">Можем ли закрыть проверку</param>
+        /// <returns></returns>
+        List<WorkItem> CloseRequests(Predicate<WorkItem> canClose);
+
+        /// <summary>
         ///     Получает родителей переданных элементов
         /// </summary>
         /// <param name="items"></param>

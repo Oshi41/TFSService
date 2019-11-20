@@ -154,10 +154,10 @@
     <value>Выберите элемент для списания времени</value>
   </data>
   <data name="AS_CloseCompletedReviewes" xml:space="preserve">
-    <value>Закрыть оконченные Code Reviews</value>
+    <value>Закрыть успешные запросы проверки кода</value>
   </data>
   <data name="AS_CloseOldReviews" xml:space="preserve">
-    <value>Закрыть старые Code Reviews</value>
+    <value>Закрыть устаревшие запросы на проверку кода</value>
   </data>
   <data name="AS_CodeReviewRequested" xml:space="preserve">
     <value>Запросили проверку кода</value>

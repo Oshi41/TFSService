@@ -95,7 +95,7 @@
                     <MenuItem Header="{x:Static p:Resources.AS_CloseCompletedReviewes}"
                               Command="{Binding Path=CodeResponsesViewModel.CloseReviewes}" />
                     <MenuItem Header="{x:Static p:Resources.AS_CloseOldReviews}"
-                              Command="{Binding Path=CodeResponsesViewModel.CloseOldReviewes}" />
+                              Command="{Binding Path=CodeResponsesViewModel.CloseOldRequests}" />
                 </MenuItem>
 
                 <MenuItem Header="{x:Static p:Resources.AS_Settings}"
