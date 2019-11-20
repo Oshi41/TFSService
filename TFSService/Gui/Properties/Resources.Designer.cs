@@ -529,6 +529,24 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ответил &apos;Looks Good&apos; на {0} запросов, созданные до {1}.
+        /// </summary>
+        public static string AS_Mask_ResponseClosed {
+            get {
+                return ResourceManager.GetString("AS_Mask_ResponseClosed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Закрыто {0} мои запросов кода,которые были проверены.
+        /// </summary>
+        public static string AS_Mask_ReviewClosed {
+            get {
+                return ResourceManager.GetString("AS_Mask_ReviewClosed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Трудосгорание за месяц.
         /// </summary>
         public static string AS_MonthlyCapacity {

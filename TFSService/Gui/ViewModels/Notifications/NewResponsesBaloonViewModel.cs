@@ -64,36 +64,40 @@ namespace Gui.ViewModels.Notifications
 
         private async Task OnCloseOldRequests()
         {
+            IsBusy = false;
+
             var items = await Task.Run(() => _api.CloseRequests(x => IsOld(x.CreatedDate)));
+
+            IsBusy = true;
+
+            var edge = DateTime.Now -_time;
+
+            WindowManager.ShowBalloonSuccess(string.Format(Resources.AS_Mask_ResponseClosed, items.Count, edge.ToLongDateString()));
         }
 
         private async Task OnCloseGoodLooking()
         {
-            await CloseReviewesInner((request, responses) =>
+            IsBusy = false;
+
+            // Получил закрытые проверки кода
+            var result = await Task.Run(() => _api.CloseCompletedReviews((request, responses) =>
             {
                 if (responses.IsNullOrEmpty()
                     || request.HasState(WorkItemStates.Closed))
                     return false;
 
                 return responses.All(x => x.HasClosedReason(WorkItems.ClosedStatus.LooksGood));
-            }, _reviews);
-        }
-
-        private async Task CloseReviewesInner(CanCloseReview canClose, IList<WorkItem> source)
-        {
-            IsBusy = false;
-
-            // Получил закрытые проверки кода
-            var result = await Task.Run(() => _api.CloseCompletedReviews(canClose));
+            }));
 
             // Ищу закрытые среди всех
-            var toRemove = source.Intersect(result, _comparer).ToList();
+            var toRemove = _reviews.Intersect(result, _comparer).ToList();
 
             // удаляю такие вхождения
-            toRemove.ForEach(x => source.Remove(x));
-
+            toRemove.ForEach(x => _reviews.Remove(x));
 
             IsBusy = false;
+
+            WindowManager.ShowBalloonSuccess(string.Format(Properties.Resources.AS_Mask_ReviewClosed, result.Count));
         }
 
 
