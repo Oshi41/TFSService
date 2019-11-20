@@ -72,6 +72,10 @@ namespace Gui.ViewModels.Notifications
                     || request.HasState(WorkItemStates.Closed))
                     return false;
 
+                // Старый запрос и уже не важен
+                if (IsOld(request.CreatedDate))
+                    return true;
+
                 // Что-то нуждается в доработке
                 if (responses.Any(x => x.HasClosedReason(WorkItems.ClosedStatus.NeedsWork)))
                 {
@@ -80,7 +84,7 @@ namespace Gui.ViewModels.Notifications
                     return false;
                 }
 
-                return IsOld(request.CreatedDate);
+                return true;
             }, _reviews);
         }
 
