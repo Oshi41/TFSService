@@ -57,6 +57,7 @@ namespace Gui.ViewModels.DialogViewModels
             {
                 _dayDuration = settings.Duration;
                 _capacity = settings.Capacity.Hours;
+                _capacityByUser = settings.Capacity.ByUser;
                 _connection = currentConnection;
                 _strategy = settings.Strategy;
                 RuleEditor = new RuleEditorViewModel(settings.Rules);

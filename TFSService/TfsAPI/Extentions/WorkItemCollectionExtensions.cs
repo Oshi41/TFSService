@@ -67,27 +67,17 @@ namespace TfsAPI.Extentions
 
             var result = new List<WorkItem>();
 
-            for (int i = 0; i < calculatedSource.Count; i++)
+            foreach (var left in calculatedSource)
             {
-                var first = calculatedSource[i];
-                var firstHasCode = comparer.GetHashCode(first);
+                // Вычислили хэш
+                var hash = comparer.GetHashCode(left);
+                // Ищем такой же в списке на исключение, сначала по хэшу, потом сравниваем
+                var find = calculatedExcept.FirstOrDefault(x => comparer.GetHashCode(x).Equals(hash) && comparer.Equals(x, left));
 
-                var foundSimilar = false;
-
-                for (int j = 0; j < calculatedExcept.Count; j++)
+                // Если не нашли в списке на исключение, добавляем в результат
+                if (find == null)
                 {
-                    var temp = calculatedExcept[i];
-                    if (comparer.GetHashCode(temp) == firstHasCode
-                        && comparer.Equals(first, temp))
-                    {
-                        foundSimilar = true;
-                        break;
-                    }
-                }
-
-                if (!foundSimilar)
-                {
-                    result.Add(first);
+                    result.Add(left);
                 }
             }
 

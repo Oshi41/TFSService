@@ -68,20 +68,26 @@ namespace Gui.ViewModels
             Capacity = Settings.Settings.Read().Capacity.Hours;
 
             // TFS API requests
-            TfsCapacity = await Task.Run(() => api.GetCapacity());
+            TfsCapacity = await Task.Run(api.GetCapacity);
             WroteOff = await Task.Run(() => api.GetWriteoffs(now, now).Sum(x => x.Value));
             Name = await Task.Run(() => api.Name);
             var all = await Task.Run(() => api.GetMyWorkItems().Select(x => new WorkItemVm(x)));
 
-            _origin.Clear();
-            _origin.AddRange(all);
+            lock (_origin)
+            {
+                _origin.Clear();
+                _origin.AddRange(all);
+            }
 
             OnFilterChanged();
         }
 
         private void OnFilterChanged(object sender = null, EventArgs e = null)
         {
-            MyItems = new ObservableCollection<WorkItemVm>(_origin.Where(x => Filter.Accepted(x.Item)));
+            lock (_origin)
+            {
+                MyItems = new ObservableCollection<WorkItemVm>(_origin.Where(x => Filter.Accepted(x.Item)));
+            }
         }
     }
 }

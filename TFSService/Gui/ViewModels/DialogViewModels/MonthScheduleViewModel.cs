@@ -99,12 +99,23 @@ namespace Gui.ViewModels.DialogViewModels
                 var i = start;
                 while (i <= end)
                 {
-                    // Получаю кол-во часов для дня из итерации TFS
-                    var capacity = await Task
-                        .Run(() => _api
-                            ?.GetCapacity(i, i)
-                            ?.FirstOrDefault()
-                            ?.GetCapacity(_api.Name));
+                    int? capacity = 0;
+
+                    // Учитываю настройки пользователя
+                    var settings = Settings.Settings.Read().Capacity;
+                    if (settings.ByUser)
+                    {
+                        capacity = settings.Hours;
+                    }
+                    else
+                    {
+                        // Получаю кол-во часов для дня из итерации TFS
+                        capacity = await Task
+                            .Run(() => _api
+                                ?.GetCapacity(i, i)
+                                ?.FirstOrDefault()
+                                ?.GetCapacity(_api.Name));
+                    }
 
                     collection.Add(new DayViewModel(i, checkins, capacity ?? 0));
                     i = i.AddDays(1);

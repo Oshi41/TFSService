@@ -25,6 +25,7 @@ namespace TfsAPI.TFS
         public TfsApi(string url, string owner = null)
         {
             Project = new TfsTeamProjectCollection(new Uri(url));
+            Project.EnsureAuthenticated();
 
             Trace.WriteLine($"{nameof(TfsApi)}.ctor: Connected to " + Project.Name);
 
@@ -101,7 +102,7 @@ namespace TfsAPI.TFS
                 }
             }
 
-            return await Task.Run(CheckConnectSync);
+            return await Task.Run((Func<bool>) CheckConnectSync);
         }
 
         #region Fields

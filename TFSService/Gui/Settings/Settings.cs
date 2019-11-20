@@ -96,7 +96,7 @@ namespace Gui.Settings
         public Capacity Capacity
         {
             get => _capacity;
-            set => SetProperty(ref _capacity, value);
+            set => Set(ref _capacity, value);
         }
 
         /// <summary>

@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 using Gui.ViewModels.Filter;
-using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
-using Microsoft.VisualStudio.Services.Common;
 using Mvvm;
 using Newtonsoft.Json;
 using TfsAPI.Constants;
@@ -23,9 +17,9 @@ namespace Gui.ViewModels
         public event EventHandler FilterChanged;
 
         [JsonConstructor]
-        public FilterViewModel(CategoryFilterViewModel states, CategoryFilterViewModel workTypes)
+        public FilterViewModel(CategoryFilterViewModel workTypes, CategoryFilterViewModel states)
         {
-            WorkTypes = states ?? new CategoryFilterViewModel(
+            WorkTypes = workTypes ?? new CategoryFilterViewModel(
                          Properties.Resources.AS_Filter_WorkTypes,
                          new ItemTypeMark[]
                          {
@@ -41,7 +35,7 @@ namespace Gui.ViewModels
                          }, true);
 
 
-            States = workTypes ?? new CategoryFilterViewModel(
+            States = states ?? new CategoryFilterViewModel(
                             Properties.Resources.AS_Filter_WorkItemStates,
                             new ItemTypeMark[]
                             {
@@ -56,7 +50,7 @@ namespace Gui.ViewModels
         }
 
         public FilterViewModel(FilterViewModel source)
-            : this(source?.States, source?.WorkTypes)
+            : this(source?.WorkTypes, source?.States)
         {
             
         }
