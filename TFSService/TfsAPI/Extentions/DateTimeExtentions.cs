@@ -24,6 +24,17 @@ namespace TfsAPI.Extentions
         }
 
         /// <summary>
+        /// Даты из одного и того же дня
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public static bool SameDay(this DateTime x, DateTime y)
+        {
+            return x.SameMonth(y) && x.Day == y.Day;
+        }
+
+        /// <summary>
         ///     Даты приблизительно равны, в пределах нескольких минут
         /// </summary>
         /// <param name="source">С каким временем сверяем</param>
@@ -36,6 +47,13 @@ namespace TfsAPI.Extentions
             var to = time.AddMinutes(minutes);
 
             return from <= time && time <= to;
+        }
+
+        public static bool IsHoliday(this DateTime time)
+        {
+            if (time.DayOfWeek == DayOfWeek.Saturday || time.DayOfWeek == DayOfWeek.Sunday) return true;
+            // TODO учитывать выходные 
+            return false;
         }
     }
 }

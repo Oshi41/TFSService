@@ -9,7 +9,8 @@
                     xmlns:conv="clr-namespace:Gui.Converters"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:commerce="clr-namespace:Microsoft.VisualStudio.Services.Commerce;assembly=Microsoft.VisualStudio.Services.WebApi"
-                    xmlns:properties="clr-namespace:Gui.Properties">
+                    xmlns:properties="clr-namespace:Gui.Properties"
+                    xmlns:trend="clr-namespace:Gui.ViewModels.DialogViewModels.Trend">
 
     <DataTemplate DataType="{x:Type viewModels:WorkItemVm}">
         <view:WorkItemView />
@@ -147,6 +148,10 @@
 
     <DataTemplate DataType="{x:Type dialogViewModels:ObservingWorkItemsViewModel}">
         <view:ObservingWorkItemsView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type trend:TrendViewModel}">
+        <view:TrendView/>
     </DataTemplate>
 
 </ResourceDictionary>

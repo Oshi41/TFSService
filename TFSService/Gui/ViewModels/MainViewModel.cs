@@ -11,6 +11,7 @@ using Gui.Helper;
 using Gui.Properties;
 using Gui.Settings;
 using Gui.ViewModels.DialogViewModels;
+using Gui.ViewModels.DialogViewModels.Trend;
 using Gui.ViewModels.Notifications;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Common;
@@ -36,6 +37,7 @@ namespace Gui.ViewModels
             SettingsCommand = new ObservableCommand(ShowSettings);
             WriteOffHoursCommand = new ObservableCommand(OnWriteHours);
             ObservableItemsCommand = new ObservableCommand(OnShowObservableItems);
+            ShowTrendCommand = new ObservableCommand(OnShowTrendCommand);
 
             Init();
         }
@@ -196,6 +198,11 @@ namespace Gui.ViewModels
         public ICommand ShowMonthlyCommand { get; }
 
         /// <summary>
+        /// Показываю график моих трудосгораний
+        /// </summary>
+        public ICommand ShowTrendCommand { get; }
+
+        /// <summary>
         ///     Принудительное обновление
         /// </summary>
         public ICommand UpdateCommand { get; }
@@ -272,6 +279,12 @@ namespace Gui.ViewModels
                     settings.ObservingItems = new ObservableCollection<IObservingItem>(vm.ObservingItems.Select(x => new ObservingItemJson(x)));
                 }
             }
+        }
+
+        private void OnShowTrendCommand()
+        {
+            var vm = new TrendViewModel(_apiObserve, GetActualCapacity());
+            WindowManager.ShowDialog(vm, Resources.AS_Trand_Title, 680, 600, maximize:true);
         }
 
         #endregion
@@ -610,6 +623,17 @@ namespace Gui.ViewModels
                 .Concat(settings.MyWorkItems)
                 .Distinct()
                 .ToList();
+        }
+
+        private int GetActualCapacity()
+        {
+            using (var settings = Settings.Settings.Read())
+            {
+                if (settings.Capacity.ByUser)
+                    return settings.Capacity.Hours;
+            }
+
+            return _apiObserve.GetCapacity();
         }
 
         #endregion

@@ -433,4 +433,10 @@
   <data name="AS_Mask_ResponseClosed" xml:space="preserve">
     <value>Ответил 'Looks Good' на {0} запросов, созданные до {1}</value>
   </data>
+  <data name="AS_Trand_Title" xml:space="preserve">
+    <value>Месячная история трудосгорания</value>
+  </data>
+  <data name="AS_Treng_History" xml:space="preserve">
+    <value>Трудосгорания</value>
+  </data>
 </root>

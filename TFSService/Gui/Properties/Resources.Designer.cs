@@ -889,6 +889,24 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Месячная история трудосгорания.
+        /// </summary>
+        public static string AS_Trand_Title {
+            get {
+                return ResourceManager.GetString("AS_Trand_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Трудосгорания.
+        /// </summary>
+        public static string AS_Treng_History {
+            get {
+                return ResourceManager.GetString("AS_Treng_History", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Изменить....
         /// </summary>
         public static string AS_TryChange {

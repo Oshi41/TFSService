@@ -76,6 +76,11 @@
             ///     ID элемента
             /// </summary>
             public const string Id = "[ID]";
+
+            /// <summary>
+            /// Когда был создан рабочий элемент
+            /// </summary>
+            public const string CreatedDate = "[Created Date]";
         }
 
         /// <summary>

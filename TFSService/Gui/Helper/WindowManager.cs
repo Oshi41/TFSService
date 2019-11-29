@@ -31,6 +31,7 @@ namespace Gui.Helper
         ///     Текст вспомогательной кнопки. Если <see cref="BindableExtended.SpecialCommand" /> == <see langword="null" />,
         ///     кнопка не отобразится
         /// </param>
+        /// <param name="maximize">Нужно ли расширить экно на весь экран</param>
         /// <returns></returns>
         public static bool? ShowDialog(BindableExtended vm,
             string title,
@@ -38,7 +39,8 @@ namespace Gui.Helper
             double? height = null,
             string ok = "OK",
             string cancel = null,
-            string specialText = null)
+            string specialText = null,
+            bool maximize = false)
         {
             var window = new DialogWindow
             {
@@ -74,6 +76,11 @@ namespace Gui.Helper
             window.Height = height.Value;
 
             CheckAndMaximizeMainWindow();
+
+            if (maximize)
+            {
+                window.WindowState = WindowState.Maximized;
+            }
 
             return window.ShowDialog();
         }

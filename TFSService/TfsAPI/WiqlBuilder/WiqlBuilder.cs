@@ -211,6 +211,21 @@ namespace TfsAPI.Rules
             return this;
         }
 
+        /// <summary>
+        /// Указываем время создания таска
+        /// </summary>
+        /// <param name="operand">Операнд условия операции</param>
+        /// <param name="date">Время</param>
+        /// <param name="op">
+        ///     Операнд сравнения. "=", "<>" и т.д
+        /// </param>
+        /// <returns></returns>
+        public WiqlBuilder CreatedDate(string operand, DateTime date, string op)
+        {
+            AddCondition(operand, $"{Sql.Fields.CreatedDate} {op} '{date.ToShortDateString().Replace(".", "/")}'");
+            return this;
+        }
+
         #endregion
 
         #region Private

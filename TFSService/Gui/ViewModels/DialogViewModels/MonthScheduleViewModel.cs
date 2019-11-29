@@ -155,7 +155,7 @@ namespace Gui.ViewModels.DialogViewModels
             Capacity = capacity;
 
             Time = time.Date;
-            IsHolliday = GetIsHolliday(Time);
+            IsHolliday = Time.IsHoliday();
 
             Checkins = checkins.Where(x => x.Key.Fields[CoreField.ChangedDate]?.Value is DateTime t
                                            && t.IsToday(Time)).ToList();
@@ -170,15 +170,5 @@ namespace Gui.ViewModels.DialogViewModels
 
         public int Capacity { get; }
         public DateTime Time { get; }
-
-        private static bool GetIsHolliday(DateTime time)
-        {
-            // Выходной
-            if (time.DayOfWeek == DayOfWeek.Saturday || time.DayOfWeek == DayOfWeek.Sunday) return true;
-
-            // TODO учитывать выходные
-
-            return false;
-        }
     }
 }

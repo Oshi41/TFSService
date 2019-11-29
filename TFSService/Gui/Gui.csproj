@@ -122,6 +122,12 @@
     <Reference Include="Ben.Demystifier, Version=0.1.0.0, Culture=neutral, PublicKeyToken=a6d206e05440431a, processorArchitecture=MSIL">
       <HintPath>..\packages\Ben.Demystifier.0.1.4\lib\net45\Ben.Demystifier.dll</HintPath>
     </Reference>
+    <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.0.9.7\lib\net45\LiveCharts.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts.Wpf, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.Wpf.0.9.7\lib\net45\LiveCharts.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="MaterialDesignColors, Version=1.2.0.325, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignColors.1.2.0\lib\net45\MaterialDesignColors.dll</HintPath>
     </Reference>
@@ -391,12 +397,14 @@
     <Compile Include="Settings\DisplayTime.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="Settings\JCollectionConverter.cs" />
+    <Compile Include="ViewModels\DialogViewModels\Trend\ChartViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\ChooseTaskViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\CreateTaskViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\FirstConnectionViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\MonthScheduleViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\ObservingWorkItemsViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\DialogViewModels\Trend\TrendViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\WriteOffHoursViewModel.cs" />
     <Compile Include="ViewModels\Filter\CategoryFilterViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterViewModel.cs" />
@@ -463,6 +471,9 @@
     </Compile>
     <Compile Include="View\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\TrendView.xaml.cs">
+      <DependentUpon>TrendView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\WorkItemSearcherView.xaml.cs">
       <DependentUpon>WorkItemSearcherView.xaml</DependentUpon>
@@ -564,6 +575,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\TrendView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\WorkItemSearcherView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -627,10 +642,11 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="..\packages\Microsoft.TeamFoundationServer.ExtendedClient.16.153.0\build\Microsoft.TeamFoundationServer.ExtendedClient.targets" Condition="Exists('..\packages\Microsoft.TeamFoundationServer.ExtendedClient.16.153.0\build\Microsoft.TeamFoundationServer.ExtendedClient.targets')" />

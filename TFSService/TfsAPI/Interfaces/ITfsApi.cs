@@ -4,6 +4,7 @@ using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Constants;
 using TfsAPI.TFS;
+using TfsAPI.TFS.Trend;
 
 namespace TfsAPI.Interfaces
 {
@@ -83,9 +84,9 @@ namespace TfsAPI.Interfaces
         /// <summary>
         ///     Запрашиваем рабочие элементы по строке
         /// </summary>
-        /// <param name="additionalQuery"></param>
+        /// <param name="query"></param>
         /// <returns></returns>
-        WorkItemCollection QueryItems(string additionalQuery);
+        WorkItemCollection QueryItems(string query);
 
         /// <summary>
         ///     Создание нового рабочего элемента
@@ -140,5 +141,14 @@ namespace TfsAPI.Interfaces
         /// <param name="items"></param>
         /// <returns></returns>
         List<WorkItem> GetParents(params WorkItem[] items);
+
+        /// <summary>
+        /// Запрашивает график трудозатрат на указанный месяц (до конца или до сегодня)
+        /// </summary>
+        /// <param name="from">Начиная с даты</param>
+        /// <param name="to">Заканчивая датой</param>
+        /// <param name="dailyCapacity">Сколько работаешь в день</param>
+        /// <returns></returns>
+        Chart GetForMonth(DateTime from, DateTime to, int dailyCapacity);
     }
 }

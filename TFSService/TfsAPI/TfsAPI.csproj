@@ -327,6 +327,7 @@
     <Compile Include="Extentions\EventHandlerExtentions.cs" />
     <Compile Include="Extentions\IterationExtentions.cs" />
     <Compile Include="Extentions\LinqExtensions.cs" />
+    <Compile Include="Extentions\RevisionExtensions.cs" />
     <Compile Include="Extentions\WorkItemCollectionExtensions.cs" />
     <Compile Include="Interfaces\IResumable.cs" />
     <Compile Include="Interfaces\ITfsApi.cs" />
@@ -354,6 +355,8 @@
     <Compile Include="TFS\Capacity\TeamCapacity.cs" />
     <Compile Include="TFS\Capacity\CapacitySearcher.cs" />
     <Compile Include="ResumeTimer\ResumeTimer.cs" />
+    <Compile Include="TFS\Trend\Chart.cs" />
+    <Compile Include="TFS\Trend\Point.cs" />
     <Compile Include="WiqlBuilder\WiqlBuilder.cs" />
     <Compile Include="TFS\TfsApi.cs" />
     <Compile Include="TFS\TfsObservable.cs" />

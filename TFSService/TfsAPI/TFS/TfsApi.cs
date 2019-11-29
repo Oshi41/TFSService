@@ -15,6 +15,7 @@ using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
 using TfsAPI.Rules;
+using TfsAPI.TFS.Trend;
 
 namespace TfsAPI.TFS
 {
@@ -53,7 +54,7 @@ namespace TfsAPI.TFS
                 Trace.WriteLine($"{nameof(TfsApi)}.{nameof(SaveElement)}: item is null");
                 return;
             }
-            
+
 #if DEBUG
             Trace.WriteLine($"Imagine that we have saved {item.Id} item");
 
@@ -238,9 +239,9 @@ namespace TfsAPI.TFS
             return QueryItems(_myItemsQuerry);
         }
 
-        public WorkItemCollection QueryItems(string additionalQuery)
+        public WorkItemCollection QueryItems(string query)
         {
-            return _itemStore.Query(additionalQuery);
+            return _itemStore.Query(query);
         }
 
         public WorkItem CreateTask(string title, WorkItem parent, uint hours)
@@ -538,6 +539,92 @@ namespace TfsAPI.TFS
         }
 
         public string Name { get; }
+
+        public Chart GetForMonth(DateTime from, DateTime to, int dailyCapacity)
+        {
+            // Обозначил граница месяца
+            //var from = new DateTime(time.Year, time.Month, 1);
+            //var to = from.AddMonths(1).AddDays(-1);
+
+            // Ограничиваем дату
+            if (to > DateTime.Now)
+            {
+                to = DateTime.Now;
+            }
+
+            var dates = new List<DateTime>();
+
+            // заполнил даты
+            {
+                var current = from;
+                while (current <= to)
+                {
+                    dates.Add(current);
+                    current = current.AddDays(1);
+                }
+            }
+
+            // Запрос на получение тасков, в которых я когда либо участвовал
+            // чтобы не запрашивать все таски, указываю пределы времени:
+            // Когда таск был создан и когда таск был закрыт
+            var builder = new WiqlBuilder()
+                .EverChangedBy("from")
+                .WithItemTypes("and", "=", WorkItemTypes.Task)
+                .EverChangedBy("and")
+                .ChangedDate("and", from, ">=")
+                .CreatedDate("and", to, "<=");
+
+            var items = QueryItems(builder.ToString());
+
+            var taskRevisions = items
+                .OfType<WorkItem>()
+                .SelectMany(x => x.Revisions.OfType<Revision>())
+                // Нашли которые мы меняли
+                .Where(x => x.ChangedBy(Name) == true)
+                // сгруппировал по рабочему элоементу
+                .GroupBy(x => x.WorkItem)
+                .ToDictionary(x => x.Key, x => x.OrderBy(r => r.Index).ToList());
+
+            var chart = new Chart();
+
+            foreach (var date in dates.Where(x => !x.IsHoliday()))
+            {
+                var point = new Point
+                {
+                    Time = date
+                };
+
+                foreach (var pair in taskRevisions)
+                {
+                    var remainings = pair
+                        .Value
+                        // Нашёл изменения за этот день
+                        .Where(x => date.SameDay(x.ChangedDate()))
+                        .Select(x => x.RemainingWork())
+                        // только актуальные значения
+                        .Where(x => x >= 0);
+
+                    point.Value += remainings.LastOrDefault();
+                }
+
+                chart.Items.Add(point);
+            }
+
+            double writeOff = 0;
+
+            // Идём с конца, так проще
+            foreach (var date in dates.OrderByDescending(x => x).Where(x => !x.IsHoliday()))
+            {
+                // каждый раз добавляем в начало графика
+                chart.Available.Insert(0, new Point
+                {
+                    Time = date,
+                    Value = writeOff += dailyCapacity
+                });
+            }
+
+            return chart;
+        }
 
         #endregion
 

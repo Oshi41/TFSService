@@ -83,6 +83,13 @@
                             <materialDesign:PackIcon Kind="History" />
                         </MenuItem.Icon>
                     </MenuItem>
+
+                    <MenuItem Header="{x:Static p:Resources.AS_Treng_History}"
+                              Command="{Binding Path=ShowTrendCommand}">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="TrackChanges" />
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
 
                 <MenuItem Header="{x:Static p:Resources.AS_Actions}">
