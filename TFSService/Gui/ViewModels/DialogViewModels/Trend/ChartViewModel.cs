@@ -36,8 +36,9 @@ namespace Gui.ViewModels
 
             Series = new SeriesCollection
             {
-                CreateByList(model.Available.Select(x => x.Value), "Доступная емкость", Brushes.Green, Brushes.Transparent),
-                CreateByList(model.Items.Select(x => x.Value), "Оставшаяся работа", Brushes.DodgerBlue),
+                CreateByList(model.Available.Select(x => x.Value), Properties.Resources.AS_AvailableCapacity, Brushes.Green, Brushes.Transparent),
+                CreateByList(model.Items.Select(x => x.Value), Properties.Resources.AS_RemainingWork, Brushes.DodgerBlue),
+                CreateByList(model.WriteOff.Select(x => x.Value), Properties.Resources.AS_WriteOff_Trend, Brushes.DarkRed),
             };
 
             DisableAnimation = model.Available.Count > 31;
@@ -45,18 +46,19 @@ namespace Gui.ViewModels
 
         private LineSeries CreateByList<T>(IEnumerable<T> valuesByDay, string title, Brush stroke, Brush fill = null)
         {
-            if (fill == null)
-            {
-                fill = Brushes.Transparent;
-            }
-
-            return new LineSeries
+            var result = new LineSeries
             {
                 Title = title,
                 Values = new ChartValues<T>(valuesByDay),
                 Stroke = stroke,
-                Fill = fill
             };
+
+            if (fill != null)
+            {
+                result.Fill = fill;
+            }
+
+            return result;
         }
     }
 }

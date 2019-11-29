@@ -205,6 +205,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Доступная емкость.
+        /// </summary>
+        public static string AS_AvailableCapacity {
+            get {
+                return ResourceManager.GetString("AS_AvailableCapacity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Отмена.
         /// </summary>
         public static string AS_Cancel {
@@ -709,6 +718,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Оставшаяся работа.
+        /// </summary>
+        public static string AS_RemainingWork {
+            get {
+                return ResourceManager.GetString("AS_RemainingWork", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Удалить.
         /// </summary>
         public static string AS_Remove {
@@ -975,6 +993,15 @@ namespace Gui.Properties {
         public static string AS_WorkItemRules {
             get {
                 return ResourceManager.GetString("AS_WorkItemRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Динамика списания часов.
+        /// </summary>
+        public static string AS_WriteOff_Trend {
+            get {
+                return ResourceManager.GetString("AS_WriteOff_Trend", resourceCulture);
             }
         }
         

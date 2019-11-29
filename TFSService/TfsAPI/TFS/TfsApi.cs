@@ -559,7 +559,9 @@ namespace TfsAPI.TFS
                 var current = from;
                 while (current <= to)
                 {
-                    dates.Add(current);
+                    if (!current.IsHoliday())
+                        dates.Add(current);
+
                     current = current.AddDays(1);
                 }
             }
@@ -587,7 +589,7 @@ namespace TfsAPI.TFS
 
             var chart = new Chart();
 
-            foreach (var date in dates.Where(x => !x.IsHoliday()))
+            foreach (var date in dates)
             {
                 var point = new Point
                 {
@@ -613,13 +615,29 @@ namespace TfsAPI.TFS
             double writeOff = 0;
 
             // Идём с конца, так проще
-            foreach (var date in dates.OrderByDescending(x => x).Where(x => !x.IsHoliday()))
+            foreach (var date in dates.OrderByDescending(x => x))
             {
                 // каждый раз добавляем в начало графика
                 chart.Available.Insert(0, new Point
                 {
                     Time = date,
                     Value = writeOff += dailyCapacity
+                });
+            }
+
+            // Сколько списывал в этом месяце
+            var checkins = GetWriteoffs(from, to);
+            // всего часов работы
+            var total = checkins.Sum(x => x.Value);
+
+            foreach (var date in dates)
+            {
+                var forToday = checkins.Where(x => date.SameDay(x.Key.ChangedDate())).Sum(x => x.Value);
+
+                chart.WriteOff.Add(new Point
+                {
+                    Time = date,
+                    Value = total -= forToday
                 });
             }
 

@@ -439,4 +439,13 @@
   <data name="AS_Treng_History" xml:space="preserve">
     <value>Трудосгорания</value>
   </data>
+  <data name="AS_AvailableCapacity" xml:space="preserve">
+    <value>Доступная емкость</value>
+  </data>
+  <data name="AS_RemainingWork" xml:space="preserve">
+    <value>Оставшаяся работа</value>
+  </data>
+  <data name="AS_WriteOff_Trend" xml:space="preserve">
+    <value>Динамика списания часов</value>
+  </data>
 </root>

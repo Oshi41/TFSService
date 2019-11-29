@@ -20,5 +20,10 @@ namespace TfsAPI.TFS.Trend
         /// Доступное трудосгорание
         /// </summary>
         public IList<Point> Available { get; set; } = new List<Point>();
+
+        /// <summary>
+        /// Сколько списывал в течении периода
+        /// </summary>
+        public IList<Point> WriteOff { get; set; } = new List<Point>();
     }
 }
