@@ -79,8 +79,9 @@ namespace Gui.ViewModels.DialogViewModels
             IsBusy = true;
 
             var start = new DateTime(Date.Year, Date.Month, 1);
+
             // Последний день месяца
-            var end = new DateTime(Date.Year, Date.Month + 1, 1).AddDays(-1);
+            var end = start.AddMonths(1).AddMinutes(-1);
 
             // ограничили сегодняшним днем
             if (end > DateTime.Now) end = DateTime.Now;
