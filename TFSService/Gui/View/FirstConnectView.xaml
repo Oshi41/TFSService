@@ -21,6 +21,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -92,5 +93,22 @@
             </Button.Style>
         </Button>
 
+        <TextBlock Grid.Row="2"
+                   Grid.Column="0"
+                   Text="{x:Static p:Resources.AS_ConnectionEstablished }"
+                   Foreground="DarkGreen">
+            <TextBlock.Style>
+                <Style BasedOn="{StaticResource {x:Type TextBlock}}"
+                       TargetType="TextBlock">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=Connection}" Value="{x:Static dialogViewModels:ConnectionType.Success}">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
     </Grid>
 </UserControl>

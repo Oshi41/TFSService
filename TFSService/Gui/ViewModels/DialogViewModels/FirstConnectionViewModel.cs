@@ -41,15 +41,6 @@ namespace Gui.ViewModels.DialogViewModels
             return base.ValidateProperty(prop);
         }
 
-        protected override string ValidateOptionalProperty(string prop)
-        {
-            if (prop == nameof(Text))
-                if (Connection == ConnectionType.Success)
-                    return Resources.AS_ConnectionEstablished;
-
-            return base.ValidateOptionalProperty(prop);
-        }
-
         #region Fields
 
         private string _text;
