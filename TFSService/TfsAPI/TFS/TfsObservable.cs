@@ -14,6 +14,7 @@ using Microsoft.Win32;
 using TfsAPI.Comparers;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
+using TfsAPI.Logger;
 using TfsAPI.ObservingItems;
 using TfsAPI.RulesNew;
 using TfsAPI.TFS.Build_Defenitions;
@@ -162,14 +163,14 @@ namespace TfsAPI.TFS
 
         private void OnCheckIn(object sender, CommitCheckinEventArgs e)
         {
-            Trace.WriteLine($"{nameof(TfsObservable)}.{nameof(OnCheckIn)}: Changeset {e.ChangesetId} was made");
+            LoggerHelper.WriteLine($"Changeset {e.ChangesetId} was made");
 
             Checkin?.Invoke(this, e);
         }
 
         private void OnSessionSwitched(object sender, SessionSwitchEventArgs e)
         {
-            Trace.WriteLine($"{nameof(TfsObservable)}.{nameof(OnSessionSwitched)}: Session switched to {e.Reason}");
+            LoggerHelper.WriteLine($"Session switched to {e.Reason}");
 
             switch (e.Reason)
             {

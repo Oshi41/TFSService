@@ -8,6 +8,7 @@ using TfsAPI.Comparers;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
+using TfsAPI.Logger;
 using TfsAPI.Properties;
 using TfsAPI.Rules;
 using TfsAPI.RulesNew.RuleParameter;
@@ -88,7 +89,7 @@ namespace TfsAPI.RulesNew
             }
             catch (Exception e)
             {
-                Trace.WriteLine($"{nameof(RuleBuilder)}.{nameof(ExecuteRule)}: " + e);
+                LoggerHelper.WriteLine(e);
             }
 
             return result;

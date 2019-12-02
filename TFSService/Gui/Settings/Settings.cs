@@ -15,6 +15,7 @@ using Newtonsoft.Json.Converters;
 using TfsAPI.Attributes;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
+using TfsAPI.Logger;
 using TfsAPI.ObservingItems;
 using TfsAPI.RulesNew;
 
@@ -242,7 +243,7 @@ namespace Gui.Settings
             }
             catch (Exception e)
             {
-                Trace.WriteLine($"Error during read settings, creating new one. The exception is :\n{e}");
+                LoggerHelper.WriteLine($"Error during read settings, creating new one. The exception is :\n{e}");
                 settings = new Settings();
             }
 
@@ -261,7 +262,7 @@ namespace Gui.Settings
 
             File.WriteAllText(SavePath, JsonConvert.SerializeObject(this, JsonSettings));
 
-            Trace.WriteLine($"{nameof(Settings)}.{nameof(Write)}: JsonSettings saved");
+            LoggerHelper.WriteLine($"JsonSettings saved");
         }
 
         /// <summary>

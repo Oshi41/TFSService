@@ -6,6 +6,7 @@ using Gui.View;
 using Gui.ViewModels;
 using Gui.ViewModels.Notifications;
 using TfsAPI.Interfaces;
+using TfsAPI.Logger;
 using TfsAPI.TFS;
 
 namespace Gui
@@ -21,11 +22,7 @@ namespace Gui
 
             DispatcherUnhandledException += WriteEx;
 
-            var listener = new TextWriterTraceListener(Settings.Settings.Read().LogPath)
-            {
-                TraceOutputOptions = TraceOptions.Timestamp | TraceOptions.ThreadId | TraceOptions.DateTime |
-                                     TraceOptions.ProcessId
-            };
+            var listener = new TextWriterTraceListener(Settings.Settings.Read().LogPath);
 
             Trace.Listeners.Add(listener);
             Trace.WriteLine("\n\n\n*******************************************\nStarting application");
@@ -39,7 +36,7 @@ namespace Gui
 
         private void WriteEx(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            Trace.WriteLine($"UNHANDLED\n\n{e.Exception}");
+            LoggerHelper.WriteLine($"UNHANDLED\n\n{e.Exception}");
         }
 
         private void StartProgram()

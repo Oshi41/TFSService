@@ -16,6 +16,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TfsAPI.Extentions;
+using TfsAPI.Logger;
 using TfsAPI.TFS.Capacity;
 using Project = Microsoft.TeamFoundation.WorkItemTracking.Client.Project;
 
@@ -192,12 +193,12 @@ namespace TfsAPI.TFS
             }
             catch (SecurityException)
             {
-                Trace.WriteLine($"{nameof(CapacitySearcher)}.{nameof(FindIterations)}: Not enough privileges");
+                LoggerHelper.WriteLine($"Not enough privileges");
                 return null;
             }
             catch (Exception e)
             {
-                Trace.WriteLine($"{nameof(CapacitySearcher)}.{nameof(FindIterations)}: " + e);
+                LoggerHelper.WriteLine(e);
                 return null;
             }
         }
@@ -238,12 +239,12 @@ namespace TfsAPI.TFS
             }
             catch (SecurityException)
             {
-                Trace.WriteLine($"{nameof(CapacitySearcher)}.{nameof(QuerryCapacity)}: Not enough privileges");
+                LoggerHelper.WriteLine($"Not enough privileges");
                 return null;
             }
             catch (Exception e)
             {
-                Trace.WriteLine($"{nameof(CapacitySearcher)}.{nameof(QuerryCapacity)}: " + e);
+                LoggerHelper.WriteLine(e);
                 return null;
             }
         }

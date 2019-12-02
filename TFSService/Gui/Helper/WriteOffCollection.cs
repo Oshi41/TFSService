@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
+using TfsAPI.Logger;
 
 namespace Gui.Helper
 {
@@ -26,8 +27,7 @@ namespace Gui.Helper
             var item = new WriteOff(id, hours);
             Add(item);
 
-            Trace.WriteLine(
-                $"{nameof(WriteOffCollection)}.{nameof(ScheduleWork)}: Hour scheduled at {item.Time.ToShortTimeString()}");
+            LoggerHelper.WriteLine($"Hour scheduled at {item.Time.ToShortTimeString()}");
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Gui.Helper
         {
             var checkins = tfs.GetWriteoffs(DateTime.Today, DateTime.Now);
 
-            Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(SyncCheckins)}: Founded {checkins.Count} changes");
+            LoggerHelper.WriteLine($"Founded {checkins.Count} changes");
 
             foreach (var checkin in checkins)
             {
@@ -50,7 +50,7 @@ namespace Gui.Helper
                     var userCheckIn = new WriteOff(id, checkin.Value, date);
                     Add(userCheckIn);
 
-                    Trace.WriteLine($"{nameof(WriteOffCollection)}.{nameof(SyncCheckins)}: Detected new check-in, " +
+                    LoggerHelper.WriteLine("Detected new check-in, " +
                                     $"Id - {checkin.Key.WorkItem.Id}, Time - {date.ToShortTimeString()}");
                 }
             }
@@ -166,8 +166,7 @@ namespace Gui.Helper
                 // какая-то ошибка, такого номера нет
                 if (!items.ContainsKey(toWrite.Id))
                 {
-                    Trace.WriteLine(
-                        $"{nameof(WriteOffCollection)}.{nameof(CheckinWork)}: Cannot find item {toWrite.Id}");
+                    LoggerHelper.WriteLine($"Cannot find item {toWrite.Id}");
                     continue;
                 }
 
@@ -184,8 +183,7 @@ namespace Gui.Helper
                     // Не получилось запписать, ошибка
                     if (revision == null)
                     {
-                        Trace.WriteLine(
-                            $"{nameof(WriteOffCollection)}.{nameof(CheckinWork)}: Cannot write off hours of task {workItem.Id}");
+                        LoggerHelper.WriteLine($"Cannot write off hours of task {workItem.Id}");
                         continue;
                     }
 
@@ -201,7 +199,7 @@ namespace Gui.Helper
                 }
                 catch (Exception e)
                 {
-                    Trace.WriteLine(e);
+                    LoggerHelper.WriteLine(e);
                 }
             }
 
@@ -220,15 +218,13 @@ namespace Gui.Helper
             // сколько программа поставила в очередь
             var scheduled = ScheduledTime();
 
-            Trace.WriteLine(
-                $"{nameof(WorkItemCollection)}.{nameof(CutOffByCapacity)}: User wrote off {alreadyRecorded} " +
+            LoggerHelper.WriteLine($"User wrote off {alreadyRecorded} " +
                 $"hour(s), capacity is {maxHoursPerDay}");
 
             // Пользователь сам начекинил на дневной предел
             if (alreadyRecorded >= maxHoursPerDay)
             {
-                Trace.WriteLine(
-                    $"{nameof(WriteOffCollection)}.{nameof(CutOffByCapacity)}: User already riched the day limit");
+                LoggerHelper.WriteLine($"User already riched the day limit");
                 Clear();
                 return;
             }
@@ -239,8 +235,7 @@ namespace Gui.Helper
             // Уложились в предел
             if (delta >= 0)
             {
-                Trace.WriteLine(
-                    $"{nameof(WriteOffCollection)}.{nameof(CutOffByCapacity)}: Scheduled work don't overflow the day limit");
+                LoggerHelper.WriteLine($"Scheduled work don't overflow the day limit");
                 return;
             }
 
@@ -260,8 +255,7 @@ namespace Gui.Helper
                 Remove(first);
                 delta -= first.Hours;
 
-                Trace.WriteLine(
-                    $"{nameof(WorkItemCollection)}.{nameof(CutOffByCapacity)}: Deleted scheduled {first.Hours} hour(s)," +
+                LoggerHelper.WriteLine($"Deleted scheduled {first.Hours} hour(s)," +
                     $"workitem {first.Id}");
             }
         }

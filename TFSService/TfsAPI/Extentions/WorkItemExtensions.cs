@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Constants;
+using TfsAPI.Logger;
 
 namespace TfsAPI.Extentions
 {
@@ -74,7 +75,7 @@ namespace TfsAPI.Extentions
         /// <exception cref="Exception"></exception>
         public static void AddHours(this WorkItem item, byte hours, bool setActive = false)
         {
-            Trace.WriteLine($"{nameof(WorkItemExtensions)}.{nameof(AddHours)}: adding {hours} to Items {item.Id}");
+            LoggerHelper.WriteLine($"adding {hours} to Items {item.Id}");
 
             if (item == null)
                 throw new ArgumentException(nameof(item));
@@ -94,13 +95,13 @@ namespace TfsAPI.Extentions
 
             if (!double.TryParse(item[WorkItems.Fields.Complited]?.ToString(), out var completed))
             {
-                Trace.WriteLine($"Can't parse item [{WorkItems.Fields.Complited}] field");
+                LoggerHelper.WriteLine($"Can't parse item [{WorkItems.Fields.Complited}] field");
                 completed = 0;
             }
 
             if (!double.TryParse(item[WorkItems.Fields.Remaining]?.ToString(), out var remaining))
             {
-                Trace.WriteLine($"Can't parse item [{WorkItems.Fields.Remaining}] field");
+                LoggerHelper.WriteLine($"Can't parse item [{WorkItems.Fields.Remaining}] field");
                 remaining = 0;
             }
 
@@ -112,14 +113,13 @@ namespace TfsAPI.Extentions
             {
                 // Открываем элемент для редактирования
                 item.Open();
-                Trace.WriteLine($"{nameof(WorkItemExtensions)}.{nameof(AddHours)}: Opened work item");
+                LoggerHelper.WriteLine($"Opened work item");
             }
 
             item.Fields[WorkItems.Fields.Complited].Value = completed;
             item.Fields[WorkItems.Fields.Remaining].Value = remaining;
 
-            Trace.WriteLine(
-                $"{nameof(WorkItemExtensions)}.{nameof(AddHours)}: Added hours");
+            LoggerHelper.WriteLine("Added hours");
         }
 
         /// <summary>

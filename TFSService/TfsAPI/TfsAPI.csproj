@@ -334,6 +334,7 @@
     <Compile Include="Interfaces\ITFsObservable.cs" />
     <Compile Include="Constants\WorkItems.cs" />
     <Compile Include="Interfaces\IObservingItem.cs" />
+    <Compile Include="Logger\LoggerHelper.cs" />
     <Compile Include="ObservingItems\ObservingItemJson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extentions\WorkItemExtensions.cs" />

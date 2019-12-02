@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.Services.Common;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
+using TfsAPI.Logger;
 using TfsAPI.Rules;
 using TfsAPI.TFS.Trend;
 
@@ -28,7 +29,7 @@ namespace TfsAPI.TFS
             Project = new TfsTeamProjectCollection(new Uri(url));
             Project.EnsureAuthenticated();
 
-            Trace.WriteLine($"{nameof(TfsApi)}.ctor: Connected to " + Project.Name);
+            LoggerHelper.WriteLine($"Connected to " + Project.Name);
 
             _itemStore = Project.GetService<WorkItemStore>();
             _linking = Project.GetService<ILinking>();
@@ -39,7 +40,7 @@ namespace TfsAPI.TFS
 
             Name = owner ?? _itemStore.UserDisplayName;
 
-            Trace.WriteLine($"{nameof(TfsApi)}.ctor: Acting from {Name}");
+            LoggerHelper.WriteLine($"Acting from {Name}");
 
             _myItemsQuerry = new WiqlBuilder()
                 .AssignedTo()
@@ -51,12 +52,12 @@ namespace TfsAPI.TFS
         {
             if (item == null)
             {
-                Trace.WriteLine($"{nameof(TfsApi)}.{nameof(SaveElement)}: item is null");
+                LoggerHelper.WriteLine($"item is null");
                 return;
             }
 
 #if DEBUG
-            Trace.WriteLine($"Imagine that we have saved {item.Id} item");
+            LoggerHelper.WriteLine($"Imagine that we have saved {item.Id} item");
 
             try
             {
@@ -65,13 +66,13 @@ namespace TfsAPI.TFS
             }
             catch (Exception e)
             {
-                Trace.WriteLine(e);
+                LoggerHelper.WriteLine(e);
             }
 
 #else
             if (_itemStore.UserDisplayName != Name)
-                Trace.WriteLine(
-                    $"{nameof(TfsApi)}.{nameof(SaveElement)}: Can't check-in from {Name}, authorized as {_itemStore.UserDisplayName}");
+                LoggerHelper.WriteLine(
+                    $"Can't check-in from {Name}, authorized as {_itemStore.UserDisplayName}");
             else
                 try
                 {
@@ -80,7 +81,7 @@ namespace TfsAPI.TFS
                 }
                 catch (Exception e)
                 {
-                    Trace.WriteLine(e);
+                    LoggerHelper.WriteLine(e);
                 }
 #endif
         }
@@ -98,7 +99,7 @@ namespace TfsAPI.TFS
                 }
                 catch (Exception e)
                 {
-                    Trace.WriteLine($"{nameof(TfsApi)}.{nameof(CheckConnection)}: " + e);
+                    LoggerHelper.WriteLine(e);
                     return false;
                 }
             }
@@ -131,8 +132,7 @@ namespace TfsAPI.TFS
 
             item.AddHours(hours, setActive);
             SaveElement(item);
-            Trace.WriteLine(
-                $"{nameof(TfsApi)}.{nameof(WriteHours)}: From task {item.Id} was writed off {hours} hour(s)");
+            LoggerHelper.WriteLine($"From task {item.Id} was writed off {hours} hour(s)");
 
             var revisions = item.Revisions.OfType<Revision>();
             var finded = revisions
@@ -164,7 +164,7 @@ namespace TfsAPI.TFS
             // Нашел связи
             var linked = _linking.GetReferencingArtifacts(new[] {uri});
 
-            Trace.WriteLine($"{nameof(TfsApi)}.{nameof(GetAssociateItems)}: Founded {linked.Length} links");
+            LoggerHelper.WriteLine($"Founded {linked.Length} links");
 
             foreach (var artifact in linked)
             {
@@ -180,8 +180,8 @@ namespace TfsAPI.TFS
                 }
             }
 
-            Trace.WriteLineIf(result.Any(),
-                $"{nameof(TfsApi)}.{nameof(GetAssociateItems)}: Changeset {changeset} linked with items: {string.Join(", ", result.Select(x => x.Id))}");
+            LoggerHelper.WriteLineIf(result.Any(),
+                $" Changeset {changeset} linked with items: {string.Join(", ", result.Select(x => x.Id))}");
 
             return result;
         }
@@ -213,7 +213,7 @@ namespace TfsAPI.TFS
 
             var items = _itemStore.Query(quarry.ToString());
 
-            Trace.WriteLine($"{nameof(TfsApi)}.{nameof(Search)}: Tfs.Search: Founded {items.Count} items");
+            LoggerHelper.WriteLine($"Founded {items.Count} items");
 
             return items.OfType<WorkItem>().ToList();
         }
@@ -292,24 +292,24 @@ namespace TfsAPI.TFS
             // Сначала сохраняем как новый таск
             SaveElement(task);
 
-            Trace.WriteLine($"{nameof(TfsApi)}.{nameof(CreateTask)}: Created task {task.Id}");
+            LoggerHelper.WriteLine($"Created task {task.Id}");
 
             // Потом меняем статус в актив
             task.State = WorkItemStates.Active;
             SaveElement(task);
 
-            Trace.WriteLine($"{nameof(TfsApi)}.{nameof(CreateTask)}: Task status changed to {task.State}\n" +
-                            "--------- BEFORE LINKING --------\n" +
-                            $"Task links count: {task.Links.Count}, " +
-                            $"Parent links count: {task.Links.Count}");
+            LoggerHelper.WriteLine($"Task status changed to {task.State}\n" +
+                                   "--------- BEFORE LINKING --------\n" +
+                                   $"Task links count: {task.Links.Count}, " +
+                                   $"Parent links count: {task.Links.Count}");
 
             // После сохранения привязываем
             task.Links.Add(new RelatedLink(link.ReverseEnd, parent.Id));
             SaveElement(task);
 
-            Trace.WriteLine($"{nameof(TfsApi)}.{nameof(CreateTask)}: --------- AFTER LINKING --------\n" +
-                            $"Task links count: {task.Links.Count}, " +
-                            $"Parent links count: {task.Links.Count}");
+            LoggerHelper.WriteLine($"--------- AFTER LINKING --------\n" +
+                                   $"Task links count: {task.Links.Count}, " +
+                                   $"Parent links count: {task.Links.Count}");
 
             return task;
         }
@@ -376,15 +376,14 @@ namespace TfsAPI.TFS
 
                     if (!changedByMe)
                     {
-                        Trace.WriteLine(
+                        LoggerHelper.WriteLine(
                             $"{revision.Fields[WorkItems.Fields.ChangedBy]?.Value} is changed completed work for you");
                         continue;
                     }
 
                     if (!assignedToMe)
                     {
-                        Trace.WriteLine(
-                            $"{nameof(TfsApi)}.{nameof(GetWriteoffs)}: {revision.Fields[CoreField.AssignedTo]?.Value} took your task");
+                        LoggerHelper.WriteLine($"{revision.Fields[CoreField.AssignedTo]?.Value} took your task");
                         continue;
                     }
 
@@ -415,8 +414,7 @@ namespace TfsAPI.TFS
 
             var requests = _itemStore.Query(quarry).OfType<WorkItem>().ToList();
 
-            Trace.WriteLineIf(requests.Any(),
-                $"{nameof(TfsApi)}.{nameof(CloseCompletedReviews)}: Founded {requests.Count} requests");
+            LoggerHelper.WriteLineIf(requests.Any(), $"Founded {requests.Count} requests");
 
             var result = new List<WorkItem>();
 
@@ -438,8 +436,7 @@ namespace TfsAPI.TFS
                     .Select(x => x.Value)
                     .ToList();
 
-                Trace.WriteLine(
-                    $"{nameof(TfsApi)}.{nameof(CloseCompletedReviews)}: Request {request.Id} has {responses.Count} responses");
+                LoggerHelper.WriteLine($"Request {request.Id} has {responses.Count} responses");
 
                 if (canClose(request, responses)) result.Add(request);
             }
@@ -450,8 +447,7 @@ namespace TfsAPI.TFS
                 SaveElement(item);
             }
 
-            Trace.WriteLineIf(result.Any(),
-                $"{nameof(TfsApi)}.{nameof(CloseCompletedReviews)}: Closed {result.Count} requests");
+            LoggerHelper.WriteLineIf(result.Any(), $"Closed {result.Count} requests");
 
             return result;
         }
@@ -467,8 +463,7 @@ namespace TfsAPI.TFS
 
             var items = _itemStore.Query(quarry).OfType<WorkItem>().ToList();
 
-            Trace.WriteLineIf(items.Any(),
-                $"{nameof(TfsApi)}.{nameof(CloseRequests)}: Founded {items.Count} requests assigned to me");
+            LoggerHelper.WriteLineIf(items.Any(), $"Founded {items.Count} requests assigned to me");
 
             var canBeClosed = items.Where(x => canClose(x)).ToList();
 

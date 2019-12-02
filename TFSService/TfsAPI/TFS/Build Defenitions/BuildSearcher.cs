@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.VisualStudio.Services.WebApi;
+using TfsAPI.Logger;
 
 namespace TfsAPI.TFS.Build_Defenitions
 {
@@ -43,11 +44,11 @@ namespace TfsAPI.TFS.Build_Defenitions
                 catch (AggregateException e)
                     when (e.InnerException is VssServiceResponseException ex)
                 {
-                    Trace.WriteLine($"{nameof(BuildSearcher)}.{nameof(FindCompletedBuilds)}: Not enough privileges");
+                    LoggerHelper.WriteLine($" Not enough privileges");
                 }
                 catch (Exception e)
                 {
-                    Trace.WriteLine($"{nameof(BuildSearcher)}.{nameof(FindCompletedBuilds)}: " + e);
+                    LoggerHelper.WriteLine(e);
                 }
 
             return builds;

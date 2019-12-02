@@ -20,6 +20,7 @@ using Mvvm;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
+using TfsAPI.Logger;
 using TfsAPI.ObservingItems;
 using TfsAPI.RulesNew;
 using TfsAPI.TFS;
@@ -53,7 +54,7 @@ namespace Gui.ViewModels
 
             if (!connect)
             {
-                Trace.WriteLine($"{nameof(MainViewModel)}.{nameof(Init)}: User denied to connect, exit the program");
+                LoggerHelper.WriteLine($"User denied to connect, exit the program");
                 Application.Current.Shutdown(0);
                 return;
             }
@@ -478,7 +479,7 @@ namespace Gui.ViewModels
                 }
                 catch (Exception e)
                 {
-                    Trace.WriteLine(e);
+                    LoggerHelper.WriteLine(e);
                     return null;
                 }
             }
@@ -553,22 +554,20 @@ namespace Gui.ViewModels
             // Рабочий элемент должен быть не закрытым таском 
             if (!item.IsTaskAvailable())
             {
-                Trace.WriteLine(
-                    $"{nameof(MainViewModel)}.{nameof(IsTaskAvailable)}: Task {item?.Id} is not exist or has been closed");
+                LoggerHelper.WriteLine("Task {item?.Id} is not exist or has been closed");
                 return false;
             }
 
             // У него должно быть запланированные часы работы
             if (!(item.Fields[WorkItems.Fields.Remaining]?.Value is double remaining) || remaining <= 0)
             {
-                Trace.WriteLine(
-                    $"{nameof(MainViewModel)}.{nameof(IsTaskAvailable)}: Task {item?.Id} is not exist or remaining time is over");
+                LoggerHelper.WriteLine("Task {item?.Id} is not exist or remaining time is over");
                 return false;
             }
 
             // Таск должен быть на мне
             if (!_apiObserve.IsAssignedToMe(item))
-                Trace.WriteLine($"{nameof(MainViewModel)}.{nameof(IsTaskAvailable)}: Task is not assigned to me");
+                LoggerHelper.WriteLine($"Task is not assigned to me");
 
             return true;
         }
@@ -657,8 +656,7 @@ namespace Gui.ViewModels
                 if (!settings.DisplayTime.GetBegin().IsToday())
                 {
                     //Начинаю рабочий день!
-                    Trace.WriteLine($"{nameof(Settings)}.{nameof(TryStartWorkDay)}: " +
-                                    $"{settings.DisplayTime.GetDisplayTime().TotalHours}h: " +
+                    LoggerHelper.WriteLine($"{settings.DisplayTime.GetDisplayTime().TotalHours}h: " +
                                     $"{settings.DisplayTime.GetDisplayTime().Minutes}m:");
 
                     // Очищаю день
@@ -672,8 +670,7 @@ namespace Gui.ViewModels
 
                     settings.DisplayTime.AddDate(DateTime.Now, true);
 
-                    Trace.WriteLine(
-                        $"{nameof(Settings)}.{nameof(TryStartWorkDay)}: {settings.DisplayTime.GetBegin().ToShortTimeString()}: Welcome to a new day!");
+                    LoggerHelper.WriteLine($"{settings.DisplayTime.GetBegin().ToShortTimeString()}: Welcome to a new day!");
 
                     result = true;
                 }
