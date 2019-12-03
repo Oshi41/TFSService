@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace TfsAPI.Logger
@@ -17,10 +18,9 @@ namespace TfsAPI.Logger
                 ? string.Empty
                 : $" ({line})";
 
-            if (!string.IsNullOrEmpty(file) && file.Contains("\\"))
+            if (!string.IsNullOrEmpty(file))
             {
-                var index = file.LastIndexOf("\\", StringComparison.Ordinal) + 1;
-                file = file.Substring(index, file.Length - index);
+                file = Path.GetFileNameWithoutExtension(file);
             }
 
             Trace.WriteLine($"{now.ToShortDateString()} {now:hh.mm.ss.fff} [{file}::{caller}{lineNumber}] {message}");
