@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using TfsAPI.Logger;
 
 namespace Gui.Helper
 {
@@ -31,7 +32,7 @@ namespace Gui.Helper
             }
             catch (Exception e)
             {
-                Trace.Write(e);
+                LoggerHelper.WriteLine(e);
                 throw;
             }
             finally
@@ -109,7 +110,7 @@ namespace Gui.Helper
             }
             catch (Exception e)
             {
-                Trace.Write(e);
+                LoggerHelper.WriteLine(e);
                 throw;
             }
             finally

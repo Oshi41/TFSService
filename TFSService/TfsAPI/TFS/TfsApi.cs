@@ -194,7 +194,7 @@ namespace TfsAPI.TFS
             }
             catch (Exception e)
             {
-                Trace.Write($"{nameof(TfsApi)}.{nameof(FindById)}: " + e);
+                LoggerHelper.WriteLine(e);
                 return null;
             }
         }
@@ -258,7 +258,7 @@ namespace TfsAPI.TFS
             catch (Exception e)
             {
                 // Выбранный тип не поддерживается проектом
-                Trace.Write(e);
+                LoggerHelper.WriteLine(e);
                 throw new Exception(
                     $"Supported work item types:\n{string.Join("\n", parent.Project.WorkItemTypes.OfType<WorkItemType>().Select(x => x.Name))}");
             }
@@ -284,7 +284,7 @@ namespace TfsAPI.TFS
             }
             catch (Exception e)
             {
-                Trace.Write(e);
+                LoggerHelper.WriteLine(e);
                 throw new Exception(
                     $"Supported link types:\n{string.Join("\n", _itemStore.WorkItemLinkTypes.Select(x => x.ReferenceName))}");
             }

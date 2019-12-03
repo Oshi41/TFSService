@@ -281,13 +281,16 @@ namespace TfsAPI.TFS
         /// <param name="copy">Список полученных из TFS элементов</param>
         private void UpdateAndSetItems(IList<WorkItem> copy)
         {
-            // Нашли изменений
-            var changed = MyItems.Except(copy, _itemChangedComparer).ToList();
+            // Нахожу ID элементов с различиями
+            var changedIds = MyItems.Except(copy, _itemChangedComparer).Select(x => x.Id).ToList();
 
             // Если есть изменения
-            if (changed.Any())
-                // Вызываем события
-                ItemsChanged?.Invoke(this, changed.ToList());
+            if (changedIds.Any())
+            {
+                // берём сразу с новыми данными
+                var updated = copy.Where(x => changedIds.Contains(x.Id)).ToList();
+                ItemsChanged?.Invoke(this, updated);
+            }
 
             // записываем новые данные
             MyItems = copy;

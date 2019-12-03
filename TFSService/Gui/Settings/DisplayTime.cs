@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Mvvm;
 using TfsAPI.Extentions;
+using TfsAPI.Logger;
 
 namespace Gui.Settings
 {
@@ -32,7 +33,7 @@ namespace Gui.Settings
         {
             if (SessionTimes.ContainsKey(time))
             {
-                Trace.Write($"{nameof(DisplayTime)}.{nameof(AddDate)}: Time is already recorded");
+                LoggerHelper.WriteLine($"Time is already recorded");
                 return;
             }
 
