@@ -13,11 +13,13 @@ namespace Gui.ViewModels
     public class StatsViewModel : BindableBase
     {
         private readonly List<WorkItemVm> _origin = new List<WorkItemVm>();
-        private int _capacity;
+        
         private ObservableCollection<WorkItemVm> _myItems;
 
         private string _name;
-        private int _tfsCapacity;
+
+        private int _capacity;
+
         private int _wroteOff;
 
         public StatsViewModel(FilterViewModel filter)
@@ -37,12 +39,6 @@ namespace Gui.ViewModels
         {
             get => _capacity;
             set => SetProperty(ref _capacity, value);
-        }
-
-        public int TfsCapacity
-        {
-            get => _tfsCapacity;
-            set => SetProperty(ref _tfsCapacity, value);
         }
 
         public int WroteOff
@@ -65,10 +61,15 @@ namespace Gui.ViewModels
                 throw new Exception(nameof(api));
 
             var now = DateTime.Now;
-            Capacity = Settings.Settings.Read().Capacity.Hours;
+
+            using (var settings = Settings.Settings.Read())
+            {
+                Capacity = settings.Capacity.ByUser
+                    ? settings.Capacity.Hours
+                    : await Task.Run(api.GetCapacity);
+            }
 
             // TFS API requests
-            TfsCapacity = await Task.Run(api.GetCapacity);
             WroteOff = await Task.Run(() => api.GetWriteoffs(now, now).Sum(x => x.Value));
             Name = await Task.Run(() => api.Name);
             var all = await Task.Run(() => api.GetMyWorkItems().Select(x => new WorkItemVm(x)));

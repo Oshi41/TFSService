@@ -284,7 +284,7 @@ namespace Gui.ViewModels
 
         private void OnShowTrendCommand()
         {
-            var vm = new TrendViewModel(_apiObserve, GetActualCapacity());
+            var vm = new TrendViewModel(_apiObserve, StatsViewModel.Capacity);
             WindowManager.ShowDialog(vm, Resources.AS_Trand_Title, 680, 600, maximize:true);
         }
 
@@ -622,17 +622,6 @@ namespace Gui.ViewModels
                 .Concat(settings.MyWorkItems)
                 .Distinct()
                 .ToList();
-        }
-
-        private int GetActualCapacity()
-        {
-            using (var settings = Settings.Settings.Read())
-            {
-                if (settings.Capacity.ByUser)
-                    return settings.Capacity.Hours;
-            }
-
-            return _apiObserve.GetCapacity();
         }
 
         #endregion
