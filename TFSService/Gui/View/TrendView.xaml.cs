@@ -43,6 +43,15 @@ namespace Gui.View
                 && item.Template.FindName("PART_HeaderButton", item) is FrameworkElement button)
             {
                 button.Visibility = Visibility.Collapsed;
+                calendar.DisplayModeChanged += PreventModeChange;
+            }
+        }
+
+        private void PreventModeChange(object sender, CalendarModeChangedEventArgs e)
+        {
+            if (sender is Calendar calendar)
+            {
+                calendar.DisplayMode = CalendarMode.Year;
             }
         }
     }

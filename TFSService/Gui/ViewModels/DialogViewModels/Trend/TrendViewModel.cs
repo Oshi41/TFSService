@@ -60,6 +60,7 @@ namespace Gui.ViewModels.DialogViewModels.Trend
                 var chart = await Task.Run(() => _api.GetForMonth(monthStart, end, _capacity));
 
                 result = new ChartViewModel(chart);
+                _cache[monthStart] = result;
             }
 
             ChartVm = result;
