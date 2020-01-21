@@ -12,11 +12,13 @@ using Gui.Properties;
 using Gui.Settings;
 using Gui.ViewModels.DialogViewModels;
 using Gui.ViewModels.DialogViewModels.Trend;
+using Gui.ViewModels.Filter;
 using Gui.ViewModels.Notifications;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Mvvm;
+using Mvvm.Commands;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
@@ -37,6 +39,7 @@ namespace Gui.ViewModels
             UpdateCommand = ObservableCommand.FromAsyncHandler(Update);
             SettingsCommand = new ObservableCommand(ShowSettings);
             WriteOffHoursCommand = new ObservableCommand(OnWriteHours);
+            AddToIgnoredCommand = new DelegateCommand<WorkItemVm>(OnAddToIgnore, OnCanAddToIgnore);
             ObservableItemsCommand = new ObservableCommand(OnShowObservableItems);
             ShowTrendCommand = new ObservableCommand(OnShowTrendCommand);
 
@@ -217,7 +220,12 @@ namespace Gui.ViewModels
         ///     Принудительно списываю время
         /// </summary>
         public ICommand WriteOffHoursCommand { get; }
-        
+
+        /// <summary>
+        /// Добавляю элемент в список игнорируемых
+        /// </summary>
+        public ICommand AddToIgnoredCommand { get; }
+
         /// <summary>
         /// Наблюдаемые элементы
         /// </summary>
@@ -273,11 +281,13 @@ namespace Gui.ViewModels
         {
             var vm = new ObservingWorkItemsViewModel(_apiObserve, Settings.Settings.Read().ObservingItems);
 
-            if (WindowManager.ShowDialog(vm, Resources.AS_ObservableItems_Title, width: 800, height:400) == true)
+            if (WindowManager.ShowDialog(vm, Resources.AS_ObservableItems_Title, width: 800, height: 400) == true)
             {
                 using (var settings = Settings.Settings.Read())
                 {
-                    settings.ObservingItems = new ObservableCollection<IObservingItem>(vm.ObservingItems.Select(x => new ObservingItemJson(x)));
+                    settings.ObservingItems =
+                        new ObservableCollection<IObservingItem>(
+                            vm.ObservingItems.Select(x => new ObservingItemJson(x)));
                 }
             }
         }
@@ -285,7 +295,52 @@ namespace Gui.ViewModels
         private void OnShowTrendCommand()
         {
             var vm = new TrendViewModel(_apiObserve, StatsViewModel.Capacity);
-            WindowManager.ShowDialog(vm, Resources.AS_Trand_Title, 680, 600, maximize:true);
+            WindowManager.ShowDialog(vm, Resources.AS_Trand_Title, 680, 600, maximize: true);
+        }
+
+        private void OnAddToIgnore(WorkItemVm obj)
+        {
+            var filter = StatsViewModel.Filter.Ignored;
+
+            // Принудительно включаю фильтр
+            if (filter.CanDisable && !filter.IsEnable)
+            {
+                filter.IsEnable = true;
+            }
+
+            // Нашёл элемент с тайим ID
+            var finded = filter.Marks.FirstOrDefault(x => x.Value.Equals(obj.Item.Id.ToString()));
+            if (finded == null)
+            {
+                // Либо создаю новый
+                filter.Marks.Add(new ExtendedItemTypeMark(obj));
+            }
+            else
+            {
+                // Либюо включаю галочку
+                finded.IsChecked = true;
+            }
+        }
+
+        private bool OnCanAddToIgnore(WorkItemVm arg)
+        {
+            // обработка ошибок
+            if (arg == null)
+                return false;
+
+            // обработка ошибок
+            var filter = StatsViewModel?.Filter?.Ignored;
+            if (filter == null)
+                return false;
+
+            // Можем форсированно включить фильтр
+            if (filter.CanDisable && !filter.IsEnable)
+                return true;
+
+            // нашли элемент с таким ID
+            var find = filter.Marks.FirstOrDefault(x => x.Value.Equals(arg.Item.Id.ToString()));
+            // Либо такого нет, либ он выключен
+            return find == null || find.IsChecked != true;
         }
 
         #endregion
@@ -589,7 +644,8 @@ namespace Gui.ViewModels
 
             using (var settings = Settings.Settings.Read())
             {
-                settings.MyWorkItems = new ObservableCollection<IObservingItem>(all.Select(x => new ObservingItemJson(x)));
+                settings.MyWorkItems =
+                    new ObservableCollection<IObservingItem>(all.Select(x => new ObservingItemJson(x)));
             }
         }
 
@@ -646,7 +702,7 @@ namespace Gui.ViewModels
                 {
                     //Начинаю рабочий день!
                     LoggerHelper.WriteLine($"{settings.DisplayTime.GetDisplayTime().TotalHours}h: " +
-                                    $"{settings.DisplayTime.GetDisplayTime().Minutes}m:");
+                                           $"{settings.DisplayTime.GetDisplayTime().Minutes}m:");
 
                     // Очищаю день
                     settings.DisplayTime.ClearPreviouse();
@@ -659,7 +715,8 @@ namespace Gui.ViewModels
 
                     settings.DisplayTime.AddDate(DateTime.Now, true);
 
-                    LoggerHelper.WriteLine($"{settings.DisplayTime.GetBegin().ToShortTimeString()}: Welcome to a new day!");
+                    LoggerHelper.WriteLine(
+                        $"{settings.DisplayTime.GetBegin().ToShortTimeString()}: Welcome to a new day!");
 
                     result = true;
                 }

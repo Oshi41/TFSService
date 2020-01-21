@@ -152,9 +152,14 @@
                                     ViewMode="{Binding Path=ViewMode}"
                                     Items="{Binding Path=StatsViewModel.MyItems}">
                 <controls:WorkItemsView.ItemMenu>
-                    <ContextMenu Visibility="{Binding Path=Item.Type.Name, Converter={StaticResource IsTaskConverter}}">
+                    <ContextMenu>
                         <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
+                                  Visibility="{Binding Path=Item.Type.Name, Converter={StaticResource IsTaskConverter}}"
                                   Command="{Binding Source={StaticResource BindProxy}, Path=Data.WriteOffHoursCommand}"
+                                  CommandParameter="{Binding}" />
+
+                        <MenuItem Header="{x:Static p:Resources.AS_MainView_ItemMenu_Ignore}"
+                                  Command="{Binding Source={StaticResource BindProxy}, Path=Data.AddToIgnoredCommand}"
                                   CommandParameter="{Binding}" />
                     </ContextMenu>
                 </controls:WorkItemsView.ItemMenu>

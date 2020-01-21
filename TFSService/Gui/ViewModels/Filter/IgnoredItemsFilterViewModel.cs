@@ -22,7 +22,7 @@ namespace Gui.ViewModels.Filter
     {
         private bool _isEnable;
         private string _currentId;
-
+        private ITfsApi _api;
         private readonly List<WorkItemVm> _all = new List<WorkItemVm>();
 
         private ObservableCollection<WorkItemVm> _myWorkItems;
@@ -125,7 +125,13 @@ namespace Gui.ViewModels.Filter
         public bool IsEnable
         {
             get => _isEnable;
-            set => SetProperty(ref _isEnable, value);
+            set
+            {
+                if (SetProperty(ref _isEnable, value))
+                {
+                    RaiseFitlerChanged();
+                }
+            }
         }
 
         public ObservableCollection<IItemTypeMark> Marks { get; }
@@ -178,6 +184,8 @@ namespace Gui.ViewModels.Filter
 
             if (api != null)
             {
+                _api = api;
+
                 var finded = await Task.Run(() => api
                     .FindById(Marks.Select(x => x.Value)
                         .Except(_all
@@ -236,7 +244,11 @@ namespace Gui.ViewModels.Filter
 
             if (!string.IsNullOrWhiteSpace(CurrentId))
             {
-                Marks.Add(new ExtendedItemTypeMark(CurrentId));
+                var mark = new ExtendedItemTypeMark(CurrentId);
+                mark.Initialize(_all, _api);
+
+                if (mark.WorkItem != null)
+                    Marks.Add(mark);
             }
         }
 

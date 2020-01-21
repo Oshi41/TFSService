@@ -451,4 +451,7 @@
   <data name="AS_Filter_IgnoredIds" xml:space="preserve">
     <value>Скрыть элементы</value>
   </data>
+  <data name="AS_MainView_ItemMenu_Ignore" xml:space="preserve">
+    <value>Скрыть элемент</value>
+  </data>
 </root>

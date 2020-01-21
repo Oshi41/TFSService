@@ -547,6 +547,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Скрыть элемент.
+        /// </summary>
+        public static string AS_MainView_ItemMenu_Ignore {
+            get {
+                return ResourceManager.GetString("AS_MainView_ItemMenu_Ignore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ответил &apos;Looks Good&apos; на {0} запросов, созданные до {1}.
         /// </summary>
         public static string AS_Mask_ResponseClosed {
