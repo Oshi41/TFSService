@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Gui.Helper;
 using Gui.Settings;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
@@ -116,7 +117,7 @@ namespace Gui.ViewModels.Filter
             Marks.CollectionChanged += NotifyChanges;
             NotifyChanges(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, Marks));
 
-            AddMark = new DelegateCommand(OnAddMark, OnCanAddMark);
+            AddMark = ObservableCommand.FromAsyncHandler(OnAddMark, OnCanAddMark);
             DeleteMark = new DelegateCommand<IItemTypeMark>(OnDeleteMark);
         }
 
@@ -199,7 +200,7 @@ namespace Gui.ViewModels.Filter
                 source = source.Union(finded.Values.Select(x => new WorkItemVm(x)));
             }
 
-            Marks.OfType<IInitializable>().ForEach(x => x.Initialize(source, api));
+            Marks.OfType<IInitializable>().ToList().ForEach(x => x.Initialize(source, api));
 
             var ids = Marks.Select(x => x.Value).Distinct().ToList();
             MyWorkItems = new ObservableCollection<WorkItemVm>(_all.Where(x => !ids.Contains(x.Item.Id.ToString())));
@@ -234,7 +235,7 @@ namespace Gui.ViewModels.Filter
             return !string.IsNullOrWhiteSpace(CurrentId);
         }
 
-        private void OnAddMark()
+        private async Task OnAddMark()
         {
             if (Selected != null)
             {
@@ -242,13 +243,12 @@ namespace Gui.ViewModels.Filter
                 return;
             }
 
-            if (!string.IsNullOrWhiteSpace(CurrentId))
+            if (!string.IsNullOrWhiteSpace(CurrentId)
+                && _api != null
+                && int.TryParse(CurrentId, out var id)
+                && await Task.Run(() => _api.FindById(id)) is WorkItem item)
             {
-                var mark = new ExtendedItemTypeMark(CurrentId);
-                mark.Initialize(_all, _api);
-
-                if (mark.WorkItem != null)
-                    Marks.Add(mark);
+                Marks.Add(new ExtendedItemTypeMark(item));
             }
         }
 
@@ -284,14 +284,19 @@ namespace Gui.ViewModels.Filter
             WorkItem = item;
         }
 
-        public async void Initialize(IEnumerable<WorkItemVm> all, ITfsApi api = null)
+        public void Initialize(IEnumerable<WorkItemVm> all, ITfsApi api = null)
         {
             if (!int.TryParse(Value, out var id))
                 return;
 
-            // Сначала ищу в списке, лиюо делаю запрос
-            WorkItem item = all.FirstOrDefault(x => x.Item.Id == id)?.Item
-                            ?? await Task.Run(() => api?.FindById(id));
+            WorkItem item = WorkItem
+                            ?? all.FirstOrDefault(x => x.Item.Id == id)?.Item;
+
+            // Делаем запрос в первый раз, либо надо принудительно обновить
+            if (item == null || api != null)
+            {
+                item = api.FindById(id);
+            }
 
             WorkItem = item;
         }
@@ -327,10 +332,17 @@ namespace Gui.ViewModels.Filter
             get => _workItem;
             set
             {
-                if (SetProperty(ref _workItem, value) && value?.Item != null)
+                if (SetProperty(ref _workItem, value))
                 {
-                    Value = value.Item.Id.ToString();
-                    ToolTip = value.Item.Type.Name + " " + value.Item.Title;
+                    if (value?.Item != null)
+                    {
+                        Value = value.Item.Id.ToString();
+                        ToolTip = value.Item.Type.Name + " " + value.Item.Title;
+                    }
+                    else
+                    {
+                        Value = ToolTip = string.Empty;
+                    }
                 }
             }
         }
