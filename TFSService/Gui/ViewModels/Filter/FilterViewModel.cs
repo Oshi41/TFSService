@@ -13,46 +13,51 @@ namespace Gui.ViewModels
     {
         public CategoryFilterViewModel WorkTypes { get; }
         public CategoryFilterViewModel States { get; }
+        public IgnoredItemsFilterViewModel Ignored { get; }
 
         public event EventHandler FilterChanged;
 
         [JsonConstructor]
-        public FilterViewModel(CategoryFilterViewModel workTypes, CategoryFilterViewModel states)
+        public FilterViewModel(CategoryFilterViewModel workTypes, CategoryFilterViewModel states,
+            IgnoredItemsFilterViewModel ignored)
         {
             WorkTypes = workTypes ?? new CategoryFilterViewModel(
-                         Properties.Resources.AS_Filter_WorkTypes,
-                         new ItemTypeMark[]
-                         {
-                             WorkItemTypes.Task,
-                             WorkItemTypes.Pbi,
-                             WorkItemTypes.Bug,
-                             WorkItemTypes.Improvement,
-                             WorkItemTypes.Incident,
-                             WorkItemTypes.Feature,
-                             WorkItemTypes.CodeReview,
-                             WorkItemTypes.ReviewResponse
-
-                         }, true);
+                            Properties.Resources.AS_Filter_WorkTypes,
+                            new ItemTypeMark[]
+                            {
+                                WorkItemTypes.Task,
+                                WorkItemTypes.Pbi,
+                                WorkItemTypes.Bug,
+                                WorkItemTypes.Improvement,
+                                WorkItemTypes.Incident,
+                                WorkItemTypes.Feature,
+                                WorkItemTypes.CodeReview,
+                                WorkItemTypes.ReviewResponse
+                            }, true);
 
 
             States = states ?? new CategoryFilterViewModel(
-                            Properties.Resources.AS_Filter_WorkItemStates,
-                            new ItemTypeMark[]
-                            {
-                                WorkItemStates.New,
-                                WorkItemStates.Active,
-                                WorkItemStates.Resolved,
-                                WorkItemStates.Requested
-                            }, true);
+                         Properties.Resources.AS_Filter_WorkItemStates,
+                         new ItemTypeMark[]
+                         {
+                             WorkItemStates.New,
+                             WorkItemStates.Active,
+                             WorkItemStates.Resolved,
+                             WorkItemStates.Requested
+                         }, true);
+
+            Ignored = ignored ?? new IgnoredItemsFilterViewModel(
+                          Properties.Resources.AS_Filter_IgnoredIds,
+                          new ItemTypeMark[0], true);
 
             WorkTypes.FilterChanged += OnFilterChanged;
             States.FilterChanged += OnFilterChanged;
+            Ignored.FilterChanged += OnFilterChanged;
         }
 
         public FilterViewModel(FilterViewModel source)
-            : this(source?.WorkTypes, source?.States)
+            : this(source?.WorkTypes, source?.States, source?.Ignored)
         {
-            
         }
 
         private void OnFilterChanged(object sender, EventArgs e)
@@ -77,6 +82,13 @@ namespace Gui.ViewModels
             {
                 var states = States.GetSelected();
                 if (!states.Any(item.HasState))
+                    return false;
+            }
+
+            if (Ignored.IsEnable)
+            {
+                if (Ignored.Marks.Where(x => x.IsChecked).Select(x => x.Value)
+                    .Any(x => string.Equals(x, item.Id.ToString())))
                     return false;
             }
 

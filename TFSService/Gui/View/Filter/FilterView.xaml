@@ -19,18 +19,26 @@
             <converters:SwitchConverter x:Key="StateColorConverter"
                                         Default="{StaticResource MaterialDesignToolForeground}">
                 <converters:Case If="{x:Static constants:WorkItemStates.Active}"
-                                 Value="{x:Static Brushes.Blue}"/>
+                                 Value="{x:Static Brushes.Blue}" />
 
                 <converters:Case If="{x:Static constants:WorkItemStates.Resolved}"
-                                 Value="{x:Static Brushes.DarkOrange}"/>
+                                 Value="{x:Static Brushes.DarkOrange}" />
 
                 <converters:Case If="{x:Static constants:WorkItemStates.New}"
-                                 Value="{x:Static Brushes.DarkGreen}"/>
+                                 Value="{x:Static Brushes.DarkGreen}" />
+            </converters:SwitchConverter>
+
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+            <converters:SwitchConverter x:Key="ChipBackgoundConverter"
+                                        Default="{StaticResource MaterialDesignBackground}">
+                <converters:Case If="True"
+                                 Value="{StaticResource MaterialDesignChipBackground}" />
             </converters:SwitchConverter>
 
             <Style TargetType="{x:Type TextBlock}"
                    BasedOn="{StaticResource {x:Type TextBlock}}">
-                <Setter Property="TextWrapping" Value="Wrap"/>
+                <Setter Property="TextWrapping" Value="Wrap" />
             </Style>
         </ResourceDictionary>
 
@@ -74,10 +82,38 @@
                                 <CheckBox IsChecked="{Binding Path=IsChecked}"
                                           IsEnabled="{Binding Path=IsEnabled}"
                                           Content="{Binding Path=Value}"
-                                          Foreground="{Binding Path=Value, Converter={StaticResource StateColorConverter}}"/>
+                                          Foreground="{Binding Path=Value, Converter={StaticResource StateColorConverter}}" />
                             </DataTemplate>
                         </filter:CategoryFilterView.Resources>
                     </filter:CategoryFilterView>
+
+                    <filter:IgnoredItemsFilterView Margin="0,20,0,0"
+                                                   DataContext="{Binding Path=Ignored}">
+                        <filter:IgnoredItemsFilterView.Resources>
+                            <DataTemplate DataType="{x:Type viewModels:ItemTypeMark}">
+                                <Border CornerRadius="16"
+                                        BorderThickness="1"
+                                        BorderBrush="{StaticResource MaterialDesignChipBackground}"
+                                        Margin="5">
+                                    <materialDesign:Chip IsDeletable="True"
+                                                         Command="{Binding Path=CheckCommand}"
+                                                         DeleteCommand="{Binding RelativeSource={RelativeSource AncestorType=filter:IgnoredItemsFilterView}, Path=DataContext.DeleteMark}"
+                                                         DeleteCommandParameter="{Binding}"
+                                                         Content="{Binding Path=Value}"
+                                                         IconBackground="Transparent"
+                                                         IsEnabled="{Binding Path=IsEnabled}"
+                                                         Background="{Binding Path=IsChecked, Converter={StaticResource ChipBackgoundConverter}}">
+                                        <materialDesign:Chip.Icon>
+                                            <materialDesign:PackIcon Kind="Check"
+                                                                     Background="Transparent"
+                                                                     Foreground="{StaticResource MaterialDesignBody}"
+                                                                     Visibility="{Binding Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        </materialDesign:Chip.Icon>
+                                    </materialDesign:Chip>
+                                </Border>
+                            </DataTemplate>
+                        </filter:IgnoredItemsFilterView.Resources>
+                    </filter:IgnoredItemsFilterView>
                 </StackPanel>
             </ScrollViewer>
         </materialDesign:PopupBox>

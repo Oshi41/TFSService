@@ -53,7 +53,7 @@ namespace Gui
             {
                 Content = new FilterView
                 {
-                    DataContext = new FilterViewModel(null, null)
+                    DataContext = new FilterViewModel(null, null, null)
                 }
             };
 

@@ -1,4 +1,6 @@
-﻿using Mvvm;
+﻿using System.Windows.Input;
+using Mvvm;
+using Mvvm.Commands;
 using Newtonsoft.Json;
 
 namespace Gui.ViewModels
@@ -15,6 +17,8 @@ namespace Gui.ViewModels
             Value = value;
             IsEnabled = isEnabled;
             IsChecked = isChecked;
+
+            CheckCommand = new DelegateCommand(() => IsChecked = !IsChecked, () => isEnabled);
         }
 
         public bool IsEnabled
@@ -34,6 +38,9 @@ namespace Gui.ViewModels
             get => _isChecked;
             set => SetProperty(ref _isChecked, value);
         }
+
+        [JsonIgnore]
+        public ICommand CheckCommand { get; }
 
         public static implicit operator ItemTypeMark(string name)
         {

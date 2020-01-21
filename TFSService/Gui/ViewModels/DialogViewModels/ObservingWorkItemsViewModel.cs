@@ -43,7 +43,7 @@ namespace Gui.ViewModels.DialogViewModels
             RemoveCommand = new DelegateCommand<WorkItemVm>(OnRemove, OnCanRemove);
             // Использую дефолтный фильтр
             // Инициализировать строго в этом потоке!!!
-            ItemSearcher = new WorkItemSearcher(_api, new FilterViewModel(null, null));
+            ItemSearcher = new WorkItemSearcher(_api, new FilterViewModel(null, null, null));
 
             Init(items);
         }

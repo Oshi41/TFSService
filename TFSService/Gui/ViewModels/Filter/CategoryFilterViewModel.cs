@@ -106,7 +106,7 @@ namespace Gui.ViewModels.Filter
             RaiseFitlerChanged();
         }
 
-        private void RaiseFitlerChanged()
+        protected void RaiseFitlerChanged()
         {
             FilterChanged?.Invoke(this, EventArgs.Empty);
         }

@@ -430,6 +430,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Скрыть элементы.
+        /// </summary>
+        public static string AS_Filter_IgnoredIds {
+            get {
+                return ResourceManager.GetString("AS_Filter_IgnoredIds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Состояние.
         /// </summary>
         public static string AS_Filter_WorkItemStates {

@@ -448,4 +448,7 @@
   <data name="AS_WriteOff_Trend" xml:space="preserve">
     <value>Динамика списания часов</value>
   </data>
+  <data name="AS_Filter_IgnoredIds" xml:space="preserve">
+    <value>Скрыть элементы</value>
+  </data>
 </root>
