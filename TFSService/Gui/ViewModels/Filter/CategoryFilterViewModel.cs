@@ -4,15 +4,14 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Gui.Settings;
 using Microsoft.TeamFoundation.Common;
 using Mvvm;
 using Newtonsoft.Json;
 
 namespace Gui.ViewModels.Filter
 {
-    public class CategoryFilterViewModel : BindableBase
+    public class CategoryFilterViewModel : BindableBase, ICategoryFilterViewModel
     {
         
         private bool _isEnable;
@@ -44,7 +43,7 @@ namespace Gui.ViewModels.Filter
             CanDisable = canDisable;
             _isEnable = isEnable;
             _shouldRestrictNotSelected = shouldRestrictNotSelected;
-            Marks = new ObservableCollection<ItemTypeMark>(marks);
+            Marks = new ObservableCollection<IItemTypeMark>(marks);
 
             Marks.CollectionChanged += NotifyChanges;
 
@@ -63,12 +62,12 @@ namespace Gui.ViewModels.Filter
             }
         }
 
-        public ObservableCollection<ItemTypeMark> Marks { get; }
+        public ObservableCollection<IItemTypeMark> Marks { get; }
 
         public string Title { get; }
         
         [JsonIgnore]
-        public bool CanDisable { get; } = true;
+        public bool CanDisable { get; }
 
         public event EventHandler FilterChanged;
 
@@ -106,7 +105,7 @@ namespace Gui.ViewModels.Filter
             RaiseFitlerChanged();
         }
 
-        protected void RaiseFitlerChanged()
+        private void RaiseFitlerChanged()
         {
             FilterChanged?.Invoke(this, EventArgs.Empty);
         }

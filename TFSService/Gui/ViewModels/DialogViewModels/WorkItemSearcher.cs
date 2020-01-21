@@ -35,7 +35,7 @@ namespace Gui.ViewModels.DialogViewModels
                     true),
                 new IgnoredItemsFilterViewModel(
                     Properties.Resources.AS_Filter_IgnoredIds,
-                    new ItemTypeMark[0],
+                    new ExtendedItemTypeMark[0],
                     true)))
         {
         }

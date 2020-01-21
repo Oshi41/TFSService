@@ -48,7 +48,7 @@ namespace Gui.ViewModels
 
             Ignored = ignored ?? new IgnoredItemsFilterViewModel(
                           Properties.Resources.AS_Filter_IgnoredIds,
-                          new ItemTypeMark[0], true);
+                          new ExtendedItemTypeMark[0], true);
 
             WorkTypes.FilterChanged += OnFilterChanged;
             States.FilterChanged += OnFilterChanged;

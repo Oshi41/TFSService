@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Gui.ViewModels
 {
-    public class ItemTypeMark : BindableBase
+    public class ItemTypeMark : BindableBase, IItemTypeMark
     {
         private bool _isChecked;
         private bool _isEnabled;
@@ -17,8 +17,6 @@ namespace Gui.ViewModels
             Value = value;
             IsEnabled = isEnabled;
             IsChecked = isChecked;
-
-            CheckCommand = new DelegateCommand(() => IsChecked = !IsChecked, () => isEnabled);
         }
 
         public bool IsEnabled
@@ -38,9 +36,6 @@ namespace Gui.ViewModels
             get => _isChecked;
             set => SetProperty(ref _isChecked, value);
         }
-
-        [JsonIgnore]
-        public ICommand CheckCommand { get; }
 
         public static implicit operator ItemTypeMark(string name)
         {

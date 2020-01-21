@@ -78,7 +78,7 @@ namespace Gui.ViewModels
             {
                 _origin.Clear();
                 _origin.AddRange(all);
-                Filter.Ignored.Initialize(_origin);
+                Filter.Ignored.Initialize(_origin, api);
             }
 
             OnFilterChanged();

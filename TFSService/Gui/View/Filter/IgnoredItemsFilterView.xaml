@@ -1,22 +1,68 @@
 ﻿<UserControl x:Class="Gui.View.Filter.IgnoredItemsFilterView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Gui.View.Filter"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:filter="clr-namespace:Gui.ViewModels.Filter"
              xmlns:viewModels="clr-namespace:Gui.ViewModels"
              xmlns:p="clr-namespace:Gui.Properties"
-             mc:Ignorable="d" 
+             xmlns:converters="clr-namespace:Gui.Converters"
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type={x:Type filter:IgnoredItemsFilterViewModel}}">
 
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+        <converters:SwitchConverter x:Key="ChipBackgoundConverter"
+                                    Default="{StaticResource MaterialDesignBackground}">
+            <converters:Case If="True"
+                             Value="{StaticResource MaterialDesignChipBackground}" />
+        </converters:SwitchConverter>
+
+        <DataTemplate DataType="{x:Type filter:ExtendedItemTypeMark}">
+            <Border CornerRadius="16"
+                    BorderThickness="1"
+                    BorderBrush="{StaticResource MaterialDesignChipBackground}"
+                    Background="Transparent"
+                    Margin="5">
+                <materialDesign:Chip IsDeletable="True"
+                                     Command="{Binding Path=CheckCommand}"
+                                     DeleteCommand="{Binding RelativeSource={RelativeSource AncestorType=local:IgnoredItemsFilterView}, Path=DataContext.DeleteMark}"
+                                     DeleteCommandParameter="{Binding}"
+                                     IconBackground="Transparent"
+                                     IsEnabled="{Binding Path=IsEnabled}"
+                                     Background="{Binding Path=IsChecked, Converter={StaticResource ChipBackgoundConverter}}">
+
+                    <materialDesign:Chip.Content>
+                        <materialDesign:PopupBox StaysOpen="True">
+                            <materialDesign:PopupBox.ToggleContent>
+                                <TextBlock Text="{Binding Path=Value}"/>
+                            </materialDesign:PopupBox.ToggleContent>
+                            <ContentControl Content="{Binding Path=WorkItem}" MaxWidth="400"/>
+                        </materialDesign:PopupBox>
+                    </materialDesign:Chip.Content>
+
+                    <materialDesign:Chip.Icon>
+                        <materialDesign:PackIcon Kind="Check"
+                                                 Background="Transparent"
+                                                 Foreground="{StaticResource MaterialDesignBody}"
+                                                 Visibility="{Binding Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </materialDesign:Chip.Icon>
+                </materialDesign:Chip>
+            </Border>
+
+            
+        </DataTemplate>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
         <materialDesign:Card Grid.Row="0"
@@ -27,11 +73,11 @@
                 <ToggleButton IsChecked="{Binding Path=IsEnable}"
                               IsEnabled="{Binding Path=CanDisable}"
                               DockPanel.Dock="Right"
-                              Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"/>
+                              Style="{StaticResource MaterialDesignSwitchDarkToggleButton}" />
 
                 <TextBlock Text="{Binding Path=Title}"
                            TextWrapping="Wrap"
-                           Margin="0,0,5,0"/>
+                           Margin="0,0,5,0" />
             </DockPanel>
         </materialDesign:Card>
 
@@ -39,19 +85,26 @@
               Margin="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <ComboBox ItemsSource="{Binding Path=MyWorkItems}"
                       IsEditable="True"
-                      Text="{Binding Path=CurrentId, UpdateSourceTrigger=PropertyChanged}"/>
+                      SelectedValue="{Binding Path=Selected, UpdateSourceTrigger=PropertyChanged}"
+                      Text="{Binding Path=CurrentId, UpdateSourceTrigger=PropertyChanged}">
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="ComboBoxItem"
+                           BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                        <Setter Property="MaxWidth" Value="300" />
+                    </Style>
+                </ComboBox.ItemContainerStyle>
+            </ComboBox>
 
             <Button Grid.Column="1"
                     Margin="5 0 0 0"
                     Style="{StaticResource MaterialDesignFlatButton}"
                     Content="{x:Static p:Resources.AS_Add}"
-                    Command="{Binding Path=AddMark}">
-            </Button>
+                    Command="{Binding Path=AddMark}" />
         </Grid>
 
         <ItemsControl ItemsSource="{Binding Path=Marks}"
@@ -60,7 +113,7 @@
                       Grid.Row="2">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal"/>
+                    <WrapPanel Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
