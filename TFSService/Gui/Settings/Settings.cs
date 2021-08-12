@@ -70,6 +70,7 @@ namespace Gui.Settings
         private FilterViewModel _mainFilter;
         private ObservableCollection<IObservingItem> _observingItems;
         private ObservableCollection<Build> _queuedBuilds;
+        private string _project;
 
         #endregion
 
@@ -217,11 +218,20 @@ namespace Gui.Settings
             get => _observingItems;
             set => Set(ref _observingItems, value);
         }
-        
+
         public ObservableCollection<Build> QueuedBuilds
         {
             get => _queuedBuilds;
             set => Set(ref _queuedBuilds, value);
+        }
+
+        /// <summary>
+        /// Имя текущего проекта, к которому подключены
+        /// </summary>
+        public string Project
+        {
+            get => _project;
+            set => Set(ref _project, value);
         }
 
         #endregion

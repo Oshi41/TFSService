@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Gui.Helper;
 using Gui.Properties;
 using Microsoft.TeamFoundation.Common;
+using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using TfsAPI.Interfaces;
 using TfsAPI.TFS;
 
 namespace Gui.ViewModels.DialogViewModels
@@ -14,19 +17,25 @@ namespace Gui.ViewModels.DialogViewModels
     /// </summary>
     public class FirstConnectionViewModel : BindableExtended
     {
-        public FirstConnectionViewModel()
+        private readonly IConnect _connectService;
+
+        public FirstConnectionViewModel(IConnect connectService)
         {
+            _connectService = connectService;
+            
             using (var settings = Settings.Settings.Read())
             {
                 RememberedConnections = settings.Connections?.ToList() ?? new List<string>();
+
+                ProjectName = settings.Project;
 
                 if (!RememberedConnections.IsNullOrEmpty())
                     Text = RememberedConnections.First();
             }
 
-            CheckConnectionCommand = ObservableCommand.FromAsyncHandler(Connect, CanConnect);
+            CheckConnectionCommand = ObservableCommand.FromAsyncHandler(CheckConnect, CanCheckConnect);
             SubmitCommand = new ObservableCommand(() => { },
-                () => Connection == ConnectionType.Success);
+                () => Connection == ConnectionType.Success && _connectService.Project != null);
         }
 
         protected override string ValidateProperty(string prop)
@@ -38,6 +47,22 @@ namespace Gui.ViewModels.DialogViewModels
                 if (Connection == ConnectionType.Failed) return Resources.AS_ConnectError;
             }
 
+            if (prop == nameof(ProjectName))
+            {
+                switch (Connection)
+                {
+                    case ConnectionType.Failed:
+                        return "";
+                    
+                    case ConnectionType.Success:
+                        if (string.IsNullOrWhiteSpace(ProjectName))
+                        {
+                            return Resources.AS_ChooseProject;
+                        }
+                        break;
+                }
+            }
+
             return base.ValidateProperty(prop);
         }
 
@@ -46,7 +71,9 @@ namespace Gui.ViewModels.DialogViewModels
         private string _text;
         private IList<string> _rememberedConnections;
         private readonly ActionArbiterAsync _arbiter = new ActionArbiterAsync();
-        private ConnectionType _connection;
+        private ConnectionType _connection = ConnectionType.Unknown;
+        private ObservableCollection<string> _allProjects;
+        private string _projectName;
 
         #endregion
 
@@ -83,28 +110,70 @@ namespace Gui.ViewModels.DialogViewModels
         }
 
         public ObservableCommand CheckConnectionCommand { get; }
+        
+        public string ProjectName
+        {
+            get => _projectName;
+            set
+            {
+                if (SetProperty(ref _projectName, value) 
+                    && Connection == ConnectionType.Success
+                    && !string.IsNullOrWhiteSpace(ProjectName))
+                {
+                    _connectService.Project = _connectService.WorkItemStore.Projects[ProjectName];
+                }
+            }
+        }
+
+        public ObservableCollection<string> AllProjects
+        {
+            get => _allProjects;
+            set => SetProperty(ref _allProjects, value);
+        }
 
         #endregion
 
         #region Command handlers
 
-        public bool CanConnect()
+        private bool CanCheckConnect()
         {
             return _arbiter.IsFree()
                    && !string.IsNullOrWhiteSpace(Text);
         }
 
-        public async Task Connect()
+        private async Task CheckConnect()
         {
-            var connected = await WorkItemService.CheckConnection(Text);
+            _connectService.Connect(Text, ProjectName);
 
-            Connection = connected ? ConnectionType.Success : ConnectionType.Failed;
+            Connection = _connectService.Tfs != null 
+                ? ConnectionType.Success 
+                : ConnectionType.Failed;
+            
+            if (_connectService.WorkItemStore == null)
+            {
+                AllProjects.Clear();
+            }
+            else
+            {
+                AllProjects = new ObservableCollection<string>(_connectService.WorkItemStore.Projects.OfType<Project>().Select(x => x.Name));
+            }
 
             CheckConnectionCommand.RaiseCanExecuteChanged();
             SubmitCommand.RaiseCanExecuteChanged();
         }
 
         #endregion
+
+        public async Task<bool> TryConnect()
+        {
+            if (CanCheckConnect())
+            {
+                await CheckConnect();
+                return _connectService.Project != null;
+            }
+
+            return false;
+        }
     }
 
     /// <summary>

@@ -37,13 +37,15 @@ namespace TfsAPI.TFS
             Func<IList<IRule>> rules,
             Func<IList<IObservingItem>> history, 
             IConnect connectService, 
-            IWorkItem workItemService)
+            IWorkItem workItemService, 
+            IBuild buildService)
         {
             _currentItem = currentItem;
             _rules = rules;
             _history = history;
             _connectService = connectService;
             _workItemService = workItemService;
+            _buildService = buildService;
 
             _versionControl = _connectService.VersionControlServer;
 
@@ -106,6 +108,7 @@ namespace TfsAPI.TFS
         private readonly IRuleBuilder _ruleBuilder;
         private readonly IConnect _connectService;
         private readonly IWorkItem _workItemService;
+        private readonly IBuild _buildService;
 
         #endregion
 
@@ -329,6 +332,8 @@ namespace TfsAPI.TFS
 
             // Добавил их в список
             _myBuilds.AddRange(newBuildIds);
+
+            _buildService.Tick();
         }
 
         /// <summary>

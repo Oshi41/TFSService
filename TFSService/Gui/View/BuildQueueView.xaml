@@ -1,0 +1,176 @@
+﻿<UserControl x:Class="Gui.View.BuildQueueView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Gui.View"
+             xmlns:properties="clr-namespace:Gui.Properties"
+             xmlns:webApi="clr-namespace:Microsoft.TeamFoundation.Build.WebApi;assembly=Microsoft.TeamFoundation.Build2.WebApi"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewModels="clr-namespace:Gui.ViewModels"
+             xmlns:controls="clr-namespace:Gui.View.Controls"
+             mc:Ignorable="d"
+             d:DesignHeight="500"
+             d:DesignWidth="400"
+             d:DataContext="{d:DesignInstance Type={x:Type viewModels:BuildQueueViewModel}}">
+
+    <materialDesign:DialogHost IsOpen="{Binding Busy}">
+        <materialDesign:DialogHost.DialogContent>
+            <controls:AwaitingContent />
+        </materialDesign:DialogHost.DialogContent>
+
+        <ScrollViewer>
+            <StackPanel Orientation="Vertical">
+
+
+                <GroupBox Margin="5">
+                    <GroupBox.Header>
+                        <DockPanel>
+                            <TextBlock Text="{x:Static properties:Resources.AS_CurrentBuilds}"
+                                       Style="{DynamicResource MaterialDesignTextBlock}"
+                                       Foreground="{StaticResource MaterialDesignDarkForeground}"
+                                       VerticalAlignment="Center" />
+
+                            <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
+                                    HorizontalAlignment="Right"
+                                    ToolTip="{x:Static properties:Resources.AS_Update}"
+                                    Width="24"
+                                    Height="24"
+                                    Command="{Binding Path=UpdateCommand}">
+                                <materialDesign:PackIcon Kind="Refresh" />
+                            </Button>
+                        </DockPanel>
+                    </GroupBox.Header>
+
+                    <DataGrid ItemsSource="{Binding Path=AgentQueue}"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              CanUserReorderColumns="True"
+                              CanUserSortColumns="True"
+                              AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="{x:Static properties:Resources.AS_BuildName}"
+                                                Binding="{Binding Path=Definition.Name}" />
+
+                            <DataGridTextColumn Header="{x:Static properties:Resources.AS_RequestedBy}"
+                                                Binding="{Binding Path=RequestedBy.DisplayName}" />
+
+                            <DataGridTextColumn Header="{x:Static properties:Resources.AS_Time}"
+                                                Binding="{Binding Path=QueueTime}" />
+                            
+                            <DataGridTextColumn Header="{x:Static properties:Resources.AP_MainView_State_Column}"
+                                                Binding="{Binding Path=Status}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                </GroupBox>
+
+                <materialDesign:DialogHost IsOpen="{Binding Path=IsOpen}">
+                    <materialDesign:DialogHost.DialogContent>
+
+                        <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth4"
+                                             Width="400"
+                                             Padding="10 10 10 5">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static properties:Resources.AS_NewBuild}"
+                                           Style="{StaticResource MaterialDesignButtonTextBlock}"
+                                           Margin="0 0 0 20" />
+
+                                <TextBlock Text="{x:Static properties:Resources.AS_BuildName}"
+                                           Margin="0 0 0 5" />
+                                <ComboBox
+                                    materialDesign:HintAssist.Hint="{x:Static properties:Resources.AS_ChooseBuild}"
+                                    SelectedItem="{Binding Path=CurrentBuildName}"
+                                    ItemsSource="{Binding Path=AllDefinitions}" 
+                                    IsTextSearchEnabled="True"
+                                    IsSynchronizedWithCurrentItem="True"
+                                    IsEditable="True"/>
+
+                                <TextBlock Text="{x:Static properties:Resources.AS_Params}"
+                                           Margin="0 17 0 5" />
+                                <DataGrid CanUserAddRows="True"
+                                          IsReadOnly="False"
+                                          CanUserDeleteRows="True"
+                                          MaxHeight="300"
+                                          MinHeight="100"
+                                          AutoGenerateColumns="False"
+                                          ItemsSource="{Binding CurrentParams}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="{x:Static properties:Resources.AS_ParamName}"
+                                                            Binding="{Binding Path=Name}" />
+
+                                        <DataGridTextColumn Header="{x:Static properties:Resources.AS_Value}"
+                                                            Binding="{Binding Path=Value}" />
+
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
+                                <DockPanel Margin="0 20 0 0">
+                                    <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                                            DockPanel.Dock="Left"
+                                            HorizontalAlignment="Left"
+                                            Content="{x:Static properties:Resources.AS_Add}"
+                                            Command="{Binding Path=SubmitBuildCommand}" />
+
+                                    <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                                            DockPanel.Dock="Right"
+                                            HorizontalAlignment="Right"
+                                            Content="{x:Static properties:Resources.AS_Cancel}"
+                                            Command="{Binding Path=DenyBuildCommand}" />
+                                </DockPanel>
+                            </StackPanel>
+                        </materialDesign:Card>
+                    </materialDesign:DialogHost.DialogContent>
+
+                    <GroupBox Header="{x:Static properties:Resources.AS_BuildQueue}"
+                              Margin="5">
+                        <StackPanel Orientation="Vertical">
+                            <ToolBar HorizontalAlignment="Stretch">
+
+                                <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
+                                        ToolTip="{x:Static properties:Resources.AS_Add}"
+                                        Width="24"
+                                        Height="24"
+                                        Margin="5 0"
+                                        Command="{Binding Path=AddCommand}">
+                                    <materialDesign:PackIcon Kind="Add" />
+                                </Button>
+
+                                <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
+                                        ToolTip="{x:Static properties:Resources.AS_Remove}"
+                                        Width="24"
+                                        Height="24"
+                                        Margin="5 0"
+                                        Command="{Binding Path=RemoveCommand}">
+                                    <materialDesign:PackIcon Kind="Delete" />
+                                </Button>
+                            </ToolBar>
+
+                            <DataGrid Margin="5"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      CanUserReorderColumns="True"
+                                      CanUserResizeColumns="True"
+                                      CanUserResizeRows="True"
+                                      CanUserSortColumns="True"
+                                      IsReadOnly="True"
+                                      ItemsSource="{Binding Path=OwnQueue}"
+                                      SelectedItem="{Binding Path=Selected}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="{x:Static properties:Resources.AS_BuildName}"
+                                                        Binding="{Binding Path=Definition.Name}" />
+
+                                    <DataGridTextColumn Header="{x:Static properties:Resources.AS_Params}"
+                                                        Binding="{Binding Path=Parameters}" />
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </GroupBox>
+                </materialDesign:DialogHost>
+            </StackPanel>
+        </ScrollViewer>
+    </materialDesign:DialogHost>
+
+</UserControl>

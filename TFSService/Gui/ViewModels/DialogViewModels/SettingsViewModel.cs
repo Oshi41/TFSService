@@ -96,9 +96,9 @@ namespace Gui.ViewModels.DialogViewModels
 
         private void OnConnect()
         {
-            var vm = new FirstConnectionViewModel();
+            var vm = new FirstConnectionViewModel(_api);
 
-            if (WindowManager.ShowDialog(vm, Resources.AS_TfsConnection_Title, 400, 200) == true) Connection = vm.Text;
+            if (WindowManager.ShowDialog(vm, Resources.AS_TfsConnection_Title, 400, 300) == true) Connection = vm.Text;
         }
 
         protected override bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)

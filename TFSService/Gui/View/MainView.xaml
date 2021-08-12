@@ -90,6 +90,13 @@
                             <materialDesign:PackIcon Kind="TrackChanges" />
                         </MenuItem.Icon>
                     </MenuItem>
+                    
+                    <MenuItem Header="{x:Static p:Resources.AS_BuidlQueue_Button}"
+                              Command="{Binding Path=ShowBuildQueueCommand}">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="Queue" />
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
 
                 <MenuItem Header="{x:Static p:Resources.AS_Actions}">

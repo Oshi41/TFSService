@@ -58,9 +58,9 @@ namespace TfsAPI.TFS
             }
 
 #else
-            if (_connect.WorkItemStore.UserDisplayName != Name)
+            if (Connect.WorkItemStore.UserDisplayName != Name)
                 LoggerHelper.WriteLine(
-                    $"Can't check-in from {Name}, authorized as {_connect.WorkItemStore.UserDisplayName}");
+                    $"Can't check-in from {Name}, authorized as {Connect.WorkItemStore.UserDisplayName}");
             else
                 try
                 {
@@ -76,21 +76,26 @@ namespace TfsAPI.TFS
 
         public string MyItemsQuarry => _myItemsQuerry;
 
-        public static async Task<bool> CheckConnection(string url)
+        public static async Task<ProjectCollection> CheckConnection(string url)
         {
-            bool CheckConnectSync()
+            ProjectCollection CheckConnectSync()
             {
                 try
                 {
                     using (var proj = new TfsTeamProjectCollection(new Uri(url)))
                     {
-                        return proj.AuthorizedIdentity.DisplayName != null;
+                        if (proj.AuthorizedIdentity.DisplayName != null)
+                        {
+                            return proj.GetService<WorkItemStore>().Projects;
+                        }
+                        
+                        return null;
                     }
                 }
                 catch (Exception e)
                 {
                     LoggerHelper.WriteLine(e);
-                    return false;
+                    return null;
                 }
             }
 

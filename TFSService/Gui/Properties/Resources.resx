@@ -454,4 +454,43 @@
   <data name="AS_MainView_ItemMenu_Ignore" xml:space="preserve">
     <value>Скрыть элемент</value>
   </data>
+  <data name="AS_CurrentBuilds" xml:space="preserve">
+    <value>Текущие сборки:</value>
+  </data>
+  <data name="AS_Value" xml:space="preserve">
+    <value>Значение</value>
+  </data>
+  <data name="AS_PropName" xml:space="preserve">
+    <value>Имя свойства</value>
+  </data>
+  <data name="AS_BuildQueue" xml:space="preserve">
+    <value>Список поставленных в очередь сборок</value>
+  </data>
+  <data name="AS_BuildName" xml:space="preserve">
+    <value>Имя сборки</value>
+  </data>
+  <data name="AS_Params" xml:space="preserve">
+    <value>Параметры</value>
+  </data>
+  <data name="AS_RequestedBy" xml:space="preserve">
+    <value>Кем запрошен</value>
+  </data>
+  <data name="AS_Time" xml:space="preserve">
+    <value>Время</value>
+  </data>
+  <data name="AS_NewBuild" xml:space="preserve">
+    <value>Новая сборка</value>
+  </data>
+  <data name="AS_ChooseBuild" xml:space="preserve">
+    <value>Выберите сборку</value>
+  </data>
+  <data name="AS_ParamName" xml:space="preserve">
+    <value>Имя параметра</value>
+  </data>
+  <data name="AS_BuidlQueue_Button" xml:space="preserve">
+    <value>Очередь сборки</value>
+  </data>
+  <data name="AS_ChooseProject" xml:space="preserve">
+    <value>Выберите проект</value>
+  </data>
 </root>

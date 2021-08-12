@@ -42,6 +42,7 @@ namespace Gui.ViewModels
             AddToIgnoredCommand = new DelegateCommand<WorkItemVm>(OnAddToIgnore, OnCanAddToIgnore);
             ObservableItemsCommand = new ObservableCommand(OnShowObservableItems);
             ShowTrendCommand = new ObservableCommand(OnShowTrendCommand);
+            ShowBuildQueueCommand = new ObservableCommand(OnShowBuildQueue);
 
             Init();
         }
@@ -68,11 +69,13 @@ namespace Gui.ViewModels
 
                 StatsViewModel = new StatsViewModel(settings.MainFilter);
 
-                await Task.Run(() => _connectService.Connect(FirstConnectionViewModel.Text));
+                await Task.Run(() => _connectService.Connect(FirstConnectionViewModel.Text, FirstConnectionViewModel.ProjectName));
 
                 _workItemService = new WorkItemService(_connectService, _connectService.Name);
                 _writeOffService = new WriteOffService(_connectService, _workItemService);
                 _chekinsService = new CheckinsService(_connectService, _workItemService);
+                _buildService = new BuildService(_connectService, settings.QueuedBuilds);
+                
                 ApiObservable = new TfsObservable(
                     settings.ObservingItems,
                     settings.MyBuilds, 
@@ -81,11 +84,17 @@ namespace Gui.ViewModels
                     () => Settings.Settings.Read().Rules, 
                     GetObservingItems, 
                     _connectService,
-                    _workItemService
+                    _workItemService,
+                    _buildService
                 );
 
                 if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
                     settings.Connections.Add(FirstConnectionViewModel.Text);
+
+                if (settings.Project != FirstConnectionViewModel.ProjectName)
+                {
+                    settings.Project = FirstConnectionViewModel.ProjectName;
+                }
             }
 
             await Task.Run(() =>
@@ -109,6 +118,7 @@ namespace Gui.ViewModels
         private IChekins _chekinsService;
         private IWriteOff _writeOffService;
         private ITFsObservable _apiObserve;
+        private IBuild _buildService;
 
         private WorkItemVm _currentTask;
         private StatsViewModel _statsViewModel;
@@ -243,6 +253,8 @@ namespace Gui.ViewModels
         /// </summary>
         public ICommand ObservableItemsCommand { get; }
 
+        public ICommand ShowBuildQueueCommand { get; }
+
         #endregion
 
         #region Command handler
@@ -257,8 +269,13 @@ namespace Gui.ViewModels
             IsBusy = true;
 
             await Task.Run(() => _apiObserve.RequestUpdate());
-
+            
             RefreshStats();
+
+            using (var settings = Settings.Settings.Read())
+            {
+                settings.QueuedBuilds = new ObservableCollection<Build>(_buildService.GetQueue());
+            }
 
             IsBusy = false;
         }
@@ -308,6 +325,18 @@ namespace Gui.ViewModels
         {
             var vm = new TrendViewModel(_writeOffService, StatsViewModel.Capacity);
             WindowManager.ShowDialog(vm, Resources.AS_Trand_Title, 680, 600, maximize: true);
+        }
+        
+        private void OnShowBuildQueue()
+        {
+            var vm = new BuildQueueViewModel(_buildService, _connectService);
+            if (WindowManager.ShowDialog(vm, Resources.AS_BuidlQueue_Button, 680, 600) == true)
+            {
+                using (var settings = Settings.Settings.Read())
+                {
+                    settings.QueuedBuilds = new ObservableCollection<Build>(vm.OwnQueue);
+                }
+            }
         }
 
         private void OnAddToIgnore(WorkItemVm obj)
@@ -513,18 +542,17 @@ namespace Gui.ViewModels
         /// <returns></returns>
         private async Task<bool?> TryConnect()
         {
-            FirstConnectionViewModel = new FirstConnectionViewModel();
+            FirstConnectionViewModel = new FirstConnectionViewModel(_connectService);
 
             // Однозначно значем куда подключаться
             if (FirstConnectionViewModel.RememberedConnections.Count == 1
-                && FirstConnectionViewModel.CanConnect())
+                && await FirstConnectionViewModel.TryConnect())
             {
-                await FirstConnectionViewModel.Connect();
                 if (FirstConnectionViewModel.Connection == ConnectionType.Success)
                     return true;
             }
 
-            return WindowManager.ShowDialog(FirstConnectionViewModel, Resources.AS_FirstConnection, 400, 200);
+            return WindowManager.ShowDialog(FirstConnectionViewModel, Resources.AS_FirstConnection, 400, 300);
         }
 
         /// <summary>

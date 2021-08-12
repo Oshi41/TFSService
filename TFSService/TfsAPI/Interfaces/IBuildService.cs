@@ -17,20 +17,20 @@ namespace TfsAPI.Interfaces
         /// Очередь на сбор агентах
         /// </summary>
         /// <returns></returns>
-        IList<Build> GetRunningBuilds();
+        Task<IList<Build>> GetRunningBuilds();
 
         /// <summary>
         /// Получаю все возможные определения сборок
         /// </summary>
         /// <returns>Список определений сборки</returns>
-        IList<BuildDefinitionReference> GetAllDefentitions();
+        Task<IList<BuildDefinitionReference>> GetAllDefentitions();
 
         /// <summary>
         /// Получаю дефолтные значения свойств для текущего определения
         /// </summary>
         /// <param name="def">Определение сборки</param>
         /// <returns></returns>
-        Task<string> GetDefaultProperties(BuildDefinitionReference def);
+        Task<IDictionary<string, BuildDefinitionVariable>> GetDefaultProperties(BuildDefinitionReference def);
 
         /// <summary>
         /// Ставим сборку в очередь
@@ -50,6 +50,6 @@ namespace TfsAPI.Interfaces
         /// <param name="project">Имя проекта</param>
         /// <param name="defName"Имя определения сборки></param>
         /// <param name="properties">Переменные сборки</param>
-        Task<Build> Schedule(string project, string defName, string properties);
+        Task<Build> Schedule(string project, string defName, IDictionary<string, BuildDefinitionVariable> properties);
     }
 }

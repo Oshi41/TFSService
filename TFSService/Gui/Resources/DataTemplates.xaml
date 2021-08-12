@@ -153,5 +153,9 @@
     <DataTemplate DataType="{x:Type trend:TrendViewModel}">
         <view:TrendView/>
     </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type viewModels:BuildQueueViewModel}">
+        <view:BuildQueueView/>
+    </DataTemplate>
 
 </ResourceDictionary>

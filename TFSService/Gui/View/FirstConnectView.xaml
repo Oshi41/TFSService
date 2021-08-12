@@ -22,6 +22,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -110,5 +112,19 @@
                 </Style>
             </TextBlock.Style>
         </TextBlock>
+        
+        <TextBlock Grid.Row="3" 
+                   Grid.Column="0" 
+                   Text="Выберите TFS проект"
+                   Margin="0 10 0 0"/>
+        
+        <ComboBox Grid.Row="4"
+                  Grid.Column="0"
+                  Margin="0 5"
+                  Padding="6"
+                  ItemsSource="{Binding Path=AllProjects}"
+                  Text="{Binding Path=ProjectName, 
+                         UpdateSourceTrigger=PropertyChanged,
+                         ValidatesOnDataErrors=True}"/>
     </Grid>
 </UserControl>

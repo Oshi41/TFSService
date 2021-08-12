@@ -214,6 +214,33 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Очередь сборки.
+        /// </summary>
+        public static string AS_BuidlQueue_Button {
+            get {
+                return ResourceManager.GetString("AS_BuidlQueue_Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Имя сборки.
+        /// </summary>
+        public static string AS_BuildName {
+            get {
+                return ResourceManager.GetString("AS_BuildName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Список поставленных в очередь сборок.
+        /// </summary>
+        public static string AS_BuildQueue {
+            get {
+                return ResourceManager.GetString("AS_BuildQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Отмена.
         /// </summary>
         public static string AS_Cancel {
@@ -241,6 +268,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Выберите сборку.
+        /// </summary>
+        public static string AS_ChooseBuild {
+            get {
+                return ResourceManager.GetString("AS_ChooseBuild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Выбираем сами.
         /// </summary>
         public static string AS_ChooseByMyOwn {
@@ -255,6 +291,15 @@ namespace Gui.Properties {
         public static string AS_ChooseParentItem {
             get {
                 return ResourceManager.GetString("AS_ChooseParentItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выберите проект.
+        /// </summary>
+        public static string AS_ChooseProject {
+            get {
+                return ResourceManager.GetString("AS_ChooseProject", resourceCulture);
             }
         }
         
@@ -345,6 +390,15 @@ namespace Gui.Properties {
         public static string AS_CreateOwn {
             get {
                 return ResourceManager.GetString("AS_CreateOwn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Текущие сборки:.
+        /// </summary>
+        public static string AS_CurrentBuilds {
+            get {
+                return ResourceManager.GetString("AS_CurrentBuilds", resourceCulture);
             }
         }
         
@@ -628,6 +682,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Новая сборка.
+        /// </summary>
+        public static string AS_NewBuild {
+            get {
+                return ResourceManager.GetString("AS_NewBuild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Новые рабочие элементы были назначены.
         /// </summary>
         public static string AS_NewItemsAssigned {
@@ -691,6 +754,24 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Имя параметра.
+        /// </summary>
+        public static string AS_ParamName {
+            get {
+                return ResourceManager.GetString("AS_ParamName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Параметры.
+        /// </summary>
+        public static string AS_Params {
+            get {
+                return ResourceManager.GetString("AS_Params", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Необходимо указать кол-во запланированных часов на работу.
         /// </summary>
         public static string AS_PlannedTime_Error {
@@ -723,6 +804,15 @@ namespace Gui.Properties {
         public static string AS_Program {
             get {
                 return ResourceManager.GetString("AS_Program", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Имя свойства.
+        /// </summary>
+        public static string AS_PropName {
+            get {
+                return ResourceManager.GetString("AS_PropName", resourceCulture);
             }
         }
         
@@ -768,6 +858,15 @@ namespace Gui.Properties {
         public static string AS_Replacing {
             get {
                 return ResourceManager.GetString("AS_Replacing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Кем запрошен.
+        /// </summary>
+        public static string AS_RequestedBy {
+            get {
+                return ResourceManager.GetString("AS_RequestedBy", resourceCulture);
             }
         }
         
@@ -907,6 +1006,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Время.
+        /// </summary>
+        public static string AS_Time {
+            get {
+                return ResourceManager.GetString("AS_Time", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Уверен, что задачу нельзя разбить на меньшие части?.
         /// </summary>
         public static string AS_TooBigTask_Asking {
@@ -975,6 +1083,15 @@ namespace Gui.Properties {
         public static string AS_UseDefaults {
             get {
                 return ResourceManager.GetString("AS_UseDefaults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Значение.
+        /// </summary>
+        public static string AS_Value {
+            get {
+                return ResourceManager.GetString("AS_Value", resourceCulture);
             }
         }
         
