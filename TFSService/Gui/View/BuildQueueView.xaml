@@ -145,6 +145,15 @@
                                         Command="{Binding Path=RemoveCommand}">
                                     <materialDesign:PackIcon Kind="Delete" />
                                 </Button>
+                                
+                                <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
+                                        ToolTip="{x:Static properties:Resources.AS_NewBuild}"
+                                        Width="24"
+                                        Height="24"
+                                        Margin="5 0"
+                                        Command="{Binding Path=AddBuildCommand}">
+                                    <materialDesign:PackIcon Kind="Build" />
+                                </Button>
                             </ToolBar>
 
                             <DataGrid Margin="5"

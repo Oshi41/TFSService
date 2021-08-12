@@ -50,6 +50,7 @@ namespace TfsAPI.Interfaces
         /// <param name="project">Имя проекта</param>
         /// <param name="defName"Имя определения сборки></param>
         /// <param name="properties">Переменные сборки</param>
-        Task<Build> Schedule(string project, string defName, IDictionary<string, BuildDefinitionVariable> properties);
+        /// <param name="forced">Поставить сборку сразу же</param>
+        Task<Build> Schedule(string project, string defName, IDictionary<string, BuildDefinitionVariable> properties, bool forced);
     }
 }

@@ -71,6 +71,7 @@ namespace Gui.Settings
         private ObservableCollection<IObservingItem> _observingItems;
         private ObservableCollection<Build> _queuedBuilds;
         private string _project;
+        private bool _observe;
 
         #endregion
 
@@ -232,6 +233,15 @@ namespace Gui.Settings
         {
             get => _project;
             set => Set(ref _project, value);
+        }
+
+        /// <summary>
+        /// Нужно ли наблюдать за рабочими элементами
+        /// </summary>
+        public bool Observe
+        {
+            get => _observe;
+            set => SetProperty(ref _observe, value);
         }
 
         #endregion

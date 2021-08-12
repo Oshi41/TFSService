@@ -33,19 +33,25 @@ namespace TfsAPI.TFS
         {
             var status = BuildStatus.Cancelling | BuildStatus.InProgress | BuildStatus.NotStarted;
 
-            var result = await _buildClient.GetBuildsAsync(_connectService.Project.Name, statusFilter:status);
+            var result = await _buildClient.GetBuildsAsync(_connectService.Project.Name, statusFilter: status);
             return result;
         }
 
         public async Task<IList<BuildDefinitionReference>> GetAllDefentitions()
         {
-            var defs = await _buildClient.GetDefinitionsAsync(_connectService.Project.Name);
+            var defs = await _buildClient.GetDefinitionsAsync(
+                _connectService.Project.Name,
+                queryOrder:DefinitionQueryOrder.LastModifiedDescending,
+                builtAfter:DateTime.Now.AddMonths(-6)
+                );
             return defs;
         }
 
-        public async Task<IDictionary<string, BuildDefinitionVariable>> GetDefaultProperties(BuildDefinitionReference def)
+        public async Task<IDictionary<string, BuildDefinitionVariable>> GetDefaultProperties(
+            BuildDefinitionReference def)
         {
-            var buildDef = (await _buildClient.GetFullDefinitionsAsync(project: _connectService.Project.Name, def.Name))?.FirstOrDefault();
+            var buildDef = (await _buildClient.GetFullDefinitionsAsync(project: _connectService.Project.Name, def.Name))
+                ?.FirstOrDefault();
             return buildDef?.Variables;
         }
 
@@ -67,7 +73,7 @@ namespace TfsAPI.TFS
             {
                 return;
             }
-            
+
             LoggerHelper.WriteLine("No active builds");
 
             var first = _scheduled[0];
@@ -76,23 +82,24 @@ namespace TfsAPI.TFS
             if (build != null && build.Status == BuildStatus.InProgress)
             {
                 _scheduled.Remove(first);
-                LoggerHelper.WriteLine($"Build was scheduled for {build.Definition.Name}, {_scheduled.Count} build(s) in a queue");
+                LoggerHelper.WriteLine(
+                    $"Build was scheduled for {build.Definition.Name}, {_scheduled.Count} build(s) in a queue");
             }
         }
 
         public async Task<Build> Schedule(string project, string defName,
-            IDictionary<string, BuildDefinitionVariable> properties)
+            IDictionary<string, BuildDefinitionVariable> properties, bool forced)
         {
             if (string.IsNullOrEmpty(project))
             {
                 throw new ArgumentException("No project specified", nameof(project));
             }
-            
+
             if (string.IsNullOrEmpty(defName))
             {
                 throw new ArgumentException("No definition specified", nameof(defName));
             }
-            
+
             var build = _scheduled.FirstOrDefault(x => x?.Project?.Name == project);
 
             if (build != null)
@@ -106,7 +113,7 @@ namespace TfsAPI.TFS
             {
                 throw new Exception($"Project {project} cannot be found");
             }
-            
+
             var definition = (await _buildClient.GetDefinitionsAsync(project, defName)).FirstOrDefault();
             if (definition == null)
             {
@@ -120,8 +127,15 @@ namespace TfsAPI.TFS
                 Parameters = "{" + string.Join(",", properties
                     .Select(x => $"\"{x.Key}\":\"{x.Value.Value}\"")) + "}"
             };
-            
-            _scheduled.Add(build);
+
+            if (forced)
+            {
+                return await Queue(build);
+            }
+            else
+            {
+                _scheduled.Add(build);
+            }
 
             return build;
         }

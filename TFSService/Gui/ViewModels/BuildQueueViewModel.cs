@@ -67,6 +67,8 @@ namespace Gui.ViewModels
         private bool _busy;
         private readonly IConnect _connectService;
 
+        private bool _forcedBuild = false;
+
         public BuildQueueViewModel(IBuild buildService, IConnect connectService)
         {
             _buildService = buildService;
@@ -77,10 +79,16 @@ namespace Gui.ViewModels
             _denyBuildCommand = new DelegateCommand(() => IsOpen = false);
             _submitBuildCommand = DelegateCommand.FromAsyncHandler(OnAddBuild, OnCanAnnBuild);
             UpdateCommand = DelegateCommand.FromAsyncHandler(OnRefresh, () => !Busy);
+            AddBuildCommand = new DelegateCommand(QueueBuild);
 
             OnRefresh();
         }
 
+        private void QueueBuild()
+        {
+            _forcedBuild = true;
+            IsOpen = true;
+        }
         private async Task OnRefresh()
         {
             Busy = true;
@@ -128,10 +136,18 @@ namespace Gui.ViewModels
                 Value = x.Value
             });
 
-            var build = await _buildService.Schedule(_connectService.Project.Name, CurrentBuildName, param);
-            OwnQueue.Add(build);
-
+            var build = await _buildService.Schedule(_connectService.Project.Name, CurrentBuildName, param, _forcedBuild);
+            
             IsOpen = false;
+
+            if (!_forcedBuild)
+            {
+                OwnQueue.Add(build);
+            }
+            else
+            {
+                await OnRefresh();
+            }
         }
 
         private void OnRemove()
@@ -142,6 +158,7 @@ namespace Gui.ViewModels
 
         private void OnAdd()
         {
+            _forcedBuild = false;
             IsOpen = true;
         }
 
@@ -221,5 +238,7 @@ namespace Gui.ViewModels
         }
 
         public ICommand UpdateCommand { get; }
+
+        public ICommand AddBuildCommand { get; }
     }
 }

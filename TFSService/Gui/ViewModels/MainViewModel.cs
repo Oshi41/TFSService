@@ -69,20 +69,21 @@ namespace Gui.ViewModels
 
                 StatsViewModel = new StatsViewModel(settings.MainFilter);
 
-                await Task.Run(() => _connectService.Connect(FirstConnectionViewModel.Text, FirstConnectionViewModel.ProjectName));
+                await Task.Run(() =>
+                    _connectService.Connect(FirstConnectionViewModel.Text, FirstConnectionViewModel.ProjectName));
 
                 _workItemService = new WorkItemService(_connectService, _connectService.Name);
                 _writeOffService = new WriteOffService(_connectService, _workItemService);
                 _chekinsService = new CheckinsService(_connectService, _workItemService);
                 _buildService = new BuildService(_connectService, settings.QueuedBuilds);
-                
+
                 ApiObservable = new TfsObservable(
                     settings.ObservingItems,
-                    settings.MyBuilds, 
+                    settings.MyBuilds,
                     settings.ItemMinutesCheck,
-                    GetTask, 
-                    () => Settings.Settings.Read().Rules, 
-                    GetObservingItems, 
+                    GetTask,
+                    () => Settings.Settings.Read().Rules,
+                    GetObservingItems,
                     _connectService,
                     _workItemService,
                     _buildService
@@ -101,8 +102,11 @@ namespace Gui.ViewModels
             {
                 TryStartWorkDay();
 
-                // Начинаем наблюдение
-                _apiObserve.Start();
+                if (Settings.Settings.Read().Observe)
+                {
+                    // Начинаем наблюдение
+                    _apiObserve.Start();
+                }
             });
 
             IsBusy = false;
@@ -113,7 +117,7 @@ namespace Gui.ViewModels
         private readonly ActionArbiter _itemsChangedArbiter = new ActionArbiter();
         private readonly SafeExecutor _safeExecutor;
         private readonly IConnect _connectService = new ConnectService();
-        
+
         private IWorkItem _workItemService;
         private IChekins _chekinsService;
         private IWriteOff _writeOffService;
@@ -261,7 +265,8 @@ namespace Gui.ViewModels
 
         private void ShowMonthly()
         {
-            WindowManager.ShowDialog(new MonthCheckinsViewModel(_writeOffService), Resources.AS_MonthlySchedule, 680, 600);
+            WindowManager.ShowDialog(new MonthCheckinsViewModel(_writeOffService), Resources.AS_MonthlySchedule, 680,
+                600);
         }
 
         private async Task Update()
@@ -269,7 +274,7 @@ namespace Gui.ViewModels
             IsBusy = true;
 
             await Task.Run(() => _apiObserve.RequestUpdate());
-            
+
             RefreshStats();
 
             using (var settings = Settings.Settings.Read())
@@ -302,7 +307,7 @@ namespace Gui.ViewModels
             if (WindowManager.ShowDialog(vm, Resources.AS_ChooseWriteoffTask, 450, 240) == true)
             {
                 var selected = vm.ChooseTaskVm.Searcher.Selected;
-                _writeOffService.WriteHours(selected, (byte) vm.Hours, true);
+                _writeOffService.WriteHours(selected, (byte)vm.Hours, true);
             }
         }
 
@@ -326,7 +331,7 @@ namespace Gui.ViewModels
             var vm = new TrendViewModel(_writeOffService, StatsViewModel.Capacity);
             WindowManager.ShowDialog(vm, Resources.AS_Trand_Title, 680, 600, maximize: true);
         }
-        
+
         private void OnShowBuildQueue()
         {
             var vm = new BuildQueueViewModel(_buildService, _connectService);
@@ -404,7 +409,7 @@ namespace Gui.ViewModels
 
         private void OnLogon(object sender, EventArgs e)
         {
-            if (TryStartWorkDay()) _apiObserve.Start();
+            if (TryStartWorkDay() && Settings.Settings.Read().Observe) _apiObserve.Start();
         }
 
         private void OnNewItems(object sender, List<WorkItem> e)
@@ -747,7 +752,8 @@ namespace Gui.ViewModels
                     settings.DisplayTime.ClearPreviouse();
 
                     // Что-то не зачекинили с утра
-                    if (work.ScheduledTime() != 0) work.CheckinScheduledWork(_writeOffService, _workItemService, settings.Capacity.Hours);
+                    if (work.ScheduledTime() != 0)
+                        work.CheckinScheduledWork(_writeOffService, _workItemService, settings.Capacity.Hours);
 
                     // Если выставили трудозатраты не сами, то получаем из TFS
                     if (!settings.Capacity.ByUser) settings.Capacity.Hours = _writeOffService.GetCapacity();
