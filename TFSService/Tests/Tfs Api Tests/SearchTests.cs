@@ -10,7 +10,7 @@ namespace Tests.Tfs_Api_Tests
         [TestMethod]
         public void TestSearch()
         {
-            var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+            var tfs = new WorkItemService("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
 
             var text = "Перевод";
 

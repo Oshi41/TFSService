@@ -20,7 +20,7 @@ namespace Gui.ViewModels.Notifications
     /// </summary>
     public class NewResponsesBaloonViewModel : ItemsAssignedBaloonViewModel
     {
-        private readonly ITfsApi _api;
+        private readonly IChekins _api;
         private readonly IEqualityComparer<WorkItem> _comparer = new IdWorkItemComparer();
         private readonly List<WorkItem> _reviews;
         private readonly TimeSpan _time;
@@ -28,7 +28,7 @@ namespace Gui.ViewModels.Notifications
 
         public NewResponsesBaloonViewModel(IEnumerable<WorkItem> responses,
             IEnumerable<WorkItem> reviews,
-            ITfsApi api,
+            IChekins api,
             string title = null)
             : base(responses, title ?? Resources.AS_CodeReviewRequested)
         {

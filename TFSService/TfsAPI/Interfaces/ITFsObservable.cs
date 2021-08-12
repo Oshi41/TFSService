@@ -7,7 +7,7 @@ using TfsAPI.RulesNew;
 
 namespace TfsAPI.Interfaces
 {
-    public interface ITFsObservable : ITfsApi, IResumable
+    public interface ITFsObservable : IResumable
     {
         /// <summary>
         ///     Пользователь закоммитил изменения

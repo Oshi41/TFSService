@@ -14,7 +14,7 @@ namespace Gui.ViewModels.DialogViewModels
     /// </summary>
     public class MonthCheckinsViewModel : BindableExtended
     {
-        private readonly ITfsApi _api;
+        private readonly IWriteOff _api;
 
         // Храним кэш заргуженный дней
         private readonly Dictionary<DateTime, List<DayViewModel>> _cache =
@@ -28,7 +28,7 @@ namespace Gui.ViewModels.DialogViewModels
         private int _sum;
         private int _sumCapacity;
 
-        public MonthCheckinsViewModel(ITfsApi api)
+        public MonthCheckinsViewModel(IWriteOff api)
         {
             _api = api;
 

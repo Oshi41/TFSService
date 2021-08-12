@@ -7,7 +7,7 @@ namespace Gui.ViewModels.DialogViewModels
     {
         private int _hours;
 
-        public WriteOffHoursViewModel(ITfsApi api)
+        public WriteOffHoursViewModel(IWorkItem api)
         {
             ChooseTaskVm = new ChooseTaskViewModel(api);
 

@@ -11,11 +11,11 @@ namespace Gui.ViewModels.DialogViewModels
     /// </summary>
     public class CreateTaskViewModel : BindableExtended
     {
-        private readonly ITfsApi _tfs;
+        private readonly IWorkItem _tfs;
         private uint _hours;
         private string _title;
 
-        public CreateTaskViewModel(ITfsApi tfs)
+        public CreateTaskViewModel(IWorkItem tfs)
         {
             _tfs = tfs;
             // Ищем для привязки только указанные типы

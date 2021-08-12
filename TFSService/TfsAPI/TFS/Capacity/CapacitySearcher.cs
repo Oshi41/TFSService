@@ -16,6 +16,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TfsAPI.Extentions;
+using TfsAPI.Interfaces;
 using TfsAPI.Logger;
 using TfsAPI.TFS.Capacity;
 using Project = Microsoft.TeamFoundation.WorkItemTracking.Client.Project;
@@ -114,6 +115,13 @@ namespace TfsAPI.TFS
         private TfsTeamService _teamService;
         private WorkHttpClient _workClient;
         private ICommonStructureService4 _structureService;
+
+        public CapacitySearcher(IConnect connection):
+            this(connection.Tfs, connection.WorkItemStore, connection.ManagementService2, connection.TeamService, 
+                connection.Tfs.GetClient<WorkHttpClient>())
+        {
+            
+        }
 
         #endregion
 

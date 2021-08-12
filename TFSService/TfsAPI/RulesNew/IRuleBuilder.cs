@@ -24,6 +24,6 @@ namespace TfsAPI.RulesNew
         /// <param name="rules"></param>
         /// <param name="api"></param>
         /// <returns></returns>
-        Dictionary<IRule, IList<WorkItem>> CheckInconsistant(IEnumerable<IRule> rules, ITfsApi api);
+        Dictionary<IRule, IList<WorkItem>> CheckInconsistant(IEnumerable<IRule> rules, IWorkItem api);
     }
 }

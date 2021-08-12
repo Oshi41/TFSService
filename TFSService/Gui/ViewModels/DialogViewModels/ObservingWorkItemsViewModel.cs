@@ -14,7 +14,7 @@ namespace Gui.ViewModels.DialogViewModels
 {
     class ObservingWorkItemsViewModel : BindableExtended
     {
-        private readonly ITfsApi _api;
+        private readonly IWorkItem _api;
         private ObservableCollection<WorkItemVm> _observingItems;
         private bool _isBusy = true;
 
@@ -35,7 +35,7 @@ namespace Gui.ViewModels.DialogViewModels
             set => SetProperty(ref _isBusy, value);
         }
 
-        public ObservingWorkItemsViewModel(ITfsApi api, IList<IObservingItem> items)
+        public ObservingWorkItemsViewModel(IWorkItem api, IList<IObservingItem> items)
         {
             _api = api;
 

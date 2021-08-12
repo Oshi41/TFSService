@@ -15,7 +15,7 @@ namespace Gui.ViewModels.DialogViewModels
     /// </summary>
     public class SettingsViewModel : BindableExtended
     {
-        private readonly ITfsApi _api;
+        private readonly IConnect _api;
 
         private int _capacity;
         private bool _capacityByUser;
@@ -27,7 +27,7 @@ namespace Gui.ViewModels.DialogViewModels
         private int _oldReviewDay;
         private WroteOffStrategy _strategy;
 
-        public SettingsViewModel(string currentConnection, ITfsApi api)
+        public SettingsViewModel(string currentConnection, IConnect api)
         {
             _api = api;
 

@@ -329,11 +329,15 @@
     <Compile Include="Extentions\LinqExtensions.cs" />
     <Compile Include="Extentions\RevisionExtensions.cs" />
     <Compile Include="Extentions\WorkItemCollectionExtensions.cs" />
+    <Compile Include="Interfaces\IChekins.cs" />
+    <Compile Include="Interfaces\IConnect.cs" />
     <Compile Include="Interfaces\IResumable.cs" />
     <Compile Include="Interfaces\ITfsApi.cs" />
     <Compile Include="Interfaces\ITFsObservable.cs" />
     <Compile Include="Constants\WorkItems.cs" />
     <Compile Include="Interfaces\IObservingItem.cs" />
+    <Compile Include="Interfaces\IWorkItem.cs" />
+    <Compile Include="Interfaces\IWriteOff.cs" />
     <Compile Include="Logger\LoggerHelper.cs" />
     <Compile Include="ObservingItems\ObservingItemJson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -356,10 +360,13 @@
     <Compile Include="TFS\Capacity\TeamCapacity.cs" />
     <Compile Include="TFS\Capacity\CapacitySearcher.cs" />
     <Compile Include="ResumeTimer\ResumeTimer.cs" />
+    <Compile Include="TFS\CheckinsService.cs" />
+    <Compile Include="TFS\ConnectService.cs" />
     <Compile Include="TFS\Trend\Chart.cs" />
     <Compile Include="TFS\Trend\Point.cs" />
+    <Compile Include="TFS\WriteOffService.cs" />
     <Compile Include="WiqlBuilder\WiqlBuilder.cs" />
-    <Compile Include="TFS\TfsApi.cs" />
+    <Compile Include="TFS\WorkItemService.cs" />
     <Compile Include="TFS\TfsObservable.cs" />
   </ItemGroup>
   <ItemGroup>

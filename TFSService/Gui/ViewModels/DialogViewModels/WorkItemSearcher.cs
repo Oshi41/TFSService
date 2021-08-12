@@ -20,7 +20,7 @@ namespace Gui.ViewModels.DialogViewModels
         /// </summary>
         /// <param name="api"></param>
         /// <param name="types">Типы элементов, который хочу вывести. Cм. <see cref="WorkItemTypes" /></param>
-        public WorkItemSearcher(ITfsApi api, IEnumerable<ItemTypeMark> types, IEnumerable<ItemTypeMark> states = null)
+        public WorkItemSearcher(IWorkItem api, IEnumerable<ItemTypeMark> types, IEnumerable<ItemTypeMark> states = null)
             : this(api, new FilterViewModel(
                 new CategoryFilterViewModel(
                     Properties.Resources.AS_Filter_WorkTypes,
@@ -40,7 +40,7 @@ namespace Gui.ViewModels.DialogViewModels
         {
         }
 
-        public WorkItemSearcher(ITfsApi api, FilterViewModel filter)
+        public WorkItemSearcher(IWorkItem api, FilterViewModel filter)
         {
             _api = api;
             _action = new TimedAction<string, IList<WorkItemVm>>(PerformSearch);
@@ -60,7 +60,7 @@ namespace Gui.ViewModels.DialogViewModels
 
         #region Fields
 
-        private readonly ITfsApi _api;
+        private readonly IWorkItem _api;
         private readonly TimedAction<string, IList<WorkItemVm>> _action;
 
         private WorkItemVm _selected;

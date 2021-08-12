@@ -10,6 +10,6 @@ namespace Gui.ViewModels.Filter
         /// </summary>
         /// <param name="all"></param>
         /// <param name="api"></param>
-        void Initialize(IEnumerable<WorkItemVm> all, ITfsApi api = null);
+        void Initialize(IEnumerable<WorkItemVm> all, IWorkItem api = null);
     }
 }

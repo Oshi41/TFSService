@@ -34,7 +34,7 @@ namespace Gui.Helper
         ///     Проверяем, записали ли чекины от пользователя
         /// </summary>
         /// <param name="tfs"></param>
-        public void SyncCheckins(ITfsApi tfs)
+        public void SyncCheckins(IWriteOff tfs)
         {
             var checkins = tfs.GetWriteoffs(DateTime.Today, DateTime.Now);
 
@@ -87,7 +87,7 @@ namespace Gui.Helper
         /// </summary>
         /// <param name="api">TFS API</param>
         /// <param name="capacity">Кол-во рабочих часов в этом дне</param>
-        public void CheckinScheduledWork(ITfsApi api, int capacity)
+        public void CheckinScheduledWork(IWriteOff api, IWorkItem workItemApi, int capacity)
         {
             // Обновили историю чекинов
             SyncCheckins(api);
@@ -95,7 +95,7 @@ namespace Gui.Helper
             // Обрезали, если вышли за предел кол-ва часов
             CutOffByCapacity(capacity);
 
-            CheckinWork(api);
+            CheckinWork(workItemApi, api);
         }
 
         /// <summary>
@@ -104,10 +104,10 @@ namespace Gui.Helper
         /// <param name="api"></param>
         /// <param name="capacity"></param>
         /// <param name="currentItem"></param>
-        public void SyncDailyPlan(ITfsApi api, int capacity, Func<WorkItem> currentItem)
+        public void SyncDailyPlan(IWorkItem api, IWriteOff writeOffApi, int capacity, Func<WorkItem> currentItem)
         {
             // Обновили историю чекинов
-            SyncCheckins(api);
+            SyncCheckins(writeOffApi);
 
             // Обрезали, если вышли за предел кол-ва часов
             CutOffByCapacity(capacity);
@@ -128,7 +128,7 @@ namespace Gui.Helper
                 if (item != null) ScheduleWork(item.Id, delta);
             }
 
-            CheckinWork(api);
+            CheckinWork(api, writeOffApi);
         }
 
         #endregion
@@ -153,7 +153,7 @@ namespace Gui.Helper
         ///     В случаем с чекином вчерашней работы, она записывается отдельно и не мешает
         ///     дневному кол-ву работы
         /// </summary>
-        private void CheckinWork(ITfsApi tfs)
+        private void CheckinWork(IWorkItem tfs, IWriteOff writeOffApi)
         {
             // Получили задачи на списание времени
             var manual = Merge(GetManual(this));
@@ -176,7 +176,7 @@ namespace Gui.Helper
                 try
                 {
                     // Записали время
-                    var revision = tfs.WriteHours(workItem, (byte) toWrite.Hours, true);
+                    var revision = writeOffApi.WriteHours(workItem, (byte) toWrite.Hours, true);
                     // Удалили этот рабочий элемента
                     RemoveAll(x => x.Id == toWrite.Id);
 

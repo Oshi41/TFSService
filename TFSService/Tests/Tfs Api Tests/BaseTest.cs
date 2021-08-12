@@ -7,7 +7,7 @@ namespace Tests.Tfs_Api_Tests
     {
         protected ITfsApi GetConn()
         {
-            return new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+            return new WorkItemService("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
         }
     }
 }

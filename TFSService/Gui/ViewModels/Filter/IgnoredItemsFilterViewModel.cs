@@ -23,7 +23,7 @@ namespace Gui.ViewModels.Filter
     {
         private bool _isEnable;
         private string _currentId;
-        private ITfsApi _api;
+        private IWorkItem _api;
         private readonly List<WorkItemVm> _all = new List<WorkItemVm>();
 
         private ObservableCollection<WorkItemVm> _myWorkItems;
@@ -176,7 +176,7 @@ namespace Gui.ViewModels.Filter
         /// </summary>
         /// <param name="all"></param>
         /// <param name="api"></param>
-        public async void Initialize(IEnumerable<WorkItemVm> all, ITfsApi api = null)
+        public async void Initialize(IEnumerable<WorkItemVm> all, IWorkItem api = null)
         {
             _all.Clear();
             _all.AddRange(all);
@@ -284,7 +284,7 @@ namespace Gui.ViewModels.Filter
             WorkItem = item;
         }
 
-        public void Initialize(IEnumerable<WorkItemVm> all, ITfsApi api = null)
+        public void Initialize(IEnumerable<WorkItemVm> all, IWorkItem api = null)
         {
             if (!int.TryParse(Value, out var id))
                 return;

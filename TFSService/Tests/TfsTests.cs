@@ -31,7 +31,7 @@ namespace Tests
         [TestMethod]
         public void GetCapacity()
         {
-            var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+            var tfs = new WorkItemService("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
             {
                 var cap = tfs.GetCapacity();
             }
@@ -77,7 +77,7 @@ namespace Tests
         [TestMethod]
         public void GetLinkedItems()
         {
-            var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+            var tfs = new WorkItemService("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
             {
                 var id = 40952;
 
@@ -88,7 +88,7 @@ namespace Tests
         [TestMethod]
         public void GetMyItems()
         {
-            var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+            var tfs = new WorkItemService("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
             {
                 var all = tfs.GetMyWorkItems();
 
@@ -123,7 +123,7 @@ namespace Tests
         [TestMethod]
         public void GetTaskLinks()
         {
-            var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+            var tfs = new WorkItemService("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
             {
                 var items = tfs.GetMyWorkItems().Where(x => x.Type.Name.Equals(WorkItemTypes.Task)).ToList();
 
@@ -141,7 +141,7 @@ namespace Tests
         [TestMethod]
         public void CheckMyWriteOff()
         {
-            var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+            var tfs = new WorkItemService("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
             {
                 var from = DateTime.Today;
 
@@ -162,7 +162,7 @@ namespace Tests
         {
             var date = new DateTime(2019, 5, 6);
             var hours = 13;
-            var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+            var tfs = new WorkItemService("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
 
             var checkins = tfs.GetWriteoffs(date.AddDays(-1), date.AddDays(1));
 
@@ -174,7 +174,7 @@ namespace Tests
         {
             var date = new DateTime(2019, 5, 21);
             var hours = 14;
-            var tfs = new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+            var tfs = new WorkItemService("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
 
             var checkins = tfs.GetWriteoffs(date, date);
 
@@ -435,7 +435,7 @@ namespace Tests
         public void TestRulesCheck()
         {
             var api =
-                new TfsApi("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
+                new WorkItemService("https://msk-tfs1.securitycode.ru/tfs/Endpoint%20Security");
 
             var builder = new RuleBuilder();
 

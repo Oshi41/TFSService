@@ -96,7 +96,7 @@ namespace Gui.ViewModels.DialogViewModels
 
         public async Task Connect()
         {
-            var connected = await TfsApi.CheckConnection(Text);
+            var connected = await WorkItemService.CheckConnection(Text);
 
             Connection = connected ? ConnectionType.Success : ConnectionType.Failed;
 

@@ -21,7 +21,7 @@ using TfsAPI.TFS.Build_Defenitions;
 
 namespace TfsAPI.TFS
 {
-    public class TfsObservable : TfsApi, ITFsObservable
+    public class TfsObservable : ITFsObservable
     {
         /// <param name="url">Адрес сервера TFS</param>
         /// <param name="myItems">Список ID моих рабочих элементов</param>
@@ -30,20 +30,22 @@ namespace TfsAPI.TFS
         /// <param name="currentItem">Функция получения рабочего элемента для списания времени</param>
         /// <param name="rules">Функция для получения списка правил проверка рабочих элементов</param>
         /// <param name="history">Элементы, за которыми я наблюдаю</param>
-        public TfsObservable(string url,
-            IList<IObservingItem> myItems,
+        public TfsObservable(IList<IObservingItem> myItems,
             IList<string> builds,
             int coolDown,
             Func<WorkItem> currentItem,
             Func<IList<IRule>> rules,
-            Func<IList<IObservingItem>> history)
-            : base(url)
+            Func<IList<IObservingItem>> history, 
+            IConnect connectService, 
+            IWorkItem workItemService)
         {
             _currentItem = currentItem;
             _rules = rules;
             _history = history;
+            _connectService = connectService;
+            _workItemService = workItemService;
 
-            _versionControl = Project.GetService<VersionControlServer>();
+            _versionControl = _connectService.VersionControlServer;
 
             _resumeTimer.AddAction(TimeSpan.FromMinutes(coolDown), RequestUpdate);
             _resumeTimer.AddAction(TimeSpan.FromHours(1),
@@ -59,12 +61,12 @@ namespace TfsAPI.TFS
             SystemEvents.SessionSwitch += OnSessionSwitched;
             AppDomain.CurrentDomain.ProcessExit += (sender, e) => Logoff?.Invoke(this, e);
 
-            MyItems = new List<WorkItem>(FindById(myItems.Select(x => x.Id)).Values);
+            MyItems = new List<WorkItem>(_workItemService.FindById(myItems.Select(x => x.Id)).Values);
 
             _cache = new MemoryCache(new MemoryCacheOptions());
-            _capacitySearcher = new CachedCapacitySearcher(_cache, Project);
+            _capacitySearcher = new CachedCapacitySearcher(_cache, _connectService.Tfs);
 
-            _buildClient = Project.GetClient<BuildHttpClient>();
+            _buildClient = _connectService.Tfs.GetClient<BuildHttpClient>();
 
             _myBuilds.AddRange(builds);
             _ruleBuilder = new RuleBuilder();
@@ -102,6 +104,8 @@ namespace TfsAPI.TFS
         private readonly ICapacitySearcher _capacitySearcher;
         private readonly BuildHttpClient _buildClient;
         private readonly IRuleBuilder _ruleBuilder;
+        private readonly IConnect _connectService;
+        private readonly IWorkItem _workItemService;
 
         #endregion
 
@@ -194,32 +198,32 @@ namespace TfsAPI.TFS
 
         private const string MyWorkItemsKey = "myItemsCachePolicyName";
 
-        /// <summary>
-        ///     Добавил хэширование, чтобы не делать запросы чаще, чем раз в минуту
-        /// </summary>
-        /// <returns></returns>
-        public override WorkItemCollection GetMyWorkItems()
-        {
-            if (!_cache.TryGetValue<WorkItemCollection>(MyWorkItemsKey, out var result))
-            {
-                result = base.GetMyWorkItems();
-
-                var options = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
-
-                lock (MyWorkItemsKey)
-                {
-                    _cache.Set(MyWorkItemsKey, result, options);
-                }
-            }
-
-            return result;
-        }
-
-        public override List<TeamCapacity> GetCapacity(DateTime start, DateTime end)
-        {
-            return _capacitySearcher.SearchCapacities(Name, start, end);
-        }
+        // /// <summary>
+        // ///     Добавил хэширование, чтобы не делать запросы чаще, чем раз в минуту
+        // /// </summary>
+        // /// <returns></returns>
+        // public override WorkItemCollection GetMyWorkItems()
+        // {
+        //     if (!_cache.TryGetValue<WorkItemCollection>(MyWorkItemsKey, out var result))
+        //     {
+        //         result = base.GetMyWorkItems();
+        //
+        //         var options = new MemoryCacheEntryOptions()
+        //             .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
+        //
+        //         lock (MyWorkItemsKey)
+        //         {
+        //             _cache.Set(MyWorkItemsKey, result, options);
+        //         }
+        //     }
+        //
+        //     return result;
+        // }
+        //
+        // public override List<TeamCapacity> GetCapacity(DateTime start, DateTime end)
+        // {
+        //     return _capacitySearcher.SearchCapacities(Name, start, end);
+        // }
 
         #endregion
 
@@ -227,7 +231,7 @@ namespace TfsAPI.TFS
 
         private void UpdateWorkItems()
         {
-            var current = GetMyWorkItems();
+            var current = _workItemService.GetMyWorkItems();
 
             var added = current.Except(MyItems, _idComparer).ToList();
             var removed = MyItems.Except(current, _idComparer).ToList();
@@ -303,7 +307,7 @@ namespace TfsAPI.TFS
         {
             // Инициализировал поиск билдов
             var buildSearcher = new BuildSearcher(_buildClient,
-                _itemStore
+                _connectService.WorkItemStore
                     .Projects
                     .OfType<Project>()
                     .Select(x => x.Guid)
@@ -311,7 +315,7 @@ namespace TfsAPI.TFS
 
             // нашел мои билды 
             var builds = buildSearcher
-                .FindCompletedBuilds(DateTime.Today, DateTime.Now, actor: Name)
+                .FindCompletedBuilds(DateTime.Today, DateTime.Now, actor: _connectService.Name)
                 .ToDictionary(x => x.BuildNumber);
 
             // Нашел ID новых билдов
@@ -337,7 +341,7 @@ namespace TfsAPI.TFS
             if (effectiveRules.IsNullOrEmpty())
                 return;
 
-            var inconsistent = _ruleBuilder.CheckInconsistant(effectiveRules, this);
+            var inconsistent = _ruleBuilder.CheckInconsistant(effectiveRules, _workItemService);
             if (inconsistent.IsNullOrEmpty())
                 return;
 
@@ -365,7 +369,7 @@ namespace TfsAPI.TFS
             var needToRequest = history.Select(x => x.Id).Except(currentIds).ToList();
 
             // Запрос к TFS
-            var finded = FindById(needToRequest);
+            var finded = _workItemService.FindById(needToRequest);
 
             // Вписал в мапу акутальные значения
             foreach (var item in current)

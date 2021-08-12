@@ -12,10 +12,10 @@ namespace Gui.ViewModels.DialogViewModels
     /// </summary>
     public class ChooseTaskViewModel : BindableExtended
     {
-        private readonly ITfsApi _tfs;
+        private readonly IWorkItem _tfs;
         private WorkItemSearcher _searcher;
 
-        public ChooseTaskViewModel(ITfsApi tfs)
+        public ChooseTaskViewModel(IWorkItem tfs)
         {
             _tfs = tfs;
             SpecialCommand = new ObservableCommand(CreateTask);

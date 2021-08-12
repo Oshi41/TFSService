@@ -68,13 +68,21 @@ namespace Gui.ViewModels
 
                 StatsViewModel = new StatsViewModel(settings.MainFilter);
 
-                ApiObservable = await Task.Run(() => new TfsObservable(FirstConnectionViewModel.Text,
-                    settings.MyWorkItems,
-                    settings.MyBuilds,
+                await Task.Run(() => _connectService.Connect(FirstConnectionViewModel.Text));
+
+                _workItemService = new WorkItemService(_connectService, _connectService.Name);
+                _writeOffService = new WriteOffService(_connectService, _workItemService);
+                _chekinsService = new CheckinsService(_connectService, _workItemService);
+                ApiObservable = new TfsObservable(
+                    settings.ObservingItems,
+                    settings.MyBuilds, 
                     settings.ItemMinutesCheck,
-                    GetTask,
-                    () => Settings.Settings.Read().Rules,
-                    GetObservingItems));
+                    GetTask, 
+                    () => Settings.Settings.Read().Rules, 
+                    GetObservingItems, 
+                    _connectService,
+                    _workItemService
+                );
 
                 if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
                     settings.Connections.Add(FirstConnectionViewModel.Text);
@@ -95,7 +103,11 @@ namespace Gui.ViewModels
 
         private readonly ActionArbiter _itemsChangedArbiter = new ActionArbiter();
         private readonly SafeExecutor _safeExecutor;
-
+        private readonly IConnect _connectService = new ConnectService();
+        
+        private IWorkItem _workItemService;
+        private IChekins _chekinsService;
+        private IWriteOff _writeOffService;
         private ITFsObservable _apiObserve;
 
         private WorkItemVm _currentTask;
@@ -237,7 +249,7 @@ namespace Gui.ViewModels
 
         private void ShowMonthly()
         {
-            WindowManager.ShowDialog(new MonthCheckinsViewModel(_apiObserve), Resources.AS_MonthlySchedule, 680, 600);
+            WindowManager.ShowDialog(new MonthCheckinsViewModel(_writeOffService), Resources.AS_MonthlySchedule, 680, 600);
         }
 
         private async Task Update()
@@ -253,14 +265,14 @@ namespace Gui.ViewModels
 
         private void ShowSettings()
         {
-            var vm = new SettingsViewModel(FirstConnectionViewModel.Text, _apiObserve);
+            var vm = new SettingsViewModel(FirstConnectionViewModel.Text, _connectService);
 
             WindowManager.ShowDialog(vm, Resources.AS_Settings, 500);
         }
 
         private void OnWriteHours(object obj)
         {
-            var vm = new WriteOffHoursViewModel(_apiObserve);
+            var vm = new WriteOffHoursViewModel(_workItemService);
 
             if (obj is WorkItemVm toWriteOff)
             {
@@ -273,13 +285,13 @@ namespace Gui.ViewModels
             if (WindowManager.ShowDialog(vm, Resources.AS_ChooseWriteoffTask, 450, 240) == true)
             {
                 var selected = vm.ChooseTaskVm.Searcher.Selected;
-                _apiObserve.WriteHours(selected, (byte) vm.Hours, true);
+                _writeOffService.WriteHours(selected, (byte) vm.Hours, true);
             }
         }
 
         private void OnShowObservableItems()
         {
-            var vm = new ObservingWorkItemsViewModel(_apiObserve, Settings.Settings.Read().ObservingItems);
+            var vm = new ObservingWorkItemsViewModel(_workItemService, Settings.Settings.Read().ObservingItems);
 
             if (WindowManager.ShowDialog(vm, Resources.AS_ObservableItems_Title, width: 800, height: 400) == true)
             {
@@ -294,7 +306,7 @@ namespace Gui.ViewModels
 
         private void OnShowTrendCommand()
         {
-            var vm = new TrendViewModel(_apiObserve, StatsViewModel.Capacity);
+            var vm = new TrendViewModel(_writeOffService, StatsViewModel.Capacity);
             WindowManager.ShowDialog(vm, Resources.AS_Trand_Title, 680, 600, maximize: true);
         }
 
@@ -387,7 +399,7 @@ namespace Gui.ViewModels
 
                 if (responses.Any())
                 {
-                    var vms = new NewResponsesBaloonViewModel(responses, requests, _apiObserve,
+                    var vms = new NewResponsesBaloonViewModel(responses, requests, _chekinsService,
                         Resources.AS_CodeReviewRequested);
                 }
 
@@ -550,7 +562,7 @@ namespace Gui.ViewModels
         private WorkItemVm FindAvailableTask(WroteOffStrategy strategy)
         {
             // Тут уже запрашиваем все таски на мне
-            var vm = new ChooseTaskViewModel(_apiObserve);
+            var vm = new ChooseTaskViewModel(_workItemService);
 
             switch (strategy)
             {
@@ -621,7 +633,7 @@ namespace Gui.ViewModels
             }
 
             // Таск должен быть на мне
-            if (!_apiObserve.IsAssignedToMe(item))
+            if (!_workItemService.IsAssignedToMe(item))
                 LoggerHelper.WriteLine($"Task is not assigned to me");
 
             return true;
@@ -632,15 +644,14 @@ namespace Gui.ViewModels
         /// </summary>
         private void RefreshStats()
         {
-            StatsViewModel.Refresh(ApiObservable);
+            StatsViewModel.Refresh(_writeOffService, _workItemService);
 
-            var all = ApiObservable
-                .GetMyWorkItems();
+            var all = _workItemService.GetMyWorkItems();
 
             CodeResponsesViewModel = new NewResponsesBaloonViewModel(
                 all.Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse)),
                 all.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)),
-                ApiObservable);
+                _chekinsService);
 
             using (var settings = Settings.Settings.Read())
             {
@@ -696,7 +707,7 @@ namespace Gui.ViewModels
             {
                 // Получил запланированную вчера работу и пытаюсь зачекинть.
                 var work = settings.CompletedWork;
-                work.SyncCheckins(_apiObserve);
+                work.SyncCheckins(_writeOffService);
 
                 if (!settings.DisplayTime.GetBegin().IsToday())
                 {
@@ -708,10 +719,10 @@ namespace Gui.ViewModels
                     settings.DisplayTime.ClearPreviouse();
 
                     // Что-то не зачекинили с утра
-                    if (work.ScheduledTime() != 0) work.CheckinScheduledWork(_apiObserve, settings.Capacity.Hours);
+                    if (work.ScheduledTime() != 0) work.CheckinScheduledWork(_writeOffService, _workItemService, settings.Capacity.Hours);
 
                     // Если выставили трудозатраты не сами, то получаем из TFS
-                    if (!settings.Capacity.ByUser) settings.Capacity.Hours = _apiObserve.GetCapacity();
+                    if (!settings.Capacity.ByUser) settings.Capacity.Hours = _writeOffService.GetCapacity();
 
                     settings.DisplayTime.AddDate(DateTime.Now, true);
 
@@ -744,7 +755,7 @@ namespace Gui.ViewModels
                 settigs.CompletedWork.ScheduleWork(id, hours);
 
                 // Сразу же списываем час работы
-                settigs.CompletedWork.CheckinScheduledWork(_apiObserve, settigs.Capacity.Hours);
+                settigs.CompletedWork.CheckinScheduledWork(_writeOffService, _workItemService, settigs.Capacity.Hours);
 
                 RefreshStats();
             }
@@ -766,7 +777,7 @@ namespace Gui.ViewModels
                 // 1) С начала наблюдения уже прошло нужное кол-во часов
                 if (now - settings.DisplayTime.GetBegin() > TimeSpan.FromHours(settings.Capacity.Hours))
                 {
-                    work.SyncDailyPlan(_apiObserve, settings.Capacity.Hours, GetTask);
+                    work.SyncDailyPlan(_workItemService, _writeOffService, settings.Capacity.Hours, GetTask);
                     result = true;
                 }
                 else
@@ -774,7 +785,7 @@ namespace Gui.ViewModels
                     // 2) Пользователь уже распланировал достаточно времени
                     if (settings.Capacity.Hours <= work.ScheduledTime() + work.CheckinedTime())
                     {
-                        work.CheckinScheduledWork(_apiObserve, settings.Capacity.Hours);
+                        work.CheckinScheduledWork(_writeOffService, _workItemService, settings.Capacity.Hours);
                         result = true;
                     }
                 }

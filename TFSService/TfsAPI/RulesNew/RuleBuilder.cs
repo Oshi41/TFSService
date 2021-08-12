@@ -50,7 +50,7 @@ namespace TfsAPI.RulesNew
         /// </summary>
         /// <param name="rules"></param>
         /// <returns></returns>
-        public Dictionary<IRule, IList<WorkItem>> CheckInconsistant(IEnumerable<IRule> rules, ITfsApi api)
+        public Dictionary<IRule, IList<WorkItem>> CheckInconsistant(IEnumerable<IRule> rules, IWorkItem api)
         {
             var toReturn = new Dictionary<IRule, IList<WorkItem>>();
 
@@ -63,7 +63,7 @@ namespace TfsAPI.RulesNew
             return toReturn;
         }
 
-        private IList<WorkItem> ExecuteRule(IRule rule, ITfsApi api)
+        private IList<WorkItem> ExecuteRule(IRule rule, IWorkItem api)
         {
             var result = new List<WorkItem>();
 

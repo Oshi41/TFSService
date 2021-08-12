@@ -55,10 +55,13 @@ namespace Gui.ViewModels
 
         public FilterViewModel Filter { get; }
 
-        public async void Refresh(ITfsApi api)
+        public async void Refresh(IWriteOff api, IWorkItem itemApi)
         {
             if (api == null)
                 throw new Exception(nameof(api));
+            
+            if (itemApi == null)
+                throw new Exception(nameof(itemApi));
 
             var now = DateTime.Now;
 
@@ -72,13 +75,13 @@ namespace Gui.ViewModels
             // TFS API requests
             WroteOff = await Task.Run(() => api.GetWriteoffs(now, now).Sum(x => x.Value));
             Name = await Task.Run(() => api.Name);
-            var all = await Task.Run(() => api.GetMyWorkItems().Select(x => new WorkItemVm(x)));
+            var all = await Task.Run(() => itemApi.GetMyWorkItems().Select(x => new WorkItemVm(x)));
 
             lock (_origin)
             {
                 _origin.Clear();
                 _origin.AddRange(all);
-                Filter.Ignored.Initialize(_origin, api);
+                Filter.Ignored.Initialize(_origin, itemApi);
             }
 
             OnFilterChanged();

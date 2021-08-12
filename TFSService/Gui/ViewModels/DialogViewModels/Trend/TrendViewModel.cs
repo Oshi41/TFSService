@@ -9,7 +9,7 @@ namespace Gui.ViewModels.DialogViewModels.Trend
 {
     public class TrendViewModel : BindableExtended
     {
-        private readonly ITfsApi _api;
+        private readonly IWriteOff _api;
         private readonly int _capacity;
         private readonly Dictionary<DateTime, ChartViewModel> _cache = new Dictionary<DateTime, ChartViewModel>();
         private bool _isBusy;
@@ -40,7 +40,7 @@ namespace Gui.ViewModels.DialogViewModels.Trend
             set => SetProperty(ref _chartVm, value);
         }
 
-        public TrendViewModel(ITfsApi api, int capacity)
+        public TrendViewModel(IWriteOff api, int capacity)
         {
             _api = api;
             _capacity = capacity;
