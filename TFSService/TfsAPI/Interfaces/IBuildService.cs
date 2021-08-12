@@ -33,6 +33,13 @@ namespace TfsAPI.Interfaces
         Task<IDictionary<string, BuildDefinitionVariable>> GetDefaultProperties(BuildDefinitionReference def);
 
         /// <summary>
+        /// Обновляет переданные сборки
+        /// </summary>
+        /// <param name="old"></param>
+        /// <returns></returns>
+        Task<IList<Build>> Update(IEnumerable<Build> old);
+
+        /// <summary>
         /// Ставим сборку в очередь
         /// </summary>
         /// <param name="build">Какую сборку ставим</param>

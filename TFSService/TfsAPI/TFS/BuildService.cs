@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation.Build.WebApi;
+using Microsoft.TeamFoundation.Common;
 using TfsAPI.Interfaces;
 using TfsAPI.Logger;
 
@@ -53,6 +54,14 @@ namespace TfsAPI.TFS
             var buildDef = (await _buildClient.GetFullDefinitionsAsync(project: _connectService.Project.Name, def.Name))
                 ?.FirstOrDefault();
             return buildDef?.Variables;
+        }
+
+        public async Task<IList<Build>> Update(IEnumerable<Build> old)
+        {
+            if (old.IsNullOrEmpty())
+                return new List<Build>();
+            
+            return await _buildClient.GetBuildsAsync(_connectService.Name, buildIds: old.Select(x => x.Id));
         }
 
         public Task<Build> Queue(Build build)

@@ -14,6 +14,7 @@
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -318,6 +319,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\LocalizedDescriptionAttribute.cs" />
+    <Compile Include="Comparers\IdBuildComparer.cs" />
+    <Compile Include="Comparers\PartialBuildComparer.cs" />
     <Compile Include="Comparers\PartialWorkItemComparer.cs" />
     <Compile Include="Comparers\IdWorkItemComparer.cs" />
     <Compile Include="Constants\Sql.cs" />
@@ -330,12 +333,15 @@
     <Compile Include="Extentions\RevisionExtensions.cs" />
     <Compile Include="Extentions\WorkItemCollectionExtensions.cs" />
     <Compile Include="Interfaces\IBuildService.cs" />
+    <Compile Include="Interfaces\IBuildsObserver.cs" />
     <Compile Include="Interfaces\IChekinsService.cs" />
     <Compile Include="Interfaces\IConnectService.cs" />
+    <Compile Include="Interfaces\IObserver.cs" />
     <Compile Include="Interfaces\IResumable.cs" />
     <Compile Include="Interfaces\ITFsObservable.cs" />
     <Compile Include="Constants\WorkItems.cs" />
     <Compile Include="Interfaces\IObservingItem.cs" />
+    <Compile Include="Interfaces\IWorkItemObserver.cs" />
     <Compile Include="Interfaces\IWorkItemService.cs" />
     <Compile Include="Interfaces\IWriteOffService.cs" />
     <Compile Include="Logger\LoggerHelper.cs" />
@@ -363,6 +369,9 @@
     <Compile Include="ResumeTimer\ResumeTimer.cs" />
     <Compile Include="TFS\CheckinsService.cs" />
     <Compile Include="TFS\ConnectService.cs" />
+    <Compile Include="TFS\Observers\BuildsObserver.cs" />
+    <Compile Include="TFS\Observers\ObserverCollectionBase.cs" />
+    <Compile Include="TFS\Observers\WorkItemObserver.cs" />
     <Compile Include="TFS\Trend\Chart.cs" />
     <Compile Include="TFS\Trend\Point.cs" />
     <Compile Include="TFS\WriteOffService.cs" />
@@ -380,7 +389,6 @@
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

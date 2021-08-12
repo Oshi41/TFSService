@@ -99,7 +99,7 @@ namespace TfsAPI.TFS
                 }
             }
 
-            return await Task.Run(CheckConnectSync);
+            return await Task.Run(() => CheckConnectSync());
         }
 
         #region Fields
