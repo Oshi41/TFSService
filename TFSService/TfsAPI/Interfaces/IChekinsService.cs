@@ -5,6 +5,14 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace TfsAPI.Interfaces
 {
+    /// <summary>
+    ///     Можем ли закрыть данную проверку кода
+    /// </summary>
+    /// <param name="myRequest">Мой запрос на проверку</param>
+    /// <param name="responses">Ответы от коллег</param>
+    /// <returns></returns>
+    public delegate bool CanCloseReview(WorkItem myRequest, IList<WorkItem> responses);
+    
     public interface IChekins
     {
         /// <summary>

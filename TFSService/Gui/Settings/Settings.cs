@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using Gui.Helper;
 using Gui.Properties;
 using Gui.ViewModels;
+using Microsoft.TeamFoundation.Build.WebApi;
 using Mvvm;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -68,6 +69,7 @@ namespace Gui.Settings
         private VisibleMode _viewMode;
         private FilterViewModel _mainFilter;
         private ObservableCollection<IObservingItem> _observingItems;
+        private ObservableCollection<Build> _queuedBuilds;
 
         #endregion
 
@@ -214,6 +216,12 @@ namespace Gui.Settings
         {
             get => _observingItems;
             set => Set(ref _observingItems, value);
+        }
+        
+        public ObservableCollection<Build> QueuedBuilds
+        {
+            get => _queuedBuilds;
+            set => Set(ref _queuedBuilds, value);
         }
 
         #endregion
