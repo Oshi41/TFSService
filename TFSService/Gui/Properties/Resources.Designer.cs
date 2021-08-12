@@ -1123,6 +1123,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Фильтр рабочих элементов.
+        /// </summary>
+        public static string AS_WorkItemFilter {
+            get {
+                return ResourceManager.GetString("AS_WorkItemFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Правила рабочих элементов:.
         /// </summary>
         public static string AS_WorkItemRules {

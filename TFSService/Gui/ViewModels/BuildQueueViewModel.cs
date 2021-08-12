@@ -108,7 +108,8 @@ namespace Gui.ViewModels
 
                 using (var settings = Settings.Settings.Read())
                 {
-                    OwnQueue = new ObservableCollection<Build>(settings.QueuedBuilds);
+                    var source = settings?.QueuedBuilds?.ToList() ?? new List<Build>();
+                    OwnQueue = new ObservableCollection<Build>(source);
                 }
             }
             catch (Exception e)

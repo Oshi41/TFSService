@@ -120,6 +120,7 @@
             <ToolBar Grid.Row="1">
                 <local:FilterView DataContext="{Binding Path=StatsViewModel.Filter}"
                                   DockPanel.Dock="Left"
+                                  ToolTip="{x:Static p:Resources.AS_WorkItemFilter}"
                                   HorizontalAlignment="Left"
                                   VerticalAlignment="Center"
                                   Margin="5"/>

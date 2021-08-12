@@ -493,4 +493,7 @@
   <data name="AS_ChooseProject" xml:space="preserve">
     <value>Выберите проект</value>
   </data>
+  <data name="AS_WorkItemFilter" xml:space="preserve">
+    <value>Фильтр рабочих элементов</value>
+  </data>
 </root>

@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Gui.Helper;
 using Gui.Properties;
 using Gui.ViewModels;
@@ -33,10 +34,12 @@ namespace Gui.Settings
             Connections = new ObservableCollection<string>();
             MyWorkItems = new ObservableCollection<IObservingItem>();
             Rules = new ObservableCollection<IRule>();
-            Capacity = new Capacity();
+            Capacity = new Capacity{Hours = 7, ByUser = true};
             MyBuilds = new ObservableCollection<string>();
             DisplayTime = new DisplayTime();
             ObservingItems = new ObservableCollection<IObservingItem>();
+            QueuedBuilds = new ObservableCollection<Build>();
+            Observe = false;
         }
 
         #region Fields
