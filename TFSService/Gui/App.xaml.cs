@@ -24,13 +24,22 @@ namespace Gui
 
             DispatcherUnhandledException += WriteEx;
 
-            var listener = new TextWriterTraceListener(Path.Combine(
+            var path = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "TfsService",
                 "Logs",
-                DateTime.Now.ToShortDateString()
-            ));
+                $"{DateTime.Now.ToShortDateString()}.log"
+            );
 
+            if (!Directory.Exists(Path.GetDirectoryName(path)))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+            }
+            
+            var listener = new TextWriterTraceListener(path);
+            
+            
+            
             Trace.Listeners.Add(listener);
             Trace.WriteLine("\n\n\n*******************************************\nStarting application");
 
