@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using Gui.Helper;
@@ -22,7 +24,12 @@ namespace Gui
 
             DispatcherUnhandledException += WriteEx;
 
-            var listener = new TextWriterTraceListener(Settings.Settings.Read().LogPath);
+            var listener = new TextWriterTraceListener(Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "TfsService",
+                "Logs",
+                DateTime.Now.ToShortDateString()
+            ));
 
             Trace.Listeners.Add(listener);
             Trace.WriteLine("\n\n\n*******************************************\nStarting application");

@@ -136,7 +136,6 @@ namespace Gui.ViewModels
         private IWorkItem _workItemService;
         private IChekins _chekinsService;
         private IWriteOff _writeOffService;
-        private ITFsObservable _apiObserve;
         private IBuild _buildService;
         private IBuildsObserver _buildsObserver;
         private IWorkItemObserver _workItemObserver;
@@ -266,8 +265,6 @@ namespace Gui.ViewModels
         private async Task Update()
         {
             IsBusy = true;
-
-            await Task.Run(() => _apiObserve.RequestUpdate());
 
             RefreshStats();
 
