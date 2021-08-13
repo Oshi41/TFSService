@@ -23,11 +23,12 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/materialdesigntheme.radiobutton.xaml"/>
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/materialdesigntheme.radiobutton.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <controls:BindProxy x:Key="BindProxy"
-                            Data="{Binding}" />
+                                Data="{Binding}" />
 
             <converters:SwitchConverter x:Key="IsTaskConverter"
                                         Default="Collapsed">
@@ -40,7 +41,7 @@
                                              TrueValue="{x:Static Visibility.Visible}"
                                              FalseValue="{x:Static Visibility.Collapsed}" />
 
-            <converters:InvertBoolToVisConverter x:Key="InvertBoolToVisConverter"/>
+            <converters:InvertBoolToVisConverter x:Key="InvertBoolToVisConverter" />
         </ResourceDictionary>
     </Window.Resources>
 
@@ -58,186 +59,197 @@
             </StackPanel>
         </materialDesign:DialogHost.DialogContent>
 
-        <Grid>
+        <materialDesign:DialogHost IsOpen="{Binding CodeResponsesViewModel.IsSelectingDate}">
+            <materialDesign:DialogHost.DialogContent>
+                <local:SelectDateView DataContext="{Binding Path=CodeResponsesViewModel}"/>
+            </materialDesign:DialogHost.DialogContent>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+            <Grid>
 
-            <Menu FontSize="12"
-                  Grid.Row="0">
-                <MenuItem Header="{x:Static p:Resources.AS_Program}">
-                    <MenuItem Header="{x:Static p:Resources.AS_Update}"
-                              Command="{Binding Path=UpdateCommand}">
-                        <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="Update" />
-                        </MenuItem.Icon>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Menu FontSize="12"
+                      Grid.Row="0">
+                    <MenuItem Header="{x:Static p:Resources.AS_Program}">
+                        <MenuItem Header="{x:Static p:Resources.AS_Update}"
+                                  Command="{Binding Path=UpdateCommand}">
+                            <MenuItem.Icon>
+                                <materialDesign:PackIcon Kind="Update" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Header="{x:Static p:Resources.AS_History}"
+                                  Command="{Binding Path=ShowMonthlyCommand}">
+                            <MenuItem.Icon>
+                                <materialDesign:PackIcon Kind="History" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Header="{x:Static p:Resources.AS_Treng_History}"
+                                  Command="{Binding Path=ShowTrendCommand}">
+                            <MenuItem.Icon>
+                                <materialDesign:PackIcon Kind="TrackChanges" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Header="{x:Static p:Resources.AS_BuidlQueue_Button}"
+                                  Command="{Binding Path=ShowBuildQueueCommand}">
+                            <MenuItem.Icon>
+                                <materialDesign:PackIcon Kind="Queue" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Header="{x:Static p:Resources.AS_AutoObserve}"
+                                  Command="{Binding Path=ShowObserveCommand}">
+                            <MenuItem.Icon>
+                                <materialDesign:PackIcon Kind="TimerSand" />
+                            </MenuItem.Icon>
+                        </MenuItem>
                     </MenuItem>
 
-                    <MenuItem Header="{x:Static p:Resources.AS_History}"
-                              Command="{Binding Path=ShowMonthlyCommand}">
-                        <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="History" />
-                        </MenuItem.Icon>
+                    <MenuItem Header="{x:Static p:Resources.AS_Actions}">
+                        <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
+                                  Command="{Binding Path=WriteOffHoursCommand}" />
+                        <Separator />
+                        <MenuItem Header="{x:Static p:Resources.AS_ObservableItems_Title}"
+                                  Command="{Binding Path=ObservableItemsCommand}" />
+                        <Separator />
+                        <MenuItem Header="{x:Static p:Resources.AS_CloseCompletedReviewes}"
+                                  Command="{Binding Path=CodeResponsesViewModel.CloseReviewes}" />
+
+                        <MenuItem Header="{x:Static p:Resources.AS_CloseOldReviews}"
+                                  Command="{Binding Path=CodeResponsesViewModel.CloseOldRequests}"
+                                  CommandParameter="{x:Null}" />
+
+
                     </MenuItem>
 
-                    <MenuItem Header="{x:Static p:Resources.AS_Treng_History}"
-                              Command="{Binding Path=ShowTrendCommand}">
-                        <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="TrackChanges" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    
-                    <MenuItem Header="{x:Static p:Resources.AS_BuidlQueue_Button}"
-                              Command="{Binding Path=ShowBuildQueueCommand}">
-                        <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="Queue" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    
-                    <MenuItem Header="{x:Static p:Resources.AS_AutoObserve}"
-                              Command="{Binding Path=ShowObserveCommand}">
-                        <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="TimerSand" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                </MenuItem>
+                    <!-- <MenuItem Header="{x:Static p:Resources.AS_Settings}" -->
+                    <!--           Command="{Binding Path=SettingsCommand}" /> -->
 
-                <MenuItem Header="{x:Static p:Resources.AS_Actions}">
-                    <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
-                              Command="{Binding Path=WriteOffHoursCommand}" />
+                </Menu>
+
+                <ToolBar Grid.Row="1">
+                    <local:FilterView DataContext="{Binding Path=StatsViewModel.Filter}"
+                                      DockPanel.Dock="Left"
+                                      ToolTip="{x:Static p:Resources.AS_WorkItemFilter}"
+                                      HorizontalAlignment="Left"
+                                      VerticalAlignment="Center"
+                                      Margin="5" />
+
                     <Separator />
-                    <MenuItem Header="{x:Static p:Resources.AS_ObservableItems_Title}"
-                              Command="{Binding Path=ObservableItemsCommand}" />
-                    <Separator/>
-                    <MenuItem Header="{x:Static p:Resources.AS_CloseCompletedReviewes}"
-                              Command="{Binding Path=CodeResponsesViewModel.CloseReviewes}" />
-                    <MenuItem Header="{x:Static p:Resources.AS_CloseOldReviews}"
-                              Command="{Binding Path=CodeResponsesViewModel.CloseOldRequests}" />
-                </MenuItem>
 
-                <MenuItem Header="{x:Static p:Resources.AS_Settings}"
-                          Command="{Binding Path=SettingsCommand}" />
+                    <RadioButton Style="{StaticResource RadioButton.Toolbar.Style}"
+                                 ToolTip="{x:Static p:Resources.AP_MainView_List_ToolTip}"
 
-            </Menu>
-
-            <ToolBar Grid.Row="1">
-                <local:FilterView DataContext="{Binding Path=StatsViewModel.Filter}"
-                                  DockPanel.Dock="Left"
-                                  ToolTip="{x:Static p:Resources.AS_WorkItemFilter}"
-                                  HorizontalAlignment="Left"
-                                  VerticalAlignment="Center"
-                                  Margin="5"/>
-
-                <Separator />
-
-                <RadioButton Style="{StaticResource RadioButton.Toolbar.Style}"
-                             ToolTip="{x:Static p:Resources.AP_MainView_List_ToolTip}"
-
-                             IsChecked="{Binding Path=ViewMode,
+                                 IsChecked="{Binding Path=ViewMode,
                                                       Converter={StaticResource EnumBooleanConverter},
                                                       ConverterParameter={x:Static viewmodels:VisibleMode.List}}">
-                    <materialDesign:PackIcon Kind="FormatListBulleted" />
-                </RadioButton>
+                        <materialDesign:PackIcon Kind="FormatListBulleted" />
+                    </RadioButton>
 
-                <RadioButton Style="{StaticResource RadioButton.Toolbar.Style}"
-                             materialDesign:RippleAssist.IsDisabled="True"
-                             ToolTip="{x:Static p:Resources.AP_MainView_Table_ToolTip}"
+                    <RadioButton Style="{StaticResource RadioButton.Toolbar.Style}"
+                                 materialDesign:RippleAssist.IsDisabled="True"
+                                 ToolTip="{x:Static p:Resources.AP_MainView_Table_ToolTip}"
 
-                              IsChecked="{Binding Path=ViewMode,
+                                 IsChecked="{Binding Path=ViewMode,
                                                       Converter={StaticResource EnumBooleanConverter},
                                                       ConverterParameter={x:Static viewmodels:VisibleMode.Table}}">
-                    <materialDesign:PackIcon Kind="TableLarge" />
-                </RadioButton>
+                        <materialDesign:PackIcon Kind="TableLarge" />
+                    </RadioButton>
 
-                <Separator />
+                    <Separator />
 
-                <Button Style="{StaticResource MaterialDesignToolButton}"
-                        Command="{Binding Path=UpdateCommand}"
-                        ToolTip="{x:Static p:Resources.AS_Update}">
-                    <materialDesign:PackIcon Kind="Update"/>
-                </Button>
+                    <Button Style="{StaticResource MaterialDesignToolButton}"
+                            Command="{Binding Path=UpdateCommand}"
+                            ToolTip="{x:Static p:Resources.AS_Update}">
+                        <materialDesign:PackIcon Kind="Update" />
+                    </Button>
 
-            </ToolBar>
+                </ToolBar>
 
-            <controls:WorkItemsView Grid.Row="2"
-                                    ViewMode="{Binding Path=ViewMode}"
-                                    Items="{Binding Path=StatsViewModel.MyItems}">
-                <controls:WorkItemsView.ItemMenu>
-                    <ContextMenu>
-                        <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
-                                  Visibility="{Binding Path=Item.Type.Name, Converter={StaticResource IsTaskConverter}}"
-                                  Command="{Binding Source={StaticResource BindProxy}, Path=Data.WriteOffHoursCommand}"
-                                  CommandParameter="{Binding}" />
+                <controls:WorkItemsView Grid.Row="2"
+                                        ViewMode="{Binding Path=ViewMode}"
+                                        Items="{Binding Path=StatsViewModel.MyItems}">
+                    <controls:WorkItemsView.ItemMenu>
+                        <ContextMenu>
+                            <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
+                                      Visibility="{Binding Path=Item.Type.Name, Converter={StaticResource IsTaskConverter}}"
+                                      Command="{Binding Source={StaticResource BindProxy}, Path=Data.WriteOffHoursCommand}"
+                                      CommandParameter="{Binding}" />
 
-                        <MenuItem Header="{x:Static p:Resources.AS_MainView_ItemMenu_Ignore}"
-                                  Command="{Binding Source={StaticResource BindProxy}, Path=Data.AddToIgnoredCommand}"
-                                  CommandParameter="{Binding}" />
-                    </ContextMenu>
-                </controls:WorkItemsView.ItemMenu>
-            </controls:WorkItemsView>
+                            <MenuItem Header="{x:Static p:Resources.AS_MainView_ItemMenu_Ignore}"
+                                      Command="{Binding Source={StaticResource BindProxy}, Path=Data.AddToIgnoredCommand}"
+                                      CommandParameter="{Binding}" />
+                        </ContextMenu>
+                    </controls:WorkItemsView.ItemMenu>
+                </controls:WorkItemsView>
 
-            <materialDesign:Card Grid.Row="3">
+                <materialDesign:Card Grid.Row="3">
 
-                <StackPanel Orientation="Vertical"
-                            Background="Transparent"
-                            Margin="5,0,5,10">
-                    <StackPanel.ToolTip>
-                        <ToolTip>
-                            <StackPanel Orientation="Vertical"
-                                        Margin="5">
+                    <StackPanel Orientation="Vertical"
+                                Background="Transparent"
+                                Margin="5,0,5,10">
+                        <StackPanel.ToolTip>
+                            <ToolTip>
+                                <StackPanel Orientation="Vertical"
+                                            Margin="5">
 
-                                <TextBlock
-                                    Text="{Binding Path=StatsViewModel.WroteOff, 
+                                    <TextBlock
+                                        Text="{Binding Path=StatsViewModel.WroteOff, 
                                               StringFormat={x:Static p:Resources.AS_StrFormat_WrittenOff}}"
-                                    Margin="5" />
-                                <TextBlock
-                                    Text="{Binding Path=StatsViewModel.Capacity,
+                                        Margin="5" />
+                                    <TextBlock
+                                        Text="{Binding Path=StatsViewModel.Capacity,
                                        StringFormat={x:Static  p:Resources.AS_StrFormat_DailyMax}}"
-                                    Margin="5" />
+                                        Margin="5" />
 
-                            </StackPanel>
-                        </ToolTip>
-                    </StackPanel.ToolTip>
+                                </StackPanel>
+                            </ToolTip>
+                        </StackPanel.ToolTip>
 
-                    <TextBlock
-                        Text="{Binding Path=StatsViewModel.TfsCapacity, 
+                        <TextBlock
+                            Text="{Binding Path=StatsViewModel.TfsCapacity, 
                               StringFormat={x:Static p:Resources.AS_StrFormat_DailyWorkTime}}"
-                        Margin="10,10,0,0"
-                        ToolTip="{x:Static p:Resources.AS_TfsInfo}" />
+                            Margin="10,10,0,0"
+                            ToolTip="{x:Static p:Resources.AS_TfsInfo}" />
 
 
-                    <Grid>
-                        <ProgressBar x:Name="RegularBar"
-                                     HorizontalAlignment="Stretch"
-                                     Maximum="{Binding Path=StatsViewModel.Capacity}"
-                                     Value="{Binding Path=StatsViewModel.WroteOff}"
-                                     Foreground="DarkGreen"
-                                     Margin="5" >
-                            <ProgressBar.Visibility>
-                                <MultiBinding Converter="{StaticResource HoursOverflowConverter}">
-                                    <Binding Path="StatsViewModel.Capacity"/>
-                                    <Binding Path="StatsViewModel.WroteOff"/>
-                                </MultiBinding>
-                            </ProgressBar.Visibility>
-                        </ProgressBar>
+                        <Grid>
+                            <ProgressBar x:Name="RegularBar"
+                                         HorizontalAlignment="Stretch"
+                                         Maximum="{Binding Path=StatsViewModel.Capacity}"
+                                         Value="{Binding Path=StatsViewModel.WroteOff}"
+                                         Foreground="DarkGreen"
+                                         Margin="5">
+                                <ProgressBar.Visibility>
+                                    <MultiBinding Converter="{StaticResource HoursOverflowConverter}">
+                                        <Binding Path="StatsViewModel.Capacity" />
+                                        <Binding Path="StatsViewModel.WroteOff" />
+                                    </MultiBinding>
+                                </ProgressBar.Visibility>
+                            </ProgressBar>
 
-                        <ProgressBar HorizontalAlignment="Stretch"
-                                     Maximum="{Binding Path=StatsViewModel.WroteOff}"
-                                     Value="{Binding Path=StatsViewModel.Capacity}"
-                                     Background="DarkOrange"
-                                     Foreground="DarkGreen"
-                                     Margin="5" 
-                                     Visibility="{Binding ElementName=RegularBar, Path=IsVisible, Converter={StaticResource InvertBoolToVisConverter}}"/>
-                    </Grid>
-                    
-                </StackPanel>
-            </materialDesign:Card>
+                            <ProgressBar HorizontalAlignment="Stretch"
+                                         Maximum="{Binding Path=StatsViewModel.WroteOff}"
+                                         Value="{Binding Path=StatsViewModel.Capacity}"
+                                         Background="DarkOrange"
+                                         Foreground="DarkGreen"
+                                         Margin="5"
+                                         Visibility="{Binding ElementName=RegularBar, Path=IsVisible, Converter={StaticResource InvertBoolToVisConverter}}" />
+                        </Grid>
 
-        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+
+            </Grid>
+
+        </materialDesign:DialogHost>
 
     </materialDesign:DialogHost>
 

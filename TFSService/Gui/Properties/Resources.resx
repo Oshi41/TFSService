@@ -523,4 +523,10 @@
   <data name="AS_GlobalVariable" xml:space="preserve">
     <value>Глобальная настройка</value>
   </data>
+  <data name="AS_ChoseOldReviewDate" xml:space="preserve">
+    <value>Выберите дату, после которой review считаются устаревшими:</value>
+  </data>
+  <data name="AS_Next" xml:space="preserve">
+    <value>Далее</value>
+  </data>
 </root>

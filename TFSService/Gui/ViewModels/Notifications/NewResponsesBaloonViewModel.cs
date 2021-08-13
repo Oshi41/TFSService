@@ -25,6 +25,8 @@ namespace Gui.ViewModels.Notifications
         private readonly List<WorkItem> _reviews;
         private readonly TimeSpan _time;
         private bool _isBusy;
+        private DateTime _oldDate = DateTime.Today.AddDays(-7);
+        private bool _isSelectingDate;
 
         public NewResponsesBaloonViewModel(IEnumerable<WorkItem> responses,
             IEnumerable<WorkItem> reviews,
@@ -38,7 +40,7 @@ namespace Gui.ViewModels.Notifications
             _time = TimeSpan.FromDays(Settings.Settings.Read().OldReviewDay);
 
             CloseReviewes = ObservableCommand.FromAsyncHandler(OnCloseGoodLooking, OnCanCloseGoodLooking).ExecuteOnce();
-            CloseOldRequests = ObservableCommand.FromAsyncHandler(OnCloseOldRequests, OnCanCloseOldRequests).ExecuteOnce();
+            CloseOldRequests = ObservableCommand.FromAsyncHandler(OnCloseOldRequests, OnCanCloseOldRequests);
         }
 
         public ICommand CloseReviewes { get; }
@@ -50,29 +52,65 @@ namespace Gui.ViewModels.Notifications
             set => Set(ref _isBusy, value);
         }
 
+        public DateTime OldDate
+        {
+            get => _oldDate;
+            set => Set(ref _oldDate, value);
+        }
+
+        public bool IsSelectingDate
+        {
+            get => _isSelectingDate;
+            set => Set(ref _isSelectingDate, value);
+        }
+
 
         private bool OnCanCloseGoodLooking()
         {
             return _reviews.Any(x => x.IsNotClosed());
         }
 
-        private bool OnCanCloseOldRequests()
+        private bool OnCanCloseOldRequests(object parameter)
         {
-            // Есть ли старый запросы проверки кода от кого-то на мне
-            return Items.Select(x => x.Item).Any(x => IsOld(x.CreatedDate));
+            if (parameter == null)
+            {
+                // Есть ли старый запросы проверки кода от кого-то на мне
+                return Items.Select(x => x.Item).Any(x => IsOld(x.CreatedDate));
+            }
+
+            if (true.Equals(parameter))
+            {
+                return OldDate != DateTime.MinValue;
+            }
+
+            return true;
         }
 
-        private async Task OnCloseOldRequests()
+        private async Task OnCloseOldRequests(object param)
         {
-            IsBusy = false;
+            if (param == null)
+            {
+                IsSelectingDate = true;
+            }
 
-            var items = await Task.Run(() => _api.CloseRequests(x => IsOld(x.CreatedDate)));
+            if (true.Equals(param))
+            {
+                param = false;
+                
+                IsBusy = false;
 
-            IsBusy = true;
+                var items = await Task.Run(() => _api.CloseRequests(x => IsOld(x.CreatedDate)));
 
-            var edge = DateTime.Now -_time;
+                IsBusy = true;
 
-            WindowManager.ShowBalloonSuccess(string.Format(Resources.AS_Mask_ResponseClosed, items.Count, edge.ToLongDateString()));
+                WindowManager.ShowBalloonSuccess(string.Format(Resources.AS_Mask_ResponseClosed, items.Count,
+                    OldDate.ToLongDateString()));
+            }
+
+            if (false.Equals(param))
+            {
+                IsSelectingDate = false;
+            }
         }
 
         private async Task OnCloseGoodLooking()
@@ -108,9 +146,7 @@ namespace Gui.ViewModels.Notifications
         /// <returns></returns>
         private bool IsOld(DateTime createdDate)
         {
-            var now = DateTime.Now;
-
-            return (now - createdDate).Duration() > _time;
+            return createdDate > OldDate;
         }
     }
 }

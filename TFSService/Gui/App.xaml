@@ -4,7 +4,8 @@
 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:Gui.Converters"
-             xmlns:constants="clr-namespace:TfsAPI.Constants;assembly=TfsAPI">
+             xmlns:constants="clr-namespace:TfsAPI.Constants;assembly=TfsAPI"
+             xmlns:system="clr-namespace:System;assembly=mscorlib">
 
     <Application.Resources>
         <ResourceDictionary>
@@ -61,6 +62,10 @@
             </converters:SwitchConverter>
 
             <converters:EnumBooleanConverter x:Key="EnumBooleanConverter" />
+            
+            <system:Boolean x:Key="False">False</system:Boolean>
+            <system:Boolean x:Key="True">True</system:Boolean>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

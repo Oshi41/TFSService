@@ -358,6 +358,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Выберите дату, после которой review считаются устаревшими:.
+        /// </summary>
+        public static string AS_ChoseOldReviewDate {
+            get {
+                return ResourceManager.GetString("AS_ChoseOldReviewDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Закрыть успешные запросы проверки кода.
         /// </summary>
         public static string AS_CloseCompletedReviewes {
@@ -759,6 +768,15 @@ namespace Gui.Properties {
         public static string AS_NewWork {
             get {
                 return ResourceManager.GetString("AS_NewWork", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Далее.
+        /// </summary>
+        public static string AS_Next {
+            get {
+                return ResourceManager.GetString("AS_Next", resourceCulture);
             }
         }
         

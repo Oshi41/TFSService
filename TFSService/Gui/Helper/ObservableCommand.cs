@@ -96,6 +96,13 @@ namespace Gui.Helper
                 throw new ArgumentNullException(nameof(executeMethod));
         }
 
+        private ObservableCommand(Func<object,Task> executeMethod, Func<object, bool> canExecuteMethod, bool isAutomaticRequeryDisabled) 
+            : base(executeMethod, canExecuteMethod, isAutomaticRequeryDisabled)
+        {
+            if (executeMethod == null || canExecuteMethod == null)
+                throw new ArgumentNullException(nameof(executeMethod));
+        }
+
         /// <summary>
         ///     Команда выполнится единократно
         /// </summary>
@@ -133,6 +140,12 @@ namespace Gui.Helper
         /// <param name="isAutomaticRequeryDisabled"></param>
         /// <returns>Constructed instance of <see cref="T:Mvvm.Commands.DelegateCommand" /></returns>
         public static ObservableCommand FromAsyncHandler(Func<Task> executeMethod, Func<bool> canExecuteMethod,
+            bool isAutomaticRequeryDisabled = false)
+        {
+            return new ObservableCommand(executeMethod, canExecuteMethod, isAutomaticRequeryDisabled);
+        }
+        
+        public static ObservableCommand FromAsyncHandler(Func<object,Task> executeMethod, Func<object, bool> canExecuteMethod,
             bool isAutomaticRequeryDisabled = false)
         {
             return new ObservableCommand(executeMethod, canExecuteMethod, isAutomaticRequeryDisabled);
