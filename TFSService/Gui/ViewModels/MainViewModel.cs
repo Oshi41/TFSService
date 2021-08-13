@@ -76,16 +76,13 @@ namespace Gui.ViewModels
                 ViewMode = viewSettings.ViewMode;
             }
 
-            await Task.Run(() =>
-                _connectService.Connect(FirstConnectionViewModel.Text, FirstConnectionViewModel.ProjectName));
-
             _workItemService = new WorkItemService(_connectService, _connectService.Name);
             _writeOffService = new WriteOffService(_connectService, _workItemService);
             _chekinsService = new CheckinsService(_connectService, _workItemService);
 
             using (var qSettings = new BuildQueueSettings().Read<BuildQueueSettings>())
             {
-                _buildService = new BuildService(_connectService, qSettings.QueuedBuilds);
+                _buildService = new BuildService(_connectService, qSettings.QueuedBuilds, TimeSpan.FromSeconds(30));
             }
 
             using (var wiSettings = new WorkItemSettings().Read<WorkItemSettings>())

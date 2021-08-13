@@ -9,6 +9,7 @@ using Gui.Helper;
 using Gui.Settings;
 using Gui.ViewModels.DialogViewModels;
 using Microsoft.TeamFoundation.Build.WebApi;
+using Microsoft.TeamFoundation.VersionControl.Common.Internal;
 using Mvvm;
 using Mvvm.Commands;
 using TfsAPI.Interfaces;
@@ -69,6 +70,7 @@ namespace Gui.ViewModels
         private readonly IConnect _connectService;
 
         private bool _forcedBuild = false;
+        private TimeSpan _delay;
 
         public BuildQueueViewModel(IBuild buildService, IConnect connectService)
         {
@@ -111,6 +113,7 @@ namespace Gui.ViewModels
                 {
                     var source = settings?.QueuedBuilds?.ToList() ?? new List<Build>();
                     OwnQueue = new ObservableCollection<Build>(source);
+                    Delay = settings.Delay;
                 }
             }
             catch (Exception e)
@@ -242,5 +245,20 @@ namespace Gui.ViewModels
         public ICommand UpdateCommand { get; }
 
         public ICommand AddBuildCommand { get; }
+
+        public TimeSpan Delay
+        {
+            get => _delay;
+            set
+            {
+                if (SetProperty(ref _delay, value))
+                {
+                    using (var settings = new BuildQueueSettings().Read<BuildQueueSettings>())
+                    {
+                        settings.Delay = Delay;
+                    }
+                }
+            }
+        }
     }
 }

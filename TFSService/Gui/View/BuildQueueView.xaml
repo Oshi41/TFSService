@@ -13,6 +13,16 @@
              d:DesignHeight="500"
              d:DesignWidth="400"
              d:DataContext="{d:DesignInstance Type={x:Type viewModels:BuildQueueViewModel}}">
+    
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Style TargetType="TextBlock" 
+                   x:Key="BaseTextStyle"
+                   BasedOn="{StaticResource {x:Type TextBlock}}">
+                <Setter Property="Foreground" Value="{StaticResource MaterialDesignDarkForeground}"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
 
     <materialDesign:DialogHost IsOpen="{Binding Busy}">
         <materialDesign:DialogHost.DialogContent>
@@ -27,18 +37,31 @@
                     <GroupBox.Header>
                         <DockPanel>
                             <TextBlock Text="{x:Static properties:Resources.AS_CurrentBuilds}"
-                                       Style="{DynamicResource MaterialDesignTextBlock}"
-                                       Foreground="{StaticResource MaterialDesignDarkForeground}"
+                                       Style="{StaticResource BaseTextStyle}"
                                        VerticalAlignment="Center" />
 
                             <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
                                     HorizontalAlignment="Right"
+                                    DockPanel.Dock="Right"
                                     ToolTip="{x:Static properties:Resources.AS_Update}"
                                     Width="24"
                                     Height="24"
+                                    Margin="5 0 "
                                     Command="{Binding Path=UpdateCommand}">
                                 <materialDesign:PackIcon Kind="Refresh" />
                             </Button>
+
+                            <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
+                                    ToolTip="{x:Static properties:Resources.AS_NewBuild}"
+                                    HorizontalAlignment="Right"
+                                    DockPanel.Dock="Right"
+                                    Width="24"
+                                    Height="24"
+                                    Margin="5 0 "
+                                    Command="{Binding Path=AddBuildCommand}">
+                                <materialDesign:PackIcon Kind="Add" />
+                            </Button>
+
                         </DockPanel>
                     </GroupBox.Header>
 
@@ -58,7 +81,7 @@
 
                             <DataGridTextColumn Header="{x:Static properties:Resources.AS_Time}"
                                                 Binding="{Binding Path=QueueTime}" />
-                            
+
                             <DataGridTextColumn Header="{x:Static properties:Resources.AP_MainView_State_Column}"
                                                 Binding="{Binding Path=Status}" />
                         </DataGrid.Columns>
@@ -82,10 +105,10 @@
                                 <ComboBox
                                     materialDesign:HintAssist.Hint="{x:Static properties:Resources.AS_ChooseBuild}"
                                     SelectedItem="{Binding Path=CurrentBuildName}"
-                                    ItemsSource="{Binding Path=AllDefinitions}" 
+                                    ItemsSource="{Binding Path=AllDefinitions}"
                                     IsTextSearchEnabled="True"
                                     IsSynchronizedWithCurrentItem="True"
-                                    IsEditable="True"/>
+                                    IsEditable="True" />
 
                                 <TextBlock Text="{x:Static properties:Resources.AS_Params}"
                                            Margin="0 17 0 5" />
@@ -123,8 +146,34 @@
                         </materialDesign:Card>
                     </materialDesign:DialogHost.DialogContent>
 
-                    <GroupBox Header="{x:Static properties:Resources.AS_BuildQueue}"
-                              Margin="5">
+                    <GroupBox Margin="5">
+                        <GroupBox.Header>
+                            <DockPanel>
+                                <TextBlock Text="{x:Static properties:Resources.AS_BuildQueue}"
+                                           Style="{StaticResource BaseTextStyle}"/>
+                                
+                                <materialDesign:PopupBox DockPanel.Dock="Right"
+                                              HorizontalAlignment="Right"
+                                              Margin="5,0"
+                                              StaysOpen="True">
+                                    <materialDesign:PopupBox.ToggleContent>
+                                        <materialDesign:PackIcon Kind="InformationOutline" 
+                                                                 Foreground="{StaticResource MaterialDesignDarkForeground}"/>
+                                    </materialDesign:PopupBox.ToggleContent>
+
+                                    <ScrollViewer MaxWidth="250"
+                                                  MaxHeight="150"
+                                                  Padding="10"
+                                                  VerticalScrollBarVisibility="Auto"
+                                                  HorizontalScrollBarVisibility="Disabled">
+                                        <TextBlock FontSize="12"
+                                                   TextWrapping="Wrap"
+                                                   Text="{x:Static properties:Resources.AS_LocalQueue_Help}" />
+                                    </ScrollViewer>
+                                </materialDesign:PopupBox>
+                                
+                            </DockPanel>
+                        </GroupBox.Header>
                         <StackPanel Orientation="Vertical">
                             <ToolBar HorizontalAlignment="Stretch">
 
@@ -146,14 +195,12 @@
                                     <materialDesign:PackIcon Kind="Delete" />
                                 </Button>
                                 
-                                <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
-                                        ToolTip="{x:Static properties:Resources.AS_NewBuild}"
-                                        Width="24"
-                                        Height="24"
-                                        Margin="5 0"
-                                        Command="{Binding Path=AddBuildCommand}">
-                                    <materialDesign:PackIcon Kind="Build" />
-                                </Button>
+                                <GridSplitter Margin="5 0"/>
+                                
+                                <TextBox Width="150"
+                                         Text="{Binding Delay, StringFormat=hh\\:mm\\:ss, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                         materialDesign:HintAssist.IsFloating="True"
+                                         materialDesign:HintAssist.Hint="{x:Static properties:Resources.AS_RefreshTimeout}"/>
                             </ToolBar>
 
                             <DataGrid Margin="5"

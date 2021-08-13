@@ -529,4 +529,15 @@
   <data name="AS_Next" xml:space="preserve">
     <value>Далее</value>
   </data>
+  <data name="AS_LocalQueue_Help" xml:space="preserve">
+    <value>Локальная очередь сборок в случае, если очередь на агенте не работает.
+      
+Как только все текущие сборки закончатся, программа отправляет первую сборку в локальной очереди агентам.</value>
+  </data>
+  <data name="AS_RefreshTimeout" xml:space="preserve">
+    <value>Таймаут обновления</value>
+  </data>
+  <data name="AS_TodayWriteOff" xml:space="preserve">
+    <value>Трудозатраты сегодня</value>
+  </data>
 </root>

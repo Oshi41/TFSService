@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Common;
 using TfsAPI.Interfaces;
@@ -15,13 +16,19 @@ namespace TfsAPI.TFS
         private readonly IConnect _connectService;
         private readonly List<Build> _scheduled;
         private readonly BuildHttpClient _buildClient;
+        private readonly Timer _timer;
 
-        public BuildService(IConnect connectService, IEnumerable<Build> scheduled)
+        public BuildService(IConnect connectService, IEnumerable<Build> scheduled, TimeSpan span)
         {
             _connectService = connectService;
             _scheduled = scheduled?.ToList() ?? new List<Build>();
 
             _buildClient = _connectService.Tfs.GetClient<BuildHttpClient>();
+            _timer = new Timer();
+            _timer.Interval = span.TotalMilliseconds;
+            _timer.Elapsed += async (sender, args) => await Tick();
+            
+            _timer.Start();
         }
 
 

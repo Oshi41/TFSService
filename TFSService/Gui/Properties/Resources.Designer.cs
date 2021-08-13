@@ -646,6 +646,17 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Локальная очередь сборок в случае, если очередь на агенте не работает.
+        ///      
+        ///Как только все текущие сборки закончатся, программа отправляет первую сборку в локальной очереди агентам..
+        /// </summary>
+        public static string AS_LocalQueue_Help {
+            get {
+                return ResourceManager.GetString("AS_LocalQueue_Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Путь к файлу логов.
         /// </summary>
         public static string AS_LogPath {
@@ -898,6 +909,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Таймаут обновления.
+        /// </summary>
+        public static string AS_RefreshTimeout {
+            get {
+                return ResourceManager.GetString("AS_RefreshTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Оставшаяся работа.
         /// </summary>
         public static string AS_RemainingWork {
@@ -1083,6 +1103,15 @@ namespace Gui.Properties {
         public static string AS_Time {
             get {
                 return ResourceManager.GetString("AS_Time", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Трудозатраты сегодня.
+        /// </summary>
+        public static string AS_TodayWriteOff {
+            get {
+                return ResourceManager.GetString("AS_TodayWriteOff", resourceCulture);
             }
         }
         

@@ -12,6 +12,7 @@
         xmlns:constants="clr-namespace:TfsAPI.Constants;assembly=TfsAPI"
         xmlns:controls="clr-namespace:Gui.View.Controls"
         xmlns:converters="clr-namespace:Gui.Converters"
+        xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
         Height="450" Width="950"
         Title="{Binding Path=StatsViewModel.Name}">
@@ -42,6 +43,9 @@
                                              FalseValue="{x:Static Visibility.Collapsed}" />
 
             <converters:InvertBoolToVisConverter x:Key="InvertBoolToVisConverter" />
+
+            <materialDesign:MathConverter x:Key="MathConverter"
+                                          Operation="Multiply" />
         </ResourceDictionary>
     </Window.Resources>
 
@@ -61,7 +65,7 @@
 
         <materialDesign:DialogHost IsOpen="{Binding CodeResponsesViewModel.IsSelectingDate}">
             <materialDesign:DialogHost.DialogContent>
-                <local:SelectDateView DataContext="{Binding Path=CodeResponsesViewModel}"/>
+                <local:SelectDateView DataContext="{Binding Path=CodeResponsesViewModel}" />
             </materialDesign:DialogHost.DialogContent>
 
             <Grid>
@@ -73,7 +77,54 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="1"
+                      Grid.Row="0"
+                      Grid.RowSpan="2"
+                      Background="{StaticResource MaterialDesignToolBarBackground}">
+                    <wpf:AngularGauge HorizontalAlignment="Right"
+                                      VerticalAlignment="Top"
+                                      ToolTip="{x:Static p:Resources.AS_TodayWriteOff}"
+                                      Margin="20 0"
+                                      Height="80"
+                                      Width="80"
+                                      Panel.ZIndex="1"
+                                      FromValue="0"
+                                      LabelsStep="2"
+                                      TicksStep="2"
+                                      Background="{StaticResource MaterialDesignToolBarBackground}"
+                                      Foreground="{StaticResource MaterialDesignDarkForeground}"
+                                      TicksForeground="White"
+                                      ToValue="{Binding Path=StatsViewModel.Capacity, Converter={StaticResource MathConverter}, ConverterParameter=2}"
+                                      Value="{Binding Path=StatsViewModel.WroteOff}"
+                                      SectionsInnerRadius=".5">
+
+                        <wpf:AngularGauge.Sections>
+                            <wpf:AngularSection Fill="Red"
+                                                FromValue="0"
+                                                ToValue="{Binding StatsViewModel.Capacity, Converter={StaticResource MathConverter}, ConverterParameter=0.3}" />
+
+                            <wpf:AngularSection Fill="Orange"
+                                                FromValue="{Binding StatsViewModel.Capacity, Converter={StaticResource MathConverter}, ConverterParameter=0.3}"
+                                                ToValue="{Binding StatsViewModel.Capacity, Converter={StaticResource MathConverter}, ConverterParameter=0.8}" />
+
+                            <wpf:AngularSection Fill="Green"
+                                                FromValue="{Binding StatsViewModel.Capacity, Converter={StaticResource MathConverter}, ConverterParameter=0.8}"
+                                                ToValue="{Binding Path=StatsViewModel.Capacity, Converter={StaticResource MathConverter}, ConverterParameter=1.2}" />
+
+                            <wpf:AngularSection Fill="Orange"
+                                                FromValue="{Binding Path=StatsViewModel.Capacity, Converter={StaticResource MathConverter}, ConverterParameter=1.2}"
+                                                ToValue="{Binding StatsViewModel.Capacity, Converter={StaticResource MathConverter}, ConverterParameter=2}" />
+                        </wpf:AngularGauge.Sections>
+                    </wpf:AngularGauge>
+                </Grid>
+
                 <Menu FontSize="12"
+                      Background="{StaticResource MaterialDesignToolBarBackground}"
                       Grid.Row="0">
                     <MenuItem Header="{x:Static p:Resources.AS_Program}">
                         <MenuItem Header="{x:Static p:Resources.AS_Update}"
@@ -134,7 +185,8 @@
 
                 </Menu>
 
-                <ToolBar Grid.Row="1">
+                <ToolBar Grid.Row="1"
+                         >
                     <local:FilterView DataContext="{Binding Path=StatsViewModel.Filter}"
                                       DockPanel.Dock="Left"
                                       ToolTip="{x:Static p:Resources.AS_WorkItemFilter}"
@@ -174,6 +226,7 @@
                 </ToolBar>
 
                 <controls:WorkItemsView Grid.Row="2"
+                                        Grid.ColumnSpan="2"
                                         ViewMode="{Binding Path=ViewMode}"
                                         Items="{Binding Path=StatsViewModel.MyItems}">
                     <controls:WorkItemsView.ItemMenu>
@@ -190,62 +243,62 @@
                     </controls:WorkItemsView.ItemMenu>
                 </controls:WorkItemsView>
 
-                <materialDesign:Card Grid.Row="3">
-
-                    <StackPanel Orientation="Vertical"
-                                Background="Transparent"
-                                Margin="5,0,5,10">
-                        <StackPanel.ToolTip>
-                            <ToolTip>
-                                <StackPanel Orientation="Vertical"
-                                            Margin="5">
-
-                                    <TextBlock
-                                        Text="{Binding Path=StatsViewModel.WroteOff, 
-                                              StringFormat={x:Static p:Resources.AS_StrFormat_WrittenOff}}"
-                                        Margin="5" />
-                                    <TextBlock
-                                        Text="{Binding Path=StatsViewModel.Capacity,
-                                       StringFormat={x:Static  p:Resources.AS_StrFormat_DailyMax}}"
-                                        Margin="5" />
-
-                                </StackPanel>
-                            </ToolTip>
-                        </StackPanel.ToolTip>
-
-                        <TextBlock
-                            Text="{Binding Path=StatsViewModel.TfsCapacity, 
-                              StringFormat={x:Static p:Resources.AS_StrFormat_DailyWorkTime}}"
-                            Margin="10,10,0,0"
-                            ToolTip="{x:Static p:Resources.AS_TfsInfo}" />
-
-
-                        <Grid>
-                            <ProgressBar x:Name="RegularBar"
-                                         HorizontalAlignment="Stretch"
-                                         Maximum="{Binding Path=StatsViewModel.Capacity}"
-                                         Value="{Binding Path=StatsViewModel.WroteOff}"
-                                         Foreground="DarkGreen"
-                                         Margin="5">
-                                <ProgressBar.Visibility>
-                                    <MultiBinding Converter="{StaticResource HoursOverflowConverter}">
-                                        <Binding Path="StatsViewModel.Capacity" />
-                                        <Binding Path="StatsViewModel.WroteOff" />
-                                    </MultiBinding>
-                                </ProgressBar.Visibility>
-                            </ProgressBar>
-
-                            <ProgressBar HorizontalAlignment="Stretch"
-                                         Maximum="{Binding Path=StatsViewModel.WroteOff}"
-                                         Value="{Binding Path=StatsViewModel.Capacity}"
-                                         Background="DarkOrange"
-                                         Foreground="DarkGreen"
-                                         Margin="5"
-                                         Visibility="{Binding ElementName=RegularBar, Path=IsVisible, Converter={StaticResource InvertBoolToVisConverter}}" />
-                        </Grid>
-
-                    </StackPanel>
-                </materialDesign:Card>
+                <!-- <materialDesign:Card Grid.Row="3"> -->
+                <!-- -->
+                <!--     <StackPanel Orientation="Vertical" -->
+                <!--                 Background="Transparent" -->
+                <!--                 Margin="5,0,5,10"> -->
+                <!--         <StackPanel.ToolTip> -->
+                <!--             <ToolTip> -->
+                <!--                 <StackPanel Orientation="Vertical" -->
+                <!--                             Margin="5"> -->
+                <!-- -->
+                <!--                     <TextBlock -->
+                <!--                         Text="{Binding Path=StatsViewModel.WroteOff,  -->
+                <!--                               StringFormat={x:Static p:Resources.AS_StrFormat_WrittenOff}}" -->
+                <!--                         Margin="5" /> -->
+                <!--                     <TextBlock -->
+                <!--                         Text="{Binding Path=StatsViewModel.Capacity, -->
+                <!--                        StringFormat={x:Static  p:Resources.AS_StrFormat_DailyMax}}" -->
+                <!--                         Margin="5" /> -->
+                <!-- -->
+                <!--                 </StackPanel> -->
+                <!--             </ToolTip> -->
+                <!--         </StackPanel.ToolTip> -->
+                <!-- -->
+                <!--         <TextBlock -->
+                <!--             Text="{Binding Path=StatsViewModel.TfsCapacity,  -->
+                <!--               StringFormat={x:Static p:Resources.AS_StrFormat_DailyWorkTime}}" -->
+                <!--             Margin="10,10,0,0" -->
+                <!--             ToolTip="{x:Static p:Resources.AS_TfsInfo}" /> -->
+                <!-- -->
+                <!-- -->
+                <!--         <Grid> -->
+                <!--             <ProgressBar x:Name="RegularBar" -->
+                <!--                          HorizontalAlignment="Stretch" -->
+                <!--                          Maximum="{Binding Path=StatsViewModel.Capacity}" -->
+                <!--                          Value="{Binding Path=StatsViewModel.WroteOff}" -->
+                <!--                          Foreground="DarkGreen" -->
+                <!--                          Margin="5"> -->
+                <!--                 <ProgressBar.Visibility> -->
+                <!--                     <MultiBinding Converter="{StaticResource HoursOverflowConverter}"> -->
+                <!--                         <Binding Path="StatsViewModel.Capacity" /> -->
+                <!--                         <Binding Path="StatsViewModel.WroteOff" /> -->
+                <!--                     </MultiBinding> -->
+                <!--                 </ProgressBar.Visibility> -->
+                <!--             </ProgressBar> -->
+                <!-- -->
+                <!--             <ProgressBar HorizontalAlignment="Stretch" -->
+                <!--                          Maximum="{Binding Path=StatsViewModel.WroteOff}" -->
+                <!--                          Value="{Binding Path=StatsViewModel.Capacity}" -->
+                <!--                          Background="DarkOrange" -->
+                <!--                          Foreground="DarkGreen" -->
+                <!--                          Margin="5" -->
+                <!--                          Visibility="{Binding ElementName=RegularBar, Path=IsVisible, Converter={StaticResource InvertBoolToVisConverter}}" /> -->
+                <!--         </Grid> -->
+                <!-- -->
+                <!--     </StackPanel> -->
+                <!-- </materialDesign:Card> -->
 
             </Grid>
 

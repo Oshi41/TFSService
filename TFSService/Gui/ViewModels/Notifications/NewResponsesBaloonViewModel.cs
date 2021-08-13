@@ -72,12 +72,6 @@ namespace Gui.ViewModels.Notifications
 
         private bool OnCanCloseOldRequests(object parameter)
         {
-            if (parameter == null)
-            {
-                // Есть ли старый запросы проверки кода от кого-то на мне
-                return Items.Select(x => x.Item).Any(x => IsOld(x.CreatedDate));
-            }
-
             if (true.Equals(parameter))
             {
                 return OldDate != DateTime.MinValue;
