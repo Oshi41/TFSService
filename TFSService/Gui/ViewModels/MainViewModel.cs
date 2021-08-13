@@ -255,8 +255,9 @@ namespace Gui.ViewModels
 
         private void ShowMonthly()
         {
-            WindowManager.ShowDialog(new MonthCheckinsViewModel(_writeOffService), Resources.AS_MonthlySchedule, 680,
-                600);
+            WindowManager.ShowDialog(new MonthCheckinsViewModel(_writeOffService), Resources.AS_MonthlySchedule, 
+                670 * 1.25,
+                670);
         }
 
         private async Task Update()

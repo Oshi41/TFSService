@@ -95,10 +95,10 @@
                                       Panel.ZIndex="1"
                                       FromValue="0"
                                       LabelsStep="2"
-                                      TicksStep="2"
+                                      TicksStep="1"
                                       Background="{StaticResource MaterialDesignToolBarBackground}"
-                                      Foreground="{StaticResource MaterialDesignDarkForeground}"
-                                      TicksForeground="White"
+                                      Foreground="{StaticResource MaterialDesignBackground}"
+                                      TicksForeground="{StaticResource MaterialDesignBackground}"
                                       ToValue="{Binding Path=StatsViewModel.Capacity, Converter={StaticResource MathConverter}, ConverterParameter=2}"
                                       Value="{Binding Path=StatsViewModel.WroteOff}"
                                       SectionsInnerRadius=".5">
