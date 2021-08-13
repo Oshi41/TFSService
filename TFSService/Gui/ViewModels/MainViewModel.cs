@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.DirectoryServices.AccountManagement;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,7 +14,7 @@ using Gui.ViewModels.DialogViewModels.Trend;
 using Gui.ViewModels.Filter;
 using Gui.ViewModels.Notifications;
 using Microsoft.TeamFoundation.Build.WebApi;
-using Microsoft.TeamFoundation.Common;
+using Microsoft.TeamFoundation.Build.WebApi.Events;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Mvvm;
 using Mvvm.Commands;
@@ -24,8 +23,8 @@ using TfsAPI.Extentions;
 using TfsAPI.Interfaces;
 using TfsAPI.Logger;
 using TfsAPI.ObservingItems;
-using TfsAPI.RulesNew;
 using TfsAPI.TFS;
+using TfsAPI.TFS.Observers;
 
 namespace Gui.ViewModels
 {
@@ -43,10 +42,12 @@ namespace Gui.ViewModels
             ObservableItemsCommand = new ObservableCommand(OnShowObservableItems);
             ShowTrendCommand = new ObservableCommand(OnShowTrendCommand);
             ShowBuildQueueCommand = new ObservableCommand(OnShowBuildQueue);
+            ShowObserveCommand = new ObservableCommand(ShowObserverView);
 
             Init();
-        }
 
+            App.Current.Exit += OnSaveSettings;
+        }
         private async void Init()
         {
             IsBusy = true;
@@ -63,51 +64,65 @@ namespace Gui.ViewModels
                 return;
             }
 
-            using (var settings = Settings.Settings.Read())
+            using (var viewSettings = new ViewSettings().Read<ViewSettings>())
             {
-                ViewMode = settings.ViewMode;
+                StatsViewModel = new StatsViewModel(viewSettings.MainFilter);
 
-                StatsViewModel = new StatsViewModel(settings.MainFilter);
+                viewSettings.Project = FirstConnectionViewModel.ProjectName;
 
-                await Task.Run(() =>
-                    _connectService.Connect(FirstConnectionViewModel.Text, FirstConnectionViewModel.ProjectName));
+                if (!viewSettings.Connections.Contains(FirstConnectionViewModel.Text))
+                    viewSettings.Connections.Add(FirstConnectionViewModel.Text);
 
-                _workItemService = new WorkItemService(_connectService, _connectService.Name);
-                _writeOffService = new WriteOffService(_connectService, _workItemService);
-                _chekinsService = new CheckinsService(_connectService, _workItemService);
-                _buildService = new BuildService(_connectService, settings.QueuedBuilds);
-
-                ApiObservable = new TfsObservable(
-                    settings.ObservingItems,
-                    settings.MyBuilds,
-                    settings.ItemMinutesCheck,
-                    GetTask,
-                    () => Settings.Settings.Read().Rules,
-                    GetObservingItems,
-                    _connectService,
-                    _workItemService,
-                    _buildService
-                );
-
-                if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
-                    settings.Connections.Add(FirstConnectionViewModel.Text);
-
-                if (settings.Project != FirstConnectionViewModel.ProjectName)
-                {
-                    settings.Project = FirstConnectionViewModel.ProjectName;
-                }
+                ViewMode = viewSettings.ViewMode;
             }
 
             await Task.Run(() =>
-            {
-                TryStartWorkDay();
+                _connectService.Connect(FirstConnectionViewModel.Text, FirstConnectionViewModel.ProjectName));
 
-                if (Settings.Settings.Read().Observe)
+            _workItemService = new WorkItemService(_connectService, _connectService.Name);
+            _writeOffService = new WriteOffService(_connectService, _workItemService);
+            _chekinsService = new CheckinsService(_connectService, _workItemService);
+
+            using (var qSettings = new BuildQueueSettings().Read<BuildQueueSettings>())
+            {
+                _buildService = new BuildService(_connectService, qSettings.QueuedBuilds);
+            }
+
+            using (var wiSettings = new WorkItemSettings().Read<WorkItemSettings>())
+            {
+                void OnSave()
                 {
-                    // Начинаем наблюдение
-                    _apiObserve.Start();
+                    using var wiSettings = new WorkItemSettings().Read<WorkItemSettings>();
+                    wiSettings.Items = new ObservableCollection<WorkItem>(_workItemObserver.Observed);
                 }
-            });
+
+                _workItemObserver = new WorkItemObserver(_workItemService, OnSave, wiSettings.Items, wiSettings.Delay);
+                _workItemObserver.ItemsChanged += OnWorkItemsChanged;
+
+                if (wiSettings.Observe)
+                {
+                    _workItemObserver.Start();
+                }
+            }
+
+            using (var bldSettings = new BuildsSettings().Read<BuildsSettings>())
+            {
+                void OnSave()
+                {
+                    using var bldSettings = new BuildsSettings().Read<BuildsSettings>();
+                    bldSettings.Builds = new ObservableCollection<Build>(_buildsObserver.Observed);
+                }
+
+                _buildsObserver = new BuildsObserver(_buildService, OnSave, bldSettings.Builds, bldSettings.Delay);
+                _buildsObserver.BuildChanged += OnBuildChanged;
+
+                if (bldSettings.Observe)
+                {
+                    _buildsObserver.Start();
+                }
+            }
+
+            await Task.Run(RefreshStats);
 
             IsBusy = false;
         }
@@ -123,6 +138,8 @@ namespace Gui.ViewModels
         private IWriteOff _writeOffService;
         private ITFsObservable _apiObserve;
         private IBuild _buildService;
+        private IBuildsObserver _buildsObserver;
+        private IWorkItemObserver _workItemObserver;
 
         private WorkItemVm _currentTask;
         private StatsViewModel _statsViewModel;
@@ -133,40 +150,6 @@ namespace Gui.ViewModels
         #endregion
 
         #region Properties
-
-        private ITFsObservable ApiObservable
-        {
-            get => _apiObserve;
-            set
-            {
-                if (value == _apiObserve)
-                    return;
-
-                if (ApiObservable != null)
-                {
-                    ApiObservable.WriteOff -= ScheduleHour;
-                    ApiObservable.Logoff -= OnLogoff;
-                    ApiObservable.Logon -= OnLogon;
-                    ApiObservable.NewItems -= OnNewItems;
-                    ApiObservable.ItemsChanged -= OnItemsChanged;
-                    ApiObservable.Builded -= OnBuilded;
-                    ApiObservable.RuleMismatch -= OnRuleMismatch;
-                }
-
-                _apiObserve = value;
-
-                if (ApiObservable != null)
-                {
-                    ApiObservable.WriteOff += ScheduleHour;
-                    ApiObservable.Logoff += OnLogoff;
-                    ApiObservable.Logon += OnLogon;
-                    ApiObservable.NewItems += OnNewItems;
-                    ApiObservable.ItemsChanged += OnItemsChanged;
-                    ApiObservable.Builded += OnBuilded;
-                    ApiObservable.RuleMismatch += OnRuleMismatch;
-                }
-            }
-        }
 
         /// <summary>
         ///     Диалог запроса рабочего элемента, над которым работаем
@@ -210,7 +193,16 @@ namespace Gui.ViewModels
         public VisibleMode ViewMode
         {
             get => _viewMode;
-            set => SetProperty(ref _viewMode, value);
+            set
+            {
+                if (SetProperty(ref _viewMode, value))
+                {
+                    using (var settings = new ViewSettings().Read<ViewSettings>())
+                    {
+                        settings.ViewMode = ViewMode;
+                    }
+                }
+            }
         }
 
         #endregion
@@ -258,6 +250,8 @@ namespace Gui.ViewModels
         public ICommand ObservableItemsCommand { get; }
 
         public ICommand ShowBuildQueueCommand { get; }
+
+        public ICommand ShowObserveCommand { get; }
 
         #endregion
 
@@ -337,9 +331,47 @@ namespace Gui.ViewModels
             var vm = new BuildQueueViewModel(_buildService, _connectService);
             if (WindowManager.ShowDialog(vm, Resources.AS_BuidlQueue_Button, 680, 600) == true)
             {
-                using (var settings = Settings.Settings.Read())
+                using (var settings = new BuildQueueSettings().Read<BuildQueueSettings>())
                 {
                     settings.QueuedBuilds = new ObservableCollection<Build>(vm.OwnQueue);
+                }
+            }
+        }
+        
+        private void ShowObserverView()
+        {
+            var vm = new ObserveViewModel();
+
+            if (WindowManager.ShowDialog(vm, Resources.AS_BuidlQueue_Button, 400, 400 * 1.25) == true)
+            {
+                using (var settings = new BuildsSettings().Read<BuildsSettings>())
+                {
+                    settings.Delay = TimeSpan.FromSeconds(vm.BuildsDelay);
+                    settings.Observe = vm.BuildsObserve;
+
+                    if (settings.Observe)
+                    {
+                        _buildsObserver.Start();
+                    }
+                    else
+                    {
+                        _buildsObserver.Pause();
+                    }
+                }
+                
+                using (var settings = new WorkItemSettings().Read<WorkItemSettings>())
+                {
+                    settings.Delay = TimeSpan.FromSeconds(vm.WorkItemDelay);
+                    settings.Observe = vm.WorkItemObserve;
+
+                    if (settings.Observe)
+                    {
+                        _workItemObserver.Start();
+                    }
+                    else
+                    {
+                        _workItemObserver.Pause();
+                    }
                 }
             }
         }
@@ -393,148 +425,118 @@ namespace Gui.ViewModels
 
         #region EventHandlers
 
-        private void ScheduleHour(object sender, ScheduleWorkArgs e)
+        private void OnBuildChanged(object sender, BuildUpdatedEvent e)
         {
-            ScheduleHour(e.Item.Id, e.Hours);
-
-            if (e?.Item != null) WindowManager.ShowBaloon(new WriteOffBaloonViewModel(e));
-        }
-
-        private void OnLogoff(object sender, EventArgs e)
-        {
-            SaveSettings();
-
-            if (TryEndWorkDay()) _apiObserve.Pause();
-        }
-
-        private void OnLogon(object sender, EventArgs e)
-        {
-            if (TryStartWorkDay() && Settings.Settings.Read().Observe) _apiObserve.Start();
-        }
-
-        private void OnNewItems(object sender, List<WorkItem> e)
-        {
-            if (!e.IsNullOrEmpty())
+            if (e.Build.Result == BuildResult.Succeeded)
             {
-                var bugs = e.Where(x => x.IsTypeOf(WorkItemTypes.Bug)).ToList();
-                var works = e.Where(x => x.IsTypeOf(WorkItemTypes.Pbi, WorkItemTypes.Improvement)).ToList();
-                var rare = e.Where(x => x.IsTypeOf(WorkItemTypes.Incident, WorkItemTypes.Feature)).ToList();
-                var responses = e.Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse)).ToList();
-                var requests = e.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)).ToList();
-                var rest = e.Except(bugs).Except(works).Except(rare).Except(responses).Except(requests).ToList();
-
-                if (bugs.Any()) WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(bugs, Resources.AS_NewBugs));
-
-                if (works.Any())
-                    WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(works, Resources.AS_NewWork));
-
-                if (rare.Any())
-                    WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(rare, Resources.AS_ImportantNotice));
-
-                if (responses.Any())
+                WindowManager.ShowBalloonSuccess(string.Format(Resources.AS_StrFormat_BuildedSuccecfully,
+                    e.Build.Definition.Name));
+            }
+            else
+            {
+                if (e.Build.Status == BuildStatus.Completed)
                 {
-                    var vms = new NewResponsesBaloonViewModel(responses, requests, _chekinsService,
-                        Resources.AS_CodeReviewRequested);
+                    WindowManager
+                        .ShowBalloonError(
+                            string.Format(Resources.AS_StrFormat_BuildedWithError, e.Build.Definition.Name,
+                                e.Build.Result));
                 }
-
-                if (rest.Any())
-                    WindowManager.ShowBaloon(
-                        new ItemsAssignedBaloonViewModel(rest, Resources.AS_NewItemsAssigned));
-
-                RefreshStats();
             }
         }
 
-        /// <summary>
-        ///     Обновлениями рабочих элементов управляются специальным арбитром
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnItemsChanged(object sender, List<WorkItem> e)
+        private void OnWorkItemsChanged(object sender, ItemsChanged e)
         {
-            _itemsChangedArbiter.Do(() =>
+            var bugs = e.Items.Where(x => x.IsTypeOf(WorkItemTypes.Bug)).ToList();
+            var works = e.Items.Where(x => x.IsTypeOf(WorkItemTypes.Pbi, WorkItemTypes.Improvement)).ToList();
+            var rare = e.Items.Where(x => x.IsTypeOf(WorkItemTypes.Incident, WorkItemTypes.Feature)).ToList();
+            var responses = e.Items.Where(x => x.IsTypeOf(WorkItemTypes.ReviewResponse)).ToList();
+            var requests = e.Items.Where(x => x.IsTypeOf(WorkItemTypes.CodeReview)).ToList();
+            var rest = e.Items.Except(bugs).Except(works).Except(rare).Except(responses).Except(requests).ToList();
+
+            if (bugs.Any())
             {
-                if (!e.IsNullOrEmpty())
+                switch (e.Action)
                 {
-                    RefreshStats();
+                    case CollectionChangeAction.Add:
+                        WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(bugs, Resources.AS_NewBugs));
+                        break;
 
-                    // Доступные элементы
-                    var active = e.Where(x => !x.HasState(WorkItemStates.Closed)).ToList();
+                    case CollectionChangeAction.Refresh:
+                        break;
 
-                    if (active.Any())
-                    {
-                        var baloon = new ItemsAssignedBaloonViewModel(active, Resources.AS_ItemsChanged);
-                        WindowManager.ShowBaloon(baloon);
-                    }
-
-                    // При каждом изменении сохраняю в конфиг
-                    using (var settings = Settings.Settings.Read())
-                    {
-                        // Получил список наблюдаемых рабочих элементов
-                        var observed = settings.ObservingItems;
-
-                        // Получил коллекцию изменений с новым значением истории
-                        var changes = e
-                            .Where(x => observed.Any(y => y.Id == x.Id))
-                            .Select(x => new ObservingItemJson(x))
-                            .ToList();
-
-                        // Удалили старую историю
-                        foreach (var item in changes)
-                        {
-                            var find = observed.FirstOrDefault(x => x.Id == item.Id);
-                            if (find != null) observed.Remove(find);
-                            observed.Add(item);
-                        }
-                    }
+                    case CollectionChangeAction.Remove:
+                        break;
                 }
-            });
-        }
-
-        private void OnBuilded(object sender, IList<Build> e)
-        {
-            using (var settings = Settings.Settings.Read())
-            {
-                var savedIds = settings.MyBuilds;
-                var newIds = e.Select(x => x.BuildNumber).ToList();
-
-                var brandNewIds = newIds.Except(savedIds).ToList();
-
-                if (!brandNewIds.Any())
-                    return;
-
-                var brandNewBuild = e
-                    .Where(x => newIds
-                        .Contains(x.BuildNumber))
-                    .ToList();
-
-                // Сохранили в настройки
-                settings.MyBuilds = new ObservableCollection<string>(brandNewIds.Concat(savedIds));
-
-                foreach (var build in brandNewBuild)
-                    if (build.Result == BuildResult.Succeeded)
-                        WindowManager.ShowBalloonSuccess(string.Format(Resources.AS_StrFormat_BuildedSuccecfully,
-                            build.BuildNumber));
-                    else
-                        WindowManager
-                            .ShowBalloonError(
-                                string.Format(Resources.AS_StrFormat_BuildedWithError,
-                                    build.BuildNumber,
-                                    build.Result));
             }
-        }
 
-        private void OnRuleMismatch(object sender, Dictionary<IRule, IList<WorkItem>> e)
-        {
-            if (e.IsNullOrEmpty())
-                return;
-
-            // Прохожу по всем правилам, где есть ненулевой список неподходящих рабочих элементов
-            foreach (var rule in e.Keys.Where(x => !e[x].IsNullOrEmpty()))
+            if (works.Any())
             {
-                var vm = new ItemsAssignedBaloonViewModel(e[rule], rule.Title + "\nНесовпадения:");
-                WindowManager.ShowBaloon(vm);
+                switch (e.Action)
+                {
+                    case CollectionChangeAction.Add:
+                        WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(works, Resources.AS_NewWork));
+                        break;
+
+                    case CollectionChangeAction.Refresh:
+                        break;
+
+                    case CollectionChangeAction.Remove:
+                        break;
+                }
             }
+
+
+            if (rare.Any())
+            {
+                switch (e.Action)
+                {
+                    case CollectionChangeAction.Add:
+                        WindowManager.ShowBaloon(new ItemsAssignedBaloonViewModel(rare, Resources.AS_ImportantNotice));
+                        break;
+
+                    case CollectionChangeAction.Refresh:
+                        break;
+
+                    case CollectionChangeAction.Remove:
+                        break;
+                }
+            }
+
+            if (responses.Any())
+            {
+                switch (e.Action)
+                {
+                    case CollectionChangeAction.Add:
+                        var vms = new NewResponsesBaloonViewModel(responses, requests, _chekinsService,
+                            Resources.AS_CodeReviewRequested);
+                        break;
+
+                    case CollectionChangeAction.Refresh:
+                        break;
+
+                    case CollectionChangeAction.Remove:
+                        break;
+                }
+            }
+
+            if (rest.Any())
+            {
+                switch (e.Action)
+                {
+                    case CollectionChangeAction.Add:
+                        WindowManager.ShowBaloon(
+                            new ItemsAssignedBaloonViewModel(rest, Resources.AS_NewItemsAssigned));
+                        break;
+
+                    case CollectionChangeAction.Refresh:
+                        break;
+
+                    case CollectionChangeAction.Remove:
+                        break;
+                }
+            }
+
+            RefreshStats();
         }
 
         #endregion
@@ -558,90 +560,6 @@ namespace Gui.ViewModels
             }
 
             return WindowManager.ShowDialog(FirstConnectionViewModel, Resources.AS_FirstConnection, 400, 300);
-        }
-
-        /// <summary>
-        ///     Таск, с которого списываем время. Строго not null!
-        /// </summary>
-        /// <returns></returns>
-        private WorkItem GetTask()
-        {
-            lock (_apiObserve)
-            {
-                _currentTask?.Item?.SyncToLatest();
-
-                var strategy = Settings.Settings.Read().Strategy;
-
-                try
-                {
-                    // Вызов по событию происходит из другого потока
-                    _currentTask = _safeExecutor.ExecuteInGuiThread(() => FindAvailableTask(strategy)).Result;
-                }
-                catch (Exception e)
-                {
-                    LoggerHelper.WriteLine(e);
-                    return null;
-                }
-            }
-
-            return _currentTask;
-        }
-
-        /// <summary>
-        ///     В зависимости от стратегии выбираем рабочий элемент
-        /// </summary>
-        /// <param name="strategy"></param>
-        /// <returns></returns>
-        private WorkItemVm FindAvailableTask(WroteOffStrategy strategy)
-        {
-            // Тут уже запрашиваем все таски на мне
-            var vm = new ChooseTaskViewModel(_workItemService);
-
-            switch (strategy)
-            {
-                case WroteOffStrategy.Random:
-                    var tasks = vm
-                        .Searcher
-                        .Items
-                        .Where(x => IsTaskAvailable(x))
-                        .ToList();
-
-                    if (tasks.Any())
-                    {
-                        // Выбираю случайный элемент
-                        var random = new Random().Next(tasks.Count);
-                        return tasks[random];
-                    }
-
-                    // Нет доступных тасков, надо выбрать самому
-                    return FindAvailableTask(WroteOffStrategy.Watch);
-
-                case WroteOffStrategy.Watch:
-
-                    // Если выбрали доступный элемент, добиваем его
-                    return IsTaskAvailable(_currentTask)
-                        ? _currentTask
-                        // Иначе спрашиваем о списании
-                        : FindAvailableTask(WroteOffStrategy.AskEveryTime);
-
-                case WroteOffStrategy.AskEveryTime:
-                    // Только одно окошко
-                    if (WindowManager.ShowDialog(vm, Resources.AS_ChooseWriteoffTask, 400, 200) == true)
-                        return vm.Searcher.Selected;
-
-                    if (WindowManager.ShowConfirm(Resources.AS_SkipWriteOff, Resources.AS_SkipWriteOff_Title) == true)
-                        return null;
-
-                    // Выбрать нужно обязательно
-                    return FindAvailableTask(strategy);
-
-                // автосписание отключено
-                case WroteOffStrategy.Disabled:
-                    return null;
-
-                default:
-                    throw new Exception("Unknown strategy");
-            }
         }
 
         /// <summary>
@@ -693,143 +611,21 @@ namespace Gui.ViewModels
             }
         }
 
-        private void SaveSettings()
+        private void OnSaveSettings(object sender, ExitEventArgs e)
         {
-            using (var settings = Settings.Settings.Read())
+            using (var settings = new ViewSettings().Read<ViewSettings>())
             {
-                var user = UserPrincipal.Current;
-                var logoff = DateTime.Now;
-                var logon = user.LastLogon;
-
-                if (logon.HasValue) settings.DisplayTime.AddDate(logon.Value, true);
-
-                settings.DisplayTime.AddDate(logoff, false);
-
                 settings.ViewMode = ViewMode;
-                settings.MainFilter = StatsViewModel?.Filter;
-            }
-        }
-
-        /// <summary>
-        /// Получает список наблюдаемых рабочих элементов вместе с рабочими элементами на мне
-        /// </summary>
-        /// <returns></returns>
-        private IList<IObservingItem> GetObservingItems()
-        {
-            var settings = Settings.Settings.Read();
-
-            return settings.ObservingItems
-                .Concat(settings.MyWorkItems)
-                .Distinct()
-                .ToList();
-        }
-
-        #endregion
-
-        #region Actions
-
-        /// <summary>
-        ///     Пытаюсь начать рабочий день. True, если получилось
-        /// </summary>
-        /// <returns></returns>
-        private bool TryStartWorkDay()
-        {
-            var result = false;
-
-            using (var settings = Settings.Settings.Read())
-            {
-                // Получил запланированную вчера работу и пытаюсь зачекинть.
-                var work = settings.CompletedWork;
-                work.SyncCheckins(_writeOffService);
-
-                if (!settings.DisplayTime.GetBegin().IsToday())
+                
+                if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
                 {
-                    //Начинаю рабочий день!
-                    LoggerHelper.WriteLine($"{settings.DisplayTime.GetDisplayTime().TotalHours}h: " +
-                                           $"{settings.DisplayTime.GetDisplayTime().Minutes}m:");
-
-                    // Очищаю день
-                    settings.DisplayTime.ClearPreviouse();
-
-                    // Что-то не зачекинили с утра
-                    if (work.ScheduledTime() != 0)
-                        work.CheckinScheduledWork(_writeOffService, _workItemService, settings.Capacity.Hours);
-
-                    // Если выставили трудозатраты не сами, то получаем из TFS
-                    if (!settings.Capacity.ByUser) settings.Capacity.Hours = _writeOffService.GetCapacity();
-
-                    settings.DisplayTime.AddDate(DateTime.Now, true);
-
-                    LoggerHelper.WriteLine(
-                        $"{settings.DisplayTime.GetBegin().ToShortTimeString()}: Welcome to a new day!");
-
-                    result = true;
+                    settings.Connections.Add(FirstConnectionViewModel.Text);
                 }
 
-                // Очищаю вчерашние рабочие элементы
-                work.ClearPrevRecords();
-                // очищаю список моих билдов
-                settings.MyBuilds.Clear();
-            }
-
-            RefreshStats();
-
-            return result;
-        }
-
-        /// <summary>
-        ///     Прошел час, списываю его и помещаю в конфиг
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="hours"></param>
-        private void ScheduleHour(int id, byte hours)
-        {
-            using (var settigs = Settings.Settings.Read())
-            {
-                settigs.CompletedWork.ScheduleWork(id, hours);
-
-                // Сразу же списываем час работы
-                settigs.CompletedWork.CheckinScheduledWork(_writeOffService, _workItemService, settigs.Capacity.Hours);
-
-                RefreshStats();
+                settings.Project = FirstConnectionViewModel.ProjectName;
+                settings.MainFilter = new FilterViewModel(StatsViewModel.Filter);
             }
         }
-
-        /// <summary>
-        ///     Пытаюсь завершить рабочий день
-        /// </summary>
-        /// <returns></returns>
-        private bool TryEndWorkDay()
-        {
-            var result = false;
-
-            using (var settings = Settings.Settings.Read())
-            {
-                var now = DateTime.Now;
-                var work = settings.CompletedWork;
-
-                // 1) С начала наблюдения уже прошло нужное кол-во часов
-                if (now - settings.DisplayTime.GetBegin() > TimeSpan.FromHours(settings.Capacity.Hours))
-                {
-                    work.SyncDailyPlan(_workItemService, _writeOffService, settings.Capacity.Hours, GetTask);
-                    result = true;
-                }
-                else
-                {
-                    // 2) Пользователь уже распланировал достаточно времени
-                    if (settings.Capacity.Hours <= work.ScheduledTime() + work.CheckinedTime())
-                    {
-                        work.CheckinScheduledWork(_writeOffService, _workItemService, settings.Capacity.Hours);
-                        result = true;
-                    }
-                }
-            }
-
-            RefreshStats();
-
-            return result;
-        }
-
         #endregion
     }
 }

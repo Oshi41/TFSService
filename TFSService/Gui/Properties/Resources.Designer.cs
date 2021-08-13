@@ -205,6 +205,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Автоматическое наблюдение.
+        /// </summary>
+        public static string AS_AutoObserve {
+            get {
+                return ResourceManager.GetString("AS_AutoObserve", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Доступная емкость.
         /// </summary>
         public static string AS_AvailableCapacity {
@@ -237,6 +246,24 @@ namespace Gui.Properties {
         public static string AS_BuildQueue {
             get {
                 return ResourceManager.GetString("AS_BuildQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Сборки.
+        /// </summary>
+        public static string AS_Builds {
+            get {
+                return ResourceManager.GetString("AS_Builds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Время от времени программа будет запрашивать текущие сборки. При изменении каких-либо свойств (сборка завершилась или изменила свой статус), появится уведомление внизу экрана..
+        /// </summary>
+        public static string AS_BuildsObserve_Help {
+            get {
+                return ResourceManager.GetString("AS_BuildsObserve_Help", resourceCulture);
             }
         }
         
@@ -421,6 +448,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Кол-во рабочих часов в день:.
+        /// </summary>
+        public static string AS_DailyWriteOffHours {
+            get {
+                return ResourceManager.GetString("AS_DailyWriteOffHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Отключено.
         /// </summary>
         public static string AS_Disabled {
@@ -444,6 +480,15 @@ namespace Gui.Properties {
         public static string AS_EmptyName_Error {
             get {
                 return ResourceManager.GetString("AS_EmptyName_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Включить.
+        /// </summary>
+        public static string AS_Enable {
+            get {
+                return ResourceManager.GetString("AS_Enable", resourceCulture);
             }
         }
         
@@ -534,6 +579,15 @@ namespace Gui.Properties {
         public static string AS_GetCapacityFromTfs {
             get {
                 return ResourceManager.GetString("AS_GetCapacityFromTfs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Глобальная настройка.
+        /// </summary>
+        public static string AS_GlobalVariable {
+            get {
+                return ResourceManager.GetString("AS_GlobalVariable", resourceCulture);
             }
         }
         
@@ -1132,11 +1186,38 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Программа время от времени будет запрашивать актуальные рабочие элементы, которые привязаны к текущему пользователю. При наличии любых изменений, к примеру, когда рабочий элемент назначается на другого человека, возникнет всплывающее уведомление с сылкой на изменённый элемент..
+        /// </summary>
+        public static string AS_WorkItemObserve_Help {
+            get {
+                return ResourceManager.GetString("AS_WorkItemObserve_Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выберите время между повторными запросами (сек).
+        /// </summary>
+        public static string AS_WorkItemObserve_Time {
+            get {
+                return ResourceManager.GetString("AS_WorkItemObserve_Time", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Правила рабочих элементов:.
         /// </summary>
         public static string AS_WorkItemRules {
             get {
                 return ResourceManager.GetString("AS_WorkItemRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Рабочие элементы.
+        /// </summary>
+        public static string AS_WorkItems {
+            get {
+                return ResourceManager.GetString("AS_WorkItems", resourceCulture);
             }
         }
         

@@ -53,15 +53,21 @@ namespace Gui.ViewModels.DialogViewModels
         /// <param name="currentConnection"></param>
         private void Init(string currentConnection)
         {
+            _connection = currentConnection;
+            Name = _api.Name;
+            
+            using (var settings = new WriteOffSettings().Read<WriteOffSettings>())
+            {
+                _dayDuration = settings.WorkTime;
+                _capacity = (int)settings.Capacity.TotalHours;
+            }
+            
             using (var settings = Settings.Settings.Read())
             {
-                _dayDuration = settings.Duration;
-                _capacity = settings.Capacity.Hours;
-                _capacityByUser = settings.Capacity.ByUser;
-                _connection = currentConnection;
+                _capacityByUser = true;
                 _strategy = settings.Strategy;
                 RuleEditor = new RuleEditorViewModel(settings.Rules);
-                Name = _api.Name;
+                
                 _logsPath = settings.LogPath;
                 _itemMinutesCheck = settings.ItemMinutesCheck;
                 _oldReviewDay = settings.OldReviewDay;
@@ -72,20 +78,27 @@ namespace Gui.ViewModels.DialogViewModels
         {
             using (var settings = Settings.Settings.Read())
             {
-                settings.Duration = DayDuration;
-                settings.Capacity.Hours = Capacity;
-                settings.Capacity.ByUser = CapacityByUser;
-
-                if (string.IsNullOrEmpty(Connection)
-                    && !settings.Connections.Contains(Connection))
-                    settings.Connections.Add(Connection);
-
                 settings.Strategy = Strategy;
 
                 settings.Rules = RuleEditor.Rules;
                 settings.LogPath = LogsPath;
                 settings.ItemMinutesCheck = ItemMinutesCheck;
                 settings.OldReviewDay = OldReviewDay;
+            }
+
+            using (var settings = new ViewSettings().Read<ViewSettings>())
+            {
+                if (string.IsNullOrEmpty(Connection)
+                    && !settings.Connections.Contains(Connection))
+                {
+                    settings.Connections.Add(Connection);
+                }
+            }
+
+            using (var settings = new WriteOffSettings().Read<WriteOffSettings>())
+            {
+                settings.WorkTime = DayDuration;
+                settings.Capacity = TimeSpan.FromHours(Capacity);
             }
         }
 

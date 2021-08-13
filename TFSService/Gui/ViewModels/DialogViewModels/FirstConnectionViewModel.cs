@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Gui.Helper;
 using Gui.Properties;
+using Gui.Settings;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using TfsAPI.Interfaces;
@@ -23,7 +24,7 @@ namespace Gui.ViewModels.DialogViewModels
         {
             _connectService = connectService;
             
-            using (var settings = Settings.Settings.Read())
+            using (var settings = new ViewSettings().Read<ViewSettings>())
             {
                 RememberedConnections = settings.Connections?.ToList() ?? new List<string>();
 

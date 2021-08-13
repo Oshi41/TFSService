@@ -496,4 +496,31 @@
   <data name="AS_WorkItemFilter" xml:space="preserve">
     <value>Фильтр рабочих элементов</value>
   </data>
+  <data name="AS_AutoObserve" xml:space="preserve">
+    <value>Автоматическое наблюдение</value>
+  </data>
+  <data name="AS_Enable" xml:space="preserve">
+    <value>Включить</value>
+  </data>
+  <data name="AS_WorkItemObserve_Help" xml:space="preserve">
+    <value>Программа время от времени будет запрашивать актуальные рабочие элементы, которые привязаны к текущему пользователю. При наличии любых изменений, к примеру, когда рабочий элемент назначается на другого человека, возникнет всплывающее уведомление с сылкой на изменённый элемент.</value>
+  </data>
+  <data name="AS_WorkItemObserve_Time" xml:space="preserve">
+    <value>Выберите время между повторными запросами (сек)</value>
+  </data>
+  <data name="AS_WorkItems" xml:space="preserve">
+    <value>Рабочие элементы</value>
+  </data>
+  <data name="AS_Builds" xml:space="preserve">
+    <value>Сборки</value>
+  </data>
+  <data name="AS_BuildsObserve_Help" xml:space="preserve">
+    <value>Время от времени программа будет запрашивать текущие сборки. При изменении каких-либо свойств (сборка завершилась или изменила свой статус), появится уведомление внизу экрана.</value>
+  </data>
+  <data name="AS_DailyWriteOffHours" xml:space="preserve">
+    <value>Кол-во рабочих часов в день:</value>
+  </data>
+  <data name="AS_GlobalVariable" xml:space="preserve">
+    <value>Глобальная настройка</value>
+  </data>
 </root>

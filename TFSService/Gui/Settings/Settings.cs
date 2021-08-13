@@ -31,14 +31,12 @@ namespace Gui.Settings
         public Settings()
         {
             CompletedWork = new WriteOffCollection();
-            Connections = new ObservableCollection<string>();
             MyWorkItems = new ObservableCollection<IObservingItem>();
             Rules = new ObservableCollection<IRule>();
-            Capacity = new Capacity{Hours = 7, ByUser = true};
+            //Capacity = new Capacity{Hours = 7, ByUser = true};
             MyBuilds = new ObservableCollection<string>();
             DisplayTime = new DisplayTime();
             ObservingItems = new ObservableCollection<IObservingItem>();
-            QueuedBuilds = new ObservableCollection<Build>();
             Observe = false;
         }
 
@@ -90,39 +88,12 @@ namespace Gui.Settings
         }
 
         /// <summary>
-        ///     Продолжительность рабочего дня
-        /// </summary>
-        public TimeSpan Duration
-        {
-            get => _duration;
-            set => SetProperty(ref _duration, value);
-        }
-
-        /// <summary>
-        ///     Сколько часов надо списать
-        /// </summary>
-        public Capacity Capacity
-        {
-            get => _capacity;
-            set => Set(ref _capacity, value);
-        }
-
-        /// <summary>
         ///     Сколько часов было списано на разные рабочие элементы
         /// </summary>
         public WriteOffCollection CompletedWork
         {
             get => _completedWork;
             set => Set(ref _completedWork, value);
-        }
-
-        /// <summary>
-        ///     Строка подключения к TFS
-        /// </summary>
-        public ObservableCollection<string> Connections
-        {
-            get => _connections;
-            set => Set(ref _connections, value);
         }
 
         /// <summary>
@@ -182,31 +153,6 @@ namespace Gui.Settings
             set => Set(ref _oldReviewDay, value);
         }
 
-        /// <summary>
-        /// Отображение на главном окне (список/таблица)
-        /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public VisibleMode ViewMode
-        {
-            get => _viewMode;
-            set => SetProperty(ref _viewMode, value);
-        }
-
-        public FilterViewModel MainFilter
-        {
-            get => _mainFilter;
-            set
-            {
-                if (!Equals(value, _mainFilter))
-                {
-                    _mainFilter = new FilterViewModel(value);
-                    OnPropertyChanged();
-
-                    NotifyChanges();
-                }
-            }
-        }
-
         public ObservableCollection<string> MyBuilds
         {
             get => _myBuilds;
@@ -227,15 +173,6 @@ namespace Gui.Settings
         {
             get => _queuedBuilds;
             set => Set(ref _queuedBuilds, value);
-        }
-
-        /// <summary>
-        /// Имя текущего проекта, к которому подключены
-        /// </summary>
-        public string Project
-        {
-            get => _project;
-            set => Set(ref _project, value);
         }
 
         /// <summary>

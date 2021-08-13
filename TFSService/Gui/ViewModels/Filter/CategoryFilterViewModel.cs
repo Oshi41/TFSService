@@ -62,6 +62,7 @@ namespace Gui.ViewModels.Filter
             }
         }
 
+        [JsonConverter(typeof(JCollectionConverter<IItemTypeMark, ItemTypeMark>))]
         public ObservableCollection<IItemTypeMark> Marks { get; }
 
         public string Title { get; }

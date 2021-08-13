@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Gui.Settings;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Mvvm;
 using TfsAPI.Extentions;
@@ -27,12 +28,14 @@ namespace Gui.ViewModels.DialogViewModels
         private DayViewModel _selectedDay;
         private int _sum;
         private int _sumCapacity;
+        private int _dailyHours;
 
         public MonthCheckinsViewModel(IWriteOff api)
         {
             _api = api;
 
             Date = DateTime.Now;
+            _dailyHours = (int)new WriteOffSettings().Read<WriteOffSettings>().Capacity.TotalHours;
         }
 
         public DateTime Date
@@ -74,7 +77,24 @@ namespace Gui.ViewModels.DialogViewModels
             set => SetProperty(ref _sumCapacity, value);
         }
 
-        private async void OnDateChanged()
+        public int DailyHours
+        {
+            get => _dailyHours;
+            set
+            {
+                if (SetProperty(ref _dailyHours, value))
+                {
+                    using (var settings = new WriteOffSettings().Read<WriteOffSettings>())
+                    {
+                        settings.Capacity = TimeSpan.FromHours(DailyHours);
+                    }
+
+                    OnDateChanged(true);
+                }
+            }
+        }
+        
+        private async void OnDateChanged(bool forced = false)
         {
             IsBusy = true;
 
@@ -90,7 +110,7 @@ namespace Gui.ViewModels.DialogViewModels
             if (start > end)
                 return;
 
-            if (!_cache.ContainsKey(start))
+            if (!_cache.ContainsKey(start) || forced)
             {
                 // чекины за месяц (один запрос к TFS)
                 var checkins = await Task.Run(() => _api.GetWriteoffs(start, end));
@@ -100,23 +120,23 @@ namespace Gui.ViewModels.DialogViewModels
                 var i = start;
                 while (i <= end)
                 {
-                    int? capacity = 0;
+                    int? capacity = new WriteOffSettings().Read<WriteOffSettings>().Capacity.Hours;
 
-                    // Учитываю настройки пользователя
-                    var settings = Settings.Settings.Read().Capacity;
-                    if (settings.ByUser)
-                    {
-                        capacity = settings.Hours;
-                    }
-                    else
-                    {
-                        // Получаю кол-во часов для дня из итерации TFS
-                        capacity = await Task
-                            .Run(() => _api
-                                ?.GetCapacity(i, i)
-                                ?.FirstOrDefault()
-                                ?.GetCapacity(_api.Name));
-                    }
+                    // // Учитываю настройки пользователя
+                    // var settings = ;
+                    // if (settings.ByUser)
+                    // {
+                    //     capacity = settings.Hours;
+                    // }
+                    // else
+                    // {
+                    //     // Получаю кол-во часов для дня из итерации TFS
+                    //     capacity = await Task
+                    //         .Run(() => _api
+                    //             ?.GetCapacity(i, i)
+                    //             ?.FirstOrDefault()
+                    //             ?.GetCapacity(_api.Name));
+                    // }
 
                     collection.Add(new DayViewModel(i, checkins, capacity ?? 0));
                     i = i.AddDays(1);
@@ -126,7 +146,7 @@ namespace Gui.ViewModels.DialogViewModels
             }
 
             // Выставляем новый месяц
-            if (Month?.FirstOrDefault()?.Time.SameMonth(Date) != true)
+            if (Month?.FirstOrDefault()?.Time.SameMonth(Date) != true || forced)
             {
                 Month = _cache[start].ToList();
                 Sum = Month.Sum(x => x.Hours);

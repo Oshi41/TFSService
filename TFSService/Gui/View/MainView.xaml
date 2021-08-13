@@ -97,6 +97,13 @@
                             <materialDesign:PackIcon Kind="Queue" />
                         </MenuItem.Icon>
                     </MenuItem>
+                    
+                    <MenuItem Header="{x:Static p:Resources.AS_AutoObserve}"
+                              Command="{Binding Path=ShowObserveCommand}">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="TimerSand" />
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
 
                 <MenuItem Header="{x:Static p:Resources.AS_Actions}">

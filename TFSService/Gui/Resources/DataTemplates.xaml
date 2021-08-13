@@ -157,5 +157,9 @@
     <DataTemplate DataType="{x:Type viewModels:BuildQueueViewModel}">
         <view:BuildQueueView/>
     </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type viewModels:ObserveViewModel}">
+        <view:ObserveView/>
+    </DataTemplate>
 
 </ResourceDictionary>

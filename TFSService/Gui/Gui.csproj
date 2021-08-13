@@ -393,10 +393,16 @@
     <Compile Include="Helper\WpfUtil.cs" />
     <Compile Include="Helper\WriteOff.cs" />
     <Compile Include="Helper\WriteOffCollection.cs" />
+    <Compile Include="Settings\BuildQueueSettings.cs" />
+    <Compile Include="Settings\BuildsSettings.cs" />
     <Compile Include="Settings\Capacity.cs" />
     <Compile Include="Settings\DisplayTime.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="Settings\JCollectionConverter.cs" />
+    <Compile Include="Settings\SettingsBase.cs" />
+    <Compile Include="Settings\ViewSettings.cs" />
+    <Compile Include="Settings\WorkItemSettings.cs" />
+    <Compile Include="Settings\WriteOffSettings.cs" />
     <Compile Include="ViewModels\BuildQueueViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\Trend\ChartViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\ChooseTaskViewModel.cs" />
@@ -419,6 +425,7 @@
     <Compile Include="ViewModels\Notifications\ItemsAssignedBaloonViewModel.cs" />
     <Compile Include="ViewModels\Notifications\NewResponsesBaloonViewModel.cs" />
     <Compile Include="ViewModels\Notifications\WriteOffBaloonViewModel.cs" />
+    <Compile Include="ViewModels\ObserveViewModel.cs" />
     <Compile Include="ViewModels\RuleEditorViewModel.cs" />
     <Compile Include="ViewModels\Rules\AddRuleViewModel.cs" />
     <Compile Include="ViewModels\SafeExecutor.cs" />
@@ -464,6 +471,9 @@
     </Compile>
     <Compile Include="View\Notifications\WriteOffNotificationView.xaml.cs">
       <DependentUpon>WriteOffNotificationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ObserveView.xaml.cs">
+      <DependentUpon>ObserveView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ObservingWorkItemsView.xaml.cs">
       <DependentUpon>ObservingWorkItemsView.xaml</DependentUpon>
@@ -567,6 +577,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\ObserveView.xaml" />
     <Page Include="View\ObservingWorkItemsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

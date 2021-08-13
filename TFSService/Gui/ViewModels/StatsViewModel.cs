@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Gui.Settings;
 using Mvvm;
 using TfsAPI.Constants;
 using TfsAPI.Extentions;
@@ -65,11 +66,16 @@ namespace Gui.ViewModels
 
             var now = DateTime.Now;
 
-            using (var settings = Settings.Settings.Read())
+            // using (var settings = Settings.Settings.Read())
+            // {
+            //     Capacity = settings.Capacity.ByUser
+            //         ? settings.Capacity.Hours
+            //         : await Task.Run(api.GetCapacity);
+            // }
+
+            using (var settings = new WriteOffSettings().Read<WriteOffSettings>())
             {
-                Capacity = settings.Capacity.ByUser
-                    ? settings.Capacity.Hours
-                    : await Task.Run(api.GetCapacity);
+                Capacity = settings.Capacity.Hours;
             }
 
             // TFS API requests
@@ -92,6 +98,11 @@ namespace Gui.ViewModels
             lock (_origin)
             {
                 MyItems = new ObservableCollection<WorkItemVm>(_origin.Where(x => Filter.Accepted(x.Item)));
+
+                using (var settings = new ViewSettings().Read<ViewSettings>())
+                {
+                    settings.MainFilter = Filter;
+                }
             }
         }
     }

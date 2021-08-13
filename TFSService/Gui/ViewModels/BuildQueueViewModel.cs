@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using Gui.Helper;
+using Gui.Settings;
 using Gui.ViewModels.DialogViewModels;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Mvvm;
@@ -106,7 +107,7 @@ namespace Gui.ViewModels
                 AgentQueue = new ObservableCollection<Build>(builds);
                 AllDefinitions = new ObservableCollection<string>(_allRefs.Keys.Select(x => x.Name));
 
-                using (var settings = Settings.Settings.Read())
+                using (var settings = new BuildQueueSettings().Read<BuildQueueSettings>())
                 {
                     var source = settings?.QueuedBuilds?.ToList() ?? new List<Build>();
                     OwnQueue = new ObservableCollection<Build>(source);
