@@ -403,6 +403,7 @@
     <Compile Include="Settings\ViewSettings.cs" />
     <Compile Include="Settings\WorkItemSettings.cs" />
     <Compile Include="Settings\WriteOffSettings.cs" />
+    <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\BuildQueueViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\Trend\ChartViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\ChooseTaskViewModel.cs" />
@@ -432,6 +433,9 @@
     <Compile Include="ViewModels\StatsViewModel.cs" />
     <Compile Include="ViewModels\VisibleMode.cs" />
     <Compile Include="ViewModels\WorkItemVm.cs" />
+    <Compile Include="View\AboutView.xaml.cs">
+      <DependentUpon>AboutView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\BuildQueueView.xaml.cs">
       <DependentUpon>BuildQueueView.xaml</DependentUpon>
     </Compile>
@@ -520,6 +524,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\AboutView.xaml" />
     <Page Include="View\BuildQueueView.xaml" />
     <Page Include="View\Controls\AwaitingContent.xaml">
       <SubType>Designer</SubType>

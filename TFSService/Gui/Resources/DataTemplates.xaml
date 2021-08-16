@@ -161,5 +161,9 @@
     <DataTemplate DataType="{x:Type viewModels:ObserveViewModel}">
         <view:ObserveView/>
     </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type viewModels:AboutViewModel}">
+        <view:AboutView/>
+    </DataTemplate>
 
 </ResourceDictionary>

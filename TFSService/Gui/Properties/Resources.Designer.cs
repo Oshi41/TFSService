@@ -142,6 +142,60 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to О программе.
+        /// </summary>
+        public static string AS_About {
+            get {
+                return ResourceManager.GetString("AS_About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Автор:.
+        /// </summary>
+        public static string AS_About_Author {
+            get {
+                return ResourceManager.GetString("AS_About_Author", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Страница на GitHub.
+        /// </summary>
+        public static string AS_About_Github_page {
+            get {
+                return ResourceManager.GetString("AS_About_Github_page", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Программа создана для помощи в работе с TFS .
+        /// </summary>
+        public static string AS_About_Help {
+            get {
+                return ResourceManager.GetString("AS_About_Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Имя: .
+        /// </summary>
+        public static string AS_About_Name {
+            get {
+                return ResourceManager.GetString("AS_About_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Имя TFS проекта: .
+        /// </summary>
+        public static string AS_About_ProjectName {
+            get {
+                return ResourceManager.GetString("AS_About_ProjectName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Действия.
         /// </summary>
         public static string AS_Actions {
@@ -444,6 +498,15 @@ namespace Gui.Properties {
         public static string AS_CurrentConnection {
             get {
                 return ResourceManager.GetString("AS_CurrentConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Текущий пользователь.
+        /// </summary>
+        public static string AS_CurrentUser {
+            get {
+                return ResourceManager.GetString("AS_CurrentUser", resourceCulture);
             }
         }
         

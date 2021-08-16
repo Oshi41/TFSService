@@ -196,6 +196,9 @@
 
 
                     </MenuItem>
+                    
+                    <MenuItem Header="{x:Static p:Resources.AS_About}"
+                              Command="{Binding Path=AboutCommand}"/>
 
                     <!-- <MenuItem Header="{x:Static p:Resources.AS_Settings}" -->
                     <!--           Command="{Binding Path=SettingsCommand}" /> -->

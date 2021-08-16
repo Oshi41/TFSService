@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="Gui.View.AboutView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModels="clr-namespace:Gui.ViewModels"
+             xmlns:p="clr-namespace:Gui.Properties"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300"
+             d:DataContext="{d:DesignInstance Type={x:Type viewModels:AboutViewModel}}">
+    
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                <Setter Property="TextWrapping" Value="Wrap"/>
+            </Style>
+            
+            <Style TargetType="TextBlock"
+                   BasedOn="{StaticResource {x:Type TextBlock}}"
+                   x:Key="ValueTextStyle">
+                <Setter Property="TextDecorations" Value="Underline"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <StackPanel>
+        <GroupBox Header="{x:Static p:Resources.AS_About}">
+            <StackPanel>
+                <TextBlock Text="{x:Static p:Resources.AS_About_Help}"/>
+                
+                <TextBlock Margin="0 10 0 0">
+                    <Run Text="{x:Static p:Resources.AS_About_Author}"/>
+                    
+                    <Hyperlink Command="{Binding Path=OpenSiteCommand}"
+                               CommandParameter="https://github.com/Oshi41">
+                        <Run Text="Oshi41"></Run>
+                    </Hyperlink>
+                </TextBlock>
+                
+                <TextBlock>
+                    <Hyperlink Command="{Binding Path=OpenSiteCommand}"
+                               CommandParameter="https://github.com/Oshi41/TFSService">
+                        <Run Text="{x:Static p:Resources.AS_About_Github_page}"></Run>
+                    </Hyperlink>
+                </TextBlock>
+            </StackPanel>
+        </GroupBox>
+        
+        <GroupBox Header="{x:Static p:Resources.AS_CurrentUser}">
+            <StackPanel>
+                <Grid IsSharedSizeScope="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"
+                                          MinWidth="150"
+                                          SharedSizeGroup="G1"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    
+                    
+                    <TextBlock Grid.Column="0"
+                               Grid.Row="0"
+                               Text="{x:Static p:Resources.AS_About_Name}"/>
+                    <TextBlock Grid.Column="1" Grid.Row="0"
+                               Style="{StaticResource ValueTextStyle}"
+                               Text="{Binding Path=Name}"/>
+                    
+                    
+                    <TextBlock Grid.Column="0"
+                               Grid.Row="1"
+                               Text="{x:Static p:Resources.AS_About_ProjectName}"/>
+                    <TextBlock Grid.Column="1" Grid.Row="1"
+                               Style="{StaticResource ValueTextStyle}"
+                               Text="{Binding Path=Project}"/>
+                </Grid>
+            </StackPanel>
+        </GroupBox>
+    </StackPanel>
+</UserControl>

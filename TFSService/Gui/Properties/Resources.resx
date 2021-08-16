@@ -540,4 +540,25 @@
   <data name="AS_TodayWriteOff" xml:space="preserve">
     <value>Трудозатраты сегодня</value>
   </data>
+  <data name="AS_About" xml:space="preserve">
+    <value>О программе</value>
+  </data>
+  <data name="AS_About_Help" xml:space="preserve">
+    <value>Программа создана для помощи в работе с TFS </value>
+  </data>
+  <data name="AS_About_Author" xml:space="preserve">
+    <value>Автор:</value>
+  </data>
+  <data name="AS_About_Github_page" xml:space="preserve">
+    <value>Страница на GitHub</value>
+  </data>
+  <data name="AS_CurrentUser" xml:space="preserve">
+    <value>Текущий пользователь</value>
+  </data>
+  <data name="AS_About_Name" xml:space="preserve">
+    <value>Имя: </value>
+  </data>
+  <data name="AS_About_ProjectName" xml:space="preserve">
+    <value>Имя TFS проекта: </value>
+  </data>
 </root>

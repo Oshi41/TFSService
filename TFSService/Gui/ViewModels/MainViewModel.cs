@@ -43,11 +43,13 @@ namespace Gui.ViewModels
             ShowTrendCommand = new ObservableCommand(OnShowTrendCommand);
             ShowBuildQueueCommand = new ObservableCommand(OnShowBuildQueue);
             ShowObserveCommand = new ObservableCommand(ShowObserverView);
+            AboutCommand = new ObservableCommand(OnShowAbout);
 
             Init();
 
             App.Current.Exit += OnSaveSettings;
         }
+
         private async void Init()
         {
             IsBusy = true;
@@ -249,6 +251,8 @@ namespace Gui.ViewModels
 
         public ICommand ShowObserveCommand { get; }
 
+        public ICommand AboutCommand { get; }
+
         #endregion
 
         #region Command handler
@@ -369,6 +373,11 @@ namespace Gui.ViewModels
                     }
                 }
             }
+        }
+        
+        private void OnShowAbout()
+        {
+            WindowManager.ShowDialog(new AboutViewModel(_connectService), Resources.AS_About, 400, 400 * 1.25);
         }
 
         private void OnAddToIgnore(WorkItemVm obj)
