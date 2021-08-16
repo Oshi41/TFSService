@@ -561,4 +561,16 @@
   <data name="AS_About_ProjectName" xml:space="preserve">
     <value>Имя TFS проекта: </value>
   </data>
+  <data name="AS_About_MaterialRef" xml:space="preserve">
+    <value>Построена на базе</value>
+  </data>
+  <data name="AS_About_libs" xml:space="preserve">
+    <value>Использует следующие библиотеки:</value>
+  </data>
+  <data name="AS_About_themesAndStyles" xml:space="preserve">
+    <value>Темы и стили</value>
+  </data>
+  <data name="AS_About_Charts" xml:space="preserve">
+    <value>Графики и визуализация данных</value>
+  </data>
 </root>

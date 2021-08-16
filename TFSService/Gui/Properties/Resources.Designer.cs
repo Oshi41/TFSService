@@ -160,6 +160,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Графики и визуализация данных.
+        /// </summary>
+        public static string AS_About_Charts {
+            get {
+                return ResourceManager.GetString("AS_About_Charts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Страница на GitHub.
         /// </summary>
         public static string AS_About_Github_page {
@@ -178,6 +187,24 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Использует следующие библиотеки:.
+        /// </summary>
+        public static string AS_About_libs {
+            get {
+                return ResourceManager.GetString("AS_About_libs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Построена на базе.
+        /// </summary>
+        public static string AS_About_MaterialRef {
+            get {
+                return ResourceManager.GetString("AS_About_MaterialRef", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Имя: .
         /// </summary>
         public static string AS_About_Name {
@@ -192,6 +219,15 @@ namespace Gui.Properties {
         public static string AS_About_ProjectName {
             get {
                 return ResourceManager.GetString("AS_About_ProjectName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Темы и стили.
+        /// </summary>
+        public static string AS_About_themesAndStyles {
+            get {
+                return ResourceManager.GetString("AS_About_themesAndStyles", resourceCulture);
             }
         }
         
