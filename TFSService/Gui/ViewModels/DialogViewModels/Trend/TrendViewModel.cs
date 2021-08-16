@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Gui.Settings;
+using Mvvm.Commands;
 using TfsAPI.Interfaces;
 
 namespace Gui.ViewModels.DialogViewModels.Trend
@@ -25,11 +27,6 @@ namespace Gui.ViewModels.DialogViewModels.Trend
             {
                 if (SetProperty(ref _capacity, value))
                 {
-                    using (var settings = new WriteOffSettings().Read<WriteOffSettings>())
-                    {
-                        settings.Capacity = TimeSpan.FromHours(Capacity);
-                    }
-
                     OnDateChanged(true);
                 }
             }
@@ -59,13 +56,15 @@ namespace Gui.ViewModels.DialogViewModels.Trend
             set => SetProperty(ref _chartVm, value);
         }
 
+        public ICommand RequestCommand { get; }
 
-        public TrendViewModel(IWriteOff api, int capacity)
+
+        public TrendViewModel(IWriteOff api)
         {
             _api = api;
-            _capacity = capacity;
 
-            Selected = DateTime.Now;
+            _selected = DateTime.Now;
+            RequestCommand = new DelegateCommand(() => OnDateChanged(true));
         }
 
         private async void OnDateChanged(bool forced = false)

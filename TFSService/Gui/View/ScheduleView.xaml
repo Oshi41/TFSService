@@ -70,19 +70,10 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0"
-                           Margin="0 0 0 5" >
-                    <Run Text="{x:Static p:Resources.AS_DailyWriteOffHours}"/>
-                </TextBlock>
-
-                <TextBox Grid.Row="1"
-                    HorizontalAlignment="Left"
-                    Width="100"
-                    materialDesign:HintAssist.Hint="{x:Static p:Resources.AS_GlobalVariable}"
-                    materialDesign:HintAssist.FloatingOffset="0 20"
-                    materialDesign:HintAssist.IsFloating="True"
-                    Text="{Binding Path=DailyHours, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource MaterialDesignTextBox}"/>
+                <controls:CapacitySettingsView Grid.Row="0"
+                                               Grid.RowSpan="2"
+                                               HorizontalAlignment="Left"
+                                               Capacity="{Binding Path=DailyHours}"/>
 
                 <TextBlock Grid.Row="2"
                            Text="{x:Static p:Resources.AS_MonthlyCapacity}"

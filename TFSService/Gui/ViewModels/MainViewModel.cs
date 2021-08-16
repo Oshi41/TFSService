@@ -317,7 +317,7 @@ namespace Gui.ViewModels
 
         private void OnShowTrendCommand()
         {
-            var vm = new TrendViewModel(_writeOffService, StatsViewModel.Capacity);
+            var vm = new TrendViewModel(_writeOffService);
             WindowManager.ShowDialog(vm, Resources.AS_Trand_Title, 680, 600, maximize: true);
         }
 
@@ -337,7 +337,7 @@ namespace Gui.ViewModels
         {
             var vm = new ObserveViewModel();
 
-            if (WindowManager.ShowDialog(vm, Resources.AS_BuidlQueue_Button, 400, 400 * 1.25) == true)
+            if (WindowManager.ShowDialog(vm, Resources.AS_AutoObserve, 400, 400 * 1.25) == true)
             {
                 using (var settings = new BuildsSettings().Read<BuildsSettings>())
                 {

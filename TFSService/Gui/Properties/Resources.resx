@@ -488,7 +488,7 @@
     <value>Имя параметра</value>
   </data>
   <data name="AS_BuidlQueue_Button" xml:space="preserve">
-    <value>Очередь сборки</value>
+    <value>Сборки</value>
   </data>
   <data name="AS_ChooseProject" xml:space="preserve">
     <value>Выберите проект</value>

@@ -34,8 +34,7 @@ namespace Gui.ViewModels.DialogViewModels
         {
             _api = api;
 
-            Date = DateTime.Now;
-            _dailyHours = (int)new WriteOffSettings().Read<WriteOffSettings>().Capacity.TotalHours;
+            _date = DateTime.Now;
         }
 
         public DateTime Date
@@ -84,11 +83,6 @@ namespace Gui.ViewModels.DialogViewModels
             {
                 if (SetProperty(ref _dailyHours, value))
                 {
-                    using (var settings = new WriteOffSettings().Read<WriteOffSettings>())
-                    {
-                        settings.Capacity = TimeSpan.FromHours(DailyHours);
-                    }
-
                     OnDateChanged(true);
                 }
             }

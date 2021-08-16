@@ -13,10 +13,20 @@ namespace Gui.Settings
         {
             return "writeoff.json";
         }
+        
         public TimeSpan Capacity
         {
             get => _capacity;
-            set => Set(ref _capacity, value);
+            set
+            {
+                if (Set(ref _capacity, value))
+                {
+                    if (Capacity.TotalHours < 1)
+                    {
+                        Set(ref _capacity, TimeSpan.FromHours(1));
+                    }
+                }
+            }
         }
 
         public TimeSpan WorkTime

@@ -223,7 +223,7 @@ namespace Gui.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Очередь сборки.
+        ///   Looks up a localized string similar to Сборки.
         /// </summary>
         public static string AS_BuidlQueue_Button {
             get {

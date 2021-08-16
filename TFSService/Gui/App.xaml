@@ -5,7 +5,8 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:Gui.Converters"
              xmlns:constants="clr-namespace:TfsAPI.Constants;assembly=TfsAPI"
-             xmlns:system="clr-namespace:System;assembly=mscorlib">
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:behaviors="clr-namespace:Gui.Behaviors">
 
     <Application.Resources>
         <ResourceDictionary>
@@ -65,7 +66,6 @@
             
             <system:Boolean x:Key="False">False</system:Boolean>
             <system:Boolean x:Key="True">True</system:Boolean>
-
         </ResourceDictionary>
     </Application.Resources>
 </Application>

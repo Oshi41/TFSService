@@ -33,19 +33,11 @@
                           SelectionMode="SingleDate" 
                           Height="300"/>
                 
-                <StackPanel Margin="14 0 0 0">
-                    <TextBlock >
-                        <Run Text="{x:Static p:Resources.AS_DailyWriteOffHours}"/>
-                    </TextBlock>
-                    
-                    <TextBox HorizontalAlignment="Left"
-                             materialDesign:HintAssist.Hint="{x:Static p:Resources.AS_GlobalVariable}"
-                             materialDesign:HintAssist.IsFloating="True"
-                             materialDesign:HintAssist.FloatingOffset="0 20"
-                             Width="100"
-                             Text="{Binding Path=Capacity, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
-                             Style="{StaticResource MaterialDesignTextBox}"/>
-                </StackPanel>
+                <controls:CapacitySettingsView
+                    Margin="14 0 0 0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Capacity="{Binding Path=Capacity}"/>
             </StackPanel>
 
             <wpf:CartesianChart Grid.Row="1"

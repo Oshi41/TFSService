@@ -439,6 +439,9 @@
       <DependentUpon>AwaitingContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Controls\BindProxy.cs" />
+    <Compile Include="View\Controls\CapacitySettingsView.xaml.cs">
+      <DependentUpon>CapacitySettingsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Controls\WorkItemsView.xaml.cs">
       <DependentUpon>WorkItemsView.xaml</DependentUpon>
     </Compile>
@@ -522,6 +525,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Controls\CapacitySettingsView.xaml" />
     <Page Include="View\Controls\WorkItemsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

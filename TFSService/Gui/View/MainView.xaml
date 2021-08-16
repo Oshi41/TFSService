@@ -86,7 +86,19 @@
                       Grid.Row="0"
                       Grid.RowSpan="2"
                       Background="{StaticResource MaterialDesignToolBarBackground}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
                     <wpf:AngularGauge HorizontalAlignment="Right"
+                                      Grid.Column="1"
+                                      Grid.RowSpan="2"
                                       VerticalAlignment="Top"
                                       ToolTip="{x:Static p:Resources.AS_TodayWriteOff}"
                                       Margin="20 0"
@@ -121,6 +133,11 @@
                                                 ToValue="{Binding StatsViewModel.Capacity, Converter={StaticResource MathConverter}, ConverterParameter=2}" />
                         </wpf:AngularGauge.Sections>
                     </wpf:AngularGauge>
+                    
+                    <controls:CapacitySettingsView Grid.Row="0"
+                                                   Grid.Column="0"
+                                                   HorizontalAlignment="Left"
+                                                   Capacity="{Binding Path=StatsViewModel.Capacity}"/>
                 </Grid>
 
                 <Menu FontSize="12"
