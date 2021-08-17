@@ -173,13 +173,16 @@ namespace Gui.ViewModels.DialogViewModels
             IsHolliday = Time.IsHoliday();
 
             Checkins = checkins.Where(x => x.Key.Fields[CoreField.ChangedDate]?.Value is DateTime t
-                                           && t.IsToday(Time)).ToList();
+                                           && t.IsToday(Time))
+                .Select(x => new KeyValuePair<WorkItemVm, int>(new WorkItemVm(x.Key.WorkItem), x.Value))
+                .ToList();
+            
             Hours = Checkins.Select(x => x.Value).Sum();
         }
 
         public bool IsHolliday { get; }
 
-        public List<KeyValuePair<Revision, int>> Checkins { get; }
+        public List<KeyValuePair<WorkItemVm, int>> Checkins { get; }
 
         public int Hours { get; }
 

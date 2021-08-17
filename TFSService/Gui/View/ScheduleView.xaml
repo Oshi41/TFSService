@@ -151,7 +151,7 @@
                                               StringFormat={x:Static p:Resources.AS_StrFormat_Hours}}"
                                 FontWeight="Bold"
                                 Margin="5,0,10,0" />
-                            <ContentControl Content="{Binding Path=Key.WorkItem}" />
+                            <ContentControl Content="{Binding Path=Key}" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
