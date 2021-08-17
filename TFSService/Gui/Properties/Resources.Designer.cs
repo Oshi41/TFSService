@@ -981,6 +981,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Открыть папку с логами.
+        /// </summary>
+        public static string AS_OpenLogsCommand {
+            get {
+                return ResourceManager.GetString("AS_OpenLogsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Открыть свойства.
         /// </summary>
         public static string AS_OpenProperties {

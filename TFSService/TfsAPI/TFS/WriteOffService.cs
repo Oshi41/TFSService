@@ -27,7 +27,9 @@ namespace TfsAPI.TFS
 
         public Revision WriteHours(WorkItem item, byte hours, bool setActive)
         {
+            LoggerHelper.WriteLine($"Write {hours} hours, syncing item {item.Title} to latest...");
             item.SyncToLatest();
+            LoggerHelper.WriteLine($"Syncing done");
 
             item.AddHours(hours, setActive);
             _workItemService.SaveElement(item);
@@ -72,6 +74,8 @@ namespace TfsAPI.TFS
 
             if (@from >= to)
                 throw new Exception($"{nameof(@from)} should be earlier than {nameof(to)}");
+            
+            LoggerHelper.WriteLine($"GetWriteoffs Start");
 
             var query = new WiqlBuilder()
                 .AssignedTo()
@@ -133,10 +137,17 @@ namespace TfsAPI.TFS
                         continue;
                     }
 
+                    LoggerHelper.WriteLine(
+                        $"[changed date]: {revision.Fields[CoreField.ChangedDate].Value}" +
+                        $" [wrote off]: {delta:00} hours" +
+                        $" [id] {revision?.WorkItem?.Id:0000000}" +
+                        $" [title] {revision?.WorkItem?.Title}");
+
                     result.Add(new KeyValuePair<Revision, int>(revision, delta));
                 }
             }
 
+            LoggerHelper.WriteLine("GetWriteoffs end");
             return result;
         }
 
@@ -165,6 +176,8 @@ namespace TfsAPI.TFS
                     current = current.AddDays(1);
                 }
             }
+            
+            LoggerHelper.WriteLine("GetForMonth start");
 
             // Запрос на получение тасков, в которых я когда либо участвовал
             // чтобы не запрашивать все таски, указываю пределы времени:
@@ -208,6 +221,8 @@ namespace TfsAPI.TFS
 
                     point.Value += remainings.LastOrDefault();
                 }
+                
+                LoggerHelper.WriteLine($"Date {date}, remaining work: {point.Value}");
 
                 chart.Items.Add(point);
             }
@@ -229,6 +244,8 @@ namespace TfsAPI.TFS
             var checkins = GetWriteoffs(@from, to);
             // всего часов работы
             var total = checkins.Sum(x => x.Value);
+            
+            LoggerHelper.WriteLine($"Total write off: {total}");
 
             foreach (var date in dates)
             {
@@ -239,8 +256,12 @@ namespace TfsAPI.TFS
                     Time = date,
                     Value = total -= forToday
                 });
+                
+                LoggerHelper.WriteLine($"Date {date}, daily work {forToday:00}");
             }
 
+            LoggerHelper.WriteLine("GetForMonth end");
+            
             return chart;
         }
 

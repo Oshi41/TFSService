@@ -159,7 +159,13 @@ namespace TfsAPI.TFS
         {
             try
             {
-                return Connect.WorkItemStore.GetWorkItem(id);
+                LoggerHelper.WriteLine($"Starting to search work item {id}...");
+                
+                var item = Connect.WorkItemStore.GetWorkItem(id);
+                
+                LoggerHelper.WriteLine($"Work item founded: {item?.Title}");
+
+                return item;
             }
             catch (Exception e)
             {
@@ -180,21 +186,30 @@ namespace TfsAPI.TFS
             // Ищу только указанные типы
             if (!allowedTypes.IsNullOrEmpty()) quarry.WithItemTypes("and", "=", allowedTypes);
 
-            var items = Connect.WorkItemStore.Query(quarry.ToString());
-
-            LoggerHelper.WriteLine($"Founded {items.Count} items");
+            var items = QueryItems(quarry.ToString());
 
             return items.OfType<WorkItem>().ToList();
         }
 
         public virtual WorkItemCollection GetMyWorkItems()
         {
-            return QueryItems(_myItemsQuerry);
+            LoggerHelper.WriteLine($"Starting requesting my items...");
+            var workItemCollection = QueryItems(_myItemsQuerry);
+            LoggerHelper.WriteLine($"My items request finished");
+
+            return workItemCollection;
         }
 
         public WorkItemCollection QueryItems(string query)
         {
-            return Connect.WorkItemStore.Query(query);
+            LoggerHelper.WriteLine($"Executing querry \"{query}\"");
+            var workItemCollection = Connect.WorkItemStore.Query(query);
+            
+            LoggerHelper.WriteLine($"Executing querry finished, {workItemCollection.Count} founded:");
+            LoggerHelper.WriteLine(Environment.NewLine + string.Join(Environment.NewLine,
+                workItemCollection.OfType<WorkItem>().Select(x => $"[id]: {x.Id:0000000} [title]: {x.Title}")));
+            
+            return workItemCollection;
         }
 
         public WorkItem CreateTask(string title, WorkItem parent, uint hours)

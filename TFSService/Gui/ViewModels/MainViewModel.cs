@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -45,7 +46,16 @@ namespace Gui.ViewModels
             ShowObserveCommand = new ObservableCommand(ShowObserverView);
             AboutCommand = new ObservableCommand(OnShowAbout);
             ShowCodeRequestsCommand = new ObservableCommand(OnShowCodeRequests);
+            OpenLogsCommand = new ObservableCommand(() =>
+            {
+                var path = App.Current.Properties["LogsPath"] as string;
 
+                if (!string.IsNullOrWhiteSpace(path))
+                {
+                    var directoryName = Path.GetDirectoryName(path);
+                    Process.Start(directoryName);
+                }
+            });
             Init();
 
             App.Current.Exit += OnSaveSettings;
@@ -256,13 +266,15 @@ namespace Gui.ViewModels
 
         public ICommand ShowCodeRequestsCommand { get; }
 
+        public ICommand OpenLogsCommand { get; }
+
         #endregion
 
         #region Command handler
 
         private void ShowMonthly()
         {
-            WindowManager.ShowDialog(new MonthCheckinsViewModel(_writeOffService), Resources.AS_MonthlySchedule, 
+            WindowManager.ShowDialog(new MonthCheckinsViewModel(_writeOffService), Resources.AS_MonthlySchedule,
                 670 * 1.25,
                 670);
         }
@@ -339,7 +351,7 @@ namespace Gui.ViewModels
                 }
             }
         }
-        
+
         private void ShowObserverView()
         {
             var vm = new ObserveViewModel();
@@ -360,7 +372,7 @@ namespace Gui.ViewModels
                         _buildsObserver.Pause();
                     }
                 }
-                
+
                 using (var settings = new WorkItemSettings().Read<WorkItemSettings>())
                 {
                     settings.Delay = TimeSpan.FromSeconds(vm.WorkItemDelay);
@@ -377,7 +389,7 @@ namespace Gui.ViewModels
                 }
             }
         }
-        
+
         private void OnShowAbout()
         {
             WindowManager.ShowDialog(new AboutViewModel(_connectService), Resources.AS_About, 400, 400 * 1.25);
@@ -406,7 +418,7 @@ namespace Gui.ViewModels
                 finded.IsChecked = true;
             }
         }
-        
+
         private void OnShowCodeRequests()
         {
             var width = 1000;
@@ -630,7 +642,7 @@ namespace Gui.ViewModels
             using (var settings = new ViewSettings().Read<ViewSettings>())
             {
                 settings.ViewMode = ViewMode;
-                
+
                 if (!settings.Connections.Contains(FirstConnectionViewModel.Text))
                 {
                     settings.Connections.Add(FirstConnectionViewModel.Text);
@@ -640,6 +652,7 @@ namespace Gui.ViewModels
                 settings.MainFilter = new FilterViewModel(StatsViewModel.Filter);
             }
         }
+
         #endregion
     }
 }

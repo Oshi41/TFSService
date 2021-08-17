@@ -23,13 +23,15 @@ namespace Gui
             base.OnStartup(e);
 
             DispatcherUnhandledException += WriteEx;
-
+            
             var path = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "TfsService",
                 "Logs",
                 $"{DateTime.Now.ToShortDateString()}.log"
             );
+
+            App.Current.Properties["LogsPath"] = path;
 
             if (!Directory.Exists(Path.GetDirectoryName(path)))
             {

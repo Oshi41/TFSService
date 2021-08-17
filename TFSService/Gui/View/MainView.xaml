@@ -190,6 +190,11 @@
                     <MenuItem Header="{x:Static p:Resources.AS_Actions}">
                         <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
                                   Command="{Binding Path=WriteOffHoursCommand}" />
+                        
+                        <Separator/>
+                        
+                        <MenuItem Header="{x:Static p:Resources.AS_OpenLogsCommand}"
+                                  Command="{Binding Path=OpenLogsCommand}" />
                         <!-- <Separator /> -->
                         <!-- <MenuItem Header="{x:Static p:Resources.AS_ObservableItems_Title}" -->
                         <!--           Command="{Binding Path=ObservableItemsCommand}" /> -->

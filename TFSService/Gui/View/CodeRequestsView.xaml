@@ -29,7 +29,6 @@
             <controls:AwaitingContent />
         </materialDesign:DialogHost.DialogContent>
 
-
         <Grid
             MaxHeight="{Binding RelativeSource={RelativeSource AncestorType=materialDesign:DialogHost}, Path=ActualWidth}">
             <Grid.RowDefinitions>

@@ -36,6 +36,8 @@ namespace TfsAPI.TFS
                     Name = WorkItemStore.UserDisplayName;
 
                     TfsChanged?.Invoke(this, Tfs);
+                    
+                    LoggerHelper.WriteLine($"Connected to TFS {Tfs?.Uri}");
                 }
             }
         }
@@ -55,6 +57,8 @@ namespace TfsAPI.TFS
                 {
                     _project = value;
                     ProjectChanged?.Invoke(this, Project);
+                    
+                    LoggerHelper.WriteLine($"Connected to project {Project?.Name}");
                 }
             }
         }

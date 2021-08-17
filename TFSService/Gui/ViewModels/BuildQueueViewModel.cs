@@ -65,7 +65,7 @@ namespace Gui.ViewModels
         private readonly ICommand _submitBuildCommand;
         private readonly ICommand _denyBuildCommand;
         private Build _selected;
-        private Dictionary<BuildDefinitionReference, IDictionary<string, BuildDefinitionVariable>> _allRefs;
+        private IDictionary<BuildDefinitionReference, IDictionary<string, BuildDefinitionVariable>> _allRefs;
         private bool _busy;
         private readonly IConnect _connectService;
 
@@ -100,11 +100,7 @@ namespace Gui.ViewModels
             {
                 var builds = await Task.Run(() => _buildService.GetRunningBuilds());
                 var references = await Task.Run(() => _buildService.GetAllDefentitions());
-
-                var dictionary = references.ToDictionary(x => x, x => _buildService.GetDefaultProperties(x));
-                await Task.WhenAll(dictionary.Values);
-
-                _allRefs = dictionary.ToDictionary(x => x.Key, x => x.Value.Result);
+                _allRefs = await _buildService.GetDefaultVariables(references);
 
                 AgentQueue = new ObservableCollection<Build>(builds);
                 AllDefinitions = new ObservableCollection<string>(_allRefs.Keys.Select(x => x.Name));

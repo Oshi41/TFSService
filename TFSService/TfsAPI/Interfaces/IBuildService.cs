@@ -26,11 +26,12 @@ namespace TfsAPI.Interfaces
         Task<IList<BuildDefinitionReference>> GetAllDefentitions();
 
         /// <summary>
-        /// Получаю дефолтные значения свойств для текущего определения
+        /// Запрашиваем дефолтные значения для сборок
         /// </summary>
-        /// <param name="def">Определение сборки</param>
+        /// <param name="source">Список сборок</param>
         /// <returns></returns>
-        Task<IDictionary<string, BuildDefinitionVariable>> GetDefaultProperties(BuildDefinitionReference def);
+        Task<IDictionary<BuildDefinitionReference, IDictionary<string, BuildDefinitionVariable>>> GetDefaultVariables(
+            IEnumerable<BuildDefinitionReference> source);
 
         /// <summary>
         /// Обновляет переданные сборки

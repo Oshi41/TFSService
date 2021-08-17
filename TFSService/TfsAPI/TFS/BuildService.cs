@@ -41,26 +41,46 @@ namespace TfsAPI.TFS
         {
             var status = BuildStatus.Cancelling | BuildStatus.InProgress | BuildStatus.NotStarted;
 
+            LoggerHelper.WriteLine($"Searhing current builds...");
             var result = await _buildClient.GetBuildsAsync(_connectService.Project.Name, statusFilter: status);
+            LoggerHelper.WriteLine($"Running {result.Count} builds:");
+            LoggerHelper.WriteLine(Environment.NewLine + string.Join(Environment.NewLine, result.Select(x => x?.Definition?.Name)));
+            
             return result;
         }
 
         public async Task<IList<BuildDefinitionReference>> GetAllDefentitions()
         {
+            var monthsOld = 6;
+            
+            LoggerHelper.WriteLine($"Searching all definitions running at least one in {monthsOld} previous months...");
+            
             var defs = await _buildClient.GetDefinitionsAsync(
                 _connectService.Project.Name,
                 queryOrder:DefinitionQueryOrder.LastModifiedDescending,
-                builtAfter:DateTime.Now.AddMonths(-6)
+                builtAfter:DateTime.Now.AddMonths(-monthsOld)
                 );
+            
+            LoggerHelper.WriteLine($"Founded {defs.Count} builds:");
+            LoggerHelper.WriteLine(Environment.NewLine + string.Join(Environment.NewLine, defs.Select(x => x?.Name)));
+            
             return defs;
         }
 
-        public async Task<IDictionary<string, BuildDefinitionVariable>> GetDefaultProperties(
-            BuildDefinitionReference def)
+        public async Task<IDictionary<BuildDefinitionReference, IDictionary<string, BuildDefinitionVariable>>> GetDefaultVariables(IEnumerable<BuildDefinitionReference> source)
         {
-            var buildDef = (await _buildClient.GetFullDefinitionsAsync(project: _connectService.Project.Name, def.Name))
-                ?.FirstOrDefault();
-            return buildDef?.Variables;
+            var references = source.ToDictionary(x => x.Id);
+            
+            LoggerHelper.WriteLine($"Searching full definition for {references.Count}:");
+            LoggerHelper.WriteLine(Environment.NewLine + string.Join(Environment.NewLine, references.Values.Select(x => x.Name)));
+
+            var result = (await _buildClient.GetFullDefinitionsAsync(project: _connectService.Project.Name,
+                    definitionIds: references.Keys))
+                .ToDictionary(x => references[x.Id], x => x.Variables);
+            
+            LoggerHelper.WriteLine($"Founded {result.Count}");
+
+            return result;
         }
 
         public async Task<IList<Build>> Update(IEnumerable<Build> old)
@@ -68,11 +88,15 @@ namespace TfsAPI.TFS
             if (old.IsNullOrEmpty())
                 return new List<Build>();
             
+            LoggerHelper.WriteLine($"Updating {old.Count()} builds: {Environment.NewLine}{string.Join(Environment.NewLine, old.Select(x => x?.Definition?.Name))}");
             return await _buildClient.GetBuildsAsync(_connectService.Name, buildIds: old.Select(x => x.Id));
         }
 
         public Task<Build> Queue(Build build)
         {
+            LoggerHelper.WriteLine($"Queueing new build {build?.Definition?.Name} with params:");
+            LoggerHelper.WriteLine(Environment.NewLine + string.Join(Environment.NewLine, build?.Parameters.Trim('{', '}').Split(',')));
+            
             return _buildClient.QueueBuildAsync(build);
         }
 
