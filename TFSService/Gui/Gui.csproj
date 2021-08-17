@@ -122,6 +122,10 @@
     <Reference Include="Ben.Demystifier, Version=0.1.0.0, Culture=neutral, PublicKeyToken=a6d206e05440431a, processorArchitecture=MSIL">
       <HintPath>..\packages\Ben.Demystifier.0.1.4\lib\net45\Ben.Demystifier.dll</HintPath>
     </Reference>
+    <Reference Include="FilterDataGrid, Version=1.2.3.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\FilterDataGrid.1.2.3\lib\net46\FilterDataGrid.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
       <HintPath>..\packages\LiveCharts.0.9.7\lib\net45\LiveCharts.dll</HintPath>
     </Reference>
@@ -375,6 +379,7 @@
     </ApplicationDefinition>
     <Compile Include=".Tests\TestDialogViewModel.cs" />
     <Compile Include="Behaviors\CalendarItemSourceBehavior.cs" />
+    <Compile Include="Behaviors\DataGridRowDetailsBehavior.cs" />
     <Compile Include="Converters\DescriptionConverter.cs" />
     <Compile Include="Converters\EnumBooleanConverter.cs" />
     <Compile Include="Converters\EnumToVisConverter.cs" />
@@ -405,6 +410,7 @@
     <Compile Include="Settings\WriteOffSettings.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\BuildQueueViewModel.cs" />
+    <Compile Include="ViewModels\CodeRequestsViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\Trend\ChartViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\ChooseTaskViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModels\CreateTaskViewModel.cs" />
@@ -438,6 +444,9 @@
     </Compile>
     <Compile Include="View\BuildQueueView.xaml.cs">
       <DependentUpon>BuildQueueView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CodeRequestsView.xaml.cs">
+      <DependentUpon>CodeRequestsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Controls\AwaitingContent.xaml.cs">
       <DependentUpon>AwaitingContent.xaml</DependentUpon>
@@ -526,6 +535,7 @@
     </Page>
     <Page Include="View\AboutView.xaml" />
     <Page Include="View\BuildQueueView.xaml" />
+    <Page Include="View\CodeRequestsView.xaml" />
     <Page Include="View\Controls\AwaitingContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

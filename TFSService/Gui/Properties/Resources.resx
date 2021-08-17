@@ -573,4 +573,46 @@
   <data name="AS_About_Charts" xml:space="preserve">
     <value>Графики и визуализация данных</value>
   </data>
+  <data name="AS_RequestDate" xml:space="preserve">
+    <value>Дата запроса</value>
+  </data>
+  <data name="AS_RequestCount" xml:space="preserve">
+    <value>Кол-во запросов</value>
+  </data>
+  <data name="AS_ResponseCount" xml:space="preserve">
+    <value>Кол-во ответов</value>
+  </data>
+  <data name="AS_CurrentStatuses" xml:space="preserve">
+    <value>Текущие статусы</value>
+  </data>
+  <data name="AS_CodeRequest_Header" xml:space="preserve">
+    <value>Запросы на проверку моего кода (Review Request)</value>
+  </data>
+  <data name="AS_Close" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="AS_OpenProperties" xml:space="preserve">
+    <value>Открыть свойства</value>
+  </data>
+  <data name="AS_Reqiests" xml:space="preserve">
+    <value>Запросы</value>
+  </data>
+  <data name="AS_Reviewer" xml:space="preserve">
+    <value>Проверяющий</value>
+  </data>
+  <data name="AS_LastChangeDate" xml:space="preserve">
+    <value>Последнее изменение</value>
+  </data>
+  <data name="AS_Responses" xml:space="preserve">
+    <value>Ответы</value>
+  </data>
+  <data name="AS_Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="AS_About_DataFilter" xml:space="preserve">
+    <value>Фильтрация для таблицы</value>
+  </data>
+  <data name="AS_Reviewers" xml:space="preserve">
+    <value>Проверяющие</value>
+  </data>
 </root>

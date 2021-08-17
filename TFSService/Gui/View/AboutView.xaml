@@ -68,6 +68,14 @@
                     </Hyperlink>
                 </TextBlock>
                 
+                <TextBlock>
+                    <Run Text="{x:Static p:Resources.AS_About_DataFilter}"></Run>
+                    <Hyperlink Command="{Binding Path=OpenSiteCommand}"
+                               CommandParameter="https://github.com/macgile/DataGridFilter">
+                        <Run Text="Data Grid Filter"></Run>
+                    </Hyperlink>
+                </TextBlock>
+                
                 
                 
             </StackPanel>

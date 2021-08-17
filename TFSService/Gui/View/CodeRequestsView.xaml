@@ -1,0 +1,200 @@
+﻿<UserControl x:Class="Gui.View.CodeRequestsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Gui.View"
+             xmlns:viewModels="clr-namespace:Gui.ViewModels"
+             xmlns:properties="clr-namespace:Gui.Properties"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:controls="clr-namespace:Gui.View.Controls"
+             xmlns:converters="clr-namespace:Gui.Converters"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:behaviors="clr-namespace:Gui.Behaviors"
+             xmlns:filterDataGrid="http://filterdatagrid.control.com/2021"
+             mc:Ignorable="d"
+             d:DesignHeight="680" d:DesignWidth="650"
+             d:DataContext="{d:DesignInstance Type={x:Type viewModels:CodeRequestsViewModel}}">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:SwitchConverter x:Key="VisConverter" Default="{x:Static Visibility.Visible}">
+                <converters:Case If="0" Value="{x:Static Visibility.Collapsed}" />
+            </converters:SwitchConverter>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <materialDesign:DialogHost IsOpen="{Binding Path=IsBusy}">
+        <materialDesign:DialogHost.DialogContent>
+            <controls:AwaitingContent />
+        </materialDesign:DialogHost.DialogContent>
+
+
+        <Grid
+            MaxHeight="{Binding RelativeSource={RelativeSource AncestorType=materialDesign:DialogHost}, Path=ActualWidth}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <!-- <RowDefinition Height="*"/> -->
+            </Grid.RowDefinitions>
+            <GroupBox Header="{x:Static properties:Resources.AS_CodeRequest_Header}">
+                <DockPanel>
+                    <ToolBar DockPanel.Dock="Top">
+                        <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
+                                ToolTip="{x:Static properties:Resources.AS_Close}"
+                                Width="24"
+                                Height="24"
+                                Command="{Binding Path=CloseInSelection}"
+                                CommandParameter="{Binding ElementName=DataGrid, Path=SelectedItems}">
+                            <materialDesign:PackIcon Kind="Trash" />
+                        </Button>
+
+                        <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
+                                ToolTip="{x:Static properties:Resources.AS_Update}"
+                                Width="24"
+                                Margin="5 0"
+                                Height="24"
+                                Command="{Binding Path=UpdateCommand}">
+                            <materialDesign:PackIcon Kind="Update" />
+                        </Button>
+
+                        <Button Style="{StaticResource MaterialDesignFloatingActionButton}"
+                                ToolTip="{x:Static properties:Resources.AS_OpenProperties}"
+                                Width="24"
+                                Height="24"
+                                Command="{Binding ElementName=DetailsBehavior, Path=ExpandCommand}"
+                                CommandParameter="{Binding ElementName=DataGrid, Path=SelectedItems}">
+                            <materialDesign:PackIcon Kind="Details" />
+                        </Button>
+
+                        <Button Command="{Binding ElementName=DetailsBehavior, Path=ExpandCommand}" />
+                    </ToolBar>
+
+                    <filterDataGrid:FilterDataGrid x:Name="DataGrid"
+                                                   FilterLanguage="Russian"
+                                                   ItemsSource="{Binding Path=CodeReviews}"
+                                                   HorizontalScrollBarVisibility="Auto"
+                                                   VerticalScrollBarVisibility="Auto"
+                                                   AutoGenerateColumns="False"
+                                                   IsReadOnly="True"
+                                                   SelectionMode="Extended"
+                                                   RowDetailsVisibilityMode="Collapsed">
+                        <i:Interaction.Behaviors>
+                            <behaviors:DataGridRowDetailsBehavior x:Name="DetailsBehavior" />
+                        </i:Interaction.Behaviors>
+
+                        <filterDataGrid:FilterDataGrid.RowDetailsTemplate>
+                            <DataTemplate DataType="{x:Type viewModels:CodeReviewViewModel}">
+                                <materialDesign:Card Padding="5"
+                                                     materialDesign:ShadowAssist.ShadowDepth="Depth3">
+                                    <StackPanel Orientation="Horizontal">
+                                        <GroupBox Header="{x:Static properties:Resources.AS_Reqiests}"
+                                                  Visibility="{Binding Path=Waiting.Count, Converter={StaticResource VisConverter}}">
+                                            <DataGrid ItemsSource="{Binding Path=Waiting}"
+                                                      AutoGenerateColumns="False"
+                                                      IsReadOnly="True">
+                                                <DataGrid.Columns>
+                                                    <DataGridHyperlinkColumn Header="ID"
+                                                                             Binding="{Binding Path=Uri}"
+                                                                             ContentBinding="{Binding Path=Id}">
+                                                        <DataGridHyperlinkColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <!-- TODO remove-->
+                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                                
+                                                                <EventSetter Event="Hyperlink.Click"
+                                                                             Handler="OnHyperlinkClick" />
+                                                            </Style>
+                                                        </DataGridHyperlinkColumn.ElementStyle>
+                                                    </DataGridHyperlinkColumn>
+
+                                                    <DataGridTextColumn
+                                                        Header="{x:Static properties:Resources.AS_Reviewer}"
+                                                        Binding="{Binding Path=Fields[Assigned To].Value}" />
+
+
+                                                    <DataGridTextColumn
+                                                        Header="{x:Static properties:Resources.AS_LastChangeDate}"
+                                                        Binding="{Binding Path=ChangedDate}" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </GroupBox>
+
+                                        <GroupBox Header="{x:Static properties:Resources.AS_Responses}"
+                                                  Margin="5 0"
+                                                  Visibility="{Binding Path=Responses.Count, Converter={StaticResource VisConverter}}">
+                                            <DataGrid ItemsSource="{Binding Path=Responses}"
+                                                      AutoGenerateColumns="False"
+                                                      IsReadOnly="True">
+                                                <DataGrid.Columns>
+                                                    <DataGridHyperlinkColumn Header="ID"
+                                                                             Binding="{Binding Path=Uri}"
+                                                                             ContentBinding="{Binding Path=Id}">
+                                                        <DataGridHyperlinkColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <!-- TODO remove-->
+                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                                
+                                                                <EventSetter Event="Hyperlink.Click"
+                                                                             Handler="OnHyperlinkClick" />
+                                                            </Style>
+                                                        </DataGridHyperlinkColumn.ElementStyle>
+                                                    </DataGridHyperlinkColumn>
+                                                    
+                                                    <DataGridTextColumn
+                                                        Header="{x:Static properties:Resources.AS_Reviewer}"
+                                                        Binding="{Binding Path=ChangedBy}" />
+
+                                                    <DataGridTextColumn
+                                                        Header="{x:Static properties:Resources.AS_LastChangeDate}"
+                                                        Binding="{Binding Path=ChangedDate}" />
+
+                                                    <DataGridTextColumn
+                                                        Header="{x:Static properties:Resources.AS_Status}"
+                                                        Binding="{Binding Path=Fields[Closed Status].Value}" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </GroupBox>
+                                    </StackPanel>
+                                </materialDesign:Card>
+                            </DataTemplate>
+                        </filterDataGrid:FilterDataGrid.RowDetailsTemplate>
+
+                        <filterDataGrid:FilterDataGrid.Columns>
+                            <filterDataGrid:DataGridTextColumn Header="{x:Static properties:Resources.AS_About_Name}"
+                                                               Width="300"
+                                                               Binding="{Binding Path=CodeRequest.Title}" />
+
+                            <filterDataGrid:DataGridTextColumn Header="{x:Static properties:Resources.AS_RequestDate}"
+                                                               Binding="{Binding Path=CodeRequest.CreatedDate}" />
+
+                            <filterDataGrid:DataGridTextColumn Header="{x:Static properties:Resources.AS_RequestCount}"
+                                                               IsColumnFiltered="True"
+                                                               Binding="{Binding Path=WaitingCount}" />
+
+                            <filterDataGrid:DataGridTextColumn
+                                Header="{x:Static properties:Resources.AS_ResponseCount}"
+                                IsColumnFiltered="True"
+                                Binding="{Binding Path=ResponseCount}" />
+
+                            <filterDataGrid:DataGridTextColumn
+                                Header="{x:Static properties:Resources.AS_CurrentStatuses}"
+                                IsColumnFiltered="True"
+                                Binding="{Binding Path=ResponseStatuses}" />
+                            
+                            <filterDataGrid:DataGridTextColumn
+                                Header="{x:Static properties:Resources.AS_Reviewers}"
+                                IsColumnFiltered="True"
+                                Binding="{Binding Path=Reviewers}" />
+                            
+                            
+                        </filterDataGrid:FilterDataGrid.Columns>
+                    </filterDataGrid:FilterDataGrid>
+                </DockPanel>
+            </GroupBox>
+
+            <GroupBox Grid.Row="1"
+                      Visibility="Collapsed"
+                      Header="Запросы моей оценки кода (Review Response)" />
+        </Grid>
+    </materialDesign:DialogHost>
+</UserControl>

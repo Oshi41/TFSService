@@ -178,21 +178,28 @@
                                 <materialDesign:PackIcon Kind="TimerSand" />
                             </MenuItem.Icon>
                         </MenuItem>
+                        
+                        <MenuItem Header="Code Requests"
+                                  Command="{Binding Path=ShowCodeRequestsCommand}">
+                            <MenuItem.Icon>
+                                <materialDesign:PackIcon Kind="VsCode" />
+                            </MenuItem.Icon>
+                        </MenuItem>
                     </MenuItem>
 
                     <MenuItem Header="{x:Static p:Resources.AS_Actions}">
                         <MenuItem Header="{x:Static p:Resources.AS_WriteOffHours}"
                                   Command="{Binding Path=WriteOffHoursCommand}" />
-                        <Separator />
-                        <MenuItem Header="{x:Static p:Resources.AS_ObservableItems_Title}"
-                                  Command="{Binding Path=ObservableItemsCommand}" />
-                        <Separator />
-                        <MenuItem Header="{x:Static p:Resources.AS_CloseCompletedReviewes}"
-                                  Command="{Binding Path=CodeResponsesViewModel.CloseReviewes}" />
-
-                        <MenuItem Header="{x:Static p:Resources.AS_CloseOldReviews}"
-                                  Command="{Binding Path=CodeResponsesViewModel.CloseOldRequests}"
-                                  CommandParameter="{x:Null}" />
+                        <!-- <Separator /> -->
+                        <!-- <MenuItem Header="{x:Static p:Resources.AS_ObservableItems_Title}" -->
+                        <!--           Command="{Binding Path=ObservableItemsCommand}" /> -->
+                        <!-- <Separator /> -->
+                        <!-- <MenuItem Header="{x:Static p:Resources.AS_CloseCompletedReviewes}" -->
+                        <!--           Command="{Binding Path=CodeResponsesViewModel.CloseReviewes}" /> -->
+                        <!-- -->
+                        <!-- <MenuItem Header="{x:Static p:Resources.AS_CloseOldReviews}" -->
+                        <!--           Command="{Binding Path=CodeResponsesViewModel.CloseOldRequests}" -->
+                        <!--           CommandParameter="{x:Null}" /> -->
 
 
                     </MenuItem>

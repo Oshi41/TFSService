@@ -169,6 +169,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Фильтрация для таблицы.
+        /// </summary>
+        public static string AS_About_DataFilter {
+            get {
+                return ResourceManager.GetString("AS_About_DataFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Страница на GitHub.
         /// </summary>
         public static string AS_About_Github_page {
@@ -457,6 +466,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Закрыть.
+        /// </summary>
+        public static string AS_Close {
+            get {
+                return ResourceManager.GetString("AS_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Закрыть успешные запросы проверки кода.
         /// </summary>
         public static string AS_CloseCompletedReviewes {
@@ -471,6 +489,15 @@ namespace Gui.Properties {
         public static string AS_CloseOldReviews {
             get {
                 return ResourceManager.GetString("AS_CloseOldReviews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Запросы на проверку моего кода (Review Request).
+        /// </summary>
+        public static string AS_CodeRequest_Header {
+            get {
+                return ResourceManager.GetString("AS_CodeRequest_Header", resourceCulture);
             }
         }
         
@@ -534,6 +561,15 @@ namespace Gui.Properties {
         public static string AS_CurrentConnection {
             get {
                 return ResourceManager.GetString("AS_CurrentConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Текущие статусы.
+        /// </summary>
+        public static string AS_CurrentStatuses {
+            get {
+                return ResourceManager.GetString("AS_CurrentStatuses", resourceCulture);
             }
         }
         
@@ -732,6 +768,15 @@ namespace Gui.Properties {
         public static string AS_ItemUpdatePeriod {
             get {
                 return ResourceManager.GetString("AS_ItemUpdatePeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Последнее изменение.
+        /// </summary>
+        public static string AS_LastChangeDate {
+            get {
+                return ResourceManager.GetString("AS_LastChangeDate", resourceCulture);
             }
         }
         
@@ -936,6 +981,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Открыть свойства.
+        /// </summary>
+        public static string AS_OpenProperties {
+            get {
+                return ResourceManager.GetString("AS_OpenProperties", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Имя параметра.
         /// </summary>
         public static string AS_ParamName {
@@ -1053,11 +1107,74 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Запросы.
+        /// </summary>
+        public static string AS_Reqiests {
+            get {
+                return ResourceManager.GetString("AS_Reqiests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Кол-во запросов.
+        /// </summary>
+        public static string AS_RequestCount {
+            get {
+                return ResourceManager.GetString("AS_RequestCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Дата запроса.
+        /// </summary>
+        public static string AS_RequestDate {
+            get {
+                return ResourceManager.GetString("AS_RequestDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Кем запрошен.
         /// </summary>
         public static string AS_RequestedBy {
             get {
                 return ResourceManager.GetString("AS_RequestedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Кол-во ответов.
+        /// </summary>
+        public static string AS_ResponseCount {
+            get {
+                return ResourceManager.GetString("AS_ResponseCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ответы.
+        /// </summary>
+        public static string AS_Responses {
+            get {
+                return ResourceManager.GetString("AS_Responses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Проверяющий.
+        /// </summary>
+        public static string AS_Reviewer {
+            get {
+                return ResourceManager.GetString("AS_Reviewer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Проверяющие.
+        /// </summary>
+        public static string AS_Reviewers {
+            get {
+                return ResourceManager.GetString("AS_Reviewers", resourceCulture);
             }
         }
         
@@ -1094,6 +1211,15 @@ namespace Gui.Properties {
         public static string AS_SkipWriteOff_Title {
             get {
                 return ResourceManager.GetString("AS_SkipWriteOff_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Статус.
+        /// </summary>
+        public static string AS_Status {
+            get {
+                return ResourceManager.GetString("AS_Status", resourceCulture);
             }
         }
         

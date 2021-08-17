@@ -44,6 +44,7 @@ namespace Gui.ViewModels
             ShowBuildQueueCommand = new ObservableCommand(OnShowBuildQueue);
             ShowObserveCommand = new ObservableCommand(ShowObserverView);
             AboutCommand = new ObservableCommand(OnShowAbout);
+            ShowCodeRequestsCommand = new ObservableCommand(OnShowCodeRequests);
 
             Init();
 
@@ -253,6 +254,8 @@ namespace Gui.ViewModels
 
         public ICommand AboutCommand { get; }
 
+        public ICommand ShowCodeRequestsCommand { get; }
+
         #endregion
 
         #region Command handler
@@ -402,6 +405,13 @@ namespace Gui.ViewModels
                 // Либюо включаю галочку
                 finded.IsChecked = true;
             }
+        }
+        
+        private void OnShowCodeRequests()
+        {
+            var width = 1000;
+            var vm = new CodeRequestsViewModel(_workItemService, _connectService);
+            WindowManager.ShowDialog(vm, "Code Requests", width, width / 1.25);
         }
 
         private bool OnCanAddToIgnore(WorkItemVm arg)
