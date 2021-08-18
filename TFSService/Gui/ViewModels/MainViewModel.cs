@@ -56,6 +56,8 @@ namespace Gui.ViewModels
                     Process.Start(directoryName);
                 }
             });
+            ShowReportCommand = new ObservableCommand(ShowReport);
+            
             Init();
 
             App.Current.Exit += OnSaveSettings;
@@ -98,7 +100,7 @@ namespace Gui.ViewModels
                 _buildService = new BuildService(_connectService, qSettings.QueuedBuilds, TimeSpan.FromSeconds(30));
             }
 
-            using (var wiSettings = new WorkItemSettings().Read<WorkItemSettings>())
+            using (var settings = new WorkItemSettings().Read<WorkItemSettings>())
             {
                 void OnSave()
                 {
@@ -106,16 +108,11 @@ namespace Gui.ViewModels
                     wiSettings.Items = new ObservableCollection<WorkItem>(_workItemObserver.Observed);
                 }
 
-                _workItemObserver = new WorkItemObserver(_workItemService, OnSave, wiSettings.Items, wiSettings.Delay);
+                _workItemObserver = new WorkItemObserver(_workItemService, OnSave, settings.Items, settings.Delay, settings.Observe);
                 _workItemObserver.ItemsChanged += OnWorkItemsChanged;
-
-                if (wiSettings.Observe)
-                {
-                    _workItemObserver.Start();
-                }
             }
 
-            using (var bldSettings = new BuildsSettings().Read<BuildsSettings>())
+            using (var settings = new BuildsSettings().Read<BuildsSettings>())
             {
                 void OnSave()
                 {
@@ -123,22 +120,24 @@ namespace Gui.ViewModels
                     bldSettings.Builds = new ObservableCollection<Build>(_buildsObserver.Observed);
                 }
 
-                _buildsObserver = new BuildsObserver(_buildService, OnSave, bldSettings.Builds, bldSettings.Delay);
+                _buildsObserver = new BuildsObserver(_buildService, OnSave, settings.Builds, settings.Delay, settings.Observe);
                 _buildsObserver.BuildChanged += OnBuildChanged;
-
-                if (bldSettings.Observe)
-                {
-                    _buildsObserver.Start();
-                }
             }
 
             await Task.Run(RefreshStats);
+            
+            _tickerController.Register(_buildService);
+            _tickerController.Register(_workItemObserver);
+            _tickerController.Register(new ReportService());
 
             IsBusy = false;
         }
 
         #region Fields
 
+        private readonly TickerController _tickerController = new TickerController();
+            
+        
         private readonly ActionArbiter _itemsChangedArbiter = new ActionArbiter();
         private readonly SafeExecutor _safeExecutor;
         private readonly IConnect _connectService = new ConnectService();
@@ -268,6 +267,8 @@ namespace Gui.ViewModels
 
         public ICommand OpenLogsCommand { get; }
 
+        public ICommand ShowReportCommand { get; }
+
         #endregion
 
         #region Command handler
@@ -362,30 +363,12 @@ namespace Gui.ViewModels
                 {
                     settings.Delay = TimeSpan.FromSeconds(vm.BuildsDelay);
                     settings.Observe = vm.BuildsObserve;
-
-                    if (settings.Observe)
-                    {
-                        _buildsObserver.Start();
-                    }
-                    else
-                    {
-                        _buildsObserver.Pause();
-                    }
                 }
 
                 using (var settings = new WorkItemSettings().Read<WorkItemSettings>())
                 {
                     settings.Delay = TimeSpan.FromSeconds(vm.WorkItemDelay);
                     settings.Observe = vm.WorkItemObserve;
-
-                    if (settings.Observe)
-                    {
-                        _workItemObserver.Start();
-                    }
-                    else
-                    {
-                        _workItemObserver.Pause();
-                    }
                 }
             }
         }
@@ -424,6 +407,13 @@ namespace Gui.ViewModels
             var width = 1000;
             var vm = new CodeRequestsViewModel(_workItemService, _connectService);
             WindowManager.ShowDialog(vm, "Code Requests", width, width / 1.25);
+        }
+        
+        private void ShowReport()
+        {
+            var width = 1000;
+            var vm = new ReportViewModel(_connectService, _writeOffService, _buildService, _chekinsService);
+            WindowManager.ShowDialog(vm, "Отчет", width, width / 1.25);
         }
 
         private bool OnCanAddToIgnore(WorkItemVm arg)

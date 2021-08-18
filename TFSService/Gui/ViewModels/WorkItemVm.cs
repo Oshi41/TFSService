@@ -21,11 +21,11 @@ namespace Gui.ViewModels
 
         public ICommand WebCommand { get; }
 
+        public string LinkUri => $"{Item?.Collection?.Store?.TeamProjectCollection?.Uri}/{Item?.Project?.Name}/_workitems/edit/{Item?.Id}";
+
         private void OnNavigate()
         {
-            var link =
-                $"{Item?.Collection?.Store?.TeamProjectCollection?.Uri}/{Item?.Project?.Name}/_workitems/edit/{Item?.Id}";
-            Process.Start(link);
+            Process.Start(LinkUri);
         }
 
         private bool OnCanNavigate()

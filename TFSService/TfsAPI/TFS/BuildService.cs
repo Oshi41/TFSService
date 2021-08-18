@@ -16,7 +16,6 @@ namespace TfsAPI.TFS
         private readonly IConnect _connectService;
         private readonly List<Build> _scheduled;
         private readonly BuildHttpClient _buildClient;
-        private readonly Timer _timer;
 
         public BuildService(IConnect connectService, IEnumerable<Build> scheduled, TimeSpan span)
         {
@@ -24,11 +23,7 @@ namespace TfsAPI.TFS
             _scheduled = scheduled?.ToList() ?? new List<Build>();
 
             _buildClient = _connectService.Tfs.GetClient<BuildHttpClient>();
-            _timer = new Timer();
-            _timer.Interval = span.TotalMilliseconds;
-            _timer.Elapsed += async (sender, args) => await Tick();
-            
-            _timer.Start();
+            Delay = span;
         }
 
 
@@ -47,6 +42,26 @@ namespace TfsAPI.TFS
             LoggerHelper.WriteLine(Environment.NewLine + string.Join(Environment.NewLine, result.Select(x => x?.Definition?.Name)));
             
             return result;
+        }
+
+        public async Task<IList<Build>> GetBuilds(string actor = null, DateTime? @from = null)
+        {
+            if (actor == null)
+            {
+                actor = _connectService.Name;
+            }
+
+            if (from == null)
+            {
+                from = DateTime.Today;
+            }
+
+            LoggerHelper.WriteLine($"Searching builds of {actor} from {from}...");
+            var list = await _buildClient.GetBuildsAsync(_connectService.Project.Name, minFinishTime: @from, requestedFor: actor);
+            LoggerHelper.WriteLine($"Founded {list.Count} builds:");
+            LoggerHelper.WriteLine(Environment.NewLine + string.Join(Environment.NewLine, list.Select(x => x?.Definition?.Name)));
+
+            return list;
         }
 
         public async Task<IList<BuildDefinitionReference>> GetAllDefentitions()
@@ -126,6 +141,8 @@ namespace TfsAPI.TFS
                     $"Build was scheduled for {build.Definition.Name}, {_scheduled.Count} build(s) in a queue");
             }
         }
+
+        public TimeSpan Delay { get; }
 
         public async Task<Build> Schedule(string project, string defName,
             IDictionary<string, BuildDefinitionVariable> properties, bool forced)

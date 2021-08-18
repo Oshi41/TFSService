@@ -341,6 +341,7 @@
     <Compile Include="Interfaces\ITFsObservable.cs" />
     <Compile Include="Constants\WorkItems.cs" />
     <Compile Include="Interfaces\IObservingItem.cs" />
+    <Compile Include="Interfaces\ITickable.cs" />
     <Compile Include="Interfaces\IWorkItemObserver.cs" />
     <Compile Include="Interfaces\IWorkItemService.cs" />
     <Compile Include="Interfaces\IWriteOffService.cs" />

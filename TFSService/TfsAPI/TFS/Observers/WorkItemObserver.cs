@@ -14,8 +14,8 @@ namespace TfsAPI.TFS.Observers
     {
         private readonly IWorkItem _workItemService;
 
-        public WorkItemObserver(IWorkItem workItemService, Action afterTick, IEnumerable<WorkItem> saved, TimeSpan delay) 
-            : base(new IdWorkItemComparer(), new PartialWorkItemComparer(), afterTick, saved, delay)
+        public WorkItemObserver(IWorkItem workItemService, Action afterTick, IEnumerable<WorkItem> saved, TimeSpan delay, bool running) 
+            : base(new IdWorkItemComparer(), new PartialWorkItemComparer(), afterTick, saved, delay, running)
         {
             _workItemService = workItemService;
         }

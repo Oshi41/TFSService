@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Timers;
 using Microsoft.TeamFoundation.Common;
 using TfsAPI.Interfaces;
 
@@ -14,8 +13,6 @@ namespace TfsAPI.TFS.Observers
         private readonly IEqualityComparer<T> _idComparer;
         private readonly IEqualityComparer<T> _changesComparer;
         private readonly Action _afterTick;
-        private readonly Timer _timer;
-        private TimeSpan _delay;
 
         /// <summary>
         /// Конструктор наблюдаемой коллекции
@@ -25,58 +22,31 @@ namespace TfsAPI.TFS.Observers
         /// <param name="afterTick">Действие после обновления</param>
         /// <param name="saved">Список сохраненных наблюдаемых объектов</param>
         /// <param name="delay">Задержка между запросами</param>
-        protected ObserverCollectionBase(IEqualityComparer<T> idComparer, 
+        protected ObserverCollectionBase(IEqualityComparer<T> idComparer,
             IEqualityComparer<T> changesComparer,
-            Action afterTick, 
+            Action afterTick,
             IEnumerable<T> saved,
-            TimeSpan delay)
+            TimeSpan delay,
+            bool running)
         {
             _idComparer = idComparer;
             _changesComparer = changesComparer;
             _afterTick = afterTick;
             Observed = saved?.ToList() ?? new List<T>();
-            
-            _timer = new Timer();
-            _timer.AutoReset = true;
-            _timer.Elapsed += OnTick;
-            
+            Running = running;
+
             Delay = delay;
         }
 
-        public void Start()
-        {
-            _timer.Start();
-            StatusChanged?.Invoke(this, _timer.Enabled);
-        }
+        public TimeSpan Delay { get; set; }
 
-        public void Pause()
-        {
-            _timer.Stop();
-            StatusChanged?.Invoke(this, _timer.Enabled);
-        }
-        
-        private void OnTick(object sender, ElapsedEventArgs e)
-        {
-            Tick();
-        }
-
-        public TimeSpan Delay
-        {
-            get => _delay;
-            set
-            {
-                if (_delay != value)
-                {
-                    _delay = value;
-                    _timer.Interval = Delay.TotalMilliseconds;
-                }
-            }
-        }
-
-        public event EventHandler<bool> StatusChanged;
+        public bool Running { get; set; }
 
         public async Task Tick()
         {
+            if (!Running)
+                return;
+            
             var oldCollection = Observed;
             var actual = await Request();
 
@@ -98,10 +68,10 @@ namespace TfsAPI.TFS.Observers
             {
                 OnCollectionChanged(CollectionChangeAction.Refresh, changed);
             }
-            
+
             Observed.Clear();
             Observed.AddRange(actual);
-            
+
             _afterTick?.Invoke();
         }
 

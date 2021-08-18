@@ -322,6 +322,15 @@ namespace Gui.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ветка.
+        /// </summary>
+        public static string AS_Branch {
+            get {
+                return ResourceManager.GetString("AS_Branch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Сборки.
         /// </summary>
         public static string AS_BuidlQueue_Button {
@@ -642,6 +651,15 @@ namespace Gui.Properties {
         public static string AS_EnterAreaPath {
             get {
                 return ResourceManager.GetString("AS_EnterAreaPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [ВСТАВЬТЕ ОПИСАНИЕ].
+        /// </summary>
+        public static string AS_EnterDesciption {
+            get {
+                return ResourceManager.GetString("AS_EnterDesciption", resourceCulture);
             }
         }
         
@@ -1112,6 +1130,22 @@ namespace Gui.Properties {
         public static string AS_Replacing {
             get {
                 return ResourceManager.GetString("AS_Replacing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;p&gt;Ежедневный отчет {0}&lt;/p&gt;
+        ///&lt;p&gt;Добрый день!&lt;/p&gt;
+        ///&lt;p&gt;&lt;/p&gt;
+        ///&lt;p&gt;Сегодня:&lt;/p&gt;
+        ///&lt;ul&gt;{1}&lt;/ul&gt;
+        ///&lt;p&gt;&lt;/p&gt;
+        ///&lt;p&gt;Завтра:&lt;/p&gt;
+        ///&lt;p&gt;[ВСТАВЬТЕ ОПИСАНИЕ]&lt;/p&gt;.
+        /// </summary>
+        public static string AS_ReportBase_Html {
+            get {
+                return ResourceManager.GetString("AS_ReportBase_Html", resourceCulture);
             }
         }
         

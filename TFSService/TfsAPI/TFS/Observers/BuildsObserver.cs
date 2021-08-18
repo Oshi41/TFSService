@@ -16,8 +16,8 @@ namespace TfsAPI.TFS.Observers
         private readonly IBuild _buildService;
 
         /// <inheritdoc/>
-        public BuildsObserver(IBuild buildService, Action afterTick, IEnumerable<Build> saved, TimeSpan delay)
-            : base(new IdBuildComparer(), new PartialBuildComparer(), afterTick, saved, delay)
+        public BuildsObserver(IBuild buildService, Action afterTick, IEnumerable<Build> saved, TimeSpan delay, bool running)
+            : base(new IdBuildComparer(), new PartialBuildComparer(), afterTick, saved, delay, running)
         {
             _buildService = buildService;
         }

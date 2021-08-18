@@ -185,6 +185,13 @@
                                 <materialDesign:PackIcon Kind="VsCode" />
                             </MenuItem.Icon>
                         </MenuItem>
+                        
+                        <MenuItem Header="Ежедневный отчет"
+                                  Command="{Binding Path=ShowReportCommand}">
+                            <MenuItem.Icon>
+                                <materialDesign:PackIcon Kind="Report" />
+                            </MenuItem.Icon>
+                        </MenuItem>
                     </MenuItem>
 
                     <MenuItem Header="{x:Static p:Resources.AS_Actions}">

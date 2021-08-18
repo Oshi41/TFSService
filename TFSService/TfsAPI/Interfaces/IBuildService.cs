@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation.Build.WebApi;
 
 namespace TfsAPI.Interfaces
 {
-    public interface IBuild
+    public interface IBuild : ITickable
     {
         /// <summary>
         /// Очередь внутренняя
@@ -18,6 +19,15 @@ namespace TfsAPI.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<IList<Build>> GetRunningBuilds();
+
+        /// <summary>
+        /// Поиск по сборкам
+        /// </summary>
+        /// <param name="actor">Кто поставил (по дефолту я)</param>
+        /// <param name="from">За какое время от сегдоняшнего (по дефолту сегодня)</param>
+        /// <returns></returns>
+        Task<IList<Build>> GetBuilds(string actor = null, DateTime? from = null);
+        
 
         /// <summary>
         /// Получаю все возможные определения сборок
@@ -46,11 +56,6 @@ namespace TfsAPI.Interfaces
         /// <param name="build">Какую сборку ставим</param>
         /// <returns></returns>
         Task<Build> Queue(Build build);
-
-        /// <summary>
-        /// Выполняем цикл проверки и постановки сборки
-        /// </summary>
-        Task Tick();
 
         /// <summary>
         /// Ставалю сборку в очередь

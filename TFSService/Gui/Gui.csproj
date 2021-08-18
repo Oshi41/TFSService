@@ -380,10 +380,12 @@
     <Compile Include=".Tests\TestDialogViewModel.cs" />
     <Compile Include="Behaviors\CalendarItemSourceBehavior.cs" />
     <Compile Include="Behaviors\DataGridRowDetailsBehavior.cs" />
+    <Compile Include="Behaviors\RichTextBoxBehavior.cs" />
     <Compile Include="Converters\DescriptionConverter.cs" />
     <Compile Include="Converters\EnumBooleanConverter.cs" />
     <Compile Include="Converters\EnumToVisConverter.cs" />
     <Compile Include="Converters\HoursColorConverter.cs" />
+    <Compile Include="Converters\HtmlToFlowDocConverter.cs" />
     <Compile Include="Converters\InvertBoolToVisConverter.cs" />
     <Compile Include="Converters\MathCompareConverter.cs" />
     <Compile Include="Converters\NoDataErrorConverter.cs" />
@@ -393,6 +395,7 @@
     <Compile Include="Converters\WorkTypeToColorConverter.cs" />
     <Compile Include="Helper\ActionArbiter.cs" />
     <Compile Include="Helper\ObservableCommand.cs" />
+    <Compile Include="Helper\TickerController.cs" />
     <Compile Include="Helper\TimedAction.cs" />
     <Compile Include="Helper\WindowManager.cs" />
     <Compile Include="Helper\WpfUtil.cs" />
@@ -402,6 +405,7 @@
     <Compile Include="Settings\BuildsSettings.cs" />
     <Compile Include="Settings\Capacity.cs" />
     <Compile Include="Settings\DisplayTime.cs" />
+    <Compile Include="Settings\ReportSettings.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="Settings\JCollectionConverter.cs" />
     <Compile Include="Settings\SettingsBase.cs" />
@@ -433,6 +437,7 @@
     <Compile Include="ViewModels\Notifications\NewResponsesBaloonViewModel.cs" />
     <Compile Include="ViewModels\Notifications\WriteOffBaloonViewModel.cs" />
     <Compile Include="ViewModels\ObserveViewModel.cs" />
+    <Compile Include="ViewModels\ReportViewModel.cs" />
     <Compile Include="ViewModels\RuleEditorViewModel.cs" />
     <Compile Include="ViewModels\Rules\AddRuleViewModel.cs" />
     <Compile Include="ViewModels\SafeExecutor.cs" />
@@ -493,6 +498,9 @@
     </Compile>
     <Compile Include="View\ObservingWorkItemsView.xaml.cs">
       <DependentUpon>ObservingWorkItemsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ReportView.xaml.cs">
+      <DependentUpon>ReportView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Rule Wizard\RuleWizardView.xaml.cs">
       <DependentUpon>RuleWizardView.xaml</DependentUpon>
@@ -604,6 +612,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\ReportView.xaml" />
     <Page Include="View\Rule Wizard\RuleWizardView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
